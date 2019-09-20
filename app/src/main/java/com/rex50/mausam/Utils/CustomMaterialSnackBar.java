@@ -30,7 +30,6 @@ public class CustomMaterialSnackBar {
     public static final int LENGTH_INDEFINITE = -2;
     public static final int LENGTH_SHORT = -1;
     public static final int LENGTH_LONG = 0;
-
     public CustomMaterialSnackBar(Context context, View v) {
         this.context = context;
         this.layout = v;
