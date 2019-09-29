@@ -71,19 +71,11 @@ public final class APIManager {
 
     public void getCurrentWeather(int service, HashMap<String, String> urlExtras, final CallBackResponse listener){
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, generateUrl(service, urlExtras), null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        DataParser dataParser = new DataParser();
-                        listener.onWeatherResponseSuccess(dataParser.parseWeatherData(response));
-                    }
+                response -> {
+                    DataParser dataParser = new DataParser();
+                    listener.onWeatherResponseSuccess(dataParser.parseWeatherData(response));
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        listener.onWeatherResponseFailure(error.toString());
-                    }
-                });
+                error -> listener.onWeatherResponseFailure(error.toString()));
 
         VolleySingleton volleySingleton = VolleySingleton.getInstance(ctx);
         volleySingleton.addToRequestQueue(jsonObjectRequest);

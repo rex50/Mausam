@@ -8,9 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.widget.Toast;
-
-import com.rex50.mausam.Views.MainActivity;
+import android.provider.Settings;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -22,23 +20,13 @@ public class LocationDataManager {
 
     private static final long LOCATION_REFRESH_TIME = 10000;
     private static final float LOCATION_REFRESH_DISTANCE = 5000;
-    public static String CURRENT_CITY;
-    public static Location CURRENT_LOCATION;
     public static String LAST_UPDATED_TIME;
-    public static String CURRENT_STATE;
-    public static String CURRENT_COUNTRY;
-//    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-//    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
-    private LocationResultResponse resultResponse;
     private static LocationDataManager instance;
     private Context ctx;
 
 
-
-//    TODO: create this singleton class and store all current location when instantiated
     private LocationDataManager(Context context) {
-        resultResponse = (MainActivity) context;
         this.ctx = context;
     }
 
@@ -49,19 +37,27 @@ public class LocationDataManager {
         return instance;
     }
 
-    private void getLocationDetails(Context context) throws IOException {
+    /*private void getLocationDetails(Context context, LocationResultCallback listener) throws IOException {
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         List<Address> addresses = geocoder.getFromLocation(CURRENT_LOCATION.getLatitude(), CURRENT_LOCATION.getLongitude(), 1);
         CURRENT_CITY = addresses.get(0).getAddressLine(0);
+        CURRENT_CITY = addresses.get(0).getLocality();
         CURRENT_STATE = addresses.get(0).getAddressLine(1);
         CURRENT_COUNTRY = addresses.get(0).getAddressLine(2);
-        if(resultResponse != null){
-            resultResponse.LocationUpdated();
-        }
+        listener.onSuccess();
     }
 
+    public boolean isGPSon() {
+        try {
+            return (Settings.Secure.getInt(ctx.getContentResolver(), Settings.Secure.LOCATION_MODE) != 0);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }*/
+
     @SuppressLint("MissingPermission")
-    public void getLocation() {
+    public void getLocation(LocationResultCallback listener) {
 //        FusedLocationProviderClient locClient = LocationServices.getFusedLocationProviderClient(context);
 //        SettingsClient settingsClient = LocationServices.getSettingsClient(context);
 //        LocationCallback locationCallback = new LocationCallback(){
@@ -82,16 +78,16 @@ public class LocationDataManager {
 //        builder.addLocationRequest(locationRequest);
 //        LocationSettingsRequest mLocationSettingsRequest = builder.build();
         LocationManager locMgr = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
-        LocationListener listener = new LocationListener() {
+        LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                CURRENT_LOCATION = location;
                 LAST_UPDATED_TIME = DateFormat.getDateTimeInstance().format(new Date());
-                try {
-                    getLocationDetails(ctx);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                listener.onSuccess(location);
+//                try {
+//                    getLocationDetails(ctx,listener);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
 
             @Override
@@ -110,14 +106,15 @@ public class LocationDataManager {
             }
         };
         if (locMgr != null) {
-            locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, listener);
+            locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, locationListener);
         }else {
-            Toast.makeText(ctx, "Error getting Location, Try again later", Toast.LENGTH_SHORT).show();
+            listener.onFailure();
         }
     }
 
-    public interface LocationResultResponse{
-        void LocationUpdated();
+    public interface LocationResultCallback {
+        void onSuccess(Location location);
+        void onFailure();
     }
 
 }
