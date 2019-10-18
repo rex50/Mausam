@@ -1,18 +1,21 @@
 package com.rex50.mausam.Utils;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.rex50.mausam.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -69,13 +72,19 @@ public class MaterialSnackBar {
     }
 
     private void showSnackBarWithMargin(Snackbar snackbar, Drawable background) {
-        int sideMargin = 20;
-        int marginBottom = 20;
+        int sideMargin = 28;
+        int marginBottom = 28;
+        float fontSize = 16;
+        Typeface textFont = Typeface.createFromAsset(context.getAssets(), "fonts/Asap-SemiBold.ttf"),
+                actionFont = Typeface.createFromAsset(context.getAssets(), "fonts/Asap-Bold.ttf");
+        int color = ResourcesCompat.getColor(context.getResources(), R.color.colorPrimaryDark, null);
+        int colorDark = ResourcesCompat.getColor(context.getResources(), R.color.defaultDark, null);
         final View snackBarView = snackbar.getView();
 //        TextView textView = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
 //        textView.setMaxLines(2);
-        final ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) snackBarView.getLayoutParams();
 
+        //setting custom margins
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) snackBarView.getLayoutParams();
         params.setMargins(params.leftMargin + sideMargin,
                 params.topMargin,
                 params.rightMargin + sideMargin,
@@ -83,14 +92,30 @@ public class MaterialSnackBar {
 
         snackBarView.setLayoutParams(params);
         if (background == null) {
-            int color = Color.rgb(43, 43, 43);
-            int radius = 8;
+            int radius = 10;
             GradientDrawable drawable = new GradientDrawable();
             drawable.setColor(color);
             drawable.setCornerRadius(radius);
             snackBarView.setBackground(drawable);
         } else
             snackBarView.setBackground(background);
+
+
+        // change snackbar text color
+        /*int snackbarTextId = android.support.design.R.id.snackbar_text;*/  // for support library
+        int snackbarTextId = com.google.android.material.R.id.snackbar_text; //for androidx
+        int snackbarActionId = com.google.android.material.R.id.snackbar_action;
+        TextView textView = (TextView) snackBarView.findViewById(snackbarTextId);
+        textView.setTypeface(textFont);
+        textView.setTextColor(colorDark);
+        textView.setTextSize(fontSize);
+
+        //custom action text color
+        textView = (TextView) snackBarView.findViewById(snackbarActionId);
+        textView.setTypeface(actionFont);
+        textView.setTextColor(colorDark);
+//        snackbar.setActionTextColor(colorDark);
+
         snackbar.show();
     }
 

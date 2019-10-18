@@ -3,7 +3,9 @@ package com.rex50.mausam.ModelClasses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Clouds {
+import java.io.Serializable;
+
+public class Clouds implements Serializable {
 
     @SerializedName("all")
     @Expose

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Views.Fragments.SearchFragment"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:id="@+id/searchFieldsHolder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_margin="20dp"
+        android:gravity="center_vertical">
+
+        <com.rex50.mausam.Utils.CustomTextViews.SemiBoldTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="Enter location to search ?"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/defaultDark"/>
+
+        <EditText
+            android:id="@+id/etxt_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_general_accent_dark"
+            android:paddingTop="10dp"
+            android:paddingBottom="12dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:singleLine="true"
+            android:textSize="22sp"
+            android:layout_marginBottom="15dp"
+            />
+
+<!--        <com.rex50.mausam.Utils.CustomTextViews.RegularTextView-->
+<!--            android:id="@+id/txt_error"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textColor="@color/colorAppRed" />-->
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/bg_general_accent_dark"
+                android:src="@drawable/ic_arrow_back_dark"
+                android:padding="16dp"
+                android:contentDescription="back button" />
+
+            <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
+                android:id="@+id/txt_error"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/colorAppRed"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                />
+
+            <ImageView
+                android:id="@+id/btn_start_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_general_accent_dark"
+                android:src="@drawable/ic_search"
+                android:padding="8dp"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

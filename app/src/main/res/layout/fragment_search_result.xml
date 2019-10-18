@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Views.Fragments.SearchResultFragment"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/weather_details_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_general">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
+                android:id="@+id/txt_current_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50"
+                android:textSize="80sp"
+                android:textColor="@color/defaultDark"/>
+
+            <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&#xb0;"
+                android:textSize="50sp"
+                android:gravity="top"
+                android:paddingBottom="30dp"
+                android:textColor="@color/defaultDark"/>
+
+            <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="c"
+                android:textSize="80sp"
+                android:textColor="@color/defaultDark"/>
+
+        </LinearLayout>
+
+        <com.rex50.mausam.Utils.CustomTextViews.SemiBoldTextView
+            android:id="@+id/txt_weather_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Description"
+            android:textSize="18sp"
+            android:textColor="@color/defaultDark"
+            android:layout_marginBottom="20dp"/>
+
+        <com.rex50.mausam.Utils.CustomTextViews.BoldTextView
+            android:id="@+id/txt_current_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="City"
+            android:textSize="24sp"
+            android:textColor="@color/defaultDark"
+            android:layout_marginBottom="5dp"/>
+
+        <com.rex50.mausam.Utils.CustomTextViews.SemiBoldTextView
+            android:id="@+id/txt_weather_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Some text to fill up the space."
+            android:textColor="@color/defaultDark"/>
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/bg_general_accent_dark"
+            android:src="@drawable/ic_arrow_back_dark"
+            android:padding="16dp"
+            android:contentDescription="back button" />
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -13,6 +13,7 @@ public class MausamSharedPrefs {
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
     private static final String IS_PERMANENTLY_DENIED = "isPermissionDeniedPermanently";
+    private static final String IS_PERMISSION_SKIPPED = "isPermissionSkipped";
 
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
@@ -64,5 +65,14 @@ public class MausamSharedPrefs {
 
     public Boolean getIsPermanentlyDenied(){
         return sharedPrefs.getBoolean(IS_PERMANENTLY_DENIED, false);
+    }
+
+    public void setIsPermissionSkipped(Boolean isPermissionSkipped){
+        editor.putBoolean(IS_PERMISSION_SKIPPED, isPermissionSkipped);
+        editor.commit();
+    }
+
+    public Boolean getIsPermissionSkipped(){
+        return sharedPrefs.getBoolean(IS_PERMISSION_SKIPPED, false);
     }
 }

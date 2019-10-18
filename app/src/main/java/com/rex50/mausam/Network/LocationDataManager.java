@@ -2,32 +2,22 @@ package com.rex50.mausam.Network;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
-
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 public class LocationDataManager {
 
-    private static final long LOCATION_REFRESH_TIME = 10000;
-    private static final float LOCATION_REFRESH_DISTANCE = 5000;
-    public static String LAST_UPDATED_TIME;
+    //TODO : Try this https://stackoverflow.com/questions/29657948/get-the-current-location-fast-and-once-in-android for location.
 
     private static LocationDataManager instance;
-    private Context ctx;
+    private Context context;
 
 
     private LocationDataManager(Context context) {
-        this.ctx = context;
+        this.context = context;
     }
 
     public static LocationDataManager getInstance(Context ctx){
@@ -49,7 +39,7 @@ public class LocationDataManager {
 
     public boolean isGPSon() {
         try {
-            return (Settings.Secure.getInt(ctx.getContentResolver(), Settings.Secure.LOCATION_MODE) != 0);
+            return (Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE) != 0);
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
         }
@@ -58,57 +48,36 @@ public class LocationDataManager {
 
     @SuppressLint("MissingPermission")
     public void getLocation(LocationResultCallback listener) {
-//        FusedLocationProviderClient locClient = LocationServices.getFusedLocationProviderClient(context);
-//        SettingsClient settingsClient = LocationServices.getSettingsClient(context);
-//        LocationCallback locationCallback = new LocationCallback(){
-//            @Override
-//            public void onLocationResult(LocationResult locationResult) {
-//                super.onLocationResult(locationResult);
-//                CURRENT_LOCATION = locationResult.getLastLocation();
-//                LAST_UPDATED_TIME = DateFormat.getDateTimeInstance().format(new Date());
-//            }
-//        };
-//
-//        LocationRequest locationRequest = new LocationRequest();
-//        locationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-//        locationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//
-//        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-//        builder.addLocationRequest(locationRequest);
-//        LocationSettingsRequest mLocationSettingsRequest = builder.build();
-        LocationManager locMgr = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                LAST_UPDATED_TIME = DateFormat.getDateTimeInstance().format(new Date());
-                listener.onSuccess(location);
-//                try {
-//                    getLocationDetails(ctx,listener);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-            }
 
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        };
-        if (locMgr != null) {
-            locMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME, LOCATION_REFRESH_DISTANCE, locationListener);
+        final LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (isGPSEnabled) {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            locationManager.requestSingleUpdate(criteria, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    listener.onSuccess(location);
+                }
+                @Override public void onStatusChanged(String provider, int status, Bundle extras) { }
+                @Override public void onProviderEnabled(String provider) { }
+                @Override public void onProviderDisabled(String provider) { }
+            }, null);
         }else {
-            listener.onFailure();
+            boolean isNetworkEnabled = locationManager != null && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            if (isNetworkEnabled) {
+                Criteria criteria = new Criteria();
+                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+                locationManager.requestSingleUpdate(criteria, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        listener.onSuccess(location);
+                    }
+                    @Override public void onStatusChanged(String provider, int status, Bundle extras) { }
+                    @Override public void onProviderEnabled(String provider) { }
+                    @Override public void onProviderDisabled(String provider) { }
+                }, null);
+            }
         }
     }
 

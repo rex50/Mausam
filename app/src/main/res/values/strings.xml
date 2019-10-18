@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Mausam</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="location_desc">With this permission, Mausam can automatically detect your location</string>
+    <string name="permission_desc">Will you please allow Mausam this permission.</string>
 </resources>

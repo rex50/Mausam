@@ -2,13 +2,15 @@ package com.rex50.mausam.ModelClasses;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Main {
+import java.io.Serializable;
+
+public class Main implements Serializable {
 
     @SerializedName("temp")
     private Double temp;
 
     @SerializedName("pressure")
-    private Integer pressure;
+    private Float pressure;
 
     @SerializedName("humidity")
     private Integer humidity;
@@ -27,11 +29,11 @@ public class Main {
         this.temp = temp;
     }
 
-    public Integer getPressure() {
+    public Float getPressure() {
         return pressure;
     }
 
-    public void setPressure(Integer pressure) {
+    public void setPressure(Float pressure) {
         this.pressure = pressure;
     }
 

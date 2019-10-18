@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,13 +16,15 @@ import androidx.core.app.ActivityCompat;
 
 import com.airbnb.lottie.L;
 import com.rex50.mausam.R;
+import com.rex50.mausam.Utils.CustomTextViews.BoldTextView;
 import com.rex50.mausam.Utils.MaterialSnackBar;
 
 public class PermissionActivity extends BaseActivity implements View.OnClickListener {
 
     private int GPS_REQUEST = 99;
     private int LOCATION_REQUEST_CODE = 101;
-    private TextView btn_ask_permission, btn_skip_permission;
+    private Switch permissionSwitch;
+    private TextView skipBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +33,12 @@ public class PermissionActivity extends BaseActivity implements View.OnClickList
     }
 
     private void init() {
-        btn_ask_permission = findViewById(R.id.btn_ask_location_permission);
-        btn_skip_permission = findViewById(R.id.btn_skip_permission);
+        permissionSwitch = findViewById(R.id.btn_ask_location_permission);
+        skipBtn = findViewById(R.id.btn_skip_permission);
 
-        btn_skip_permission.setOnClickListener(this);
-        btn_ask_permission.setOnClickListener(this);
+//        btn_skip_permission.setOnClickListener(this);
+        permissionSwitch.setOnClickListener(this);
+        skipBtn.setOnClickListener(this);
     }
 
     private void requestPermission() {
@@ -61,6 +66,8 @@ public class PermissionActivity extends BaseActivity implements View.OnClickList
         if (requestCode == LOCATION_REQUEST_CODE) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                permissionSwitch.setChecked(true);
+                sharedPrefs.setIsPermissionSkipped(false);
                 materialSnackBar.show("Granted !!!", MaterialSnackBar.LENGTH_SHORT);
                 startActivity(new Intent(PermissionActivity.this, MainActivity.class));
                 finish();
@@ -68,6 +75,7 @@ public class PermissionActivity extends BaseActivity implements View.OnClickList
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                         Manifest.permission.ACCESS_FINE_LOCATION)) {
                     materialSnackBar.show("Denied", MaterialSnackBar.LENGTH_SHORT);
+                    permissionSwitch.setChecked(false);
                 }else {
                     sharedPrefs.setIsPermanentlyDenied(true);
                 }
@@ -83,7 +91,11 @@ public class PermissionActivity extends BaseActivity implements View.OnClickList
             case R.id.btn_ask_location_permission:
                 requestPermission();
                 break;
+
             case R.id.btn_skip_permission: //start search activity
+                sharedPrefs.setIsPermissionSkipped(true);
+                startActivity(new Intent(PermissionActivity.this, MainActivity.class));
+                finish();
                 break;
         }
     }

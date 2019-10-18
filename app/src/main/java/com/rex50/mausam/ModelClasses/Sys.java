@@ -2,7 +2,9 @@ package com.rex50.mausam.ModelClasses;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Sys {
+import java.io.Serializable;
+
+public class Sys implements Serializable {
 
     @SerializedName("type")
     private Integer type;

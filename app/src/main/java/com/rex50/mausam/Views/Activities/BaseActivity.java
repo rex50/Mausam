@@ -30,9 +30,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GPSRequestHelper.GPS_REQUEST_CODE) {
             gpsRequestHelper.setGPSrequestResponse();
-        } else
-            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

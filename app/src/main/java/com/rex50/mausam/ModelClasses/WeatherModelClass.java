@@ -1,9 +1,10 @@
 package com.rex50.mausam.ModelClasses;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class WeatherModelClass {
+public class WeatherModelClass implements Serializable {
 
     @SerializedName("coord")
     private Coord coord;
