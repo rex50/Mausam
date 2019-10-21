@@ -5,14 +5,14 @@ import java.util.regex.Pattern;
 
 public class Utils {
 
-    public static boolean containsNumericValues(String text){
+    private static boolean containsNumericValues(String text){
         Pattern p = Pattern.compile("[0-9]");
         Matcher m = p.matcher(text);
         return m.find();
     }
 
-    public static boolean containsSpecialChars(String text){
-        Pattern p = Pattern.compile("[^A-Za-z0-9]");
+    private static boolean containsSpecialChars(String text){
+        Pattern p = Pattern.compile("[^A-Za-z0-9 ]");
         Matcher m = p.matcher(text);
         return m.find();
     }
