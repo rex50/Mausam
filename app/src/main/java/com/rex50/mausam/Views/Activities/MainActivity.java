@@ -174,7 +174,15 @@ public class MainActivity extends BaseActivity implements
 
             @Override
             public void onWeatherResponseFailure(String msg) {
-                materialSnackBar.show(msg, MaterialSnackBar.LENGTH_SHORT);
+                if(sharedPrefs.getLatitude() != 0 && sharedPrefs.getLatitude() != 0){
+                    materialSnackBar.showActionSnackBar(msg,"RETRY", MaterialSnackBar.LENGTH_INDEFINITE, () -> {
+                        requestWeather(sharedPrefs.getLatitude(), sharedPrefs.getLongitude());
+                        materialSnackBar.dismiss();
+                    });
+                }else {
+                    materialSnackBar.showActionSnackBar(msg, "DISMISS", MaterialSnackBar.LENGTH_LONG, () -> materialSnackBar.dismiss());
+                }
+
             }
         });
     }
@@ -203,7 +211,7 @@ public class MainActivity extends BaseActivity implements
         loadFragment(new SearchFragment(), true);
     }
 
-    public void toggleLocationLoader(boolean state){
+    private void toggleLocationLoader(boolean state){
         Animation locationAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_scale_alpha);
         if(state){
             locationLoader.setVisibility(View.VISIBLE);

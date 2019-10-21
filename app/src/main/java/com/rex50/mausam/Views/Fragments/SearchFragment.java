@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -90,7 +91,8 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        if(getActivity() != null)
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         init(view);
@@ -100,10 +102,6 @@ public class SearchFragment extends Fragment {
 
     }
 
-//    public void setMaterialSnackBar(MaterialSnackBar materialSnackBar){
-//        this.materialSnackBar = materialSnackBar;
-//    }
-
     private void init(View v) {
         mainActivity = (MainActivity) getActivity();
         searchETxt = v.findViewById(R.id.etxt_search);
@@ -111,28 +109,32 @@ public class SearchFragment extends Fragment {
         txtError = v.findViewById(R.id.txt_error);
         searchFieldsHolder = v.findViewById(R.id.searchFieldsHolder);
         btn_back = v.findViewById(R.id.btn_back);
-        btn_back.setOnClickListener(v12 -> mListener.goBack());
+        btn_back.setOnClickListener(v12 ->{
+            searchETxt.setEnabled(false);
+            mListener.goBack();
+        });
         Animation cardAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_weather_card);
         searchFieldsHolder.startAnimation(cardAnimation);
-        startSearchBtn.setOnClickListener(v1 -> Utils.validateText(searchETxt.getText().toString(), new Utils.TextValidationInterface() {
+        startSearchBtn.setOnClickListener(v1 -> Utils.validateText(searchETxt.getText().toString().trim(), new Utils.TextValidationInterface() {
             @Override
             public void correct() {
+                searchETxt.setEnabled(false);
                 startSearch(searchETxt.getText().toString().trim());
             }
 
             @Override
-            public void cointainNumber() {
-                txtError.setText("Please write a location name without Number");
+            public void containNumber() {
+                txtError.setText(R.string.contain_number_error_msg);
             }
 
             @Override
-            public void cointainSpecialChars() {
-                txtError.setText("Please write a location name without using space or special characters");
+            public void containSpecialChars() {
+                txtError.setText(R.string.contain_speciall_chars_error_msg);
             }
 
             @Override
             public void empty() {
-                txtError.setText("Please enter location name to continue");
+                txtError.setText(R.string.empty_error_msg);
             }
         }));
     }
@@ -171,12 +173,19 @@ public class SearchFragment extends Fragment {
             @Override
             public void onWeatherResponseFailure(String msg) {
                 setErrorMsg(msg);
+                searchETxt.setEnabled(true);
+                if(getContext() != null) {
+                    searchETxt.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.showSoftInput(searchETxt, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                }
             }
         });
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
         void onSearchSuccess(WeatherModelClass weatherDetails);
         void goBack();

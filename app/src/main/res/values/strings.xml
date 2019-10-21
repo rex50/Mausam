@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Mausam</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="location_desc">With this permission, Mausam can automatically detect your location</string>
     <string name="permission_desc">Will you please allow Mausam this permission.</string>
+
+
+    <!--Error messages-->
+    <string name="contain_number_error_msg">Please write a location name without Number</string>
+    <string name="contain_speciall_chars_error_msg">Please write a location name without using space or special characters</string>
+    <string name="empty_error_msg">Please enter location name to continue</string>
 </resources>

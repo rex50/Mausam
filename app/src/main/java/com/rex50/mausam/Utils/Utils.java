@@ -21,9 +21,9 @@ public class Utils {
         if(text.trim().isEmpty()) {
             listner.empty();
         } else if(containsNumericValues(text)){
-            listner.cointainNumber();
+            listner.containNumber();
         } else if(containsSpecialChars(text)){
-            listner.cointainSpecialChars();
+            listner.containSpecialChars();
         } else {
             listner.correct();
         }
@@ -31,8 +31,8 @@ public class Utils {
 
     public interface TextValidationInterface{
         void correct();
-        void cointainNumber();
-        void cointainSpecialChars();
+        void containNumber();
+        void containSpecialChars();
         void empty();
     }
 
