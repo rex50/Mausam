@@ -67,8 +67,10 @@ public class MaterialSnackBar {
     }
 
     public void dismiss() {
-        snackbar.dismiss();
-        snackbar = null;
+        if(snackbar != null){
+            snackbar.dismiss();
+            snackbar = null;
+        }
     }
 
     private void showSnackBarWithMargin(Snackbar snackbar, Drawable background) {
@@ -109,6 +111,7 @@ public class MaterialSnackBar {
         textView.setTypeface(textFont);
         textView.setTextColor(colorDark);
         textView.setTextSize(fontSize);
+        textView.setMaxLines(5);
 
         //custom action text color
         textView = (TextView) snackBarView.findViewById(snackbarActionId);

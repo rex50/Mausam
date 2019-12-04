@@ -16,16 +16,22 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.rex50.mausam.ModelClasses.WeatherModelClass;
 import com.rex50.mausam.Network.APIManager;
 import com.rex50.mausam.R;
+import com.rex50.mausam.Utils.DataParser;
 import com.rex50.mausam.Utils.Utils;
 import com.rex50.mausam.Views.Activities.MainActivity;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
+
+import static com.rex50.mausam.Utils.Utils.*;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -166,20 +172,38 @@ public class SearchFragment extends Fragment {
         urlExtras.put("q", place);
         apiManager.searchWeather(APIManager.SERVICE_CURRENT_WEATHER, urlExtras, new APIManager.CallBackResponse() {
             @Override
-            public void onWeatherResponseSuccess(WeatherModelClass weatherDetails) {
-                mListener.onSearchSuccess(weatherDetails);
+            public void onWeatherResponseSuccess(JSONObject jsonObject) {
+                mListener.onSearchSuccess(new DataParser().parseWeatherData(jsonObject));
             }
 
             @Override
-            public void onWeatherResponseFailure(String msg) {
-                setErrorMsg(msg);
-                searchETxt.setEnabled(true);
-                if(getContext() != null) {
-                    searchETxt.requestFocus();
-                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.showSoftInput(searchETxt, InputMethodManager.SHOW_IMPLICIT);
-                    }
+            public void onWeatherResponseFailure(int errorCode, String msg) {
+                switch (errorCode){
+                    case PAGE_NOT_FOUND : //TODO : page not found (show material snackbar)
+                        Toast.makeText(mainActivity, "Something is wrong. Please try again", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case CITY_NOT_FOUND :
+                        setErrorMsg(msg);
+                        searchETxt.setEnabled(true);
+                        if(getContext() != null) {
+                            searchETxt.requestFocus();
+                            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                imm.showSoftInput(searchETxt, InputMethodManager.SHOW_IMPLICIT);
+                            }
+                        }
+                        break;
+
+                    default :
+                        if(getContext() != null) {
+                            searchETxt.requestFocus();
+                            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) {
+                                imm.showSoftInput(searchETxt, InputMethodManager.SHOW_IMPLICIT);
+                            }
+                        }
+                        break;
                 }
             }
         });

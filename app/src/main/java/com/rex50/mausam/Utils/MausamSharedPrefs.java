@@ -2,9 +2,9 @@ package com.rex50.mausam.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
 
-import java.util.ConcurrentModificationException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MausamSharedPrefs {
 
@@ -14,6 +14,7 @@ public class MausamSharedPrefs {
     private static final String LONGITUDE = "longitude";
     private static final String IS_PERMANENTLY_DENIED = "isPermissionDeniedPermanently";
     private static final String IS_PERMISSION_SKIPPED = "isPermissionSkipped";
+    private static final String LAST_WEATHER_DATA = "lastWeatherData";
 
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
@@ -56,6 +57,23 @@ public class MausamSharedPrefs {
         return Double.longBitsToDouble(
                 sharedPrefs.getLong(LONGITUDE, Double.doubleToLongBits(0))
         );
+    }
+
+    public void setLastWeatherData(JSONObject jsonObject){
+        editor.putString(LAST_WEATHER_DATA, jsonObject.toString());
+        editor.commit();
+    }
+
+    public JSONObject getLastWeatherData(){
+        try {
+            String data = sharedPrefs.getString(LAST_WEATHER_DATA, "null");
+            if(!("null").equals(data))
+                return new JSONObject(data);
+            else
+                return null;
+        } catch (JSONException e) {
+            return null;
+        }
     }
 
     public void setIsPermanentlyDenied(Boolean isPermanentlyDenied){

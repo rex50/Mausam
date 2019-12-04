@@ -20,6 +20,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.rex50.mausam.Utils.Utils.*;
+
 public final class APIManager {
 
     private static String baseUrl = "https://api.openweathermap.org/";
@@ -82,11 +84,9 @@ public final class APIManager {
 
     public void getCurrentWeather(@ApiService int service, HashMap<String, String> urlExtras, final CallBackResponse listener){
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, generateUrl(service, urlExtras), null,
-                response -> {
-                    DataParser dataParser = new DataParser();
-                    listener.onWeatherResponseSuccess(dataParser.parseWeatherData(response));
-                },
-                error -> listener.onWeatherResponseFailure("Sorry something went wrong try again later."));
+                listener::onWeatherResponseSuccess,
+                error -> listener.onWeatherResponseFailure(WEATHER_NOT_FOUND, "Sorry something went wrong try again later.")
+        );
 
         VolleySingleton volleySingleton = VolleySingleton.getInstance(ctx);
         volleySingleton.addToRequestQueue(jsonObjectRequest);
@@ -96,20 +96,19 @@ public final class APIManager {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, generateUrl(service, urlExtras), null,
                 response -> {
                     if(response.optString("cod").equals("404")){
-                        listener.onWeatherResponseFailure(response.optString("message"));
+                        listener.onWeatherResponseFailure(PAGE_NOT_FOUND, response.optString("message"));
                     }else {
-                        DataParser dataParser = new DataParser();
-                        listener.onWeatherResponseSuccess(dataParser.parseWeatherData(response));
+                        listener.onWeatherResponseSuccess(response);
                     }
                 },
-                error -> listener.onWeatherResponseFailure("City not found"));
+                error -> listener.onWeatherResponseFailure(CITY_NOT_FOUND, "City not found"));
         VolleySingleton volleySingleton = VolleySingleton.getInstance(ctx);
         volleySingleton.addToRequestQueue(jsonObjectRequest);
     }
 
     public interface CallBackResponse{
-        void onWeatherResponseSuccess(WeatherModelClass weatherDetails);
-        void onWeatherResponseFailure(String msg);
+        void onWeatherResponseSuccess(JSONObject weatherDetails);
+        void onWeatherResponseFailure(int errorCode, String msg);
     }
 
 }

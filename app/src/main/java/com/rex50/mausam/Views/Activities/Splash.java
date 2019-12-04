@@ -21,7 +21,7 @@ public class Splash extends BaseActivity {
             Intent intent;
             if(ContextCompat.checkSelfPermission(Splash.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && !sharedPrefs.getIsPermissionSkipped()){
+                    != PackageManager.PERMISSION_GRANTED && !sharedPrefs.getIsPermanentlyDenied()){
                 intent = new Intent(Splash.this, PermissionActivity.class);
             }else {
                 intent = new Intent(Splash.this, MainActivity.class);
@@ -34,5 +34,10 @@ public class Splash extends BaseActivity {
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_splash;
+    }
+
+    @Override
+    protected void internetStatus(int internetType) {
+
     }
 }

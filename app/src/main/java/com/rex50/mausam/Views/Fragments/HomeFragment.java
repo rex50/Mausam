@@ -15,9 +15,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rex50.mausam.ModelClasses.WeatherModelClass;
 import com.rex50.mausam.R;
+import com.rex50.mausam.Utils.Utils;
 
 /**
  * A fragment with a Google +1 button.
@@ -113,7 +115,13 @@ public class HomeFragment extends Fragment {
         Animation cardAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_weather_card);
         weatherDetailsHolder.startAnimation(cardAnimation);
 
-        btnSearch.setOnClickListener(v -> mListener.startSearchScreen());
+        btnSearch.setOnClickListener(v -> {
+            if(Utils.getConnectivityStatus(getContext()) != Utils.TYPE_NOT_CONNECTED){
+                mListener.startSearchScreen();
+            }else{
+                Toast.makeText(getContext(), "Please connect to internet first.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

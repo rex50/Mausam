@@ -6,17 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
-import com.airbnb.lottie.L;
 import com.rex50.mausam.R;
-import com.rex50.mausam.Utils.CustomTextViews.BoldTextView;
 import com.rex50.mausam.Utils.MaterialSnackBar;
 
 public class PermissionActivity extends BaseActivity implements View.OnClickListener {
@@ -38,7 +34,8 @@ public class PermissionActivity extends BaseActivity implements View.OnClickList
 
 //        btn_skip_permission.setOnClickListener(this);
         permissionSwitch.setOnClickListener(this);
-        skipBtn.setOnClickListener(this);
+//        skipBtn.setOnClickListener(this);
+        skipBtn.setVisibility(View.GONE);
     }
 
     private void requestPermission() {
@@ -62,6 +59,11 @@ public class PermissionActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
+    protected void internetStatus(int internetType) {
+
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == LOCATION_REQUEST_CODE) {
             if (grantResults.length > 0
@@ -78,6 +80,7 @@ public class PermissionActivity extends BaseActivity implements View.OnClickList
                     permissionSwitch.setChecked(false);
                 }else {
                     sharedPrefs.setIsPermanentlyDenied(true);
+                    startActivity(new Intent(PermissionActivity.this, MainActivity.class));
                 }
             }
         } else {
@@ -92,11 +95,11 @@ public class PermissionActivity extends BaseActivity implements View.OnClickList
                 requestPermission();
                 break;
 
-            case R.id.btn_skip_permission: //start search activity
+            /*case R.id.btn_skip_permission: //start search activity
                 sharedPrefs.setIsPermissionSkipped(true);
                 startActivity(new Intent(PermissionActivity.this, MainActivity.class));
                 finish();
-                break;
+                break;*/
         }
     }
 }
