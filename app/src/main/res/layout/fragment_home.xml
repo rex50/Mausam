@@ -1,94 +1,394 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearView"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Views.Activities.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white">
 
-        <LinearLayout
-            android:id="@+id/weather_details_holder"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:scrollbars="none">
+
+        <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/linearView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:layout_margin="20dp"
-            android:background="@drawable/bg_general">
+            tools:context=".views.activities.MainActivity">
+
+            <LinearLayout
+                android:id="@+id/weather_details_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:background="@drawable/bg_general_light"
+                android:animateLayoutChanges="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                        <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
-                            android:id="@+id/txt_current_weather"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="50"
-                            android:textSize="80sp"
-                            android:textColor="@color/defaultDark"/>
+                    <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                        android:id="@+id/txt_current_weather"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="50"
+                        android:textColor="@color/defaultDark"
+                        android:textSize="80sp" />
 
-                        <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="&#xb0;"
-                            android:textSize="50sp"
-                            android:gravity="top"
-                            android:paddingBottom="30dp"
-                            android:textColor="@color/defaultDark"/>
+                    <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:paddingBottom="30dp"
+                        android:text="&#xb0;"
+                        android:textColor="@color/defaultDark"
+                        android:textSize="50sp" />
 
-                        <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="c"
-                            android:textSize="80sp"
-                            android:textColor="@color/defaultDark"/>
+                    <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="c"
+                        android:textColor="@color/defaultDark"
+                        android:textSize="80sp" />
 
                 </LinearLayout>
 
-                <com.rex50.mausam.Utils.CustomTextViews.SemiBoldTextView
+                <com.rex50.mausam.utils.custom_text_views.BoldTextView
+                    android:id="@+id/txt_current_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:text="City"
+                    android:textColor="@color/defaultDark"
+                    android:textSize="22sp" />
+
+                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
                     android:id="@+id/txt_weather_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
                     android:gravity="center"
                     android:text="Description"
-                    android:textSize="18sp"
                     android:textColor="@color/defaultDark"
-                    android:layout_marginBottom="20dp"/>
+                    android:textSize="14sp" />
 
-                <com.rex50.mausam.Utils.CustomTextViews.BoldTextView
-                    android:id="@+id/txt_current_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="City"
-                    android:textSize="24sp"
-                    android:textColor="@color/defaultDark"
-                    android:layout_marginBottom="5dp"/>
-
-                <com.rex50.mausam.Utils.CustomTextViews.SemiBoldTextView
+                <!--<com.rex50.mausam.Utils.CustomTextViews.SemiBoldTextView
                     android:id="@+id/txt_weather_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Some text to fill up the space."
-                    android:textColor="@color/defaultDark"/>
+                    android:textColor="@color/defaultDark" />-->
+
+                <LinearLayout
+                    android:id="@+id/weather_extra_info_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:animateLayoutChanges="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:paddingTop="10dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="Min Temperature"
+                                    android:textColor="@color/defaultDark" />
+
+                                <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                                    android:id="@+id/txt_min_temp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="45"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="40sp" />
+
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="Max Temperature"
+                                    android:textColor="@color/defaultDark" />
+
+                                <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                                    android:id="@+id/txt_max_temp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="55"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="40sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:paddingTop="10dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="Pressure"
+                                    android:textColor="@color/defaultDark" />
+
+                                <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                                    android:id="@+id/txt_pressure"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="1019"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="40sp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="Humidity"
+                                    android:textColor="@color/defaultDark" />
+
+                                <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                                    android:id="@+id/txt_humidity"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="82"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="40sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="vertical">
+
+                        <com.rex50.mausam.utils.custom_text_views.BoldTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Wind"
+                            android:textColor="@color/defaultDark"
+                            android:textSize="18sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="false"
+                            android:paddingTop="10dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="Speed"
+                                    android:textColor="@color/defaultDark" />
+
+                                <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                                    android:id="@+id/txt_wind_speed"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="2.1"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="40sp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="Degree"
+                                    android:textColor="@color/defaultDark" />
+
+                                <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                                    android:id="@+id/txt_wind_degree"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:text="40"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="40sp" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.rex50.mausam.utils.custom_text_views.BoldTextView
+                    android:id="@+id/btn_more_weather_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Show more details"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/bg_general"
+                    android:padding="6dp"
+                    android:visibility="visible"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/weather_images_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/bg_wall_weather"
+                android:animateLayoutChanges="true">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/weather_banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="0dp"
+                    app:cardCornerRadius="6dp"
+                    android:backgroundTint="#38B5FD">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/weather_wall_banner"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="Weather wallpapers" />
+                </androidx.cardview.widget.CardView>
+
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/weather_wallpapers_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:clipToPadding="false"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/location_images_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="50dp"
+                android:background="@drawable/bg_wall_weather"
+                android:animateLayoutChanges="true">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/location_banner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="0dp"
+                    app:cardCornerRadius="6dp"
+                    android:backgroundTint="#FDBC59">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/location_wall_banner"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="Location wallpapers" />
+                </androidx.cardview.widget.CardView>
+
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/location_wallpapers_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:clipToPadding="false"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    />
+
+            </LinearLayout>
 
         </LinearLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="20dp">
+    </ScrollView>
 
-                <ImageView
-                    android:id="@+id/btn_search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:background="@drawable/bg_general_accent_dark"
-                    android:src="@drawable/ic_search"
-                    android:padding="8dp"/>
+    <ImageView
+        android:id="@+id/btn_search"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_general_accent_dark"
+        android:padding="8dp"
+        android:src="@drawable/ic_search"
+        android:layout_margin="20dp"/>
 
-        </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>

@@ -18,7 +18,6 @@
     <color name="darkSlate">#556298</color>
     <color name="lightSlate">#778aa2</color>
 
-    <color name="fancyTabBar">#FFFFFF</color>
-    <color name="primaryButton">#FFDD79</color>
-
+    <color name="fancyTabBar">#464646</color>
+    <color name="primaryButton">#9D8EFF</color>
 </resources>

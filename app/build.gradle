@@ -10,6 +10,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue("string", "unsplashAccessKey", unsplashAccessKey)
+        resValue("string", "openWeatherAppId", openWeatherAppId)
     }
     buildTypes {
         release {
@@ -22,6 +24,23 @@ android {
         targetCompatibility = 1.8
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
+
+    def githubProperties = new Properties()
+    githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+    repositories {
+        maven {
+            name = "GitHubPackages"
+
+            url = uri("https://maven.pkg.github.com/Cuberto/flashy-tabbar-android")
+            credentials {
+                /** Create github.properties in root project folder file with
+                 ** gpr.usr=GITHUB_USER_ID & gpr.key=PERSONAL_ACCESS_TOKEN
+                 ** Or set env variable GPR_USER & GPR_API_KEY if not adding a properties file**/
+                username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
+                password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -31,7 +50,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.gms:play-services-plus:17.0.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.weather_wall_banner.1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     //Added
@@ -39,8 +58,11 @@ dependencies {
     implementation 'com.karumi:dexter:5.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.android.volley:volley:1.1.1'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha03'
+    implementation 'net.danlew:android.joda:2.10.1'
+//    implementation 'com.cuberto.flashytabbarandroid:flashytabbarandroid:1.0.0'
 }

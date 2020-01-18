@@ -1,14 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/linearView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Views.Activities.MainActivity"
+    tools:context=".views.activities.MainActivity"
     android:background="@android:color/white">
 
     <include layout="@layout/custom_header" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@color/fancyTabBar"
+            android:elevation="20dp"
+            android:minHeight="?actionBarSize"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:tabGravity="fill"
+            app:tabIndicatorHeight="0dp"
+            app:tabMode="fixed"
+            android:layout_alignParentBottom="true" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/testViewpager"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/tabLayout"/>
+
+    </RelativeLayout>
+
+
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -48,7 +78,7 @@
                 android:layout_height="200dp"
                 android:layout_margin="20dp"/>
 
-            <com.rex50.mausam.Utils.CustomTextViews.SemiBoldTextView
+            <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
                 android:id="@+id/error_msg_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

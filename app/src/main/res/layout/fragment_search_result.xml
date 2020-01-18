@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Views.Fragments.SearchResultFragment"
+    tools:context=".views.fragments.SearchResultFragment"
     android:background="@android:color/white"
     android:orientation="vertical">
 
@@ -22,7 +22,7 @@
             android:orientation="horizontal"
             android:gravity="center">
 
-            <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
+            <com.rex50.mausam.utils.custom_text_views.RegularTextView
                 android:id="@+id/txt_current_weather"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
                 android:textSize="80sp"
                 android:textColor="@color/defaultDark"/>
 
-            <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
+            <com.rex50.mausam.utils.custom_text_views.RegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="&#xb0;"
@@ -39,7 +39,7 @@
                 android:paddingBottom="30dp"
                 android:textColor="@color/defaultDark"/>
 
-            <com.rex50.mausam.Utils.CustomTextViews.RegularTextView
+            <com.rex50.mausam.utils.custom_text_views.RegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="c"
@@ -48,7 +48,7 @@
 
         </LinearLayout>
 
-        <com.rex50.mausam.Utils.CustomTextViews.SemiBoldTextView
+        <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
             android:id="@+id/txt_weather_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
             android:textColor="@color/defaultDark"
             android:layout_marginBottom="20dp"/>
 
-        <com.rex50.mausam.Utils.CustomTextViews.BoldTextView
+        <com.rex50.mausam.utils.custom_text_views.BoldTextView
             android:id="@+id/txt_current_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             android:textColor="@color/defaultDark"
             android:layout_marginBottom="5dp"/>
 
-        <com.rex50.mausam.Utils.CustomTextViews.SemiBoldTextView
+        <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
             android:id="@+id/txt_weather_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
