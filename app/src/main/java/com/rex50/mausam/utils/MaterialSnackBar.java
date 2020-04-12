@@ -76,11 +76,11 @@ public class MaterialSnackBar {
     private void showSnackBarWithMargin(Snackbar snackbar, Drawable background) {
         int sideMargin = 28;
         int marginBottom = 28;
-        float fontSize = 16;
+        float fontSize = 14;
         Typeface textFont = Typeface.createFromAsset(context.getAssets(), "fonts/Asap-SemiBold.ttf"),
                 actionFont = Typeface.createFromAsset(context.getAssets(), "fonts/Asap-Bold.ttf");
-        int color = ResourcesCompat.getColor(context.getResources(), R.color.colorPrimaryDark, null);
-        int colorDark = ResourcesCompat.getColor(context.getResources(), R.color.defaultDark, null);
+        int color = ResourcesCompat.getColor(context.getResources(), R.color.colorAccent, null);
+        int colorDark = ResourcesCompat.getColor(context.getResources(), R.color.white, null);
         final View snackBarView = snackbar.getView();
 //        TextView textView = (TextView) snackBarView.findViewById(android.support.design.R.id.snackbar_text);
 //        textView.setMaxLines(2);

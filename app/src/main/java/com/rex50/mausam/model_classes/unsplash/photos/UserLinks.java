@@ -4,7 +4,7 @@ package com.rex50.mausam.model_classes.unsplash.photos;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Links__ {
+public class UserLinks {
 
     @SerializedName("self")
     @Expose

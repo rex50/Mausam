@@ -1,9 +1,25 @@
 <resources>
     <string name="app_name">Mausam</string>
 
-    <string name="location_desc">With this permission, Mausam can automatically detect your location</string>
-    <string name="permission_desc">Will you please allow Mausam this permission.</string>
+    <!--    Titles-->
+    <string name="permission_title">Permissions</string>
+    <string name="location_perm_title">Location</string>
+    <string name="storage_perm_title">Storage</string>
+    <string name="search_loc_title">Search location</string>
 
+    <!--    Descriptions-->
+    <string name="permission_desc">Will you please allow Mausam this permission.</string>
+    <string name="location_desc">With this permission, Mausam can automatically detect your location</string>
+    <string name="storage_desc">With this permission, Mausam can download wallpapers and store in the phone storage.</string>
+    <string name="search_loc_desc">We understand you don’t want to reveal your  location but Mausam needs it show weather and wallpapers based on it. </string>
+
+    <!--    Hints-->
+    <string name="search_loc_box_hint">Search place here</string>
+
+    <!--    Dummy text-->
+    <string name="dummy_title">Title goes here</string>
+    <string name="dummy_error">Some error has occurred and this is dummy message</string>
+    <string name="lorem_ipsum">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s</string>
 
     <!--Error messages-->
     <string name="contain_number_error_msg">Please write a location name without Number</string>
@@ -12,7 +28,14 @@
     <string name="no_gps_error_msg">Can\'t find location when GPS is off.</string>
     <string name="no_permission_error_msg">Location permission is needed to show latest weather details. Please go to settings and allow Location Permission.</string>
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
+    <string name="search_city_error">%s place weather information not found, you can skip this by the way.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="skip_btn_text">Skip</string>
+    <string name="choose_search_provider_title">Choose search provider</string>
+    <string name="unsplash_txt">Unsplash</string>
+    <string name="pixabay_txt">Pixabay</string>
+    <string name="search_box_hint">Search here</string>
+    <string name="last_updated_time">Last updated %s mins ago</string>
 </resources>

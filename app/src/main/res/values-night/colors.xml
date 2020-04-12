@@ -1,15 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#AEACFF</color>
-    <color name="colorPrimaryDark">#9D8EFF</color>
-    <color name="colorAccent">#FFF99E</color>
+    <!--    New Colors-->
+    <color name="colorPrimary">@color/white</color>
+    <color name="colorPrimaryDark">@color/black</color>
+    <color name="colorAccent">#4489F4</color>
+
+    <!--    Other colors-->
+    <color name="blueBerry">#4286F4</color>
+    <color name="blueJeans">#58AEF7</color>
+    <color name="blueEyes">#9FC4FD</color>
+    <color name="persianGreen">#00B09B</color>
+    <color name="yellowGreen">#96C93D</color>
+    <color name="magicMint">#A5E4DA</color>
+    <color name="cyanBlueAzure">#468AC4</color>
+    <color name="satinRed">#CF6679</color>
+    <color name="black">#000000</color>
+    <color name="raisinBlack">#242424</color>
+    <color name="jetBlack">#2F2F2F</color>
+    <color name="oliveBlack">#403F3F</color>
+    <color name="liverDark">#4C4C4C</color>
+    <color name="graniteGray">#606060</color>
+    <color name="taupeGray">#8A8A8A</color>
+    <color name="white">#FFFFFF</color>
+
+
+<!--    UI colors-->
+
+    <!--General-->
+    <color name="black_to_white">@color/white</color>
+    <color name="white_to_black">@color/black</color>
+
+    <!--Text-->
+    <color name="titleColor">@color/white</color>
+    <color name="descColor">@color/taupeGray</color>
+    <color name="accent_button_text">@color/black</color>
+    <color name="more_button_text">@color/white</color>
+    <color name="weather_card_title_text_color">@color/white</color>
+    <color name="weather_card_detail_text_color">@color/white</color>
+
+    <!--Button-->
+    <color name="more_button">@color/colorAccent</color>
+
+
+<!--    Old colors-->
+    <color name="oldColorPrimary">#AEACFF</color>
+    <color name="oldColorPrimaryDark">#9D8EFF</color>
+    <color name="oldColorAccent">#FFF99E</color>
     <color name="colorAccentDark">#FFDD79</color>
     <color name="defaultDark">#3A3271</color>
     <color name="colorPrimaryLight">#66AEACFF</color>
     <color name="colorAppRed">#FFA4A4</color>
-    <color name="white">#FFFFFF</color>
-    
-    
+
+
 <!--    some random colors-->
     <color name="brickRed">#c9324d</color>
     <color name="oldRose">#c03a4f</color>
@@ -18,6 +60,7 @@
     <color name="darkSlate">#556298</color>
     <color name="lightSlate">#778aa2</color>
 
-    <color name="fancyTabBar">#464646</color>
-    <color name="primaryButton">#9D8EFF</color>
+<!--    TabBar Color-->
+    <color name="fancyTabBar">@color/raisinBlack</color>
+
 </resources>

@@ -8,7 +8,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -41,7 +40,7 @@ public class WeatherWallpapersAdapter extends RecyclerView.Adapter<WeatherWallpa
     @NonNull
     @Override
     public WeatherWallpapersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.home_wallpaper_item, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.general_type_cell, parent, false);
         return new WeatherWallpapersViewHolder(v);
     }
 

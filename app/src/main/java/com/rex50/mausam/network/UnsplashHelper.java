@@ -1,6 +1,7 @@
 package com.rex50.mausam.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.StringDef;
@@ -8,6 +9,7 @@ import androidx.annotation.StringDef;
 import com.rex50.mausam.interfaces.GetUnsplashPhotosListener;
 import com.rex50.mausam.interfaces.GetUnsplashSearchedPhotosListener;
 import com.rex50.mausam.utils.DataParser;
+import com.rex50.mausam.utils.MausamSharedPrefs;
 
 import org.json.JSONArray;
 
@@ -47,17 +49,25 @@ public class UnsplashHelper {
         APIManager apiManager = APIManager.getInstance(context);
         HashMap<String, String> extras = new HashMap<>();
         extras.put("order_by", orderBy);
-        apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
-            @Override
-            public void onSuccess(String response) {
-                listener.onSuccess(new DataParser().parseUnsplashData(response));
-            }
+        MausamSharedPrefs prefs = new MausamSharedPrefs(context);
+        if(prefs.getFromPhotosResponseMap(orderBy).isEmpty()) {
+            apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
+                @Override
+                public void onSuccess(String response) {
+                    prefs.setPhotosResponseMap(orderBy, response);
+                    Log.e(TAG, "getPhotos: getting from API");
+                    listener.onSuccess(new DataParser().parseUnsplashData(response));
+                }
 
-            @Override
-            public void onFailed(JSONArray errors) {
-                listener.onFailed(errors);
-            }
-        });
+                @Override
+                public void onFailed(JSONArray errors) {
+                    listener.onFailed(errors);
+                }
+            });
+        }else {
+            Log.e(TAG, "getPhotos: getting from sharedPrefs");
+            listener.onSuccess(new DataParser().parseUnsplashData(prefs.getFromPhotosResponseMap(orderBy)));
+        }
     }
 
     public void getSearchedPhotos(String searchTerm, int page, @perPageRestriction int perPage, GetUnsplashSearchedPhotosListener listener){
@@ -66,18 +76,26 @@ public class UnsplashHelper {
         extras.put("query", searchTerm);
         extras.put("page", page < 1 ? String.valueOf(page) : "1");
         extras.put("per_page", String.valueOf(perPage));
-        apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_SEARCHED_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
-            @Override
-            public void onSuccess(String response) {
-                listener.onSuccess(new DataParser().parseSearchedPhotos(response));
-            }
+        MausamSharedPrefs prefs = new MausamSharedPrefs(context);
+        if(prefs.getFromPhotosResponseMap(searchTerm).isEmpty()) {
+            apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_SEARCHED_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
+                @Override
+                public void onSuccess(String response) {
+                    prefs.setPhotosResponseMap(searchTerm, response);
+                    listener.onSuccess(new DataParser().parseSearchedPhotos(response));
+                }
 
-            @Override
-            public void onFailed(JSONArray errors) {
-                listener.onFailed(errors);
-            }
-        });
+                @Override
+                public void onFailed(JSONArray errors) {
+                    listener.onFailed(errors);
+                }
+            });
+        }else {
+            Log.e(TAG, "getPhotos: getting from sharedPrefs");
+            listener.onSuccess(new DataParser().parseSearchedPhotos(prefs.getFromPhotosResponseMap(searchTerm)));
+        }
     }
+
 
 
 }

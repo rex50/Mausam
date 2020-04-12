@@ -7,9 +7,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".views.activities.MainActivity"
-    android:background="@android:color/white">
+    android:background="?android:attr/windowBackground">
 
-    <include layout="@layout/custom_header" />
+<!--    <include layout="@layout/custom_header_home" />-->
 
     <RelativeLayout
         android:layout_width="match_parent"

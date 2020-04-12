@@ -1,9 +1,11 @@
 
 package com.rex50.mausam.model_classes.unsplash.photos;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.rex50.mausam.model_classes.unsplash.collection.Category;
+
+import java.util.List;
 
 public class UnsplashPhotos {
 
@@ -39,10 +41,10 @@ public class UnsplashPhotos {
     private Urls urls;
     @SerializedName("links")
     @Expose
-    private Links links;
+    private DownloadLinks links;
     @SerializedName("categories")
     @Expose
-    private List<Object> categories = null;
+    private List<Category> categories = null;
     @SerializedName("likes")
     @Expose
     private Integer likes;
@@ -139,19 +141,19 @@ public class UnsplashPhotos {
         this.urls = urls;
     }
 
-    public Links getLinks() {
+    public DownloadLinks getLinks() {
         return links;
     }
 
-    public void setLinks(Links links) {
+    public void setLinks(DownloadLinks links) {
         this.links = links;
     }
 
-    public List<Object> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<Object> categories) {
+    public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
 

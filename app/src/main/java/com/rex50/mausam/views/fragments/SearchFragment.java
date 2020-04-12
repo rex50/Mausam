@@ -1,37 +1,38 @@
 package com.rex50.mausam.views.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
-
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.rex50.mausam.R;
 import com.rex50.mausam.model_classes.weather.WeatherModelClass;
 import com.rex50.mausam.network.APIManager;
-import com.rex50.mausam.R;
 import com.rex50.mausam.utils.DataParser;
+import com.rex50.mausam.utils.MaterialSnackBar;
+import com.rex50.mausam.utils.MausamSharedPrefs;
 import com.rex50.mausam.utils.Utils;
-import com.rex50.mausam.views.activities.MainActivity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import static com.rex50.mausam.utils.Utils.*;
+import static com.rex50.mausam.utils.Utils.CITY_NOT_FOUND;
+import static com.rex50.mausam.utils.Utils.PAGE_NOT_FOUND;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,23 +43,20 @@ import static com.rex50.mausam.utils.Utils.*;
  * create an instance of this fragment.
  */
 public class SearchFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    boolean searchOnlyCity = false;
 
-    private ImageView startSearchBtn;
-    private EditText searchETxt;
-    private TextView txtError;
+//    private ImageView startSearchBtn;
+    private EditText eTxtSearch;
+    private TextView txtError, txtPageTitle, txtPageDesc;
+    private Button btnNext;
+    private LinearLayout containerSearchProviders;
 
-    private LinearLayout searchFieldsHolder;
-    private MainActivity mainActivity;
+//    private LinearLayout searchFieldsHolder;
+//    private MainActivity mainActivity;
 
-    private ImageView btn_back;
+//    private ImageView btn_back;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,12 +72,10 @@ public class SearchFragment extends Fragment {
 //     * @param param2 Parameter 2.
      * @return A new instance of fragment SearchFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static SearchFragment newInstance(String param1, String param2) {
+    public static SearchFragment newInstance(boolean searchOnlyCity) {
         SearchFragment fragment = new SearchFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putBoolean(ARG_PARAM1, searchOnlyCity);
         fragment.setArguments(args);
         return fragment;
     }
@@ -88,8 +84,7 @@ public class SearchFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            searchOnlyCity = getArguments().getBoolean(ARG_PARAM1);
         }
     }
 
@@ -108,24 +103,58 @@ public class SearchFragment extends Fragment {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void init(View v) {
-        mainActivity = (MainActivity) getActivity();
-        searchETxt = v.findViewById(R.id.etxt_search);
-        startSearchBtn = v.findViewById(R.id.btn_start_search);
+        txtPageTitle = v.findViewById(R.id.txt_page_title);
+        txtPageDesc = v.findViewById(R.id.txt_page_desc);
+        containerSearchProviders = v.findViewById(R.id.container_search_providers);
+        eTxtSearch = v.findViewById(R.id.etxt_search);
         txtError = v.findViewById(R.id.txt_error);
-        searchFieldsHolder = v.findViewById(R.id.searchFieldsHolder);
-        btn_back = v.findViewById(R.id.btn_back);
-        btn_back.setOnClickListener(v12 ->{
-            searchETxt.setEnabled(false);
-            mListener.goBack();
+        btnNext = v.findViewById(R.id.btn_next_search);
+
+        if(searchOnlyCity){
+            containerSearchProviders.setVisibility(View.GONE);
+            btnNext.setVisibility(View.VISIBLE);
+            btnNext.setOnClickListener(v1 -> mListener.nextBtnClicked());
+            txtPageTitle.setText(R.string.search_loc_title);
+            txtPageDesc.setText(R.string.search_loc_desc);
+            eTxtSearch.setHint(R.string.search_loc_box_hint);
+        }
+
+        eTxtSearch.setOnTouchListener((v1, event) -> {
+            final int DRAWABLE_LEFT = 0;
+            final int DRAWABLE_TOP = 1;
+            final int DRAWABLE_RIGHT = 2;
+            final int DRAWABLE_BOTTOM = 3;
+
+            if(event.getAction() == MotionEvent.ACTION_UP) {
+                if(event.getRawX() >= (eTxtSearch.getRight() - eTxtSearch.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    if(searchOnlyCity)
+                        validateCity(StringUtils.capitalize(eTxtSearch.getText().toString().trim()));
+                    return true;
+                }
+            }
+            return false;
         });
-        Animation cardAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_weather_card);
-        searchFieldsHolder.startAnimation(cardAnimation);
-        startSearchBtn.setOnClickListener(v1 -> Utils.validateText(searchETxt.getText().toString().trim(), new Utils.TextValidationInterface() {
+
+        eTxtSearch.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if(searchOnlyCity)
+                    validateCity(StringUtils.capitalize(eTxtSearch.getText().toString().trim()));
+                return true;
+            }
+            return false;
+        });
+
+    }
+
+    private void validateCity(String city) {
+        Utils.validateText(city, new Utils.TextValidationInterface() {
             @Override
             public void correct() {
-                searchETxt.setEnabled(false);
-                startSearch(searchETxt.getText().toString().trim());
+                eTxtSearch.setEnabled(false);
+                txtError.setText("");
+                startWeatherSearch(city);
             }
 
             @Override
@@ -142,7 +171,7 @@ public class SearchFragment extends Fragment {
             public void empty() {
                 txtError.setText(R.string.empty_error_msg);
             }
-        }));
+        });
     }
 
     public void setErrorMsg(String msg){
@@ -166,41 +195,45 @@ public class SearchFragment extends Fragment {
         mListener = null;
     }
 
-    private void startSearch(String place) {
+    private void startWeatherSearch(String place) {
         APIManager apiManager = APIManager.getInstance(getContext());
         HashMap<String, String> urlExtras = new HashMap<>();
         urlExtras.put("q", place);
         apiManager.searchWeather(APIManager.SERVICE_CURRENT_WEATHER, urlExtras, new APIManager.WeatherAPICallBackResponse() {
             @Override
             public void onWeatherResponseSuccess(JSONObject jsonObject) {
-                mListener.onSearchSuccess(new DataParser().parseWeatherData(jsonObject));
+                if(searchOnlyCity){
+                    mListener.getSharedPrefs().setLastWeatherData(jsonObject);
+                    mListener.getSharedPrefs().setUserLocation(eTxtSearch.getText().toString());
+                    mListener.onWeatherSearchSuccess(new DataParser().parseWeatherData(jsonObject));
+                }
             }
 
             @Override
             public void onWeatherResponseFailure(int errorCode, String msg) {
+                eTxtSearch.setEnabled(true);
                 switch (errorCode){
                     case PAGE_NOT_FOUND : //TODO : page not found (show material snackbar)
-                        Toast.makeText(mainActivity, "Something is wrong. Please try again", Toast.LENGTH_SHORT).show();
+                        mListener.getSnackBar().show("Something is wrong. Please try again", MaterialSnackBar.LENGTH_LONG);
                         break;
 
                     case CITY_NOT_FOUND :
-                        setErrorMsg(msg);
-                        searchETxt.setEnabled(true);
+                        setErrorMsg(String.format(getString(R.string.search_city_error), place));
                         if(getContext() != null) {
-                            searchETxt.requestFocus();
+                            eTxtSearch.requestFocus();
                             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                             if (imm != null) {
-                                imm.showSoftInput(searchETxt, InputMethodManager.SHOW_IMPLICIT);
+                                imm.showSoftInput(eTxtSearch, InputMethodManager.SHOW_IMPLICIT);
                             }
                         }
                         break;
 
                     default :
                         if(getContext() != null) {
-                            searchETxt.requestFocus();
+                            eTxtSearch.requestFocus();
                             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                             if (imm != null) {
-                                imm.showSoftInput(searchETxt, InputMethodManager.SHOW_IMPLICIT);
+                                imm.showSoftInput(eTxtSearch, InputMethodManager.SHOW_IMPLICIT);
                             }
                         }
                         break;
@@ -211,7 +244,9 @@ public class SearchFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
-        void onSearchSuccess(WeatherModelClass weatherDetails);
-        void goBack();
+        void onWeatherSearchSuccess(WeatherModelClass weatherDetails);
+        void nextBtnClicked();
+        MausamSharedPrefs getSharedPrefs();
+        MaterialSnackBar getSnackBar();
     }
 }

@@ -7,19 +7,21 @@ import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
-
 public class MausamSharedPrefs {
 
     private static final String SHARED_PREFS_NAME = "MausamSharedPrefs";
     private static final String IS_FIRST_TIME = "isFirstTime";
     private static final String LATITUDE = "latitude";
     private static final String LONGITUDE = "longitude";
-    private static final String IS_PERMANENTLY_DENIED = "isPermissionDeniedPermanently";
-    private static final String IS_PERMISSION_SKIPPED = "isPermissionSkipped";
+    private static final String IS_LOCATION_PERMANENTLY_DENIED = "isLocationPermissionDeniedPermanently";
+    private static final String IS_LOCATION_PERMISSION_SKIPPED = "isLocationPermissionSkipped";
+    private static final String IS_STORAGE_PERMANENTLY_DENIED = "isStoragePermissionDeniedPermanently";
+    private static final String IS_STORAGE_PERMISSION_SKIPPED = "isStoragePermissionSkipped";
     private static final String LAST_WEATHER_DATA = "lastWeatherData";
+    private static final String USER_LOCATION = "userLocation";
     private static final String LAST_LOCATION_DETAILS = "locationDetails";
     private static final String LAST_WEATHER_UPDATED = "lastWeatherUpdated";
+    private static final String PHOTOS_RESPONSE = "photosResponse";
 
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
@@ -74,6 +76,33 @@ public class MausamSharedPrefs {
                 null : new DateTime(sharedPrefs.getString(LAST_WEATHER_UPDATED, "null"));
     }
 
+    public void setUserLocation(String location){
+        editor.putString(USER_LOCATION, location);
+        editor.commit();
+    }
+
+    public String getUserLocation(){
+        return sharedPrefs.getString(USER_LOCATION, "null");
+    }
+
+    public void setPhotosResponse(String response){
+        editor.putString(PHOTOS_RESPONSE, response);
+        editor.commit();
+    }
+
+    public String getPhotosResponse(){
+        return sharedPrefs.getString(PHOTOS_RESPONSE, "");
+    }
+
+    public void setPhotosResponseMap(String key, String response){
+        editor.putString(key, response);
+        editor.commit();
+    }
+
+    public String getFromPhotosResponseMap(String key){
+        return sharedPrefs.getString(key, "");
+    }
+
     public void setLastLocationDetails(JSONObject jsonObject){
         editor.putString(LAST_LOCATION_DETAILS, jsonObject.toString());
         editor.commit();
@@ -98,8 +127,8 @@ public class MausamSharedPrefs {
 
     public JSONObject getLastWeatherData(){
         try {
-            String data = sharedPrefs.getString(LAST_WEATHER_DATA, "null");
-            if(!("null").equals(data))
+            String data = sharedPrefs.getString(LAST_WEATHER_DATA, null);
+            if(null != data)
                 return new JSONObject(data);
             else
                 return null;
@@ -108,21 +137,40 @@ public class MausamSharedPrefs {
         }
     }
 
-    public void setIsPermanentlyDenied(Boolean isPermanentlyDenied){
-        editor.putBoolean(IS_PERMANENTLY_DENIED, isPermanentlyDenied);
+    public void setLocationPermanentlyDenied(Boolean isPermanentlyDenied){
+        editor.putBoolean(IS_LOCATION_PERMANENTLY_DENIED, isPermanentlyDenied);
         editor.commit();
     }
 
-    public Boolean getIsPermanentlyDenied(){
-        return sharedPrefs.getBoolean(IS_PERMANENTLY_DENIED, false);
+    public Boolean isLocationPermanentlyDenied(){
+        return sharedPrefs.getBoolean(IS_LOCATION_PERMANENTLY_DENIED, false);
     }
 
-    public void setIsPermissionSkipped(Boolean isPermissionSkipped){
-        editor.putBoolean(IS_PERMISSION_SKIPPED, isPermissionSkipped);
+    public void setLocationPermissionSkipped(Boolean isPermissionSkipped){
+        editor.putBoolean(IS_LOCATION_PERMISSION_SKIPPED, isPermissionSkipped);
         editor.commit();
     }
 
-    public Boolean getIsPermissionSkipped(){
-        return sharedPrefs.getBoolean(IS_PERMISSION_SKIPPED, false);
+    public Boolean isLocationPermissionSkipped(){
+        return sharedPrefs.getBoolean(IS_LOCATION_PERMISSION_SKIPPED, false);
     }
+
+    public void setStoragePermanentlyDenied(Boolean isPermanentlyDenied){
+        editor.putBoolean(IS_STORAGE_PERMANENTLY_DENIED, isPermanentlyDenied);
+        editor.commit();
+    }
+
+    public Boolean isStoragePermanentlyDenied(){
+        return sharedPrefs.getBoolean(IS_STORAGE_PERMANENTLY_DENIED, false);
+    }
+
+    public void setStoragePermissionSkipped(Boolean isPermissionSkipped){
+        editor.putBoolean(IS_STORAGE_PERMISSION_SKIPPED, isPermissionSkipped);
+        editor.commit();
+    }
+
+    public Boolean isStoragePermissionSkipped(){
+        return sharedPrefs.getBoolean(IS_STORAGE_PERMISSION_SKIPPED, false);
+    }
+
 }

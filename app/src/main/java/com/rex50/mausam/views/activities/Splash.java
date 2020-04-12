@@ -9,6 +9,7 @@ import android.os.Handler;
 import androidx.core.content.ContextCompat;
 
 import com.rex50.mausam.R;
+import com.rex50.mausam.baseClasses.BaseActivity;
 
 public class Splash extends BaseActivity {
 
@@ -21,11 +22,15 @@ public class Splash extends BaseActivity {
             Intent intent;
             if(ContextCompat.checkSelfPermission(Splash.this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && !sharedPrefs.getIsPermanentlyDenied()){
+                    != PackageManager.PERMISSION_GRANTED && !sharedPrefs.isLocationPermanentlyDenied()){
                 intent = new Intent(Splash.this, PermissionActivity.class);
             }else {
                 intent = new Intent(Splash.this, MainActivity.class);
             }
+
+            //TODO: remove below line while releasing
+//            intent = new Intent(Splash.this, SearchCityActivity.class);
+
             startActivity(intent);
             finish();
         }, SPLASH_TIME_OUT);

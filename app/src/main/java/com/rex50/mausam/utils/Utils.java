@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class Utils {
 
-    //For location and weather
+    //location and weather Constants
     public static final int GPS_NOT_ENABLED = 5;
     public static final int NO_PERMISSION = 6;
     public static final int LAST_LOCATION_NOT_FOUND = 7;
@@ -17,7 +17,7 @@ public class Utils {
     public static final int CITY_NOT_FOUND = 9;
     public static final int PAGE_NOT_FOUND = 404;
 
-    //For Internet connection
+    //Internet connection Constants
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;
     public static final int TYPE_NOT_CONNECTED = 0;

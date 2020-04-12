@@ -23,7 +23,7 @@ public class DataParser {
         List<UnsplashPhotos> list = new ArrayList<>();
         try {
             JSONArray responseArray = new JSONArray(response);
-            for (int i = 0; i < response.length(); i++) {
+            for (int i = 0; i < responseArray.length(); i++) {
                 list.add(gson.fromJson(responseArray.getJSONObject(i).toString(), UnsplashPhotos.class));
             }
         } catch (JSONException e) {

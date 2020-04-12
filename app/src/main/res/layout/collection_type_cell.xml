@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        app:cardCornerRadius="6dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:requiresFadingEdge="vertical"
+        app:cardElevation="8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/wallpaper_img_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:srcCompat="@tools:sample/avatars"
+                android:contentDescription="image" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/black_to_transparent_overlay"/>
+
+            <ImageView
+                android:id="@+id/wallpaper_img_1"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:layout_margin="10dp"
+                tools:srcCompat="@tools:sample/avatars"
+                android:layout_alignParentBottom="true"
+                android:contentDescription="image" />
+
+            <ImageView
+                android:id="@+id/wallpaper_img_2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:layout_margin="10dp"
+                tools:srcCompat="@tools:sample/avatars"
+                android:layout_alignParentBottom="true"
+                android:layout_toEndOf="@+id/wallpaper_img_1"
+                android:contentDescription="image" />
+
+            <ImageView
+                android:id="@+id/wallpaper_img_3"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:layout_margin="10dp"
+                tools:srcCompat="@tools:sample/avatars"
+                android:layout_alignParentBottom="true"
+                android:layout_toEndOf="@+id/wallpaper_img_2"
+                android:contentDescription="image" />
+
+            <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                android:id="@+id/txt_collection_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Iranians, around the world, men and women and children."
+                android:textSize="10sp"
+                android:textColor="@color/white_to_black"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_above="@+id/wallpaper_img_1"/>
+
+            <com.rex50.mausam.utils.custom_text_views.BoldTextView
+                android:id="@+id/txt_collection_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Iranians"
+                android:textSize="16sp"
+                android:textColor="@color/white_to_black"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_above="@+id/txt_collection_desc"/>
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

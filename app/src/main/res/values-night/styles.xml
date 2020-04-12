@@ -15,7 +15,7 @@
         <item name="android:colorAccent">@color/defaultDark</item>
     </style>
 
-    //Use this for changing theme with animation
+<!--    Use this for changing theme with animation-->
     <style name="WindowAnimationTransition">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>

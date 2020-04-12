@@ -26,19 +26,19 @@ public class User {
     private String lastName;
     @SerializedName("twitter_username")
     @Expose
-    private Object twitterUsername;
+    private String twitterUsername;
     @SerializedName("portfolio_url")
     @Expose
     private String portfolioUrl;
     @SerializedName("bio")
     @Expose
-    private Object bio;
+    private String bio;
     @SerializedName("location")
     @Expose
-    private Object location;
+    private String location;
     @SerializedName("links")
     @Expose
-    private Links_ links;
+    private UserLinks links;
     @SerializedName("profile_image")
     @Expose
     private ProfileImage profileImage;
@@ -106,11 +106,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Object getTwitterUsername() {
+    public String getTwitterUsername() {
         return twitterUsername;
     }
 
-    public void setTwitterUsername(Object twitterUsername) {
+    public void setTwitterUsername(String twitterUsername) {
         this.twitterUsername = twitterUsername;
     }
 
@@ -122,27 +122,27 @@ public class User {
         this.portfolioUrl = portfolioUrl;
     }
 
-    public Object getBio() {
+    public String getBio() {
         return bio;
     }
 
-    public void setBio(Object bio) {
+    public void setBio(String bio) {
         this.bio = bio;
     }
 
-    public Object getLocation() {
+    public String getLocation() {
         return location;
     }
 
-    public void setLocation(Object location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 
-    public Links_ getLinks() {
+    public UserLinks getLinks() {
         return links;
     }
 
-    public void setLinks(Links_ links) {
+    public void setLinks(UserLinks links) {
         this.links = links;
     }
 

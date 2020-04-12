@@ -15,6 +15,18 @@
         <item name="android:colorAccent">@color/defaultDark</item>
     </style>
 
+    <style name="ToolBarWithoutMargin">
+        <item name="android:contentInsetLeft">0dp</item>
+        <item name="android:contentInsetStart">0dp</item>
+        <item name="contentInsetLeft">0dp</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="android:contentInsetRight">0dp</item>
+        <item name="android:contentInsetEnd">0dp</item>
+        <item name="contentInsetRight">0dp</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="contentInsetEnd">0dp</item>
+    </style>
+
     <style name="WindowAnimationTransition">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>

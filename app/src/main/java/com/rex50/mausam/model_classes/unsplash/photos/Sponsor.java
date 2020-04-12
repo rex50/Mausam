@@ -35,13 +35,13 @@ public class Sponsor {
     private String bio;
     @SerializedName("location")
     @Expose
-    private Object location;
+    private String location;
     @SerializedName("links")
     @Expose
-    private Links__ links;
+    private UserLinks links;
     @SerializedName("profile_image")
     @Expose
-    private ProfileImage_ profileImage;
+    private ProfileImage profileImage;
     @SerializedName("instagram_username")
     @Expose
     private String instagramUsername;
@@ -130,27 +130,27 @@ public class Sponsor {
         this.bio = bio;
     }
 
-    public Object getLocation() {
+    public String getLocation() {
         return location;
     }
 
-    public void setLocation(Object location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 
-    public Links__ getLinks() {
+    public UserLinks getLinks() {
         return links;
     }
 
-    public void setLinks(Links__ links) {
+    public void setLinks(UserLinks links) {
         this.links = links;
     }
 
-    public ProfileImage_ getProfileImage() {
+    public ProfileImage getProfileImage() {
         return profileImage;
     }
 
-    public void setProfileImage(ProfileImage_ profileImage) {
+    public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
     }
 

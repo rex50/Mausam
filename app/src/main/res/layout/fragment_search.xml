@@ -1,98 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.fragments.SearchFragment"
     android:orientation="vertical"
     android:background="?android:attr/windowBackground">
 
+    <include layout="@layout/custom_header_general"
+        android:id="@+id/header"/>
+
     <LinearLayout
-        android:id="@+id/searchFieldsHolder"
+        android:id="@+id/container_search_providers"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="20dp"
-        android:gravity="center_vertical">
+        android:layout_below="@+id/header">
 
-        <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="Enter location to search ?"
-            android:layout_marginBottom="8dp"
-            android:textColor="@color/defaultDark"/>
-
-        <EditText
-            android:id="@+id/etxt_search"
+        <com.rex50.mausam.utils.custom_text_views.BoldTextView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_general_accent_dark"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:typeface="normal"
-            android:fontFamily="sans-serif"
-            android:paddingTop="10dp"
-            android:paddingBottom="12dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:singleLine="true"
-            android:textSize="22sp"
-            android:layout_marginBottom="15dp"
-            android:forceDarkAllowed="true"
-            />
+            android:layout_height="wrap_content"
+            android:text="@string/choose_search_provider_title"
+            android:textSize="12sp"
+            android:textAlignment="center"
+            android:textColor="@color/graniteGray"
+            android:textStyle="bold"/>
 
-<!--        <com.rex50.mausam.Utils.CustomTextViews.RegularTextView-->
-<!--            android:id="@+id/txt_error"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textColor="@color/colorAppRed" />-->
-
-    </LinearLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="20dp">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:gravity="center_vertical">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/bg_general_accent_dark"
-                android:src="@drawable/ic_arrow_back_dark"
-                android:padding="8dp"
-                android:contentDescription="back button" />
-
-            <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                android:id="@+id/txt_error"
+            <Button
+                android:id="@+id/provider_unsplash"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/colorAppRed"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                />
+                android:text="@string/unsplash_txt"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
+                android:backgroundTint="@color/colorAccent"
+                android:textAllCaps="false"/>
 
-            <ImageView
-                android:id="@+id/btn_start_search"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/provider_pixabay"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_general_accent_dark"
-                android:src="@drawable/ic_search"
-                android:padding="8dp"/>
+                android:layout_weight="1"
+                android:text="@string/pixabay_txt"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="@color/blueEyes"
+                android:textAllCaps="false"/>
+
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
-</LinearLayout>
+    <EditText
+        android:id="@+id/etxt_search"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:fontFamily="sans-serif"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:singleLine="true"
+        android:textSize="14sp"
+        android:hint="@string/search_box_hint"
+        android:background="@drawable/bg_general_edittext"
+        android:layout_margin="10dp"
+        android:drawableEnd="@drawable/ic_search"
+        android:drawablePadding="5dp"
+        android:textColorHint="@color/taupeGray"
+        android:layout_below="@+id/container_search_providers"
+        android:imeOptions="actionSearch" />
+
+    <com.rex50.mausam.utils.custom_text_views.RegularTextView
+        android:id="@+id/txt_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/satinRed"
+        android:layout_margin="10dp"
+        android:textAlignment="center"
+        android:layout_below="@+id/etxt_search"
+        android:textSize="12sp"/>
+
+    <Button
+        android:id="@+id/btn_next_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/skip_btn_text"
+        android:textSize="18sp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/colorAccent"
+        android:visibility="gone"/>
+
+</RelativeLayout>

@@ -1,6 +1,5 @@
 package com.rex50.mausam.utils;
 
-import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +70,7 @@ public class FlashyTabBar extends ViewPager.SimpleOnPageChangeListener {
         title.setText(mFragmentTitleList.get(position));
 
         //TODO : Maintain Color according to dark mode
-        title.setTextColor(mFragmentColorList.get(position) == null ? Color.argb(255, 40, 45, 130) : getColor(mFragmentColorList.get(position)));
+        title.setTextColor(mFragmentColorList.get(position) == null ? getColor(R.color.colorAccent) : getColor(mFragmentColorList.get(position)));
 
         if(mFragmentSizeList.get(position) != null) {
             title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mFragmentSizeList.get(position));
@@ -94,7 +93,7 @@ public class FlashyTabBar extends ViewPager.SimpleOnPageChangeListener {
         set.clear(foreground.getId(), isSelected ? ConstraintSet.TOP : ConstraintSet.BOTTOM);
         set.connect(foreground.getId(), isSelected ? ConstraintSet.BOTTOM : ConstraintSet.TOP, tabImageView.getId(), ConstraintSet.BOTTOM);
         set.applyTo(layout);
-        tabImageView.setColorFilter(Color.argb(255, 40, 45, 130));
+        tabImageView.setColorFilter(getColor(R.color.titleColor));
     }
 
     public void highLightTab(int position) {

@@ -1,87 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.activities.PermissionActivity"
-    android:orientation="vertical"
-    android:background="@android:color/white">
+    android:orientation="vertical">
 
-    <include layout="@layout/custom_header"/>
+<!--    <include layout="@layout/custom_header_home"/>-->
 
-    <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+    <com.rex50.mausam.utils.custom_text_views.BoldTextView
+        android:id="@+id/permission_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/permission_desc"
-        android:textSize="18sp"
-        android:layout_margin="20dp"
-        android:textColor="@color/defaultDark"/>
+        android:text="@string/permission_title"
+        android:textSize="24sp"
+        android:layout_margin="15dp"
+        android:textStyle="bold"
+        android:textColor="@color/titleColor"/>
+
+    <LinearLayout
+        android:id="@+id/location_permission_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="15sp"
+        android:layout_marginStart="15dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        android:layout_below="@+id/permission_title">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/location_perm_title"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/titleColor"/>
+
+            <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/location_desc"
+                android:paddingEnd="30dp"
+                android:textSize="10sp"
+                android:textColor="@color/taupeGray"
+                />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/btn_ask_location_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:track="@drawable/track_selector"
+            android:thumb="@drawable/thumb_selector"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:elevation="0dp"
-        android:background="@drawable/bg_general"
-        android:orientation="vertical">
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="15sp"
+        android:layout_marginStart="15dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        android:layout_below="@+id/location_permission_container">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:gravity="center">
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
 
-            <com.rex50.mausam.utils.custom_text_views.BoldTextView
-                android:layout_width="wrap_content"
+            <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Location"
-                android:textSize="22sp"
-                android:layout_weight="1"
-                android:textColor="@color/defaultDark"/>
+                android:text="@string/storage_perm_title"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/titleColor"/>
 
-            <Switch
-                android:id="@+id/btn_ask_location_permission"
-                android:layout_width="wrap_content"
+            <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:track="@drawable/track_selector"
-                android:thumb="@drawable/thumb_selector"/>
-
+                android:text="@string/storage_desc"
+                android:paddingEnd="30dp"
+                android:textSize="10sp"
+                android:textColor="@color/taupeGray"
+                />
         </LinearLayout>
 
-        <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
-            android:layout_width="match_parent"
+        <Switch
+            android:id="@+id/btn_ask_storage_permission"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/location_desc"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="20dp"
-            android:textSize="16sp"
-            android:textColor="@color/defaultDark"
-            />
+            android:track="@drawable/track_selector"
+            android:thumb="@drawable/thumb_selector"/>
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <com.rex50.mausam.utils.custom_text_views.BoldTextView
-            android:id="@+id/btn_skip_permission"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Skip"
-            android:textSize="22sp"
-            android:textColor="@color/defaultDark"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="20dp"
-            android:background="@drawable/bg_general"
-            android:backgroundTint="@color/colorAccentDark"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"/>
+    <Button
+        android:id="@+id/btn_skip_permission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/skip_btn_text"
+        android:textSize="18sp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/colorAccent"/>
 
-    </RelativeLayout>
+    <!--<com.rex50.mausam.utils.custom_text_views.BoldTextView
+        android:id="@+id/btn_skip_permission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Skip"
+        android:textSize="22sp"
+        android:textColor="@color/defaultDark"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_general"
+        android:backgroundTint="@color/colorAccentDark"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>-->
 
-</LinearLayout>
+</RelativeLayout>

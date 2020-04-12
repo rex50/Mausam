@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="10dp"
+    android:paddingTop="20dp"
+    android:layout_marginBottom="30dp">
+
+    <com.rex50.mausam.utils.custom_text_views.BoldTextView
+        android:id="@+id/txt_page_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dummy_title"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/titleColor"/>
+
+    <com.rex50.mausam.utils.custom_text_views.BoldTextView
+        android:id="@+id/txt_page_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/lorem_ipsum"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:textColor="@color/descColor"/>
+
+</LinearLayout>

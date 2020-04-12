@@ -1,11 +1,5 @@
 package com.rex50.mausam.views.activities;
 
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,33 +11,46 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
-//import com.cuberto.flashytabbarandroid.TabFlashyAnimator;
 import com.google.android.material.tabs.TabLayout;
+import com.rex50.mausam.R;
+import com.rex50.mausam.baseClasses.BaseActivity;
 import com.rex50.mausam.interfaces.LocationResultListener;
 import com.rex50.mausam.interfaces.WeatherResultListener;
 import com.rex50.mausam.model_classes.weather.WeatherModelClass;
-import com.rex50.mausam.R;
+import com.rex50.mausam.network.APIManager;
+import com.rex50.mausam.network.MausamLocationManager;
+import com.rex50.mausam.utils.DataParser;
 import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.LastLocationProvider;
-import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
-import com.rex50.mausam.utils.DataParser;
-import com.rex50.mausam.utils.GPSRequestHelper;
 import com.rex50.mausam.utils.MaterialSnackBar;
-import com.rex50.mausam.utils.Utils;
+import com.rex50.mausam.utils.MausamSharedPrefs;
+import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
 import com.rex50.mausam.views.fragments.HomeFragment;
 import com.rex50.mausam.views.fragments.SearchFragment;
 import com.rex50.mausam.views.fragments.SearchResultFragment;
 
+import org.joda.time.DateTime;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import static com.rex50.mausam.utils.Utils.*;
+import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
+import static com.rex50.mausam.utils.Utils.TYPE_NOT_CONNECTED;
+import static com.rex50.mausam.utils.Utils.getConnectivityStatus;
+
+//import com.google.firebase.analytics.FirebaseAnalytics;
+
+//import com.cuberto.flashytabbarandroid.TabFlashyAnimator;
 
 public class MainActivity extends BaseActivity implements
         SearchFragment.OnFragmentInteractionListener,
@@ -61,18 +68,25 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Firebase init
+        /*FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
+        instanceId.getInstanceId();*/
+        /*FirebaseAnalytics analytis = FirebaseAnalytics.getInstance(this);
+        analytis.logEvent("on_main_activity", new Bundle());*/
+
+
         super.onCreate(savedInstanceState);
         init();
         /*if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED){
-            if(sharedPrefs.getIsPermissionSkipped()){
+            if(sharedPrefs.isLocationPermissionSkipped()){
                 if(sharedPrefs.getLongitude() != 0 && sharedPrefs.getLatitude() != 0){
                     requestWeather(sharedPrefs.getLatitude(),sharedPrefs.getLongitude());
                     materialSnackBar.show("Showing last known location weather", MaterialSnackBar.LENGTH_SHORT);
                 }else
                     loadFragment(new SearchFragment());
-            }else if(!sharedPrefs.getIsPermanentlyDenied()){
+            }else if(!sharedPrefs.isLocationPermanentlyDenied()){
                 startActivity(new Intent(this, PermissionActivity.class));
                 finish();
             }
@@ -144,14 +158,14 @@ public class MainActivity extends BaseActivity implements
     private void loadOfflineWeatherData() {
         JSONObject weatherJSON = sharedPrefs.getLastWeatherData();
         if(weatherJSON != null){
-            if(!isPermissionEnabled())
+            /*if(!isPermissionEnabled())
                 materialSnackBar.showActionSnackBar(getString(R.string.no_permission_error_msg), "OK", MaterialSnackBar.LENGTH_INDEFINITE, () -> materialSnackBar.dismiss());
             else if(Utils.getConnectivityStatus(this) == TYPE_NOT_CONNECTED)
                 materialSnackBar.showActionSnackBar(getString(R.string.no_internet_error_msg), "OK", MaterialSnackBar.LENGTH_INDEFINITE, () -> materialSnackBar.dismiss());
             DataParser parser = new DataParser();
             WeatherModelClass weatherDetails = parser.parseWeatherData(weatherJSON);
             HomeFragment homeFragment = HomeFragment.newInstance(weatherDetails);
-            loadFragment(homeFragment);
+            loadFragment(homeFragment);*/
         }else {
             noInternetErrorPage.show();
         }
@@ -166,11 +180,11 @@ public class MainActivity extends BaseActivity implements
         lastLocationProvider = new LastLocationProvider(this);
         ViewPager viewPager = findViewById(R.id.testViewpager);
         List<Fragment> mFragmentList = new ArrayList<>();
-        mFragmentList.add(new SearchFragment());
+        mFragmentList.add(new HomeFragment());
         mFragmentList.add(new SearchFragment());
         mFragmentList.add(new SearchFragment());
 
-        FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+        FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             @Override
             public Fragment getItem(int position) {
                 return mFragmentList.get(position);
@@ -193,11 +207,11 @@ public class MainActivity extends BaseActivity implements
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if(tab.getPosition() == 0){
+                /*if(tab.getPosition() == 0){
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 }else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                }
+                }*/
             }
 
             @Override
@@ -247,7 +261,7 @@ public class MainActivity extends BaseActivity implements
             }
         });*/
 
-        requestLocationAndWeather(new WeatherResultListener() {
+        /*requestLocationAndWeather(new WeatherResultListener() {
             @Override
             public void onSuccess(WeatherModelClass weatherDetails) {
                 isGettingWeather = false;
@@ -256,7 +270,7 @@ public class MainActivity extends BaseActivity implements
 //                toggleLocationPermissionError(false);
                 noPermissionErrorPage.hide();
                 homeFragment = HomeFragment.newInstance(weatherDetails);
-                loadFragment(homeFragment);
+//                loadFragment(homeFragment);
             }
 
             @Override
@@ -308,7 +322,7 @@ public class MainActivity extends BaseActivity implements
                         break;
                 }
             }
-        });
+        });*/
     }
 
     @Override
@@ -362,12 +376,27 @@ public class MainActivity extends BaseActivity implements
     }
 
     @Override
-    public void onSearchSuccess(WeatherModelClass weatherDetails) {
+    public void onWeatherSearchSuccess(WeatherModelClass weatherDetails) {
         fragmentManager.popBackStack();
         toggleLocationLoader(false);
         SearchResultFragment fragment = new SearchResultFragment();
         fragment.setWeatherDetails(weatherDetails);
         loadFragment(fragment, true);
+    }
+
+    @Override
+    public void nextBtnClicked() {
+
+    }
+
+    @Override
+    public MausamSharedPrefs getSharedPrefs() {
+        return sharedPrefs;
+    }
+
+    @Override
+    public MaterialSnackBar getSnackBar() {
+        return null;
     }
 
     @Override
@@ -378,6 +407,79 @@ public class MainActivity extends BaseActivity implements
     @Override
     public Bundle getLastLocationDetails() {
         return lastLocationProvider.getLastLocation().getExtras();
+    }
+
+    @Override
+    public void requestWeather(WeatherResultListener listener) {
+        /*requestLocationAndWeather(new WeatherResultListener() {
+            @Override
+            public void onSuccess(WeatherModelClass weatherDetails) {
+                isGettingWeather = false;
+                isFirstWeatherFetched = true;
+                toggleLocationLoader(false);
+//                toggleLocationPermissionError(false);
+                noPermissionErrorPage.hide();
+                listener.onSuccess(weatherDetails);
+                *//*homeFragment = HomeFragment.newInstance(weatherDetails);
+                loadFragment(homeFragment);*//*
+            }
+
+            @Override
+            public void onFailed(int errorCode) {
+                isGettingWeather = false;
+                toggleLocationLoader(false);
+                materialSnackBar.dismiss();
+                switch (errorCode){
+                    case NO_PERMISSION :
+//                        toggleLocationPermissionError(true);
+                        noPermissionErrorPage.show();
+                        break;
+
+                    case GPS_NOT_ENABLED :
+//                        materialSnackBar.show("GPS is turned off, trying to get last known location", MaterialSnackBar.LENGTH_INDEFINITE);
+//                        toggleLocationGPSError(true);
+                        noGpsErrorPage.show();
+                        materialSnackBar.showActionSnackBar("GPS is off", "Enable", MaterialSnackBar.LENGTH_INDEFINITE,
+                                () -> {
+//                                    toggleLocationGPSError(false);
+                                    noGpsErrorPage.hide();
+                                    toggleLocationLoader(true);
+                                    materialSnackBar.dismiss();
+
+                                    //TODO : Prompt to start GPS and on success get weather details
+                                    gpsRequestHelper.requestGPS(new GPSRequestHelper.GPSListener() {
+                                        @Override
+                                        public void enabled() {
+                                            getWeatherDetails();
+                                            materialSnackBar.dismiss();
+                                        }
+
+                                        @Override
+                                        public void disabled() {
+                                            //TODO : do something without location.
+                                            materialSnackBar.dismiss();
+                                        }
+                                    });
+                                });
+                        break;
+
+                    case CITY_NOT_FOUND : //TODO : city data is not available in database
+                        break;
+
+                    case PAGE_NOT_FOUND :
+                        if(getConnectivityStatus(MainActivity.this) != TYPE_NOT_CONNECTED){
+                            materialSnackBar.show("No internet connection", MaterialSnackBar.LENGTH_INDEFINITE);
+                        }
+                        break;
+                }
+            }
+        });*/
+        if(sharedPrefs.getLastWeatherData() != null){
+            WeatherModelClass weatherModelClass = new DataParser().parseWeatherData(sharedPrefs.getLastWeatherData());
+            requestWeather(weatherModelClass.getCoord().getLat(), weatherModelClass.getCoord().getLon(), listener);
+        }else {
+            //TODO : listener.onFailed();
+        }
     }
 
     private void toggleLocationLoader(boolean state){
@@ -458,6 +560,106 @@ public class MainActivity extends BaseActivity implements
         else{
             //hide loader
         }
+    }
+
+    /**
+     *
+     * @param listener needed to get the location response
+     */
+    protected void requestLocation(LocationResultListener listener){
+        requestLocation(listener, null);
+    }
+
+    /**
+     * This function can be used to get location (location data will be saved to shared prefs) and current weather
+     * @param listener is needed to get weather details
+     */
+    protected void requestLocationAndWeather(WeatherResultListener listener){
+        requestLocation( null, listener);
+    }
+
+    /**
+     *
+     * @param locationListener needed to get response when location data is found. pass {null} if only weather info is needed.
+     * @param weatherListener needed to get response of weather with location data. pass {null} if only location info is needed.
+     */
+    private void requestLocation(LocationResultListener locationListener, WeatherResultListener weatherListener){
+//        materialSnackBar.show("Getting location...", MaterialSnackBar.LENGTH_INDEFINITE);
+        MausamLocationManager locationDataManager = new MausamLocationManager();
+        locationDataManager.getLocation(this, new MausamLocationManager.LocationResultCallback() {
+            @Override
+            public void onSuccess(Location location) {
+                materialSnackBar.dismiss();
+                if(weatherListener != null){
+                    //Get weather data only after 15 minutes as servers are updated at the interval of 10 minutes
+                    if(sharedPrefs.getLastWeatherUpdated() != null){
+                        DateTime currentTime = DateTime.now();
+                        if(!sharedPrefs.getLastWeatherUpdated().isAfter(currentTime.minusMinutes(15))){
+                            requestWeather(location.getLatitude(), location.getLongitude(), weatherListener);
+                        }else {
+                            DataParser parser = new DataParser();
+                            weatherListener.onSuccess(parser.parseWeatherData(sharedPrefs.getLastWeatherData()));
+                        }
+                    }else {
+                        requestWeather(location.getLatitude(), location.getLongitude(), weatherListener);
+                    }
+                }else {
+                    if(locationListener != null)
+                        locationListener.onSuccess(location);
+                }
+            }
+
+            @Override
+            public void onFailed(int errorCode) {
+                materialSnackBar.dismiss();
+                if(weatherListener != null)
+                    weatherListener.onFailed(errorCode);
+                else if(locationListener != null)
+                    locationListener.onFailed(errorCode);
+                else
+                    materialSnackBar.show("Error getting your location", MaterialSnackBar.LENGTH_LONG);
+            }
+        });
+    }
+
+    protected void requestWeather(Double latitude, Double longitude, WeatherResultListener weatherListener){
+        APIManager apiManager = APIManager.getInstance(this);
+        HashMap<String, String> urlExtras = new HashMap<>();
+        urlExtras.put("lat", String.valueOf(latitude));
+        urlExtras.put("lon", String.valueOf(longitude));
+        apiManager.getWeather(APIManager.SERVICE_CURRENT_WEATHER, urlExtras, new APIManager.WeatherAPICallBackResponse() {
+            @Override
+            public void onWeatherResponseSuccess(JSONObject response) {
+                materialSnackBar.dismiss();
+                sharedPrefs.setLastWeatherData(response);
+                sharedPrefs.setLastWeatherUpdated(DateTime.now());
+                DataParser parser = new DataParser();
+                if(weatherListener != null)
+                    weatherListener.onSuccess(parser.parseWeatherData(response));
+                /*else {
+                    toggleLocationLoader(false);
+                    Fragment fragment = HomeFragment.newInstance(weatherDetails);
+                    loadFragment(fragment);
+                }*/
+            }
+
+            @Override
+            public void onWeatherResponseFailure(int errorCode, String msg) {
+                /*if(sharedPrefs.getLatitude() != 0 && sharedPrefs.getLatitude() != 0 && weatherListener != null){
+                    materialSnackBar.showActionSnackBar(msg,"RETRY", MaterialSnackBar.LENGTH_INDEFINITE, () -> {
+                        requestWeather(sharedPrefs.getLatitude(), sharedPrefs.getLongitude(), weatherListener);
+                        materialSnackBar.dismiss();
+                    });
+                }else*/
+                materialSnackBar.dismiss();
+                if(weatherListener != null) {
+                    weatherListener.onFailed(errorCode);
+                }else {
+                    materialSnackBar.showActionSnackBar(msg, "DISMISS", MaterialSnackBar.LENGTH_LONG, () -> materialSnackBar.dismiss());
+                }
+
+            }
+        });
     }
 
 }
