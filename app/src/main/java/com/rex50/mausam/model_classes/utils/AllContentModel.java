@@ -10,16 +10,21 @@ public class AllContentModel {
 
     private List<GenericModelFactory> models;
 
+    private List<String> types;
+
     public AllContentModel(){
         models = new ArrayList<>();
+        types = new ArrayList<>();
     }
 
-    public void addModel(GenericModelFactory model){
+    public void addModel(String type, GenericModelFactory model){
         this.models.add(model);
+        this.types.add(type);
     }
 
-    public void addModel(int pos, GenericModelFactory model){
+    public void addModel(int pos, String type, GenericModelFactory model){
         this.models.add(pos, model);
+        this.types.add(pos, type);
     }
 
     public void addAllModel(List<GenericModelFactory> list){
@@ -28,6 +33,10 @@ public class AllContentModel {
 
     public GenericModelFactory getModel(int pos){
         return /*models.size() > pos ?*/ models.get(pos) /*: getDummyModel(pos)*/;
+    }
+
+    public String getType(int pos){
+        return types.get(pos);
     }
 
     public int size(){

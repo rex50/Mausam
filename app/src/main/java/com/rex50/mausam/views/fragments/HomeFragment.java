@@ -319,10 +319,11 @@ public class HomeFragment extends Fragment {
             unsplashHelper.getSearchedPhotos("Summer", 1, 20, new GetUnsplashSearchedPhotosListener() {
                 @Override
                 public void onSuccess(SearchedPhotos photos) {
-                    allData.addModel(0,
+                    Integer pos = addSequentially(WEATHER_BASED_WALLPAPERS,
                             GenericModelFactory.getGeneralTypeObject(WEATHER_BASED_WALLPAPERS, POWERED_BY_UNSPLASH, false, photos.getResults()));
-
-                    adapter.notifyItemInserted(0);
+                    if(pos != null){
+                        adapter.notifyItemInserted(pos);
+                    }
                 }
 
                 @Override
@@ -336,10 +337,11 @@ public class HomeFragment extends Fragment {
             unsplashHelper.getSearchedPhotos("Surat", 1, 20, new GetUnsplashSearchedPhotosListener() {
                 @Override
                 public void onSuccess(SearchedPhotos photos) {
-                    allData.addModel(0,
+                    Integer pos = addSequentially(LOCATION_BASED_WALLPAPERS,
                             GenericModelFactory.getGeneralTypeObject(LOCATION_BASED_WALLPAPERS, POWERED_BY_UNSPLASH, false, photos.getResults()));
-
-                    adapter.notifyItemInserted(0);
+                    if(pos != null){
+                        adapter.notifyItemInserted(pos);
+                    }
                 }
 
                 @Override
@@ -353,10 +355,11 @@ public class HomeFragment extends Fragment {
             unsplashHelper.getSearchedPhotos("Night", 1, 20, new GetUnsplashSearchedPhotosListener() {
                 @Override
                 public void onSuccess(SearchedPhotos photos) {
-                    allData.addModel(0,
+                    Integer pos = addSequentially(TIME_BASED_WALLPAPERS,
                             GenericModelFactory.getGeneralTypeObject(TIME_BASED_WALLPAPERS, POWERED_BY_UNSPLASH, false, photos.getResults()));
-
-                    adapter.notifyItemInserted(0);
+                    if(pos != null){
+                        adapter.notifyItemInserted(pos);
+                    }
                 }
 
                 @Override
@@ -370,10 +373,11 @@ public class HomeFragment extends Fragment {
             unsplashHelper.getPhotos(UnsplashHelper.ORDER_BY_DEFAULT, new GetUnsplashPhotosListener() {
                 @Override
                 public void onSuccess(List<UnsplashPhotos> photos) {
-                    allData.addModel(0,
+                    Integer pos = addSequentially(TIME_BASED_WALLPAPERS,
                             GenericModelFactory.getGeneralTypeObject(POPULAR_WALLPAPERS, POWERED_BY_UNSPLASH,false, photos));
-
-                    adapter.notifyItemInserted(0);
+                    if(pos != null){
+                        adapter.notifyItemInserted(pos);
+                    }
                 }
 
                 @Override
@@ -407,6 +411,28 @@ public class HomeFragment extends Fragment {
             //TODO: DO API call
         }
 
+    }
+
+    private synchronized Integer addSequentially(String type, GenericModelFactory model){
+        try {
+            if(allData.size() == 0) {
+                allData.addModel(type, model);
+                return 0;
+            }
+            int pos = sequenceOfLayout.indexOf(type);
+            for (int i = 0; i < allData.size(); i++) {
+                int addedPos = sequenceOfLayout.indexOf(allData.getType(i));
+                if(addedPos > pos){
+                    allData.addModel(pos, type, model);
+                    return i;
+                }
+            }
+            allData.addModel(type, model);
+            return allData.size() - 1;
+        }catch (Exception e){
+            Log.e(TAG, "addSequentially: ", e);
+            return null;
+        }
     }
 
     private Double convertToCelsius(Double kelvin){
