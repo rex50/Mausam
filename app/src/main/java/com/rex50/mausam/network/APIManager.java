@@ -2,14 +2,11 @@ package com.rex50.mausam.network;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.IntDef;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.rex50.mausam.R;
@@ -25,7 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.rex50.mausam.utils.Utils.*;
+import static com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME;
+import static com.rex50.mausam.utils.Utils.CITY_NOT_FOUND;
+import static com.rex50.mausam.utils.Utils.PAGE_NOT_FOUND;
+import static com.rex50.mausam.utils.Utils.WEATHER_NOT_FOUND;
 
 public final class APIManager {
 
@@ -91,7 +91,7 @@ public final class APIManager {
 
 
     /**
-     * Collection Urls
+     * Collections Urls
      */
     private static final String URL_GET_COLLECTIONS =
             "collections";
@@ -159,18 +159,25 @@ public final class APIManager {
 
     private String generateUrl(String baseUrl,int service, HashMap<String, String> urlExtras) {
         Uri.Builder uri = Uri.parse(baseUrl).buildUpon();
-        uri.path(serviceTable.get(service));
+        switch (service){
+            case SERVICE_GET_PHOTOS_BY_USER:
+                uri.path(String.format(serviceTable.get(service), urlExtras.get(UNSPLASH_USERNAME)));
+                urlExtras.remove(UNSPLASH_USERNAME);
+                break;
+            default:
+                uri.path(serviceTable.get(service));
+
+        }
         if (urlExtras != null) {
             for (Map.Entry parameter : urlExtras.entrySet()) {
                 uri.appendQueryParameter(parameter.getKey().toString(), parameter.getValue().toString());
             }
         }
-        uri.appendQueryParameter("appid",appId);
-        Log.d("Response", uri.build().toString());
         return uri.build().toString();
     }
 
     public void getWeather(@WeatherApiService int service, HashMap<String, String> urlExtras, final WeatherAPICallBackResponse listener){
+        urlExtras.put("appid", appId);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, generateUrl(baseUrlWeather, service, urlExtras), null,
                 listener::onWeatherResponseSuccess,
                 error -> listener.onWeatherResponseFailure(WEATHER_NOT_FOUND, "Sorry something went wrong try again later.")
@@ -181,6 +188,7 @@ public final class APIManager {
     }
 
     public void searchWeather(@WeatherApiService int service, HashMap<String, String> urlExtras, final WeatherAPICallBackResponse listener){
+        urlExtras.put("appid", appId);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, generateUrl(baseUrlWeather, service, urlExtras), null,
                 response -> {
                     if(response.optString("cod").equals("404")){

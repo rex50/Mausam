@@ -48,37 +48,65 @@ android {
 }
 
 dependencies {
+    def room_version = "2.2.5"
+    def glide_version = "4.11.0"
+    def material_version = "1.2.0-alpha06"
+    def joda_version = "2.10.3"
+    def lang_version = "3.5"
+    def ktx_version = "1.2.0"
+    def gson_version = "2.8.6"
+    def volley_version = "1.1.1"
+    def cardview_version = "1.0.0"
+    def play_service_location_version = "17.0.0"
+    def switcher_version = "1.1.0"
+    def imageViewer_version = "1.0.1"
+    def photo_view_version = "2.3.0"
+    def ripple_effect_version = "1.3"
+    def push_down_effect_version = "1.1.1"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.gms:play-services-plus:17.0.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.weather_wall_banner.1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     //Added
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
-    implementation 'com.karumi:dexter:5.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.android.volley:volley:1.1.1'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.google.android.material:material:1.1.0'
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
-    implementation 'net.danlew:android.joda:2.10.1'
-    implementation 'org.apache.commons:commons-lang3:3.5'
-    implementation 'com.github.vivchar:RendererRecyclerViewAdapter:2.8.0'
-    implementation "androidx.core:core-ktx:+"
+    implementation "com.google.android.gms:play-services-location:$play_service_location_version"
+    implementation "androidx.cardview:cardview:$cardview_version"
+    implementation "com.android.volley:volley:$volley_version"
+    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
+    implementation "com.google.android.material:material:$material_version"
+    implementation "net.danlew:android.joda:$joda_version"
+    implementation "org.apache.commons:commons-lang3:$lang_version"
+    implementation "androidx.core:core-ktx:$ktx_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    //For testing
-    /*implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.3'
-    implementation 'com.google.firebase:firebase-analytics:17.2.2'*/
 
-//    implementation 'com.cuberto.flashytabbarandroid:flashytabbarandroid:1.0.0'
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    implementation "com.bitvale:switcher:$switcher_version"
+
+    implementation "com.github.stfalcon:stfalcon-imageviewer:$imageViewer_version"
+    implementation "com.github.chrisbanes:PhotoView:$photo_view_version"
+
+    //Click effect
+    //implementation "com.github.traex.rippleeffect:library:$ripple_effect_version"
+    implementation ("com.github.thekhaeng:pushdown-anim-click:$push_down_effect_version"){
+        exclude group: 'com.android.support'
+    }
+
+    //For testing
+    /*implementation "com.google.firebase:firebase-inappmessaging-display:19.0.3"
+    implementation "com.google.firebase:firebase-analytics:17.2.2"*/
+
+//    implementation "com.cuberto.flashytabbarandroid:flashytabbarandroid:1.0.0"
 }
-repositories {
+/*repositories {
     mavenCentral()
-}
+}*/

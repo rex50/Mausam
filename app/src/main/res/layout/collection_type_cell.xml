@@ -7,6 +7,7 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardView"
         android:layout_width="240dp"
         android:layout_height="240dp"
         app:cardCornerRadius="6dp"
@@ -14,7 +15,9 @@
         android:layout_marginBottom="15dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:requiresFadingEdge="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:selectableItemBackground"
         app:cardElevation="8dp">
 
         <RelativeLayout
@@ -32,39 +35,71 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/black_to_transparent_overlay"/>
+                android:background="@drawable/accent_to_transparent_overlay"/>
 
-            <ImageView
-                android:id="@+id/wallpaper_img_1"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_img1"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:scaleType="centerCrop"
-                android:layout_margin="10dp"
-                tools:srcCompat="@tools:sample/avatars"
+                app:cardCornerRadius="6dp"
                 android:layout_alignParentBottom="true"
-                android:contentDescription="image" />
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
+                app:cardElevation="8dp">
+                <ImageView
+                    android:id="@+id/wallpaper_img_1"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/avatars"
+                    android:contentDescription="@string/preview_image" />
+            </com.google.android.material.card.MaterialCardView>
 
-            <ImageView
-                android:id="@+id/wallpaper_img_2"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_img2"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:scaleType="centerCrop"
-                android:layout_margin="10dp"
-                tools:srcCompat="@tools:sample/avatars"
+                app:cardCornerRadius="6dp"
                 android:layout_alignParentBottom="true"
-                android:layout_toEndOf="@+id/wallpaper_img_1"
-                android:contentDescription="image" />
+                android:layout_toEndOf="@+id/card_img1"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginEnd="15dp"
+                app:cardElevation="8dp">
 
-            <ImageView
-                android:id="@+id/wallpaper_img_3"
+                <ImageView
+                    android:id="@+id/wallpaper_img_2"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/avatars"
+                    android:contentDescription="@string/preview_image" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_img3"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:scaleType="centerCrop"
-                android:layout_margin="10dp"
-                tools:srcCompat="@tools:sample/avatars"
+                app:cardCornerRadius="6dp"
                 android:layout_alignParentBottom="true"
-                android:layout_toEndOf="@+id/wallpaper_img_2"
-                android:contentDescription="image" />
+                android:layout_toEndOf="@+id/card_img2"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginEnd="15dp"
+                app:cardElevation="8dp">
+
+                <ImageView
+                    android:id="@+id/wallpaper_img_3"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/avatars"
+                    android:layout_toEndOf="@+id/wallpaper_img_2"
+                    android:contentDescription="@string/preview_image" />
+            </com.google.android.material.card.MaterialCardView>
 
             <com.rex50.mausam.utils.custom_text_views.MediumTextView
                 android:id="@+id/txt_collection_desc"
@@ -72,12 +107,13 @@
                 android:layout_height="wrap_content"
                 android:text="Iranians, around the world, men and women and children."
                 android:textSize="10sp"
-                android:textColor="@color/white_to_black"
+                android:maxLines="3"
+                android:textColor="@color/white"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginBottom="15dp"
-                android:layout_above="@+id/wallpaper_img_1"/>
+                android:layout_above="@+id/card_img1"/>
 
             <com.rex50.mausam.utils.custom_text_views.BoldTextView
                 android:id="@+id/txt_collection_title"
@@ -85,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:text="Iranians"
                 android:textSize="16sp"
-                android:textColor="@color/white_to_black"
+                android:textColor="@color/white"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_above="@+id/txt_collection_desc"/>

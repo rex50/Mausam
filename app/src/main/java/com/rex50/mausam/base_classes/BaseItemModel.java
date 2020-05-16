@@ -1,4 +1,4 @@
-package com.rex50.mausam.baseClasses;
+package com.rex50.mausam.base_classes;
 
 import android.os.Parcelable;
 

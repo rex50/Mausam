@@ -4,6 +4,7 @@
     <color name="colorPrimary">@color/black</color>
     <color name="colorPrimaryDark">@color/white</color>
     <color name="colorAccent">#4489F4</color>
+    <color name="colorAccentTransparent">#504489F4</color>
 
 <!--    Other colors-->
     <color name="blueBerry">#4286F4</color>
@@ -28,6 +29,8 @@
     <!--General-->
     <color name="black_to_white">@color/black</color>
     <color name="white_to_black">@color/white</color>
+    <color name="white_to_accent">@color/white</color>
+    <color name="accent_to_oliveBlack">@color/colorAccent</color>
 
     <!--Text-->
     <color name="titleColor">@color/black</color>

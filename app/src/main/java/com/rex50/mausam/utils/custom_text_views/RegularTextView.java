@@ -30,8 +30,14 @@ public class RegularTextView extends AppCompatTextView {
     }
 
     private void setCustomTypeface(Context context){
-        Typeface face=Typeface.createFromAsset(context.getAssets(), "fonts/Asap-Regular.ttf");
+        Typeface face=Typeface.createFromAsset(context.getAssets(), getFontPath());
         this.setTypeface(face);
+    }
+
+    private String getFontPath(){
+//        return "fonts/Asap-Regular.ttf";
+        return "fonts/Poppins-Regular.ttf";
+//        return "fonts/Roboto-Regular.ttf";
     }
 
 }

@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/userLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:clickable="true"
+    android:focusable="true"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="wrap_content"
-        android:layout_height="150dp"
-        app:cardCornerRadius="75dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:cardCornerRadius="60dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
         android:layout_marginStart="10dp"
@@ -19,11 +23,17 @@
 
         <ImageView
             android:id="@+id/user_img"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/avatars"
-            android:contentDescription="image" />
+            android:contentDescription="@string/photographer_s_image" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/accent_to_transparent_overlay"
+            android:visibility="gone"/>
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -32,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="User name"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textColor="@color/black_to_white"
         android:layout_gravity="center"
         android:gravity="center"/>

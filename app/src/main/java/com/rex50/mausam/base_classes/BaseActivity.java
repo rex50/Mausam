@@ -1,4 +1,4 @@
-package com.rex50.mausam.baseClasses;
+package com.rex50.mausam.base_classes;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.rex50.mausam.recievers.NetworkChangeReceiver;
 import com.rex50.mausam.utils.GPSRequestHelper;
 import com.rex50.mausam.utils.MaterialSnackBar;
-import com.rex50.mausam.utils.MausamSharedPrefs;
+import com.rex50.mausam.storage.MausamSharedPrefs;
 import com.rex50.mausam.utils.Utils;
 
 public abstract class BaseActivity extends AppCompatActivity {

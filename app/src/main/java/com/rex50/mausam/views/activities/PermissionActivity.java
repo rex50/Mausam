@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import com.rex50.mausam.R;
 import com.rex50.mausam.utils.MaterialSnackBar;
-import com.rex50.mausam.baseClasses.BaseActivity;
+import com.rex50.mausam.base_classes.BaseActivity;
 
 public class PermissionActivity extends BaseActivity implements View.OnClickListener {
 

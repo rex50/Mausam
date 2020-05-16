@@ -91,4 +91,11 @@ public class Utils {
             return "null";
     }
 
+    public static String getTextOrEmpty(String string){
+        if(optString(string).equalsIgnoreCase("null")){
+            return "";
+        }
+        return string;
+    }
+
 }

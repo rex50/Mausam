@@ -15,7 +15,6 @@
         android:layout_margin="5dp"
         android:padding="10dp"
         android:drawableLeft="@drawable/tag_dot"
-        android:drawableTint="@color/white"
         android:textColor="@color/more_button_text"
         android:backgroundTint="@color/more_button"
         app:layout_constraintEnd_toEndOf="parent"

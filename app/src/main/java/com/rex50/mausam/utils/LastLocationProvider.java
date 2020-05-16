@@ -4,6 +4,8 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 
+import com.rex50.mausam.storage.MausamSharedPrefs;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

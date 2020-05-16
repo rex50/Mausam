@@ -30,12 +30,62 @@
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
     <string name="search_city_error">%s place weather information not found, you can skip this by the way.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="skip_btn_text">Skip</string>
     <string name="choose_search_provider_title">Choose search provider</string>
     <string name="unsplash_txt">Unsplash</string>
     <string name="pixabay_txt">Pixabay</string>
     <string name="search_box_hint">Search here</string>
     <string name="last_updated_time">Last updated %s mins ago</string>
+    <string name="preview_image">Preview Image</string>
+    <string name="photographer_s_image">photographer\'s image</string>
+    <string name="color_name">Color name</string>
+    <string name="mausam_logo">Mausam Logo</string>
+    <string name="settings_button">Settings button</string>
+    <string name="set_as_wallpaper">Set as wallpaper</string>
+    <string name="download_image">Download image</string>
+    <string name="add_to_favourites">Add to favourites</string>
+    <string name="share">Share</string>
+    <string name="more_details">More Details</string>
+
+
+    <!--Colors array-->
+    <string-array name="colors">
+        <item>Red_#FF0000</item>
+        <item>Orange_#FF7F00</item>
+        <item>Yellow_#FFFF00</item>
+        <item>Green_#00FF00</item>
+        <item>Turquoise_#30D5C8</item>
+        <item>Blue_#0000FF</item>
+        <item>Lilac_#C8A2C8</item>
+        <item>Pink_#FFC0CB</item>
+        <item>White_#FFFFFF</item>
+        <item>Gray_#808080</item>
+        <item>Black_#000000</item>
+        <item>Brown_#964B00</item>
+    </string-array>
+
+    <!--    Categories array-->
+    <string-array name="categories">
+        <item>Fashion</item>
+        <item>Nature</item>
+        <item>Backgrounds</item>
+        <item>Science</item>
+        <item>Education</item>
+        <item>People</item>
+        <item>Feelings</item>
+        <item>Religion</item>
+        <item>Health</item>
+        <item>Places</item>
+        <item>Animals</item>
+        <item>Industry</item>
+        <item>Food</item>
+        <item>Computer</item>
+        <item>Sports</item>
+        <item>Transportation</item>
+        <item>Travel</item>
+        <item>Buildings</item>
+        <item>Business</item>
+        <item>Music</item>
+    </string-array>
+
 </resources>

@@ -17,10 +17,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rex50.mausam.R;
+import com.rex50.mausam.interfaces.GetUnsplashCollectionsAndTagsListener;
+import com.rex50.mausam.interfaces.GetUnsplashPhotosAndUsersListener;
 import com.rex50.mausam.interfaces.GetUnsplashPhotosListener;
 import com.rex50.mausam.interfaces.GetUnsplashSearchedPhotosListener;
 import com.rex50.mausam.interfaces.WeatherResultListener;
+import com.rex50.mausam.model_classes.unsplash.collection.Collections;
+import com.rex50.mausam.model_classes.unsplash.collection.Tag;
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos;
+import com.rex50.mausam.model_classes.unsplash.photos.User;
 import com.rex50.mausam.model_classes.unsplash.searched_photos.SearchedPhotos;
 import com.rex50.mausam.model_classes.utils.AllContentModel;
 import com.rex50.mausam.model_classes.utils.GenericModelFactory;
@@ -33,6 +38,7 @@ import com.rex50.mausam.views.adapters.WeatherWallpapersAdapter;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.rex50.mausam.utils.Constants.AvailableLayouts.BROWSE_BY_CATEGORIES;
@@ -74,6 +80,8 @@ public class HomeFragment extends Fragment {
     private List<String> sequenceOfLayout;
 
     private RecyclerView mainContentRecycler;
+
+    private HomeAdapter adapter;
 
     // TODO: Rename and change types of parameters
     private WeatherModelClass mWeatherDetails;
@@ -139,14 +147,10 @@ public class HomeFragment extends Fragment {
         weatherDetailsHolder = view.findViewById(R.id.weather_details_holder);
         extraWeatherDetailsHolder = view.findViewById(R.id.weather_extra_info_holder);
         mainContentRecycler = view.findViewById(R.id.main_content);
-        allData = new AllContentModel();
-        sequenceOfLayout = new ArrayList<>();
-        sequenceOfLayout.add(WEATHER_BASED_WALLPAPERS);
-        sequenceOfLayout.add(LOCATION_BASED_WALLPAPERS);
-        sequenceOfLayout.add(TIME_BASED_WALLPAPERS);
-        sequenceOfLayout.add(POPULAR_WALLPAPERS);
 
-        prepareHomeRecycler(sequenceOfLayout);
+        allData = new AllContentModel(getContext());
+
+        prepareHomeRecycler(getSequenceOfLayout());
 
 
         //weatherWallpaperRecycler = view.findViewById(R.id.weather_wallpapers_recycler);
@@ -241,12 +245,15 @@ public class HomeFragment extends Fragment {
             }
         });*/
 
+        //TODO: remove below line once location module is attached
+        location = "Surat";
+
         try {
             //for celsius = kelvin - 273.15
 //        Double temp = mWeatherDetails.getMain().getTemp() - 273.15;
             //txtWeather.setText(getFormattedString(convertToCelsius(mWeatherDetails.getMain().getTemp())));
 //        txtWeatherMsg.setText(mWeatherDetails.getWeather().get(0).getDescription());
-            if (!location.isEmpty()) {
+            if (!location.isEmpty() && !location.equalsIgnoreCase("null")) {
                 txtLocation.setText(location);
             } else {
                 txtLocation.setText(mWeatherDetails.getName());
@@ -287,12 +294,17 @@ public class HomeFragment extends Fragment {
         }));*/
 
         btnWeatherMoreDetails.setOnClickListener(v -> {
-            if(extraWeatherDetailsHolder.getVisibility() == View.VISIBLE){
+            /*if(extraWeatherDetailsHolder.getVisibility() == View.VISIBLE){
                 extraWeatherDetailsHolder.setVisibility(View.GONE);
                 btnWeatherMoreDetails.setText("Show more details");
             }else {
                 extraWeatherDetailsHolder.setVisibility(View.VISIBLE);
                 btnWeatherMoreDetails.setText("Show less details");
+            }*/
+            if(extraWeatherDetailsHolder.getVisibility() != View.VISIBLE){
+                extraWeatherDetailsHolder.setVisibility(View.VISIBLE);
+                //btnWeatherMoreDetails.setText("Show less details");
+                btnWeatherMoreDetails.setVisibility(View.GONE);
             }
         });
 
@@ -305,25 +317,44 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private List<String> getSequenceOfLayout() {
+        if(sequenceOfLayout == null)
+            sequenceOfLayout = new ArrayList<>();
+        else
+            sequenceOfLayout.clear();
+        sequenceOfLayout.add(WEATHER_BASED_WALLPAPERS);
+        sequenceOfLayout.add(LOCATION_BASED_WALLPAPERS);
+        sequenceOfLayout.add(TIME_BASED_WALLPAPERS);
+        sequenceOfLayout.add(POPULAR_WALLPAPERS);
+        sequenceOfLayout.add(POPULAR_PHOTOGRAPHERS);
+        sequenceOfLayout.add(FEATURED_COLLECTIONS);
+        sequenceOfLayout.add(POPULAR_TAGS);
+        sequenceOfLayout.add(BROWSE_BY_COLORS);
+        sequenceOfLayout.add(BROWSE_BY_CATEGORIES);
+        sequenceOfLayout.add(FAVOURITE_PHOTOGRAPHER_IMAGES);
+        return sequenceOfLayout;
+    }
+
     private void prepareHomeRecycler(List<String> sequenceOfLayout){
 
         UnsplashHelper unsplashHelper = new UnsplashHelper(getContext());
 
-        HomeAdapter adapter = new HomeAdapter(getContext(), allData);
+        adapter = new HomeAdapter(getContext(), allData);
         mainContentRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         mainContentRecycler.setHasFixedSize(true);
         mainContentRecycler.setAdapter(adapter);
         //TODO: fetch and add data to list
 
+        allData.setSequenceOfLayouts(sequenceOfLayout);
+        allData.setAdapter(adapter);
+        allData.setOnClickListener();
+
         if(sequenceOfLayout.contains(WEATHER_BASED_WALLPAPERS)){
             unsplashHelper.getSearchedPhotos("Summer", 1, 20, new GetUnsplashSearchedPhotosListener() {
                 @Override
                 public void onSuccess(SearchedPhotos photos) {
-                    Integer pos = addSequentially(WEATHER_BASED_WALLPAPERS,
+                    allData.addSequentially(WEATHER_BASED_WALLPAPERS,
                             GenericModelFactory.getGeneralTypeObject(WEATHER_BASED_WALLPAPERS, POWERED_BY_UNSPLASH, false, photos.getResults()));
-                    if(pos != null){
-                        adapter.notifyItemInserted(pos);
-                    }
                 }
 
                 @Override
@@ -337,11 +368,8 @@ public class HomeFragment extends Fragment {
             unsplashHelper.getSearchedPhotos("Surat", 1, 20, new GetUnsplashSearchedPhotosListener() {
                 @Override
                 public void onSuccess(SearchedPhotos photos) {
-                    Integer pos = addSequentially(LOCATION_BASED_WALLPAPERS,
+                    allData.addSequentially(LOCATION_BASED_WALLPAPERS,
                             GenericModelFactory.getGeneralTypeObject(LOCATION_BASED_WALLPAPERS, POWERED_BY_UNSPLASH, false, photos.getResults()));
-                    if(pos != null){
-                        adapter.notifyItemInserted(pos);
-                    }
                 }
 
                 @Override
@@ -355,11 +383,8 @@ public class HomeFragment extends Fragment {
             unsplashHelper.getSearchedPhotos("Night", 1, 20, new GetUnsplashSearchedPhotosListener() {
                 @Override
                 public void onSuccess(SearchedPhotos photos) {
-                    Integer pos = addSequentially(TIME_BASED_WALLPAPERS,
+                    allData.addSequentially(TIME_BASED_WALLPAPERS,
                             GenericModelFactory.getGeneralTypeObject(TIME_BASED_WALLPAPERS, POWERED_BY_UNSPLASH, false, photos.getResults()));
-                    if(pos != null){
-                        adapter.notifyItemInserted(pos);
-                    }
                 }
 
                 @Override
@@ -370,13 +395,36 @@ public class HomeFragment extends Fragment {
         }
 
         if(sequenceOfLayout.contains(POPULAR_WALLPAPERS)){
-            unsplashHelper.getPhotos(UnsplashHelper.ORDER_BY_DEFAULT, new GetUnsplashPhotosListener() {
+            unsplashHelper.getPhotosAndUsers(UnsplashHelper.ORDER_BY_DEFAULT, new GetUnsplashPhotosAndUsersListener() {
                 @Override
-                public void onSuccess(List<UnsplashPhotos> photos) {
-                    Integer pos = addSequentially(TIME_BASED_WALLPAPERS,
-                            GenericModelFactory.getGeneralTypeObject(POPULAR_WALLPAPERS, POWERED_BY_UNSPLASH,false, photos));
-                    if(pos != null){
-                        adapter.notifyItemInserted(pos);
+                public void onSuccess(List<UnsplashPhotos> photos, List<User> userList) {
+                    allData.addSequentially(POPULAR_WALLPAPERS,
+                            GenericModelFactory.getGeneralTypeObject(POPULAR_WALLPAPERS, POWERED_BY_UNSPLASH,true, photos));
+
+                    if(sequenceOfLayout.contains(POPULAR_PHOTOGRAPHERS)){
+                        allData.addSequentially(POPULAR_PHOTOGRAPHERS,
+                                GenericModelFactory.getUserTypeObject(POPULAR_PHOTOGRAPHERS, POWERED_BY_UNSPLASH,false, userList));
+                    }
+
+                }
+
+                @Override
+                public void onFailed(JSONArray errors) {
+                    Log.e(TAG, "onFailed: " + errors);
+                }
+            });
+        }
+
+        if(sequenceOfLayout.contains(FEATURED_COLLECTIONS)){
+            unsplashHelper.getCollectionsAndTags(1, 10, new GetUnsplashCollectionsAndTagsListener() {
+                @Override
+                public void onSuccess(List<Collections> collection, List<Tag> tagsList) {
+                    allData.addSequentially(FEATURED_COLLECTIONS,
+                            GenericModelFactory.getCollectionTypeObject(FEATURED_COLLECTIONS, POWERED_BY_UNSPLASH,false, collection));
+
+                    if(sequenceOfLayout.contains(POPULAR_TAGS)){
+                        allData.addSequentially(POPULAR_TAGS,
+                                GenericModelFactory.getTagTypeObject(POPULAR_TAGS, POWERED_BY_UNSPLASH,false, tagsList, true));
                     }
                 }
 
@@ -387,52 +435,37 @@ public class HomeFragment extends Fragment {
             });
         }
 
-        if(sequenceOfLayout.contains(POPULAR_PHOTOGRAPHERS)){
-            //TODO: DO API call
-        }
-
-        if(sequenceOfLayout.contains(POPULAR_TAGS)){
-            //TODO: DO API call
-        }
-
-        if(sequenceOfLayout.contains(FEATURED_COLLECTIONS)){
-            //TODO: DO API call
-        }
-
         if(sequenceOfLayout.contains(BROWSE_BY_CATEGORIES)){
-            //TODO: DO API call
+            if(getContext() != null){
+                List<String> categories = Arrays.asList(getContext().getResources().getStringArray(R.array.categories));
+                allData.addSequentially(BROWSE_BY_CATEGORIES, GenericModelFactory.getCategoryTypeObject(BROWSE_BY_CATEGORIES,
+                        POWERED_BY_UNSPLASH, false, categories, true));
+            }
         }
 
         if(sequenceOfLayout.contains(BROWSE_BY_COLORS)){
-            //TODO: DO API call
+            if(getContext() != null) {
+                List<String> colorsList = Arrays.asList(getContext().getResources().getStringArray(R.array.colors));
+                allData.addSequentially(BROWSE_BY_COLORS, GenericModelFactory.getColorTypeObject(BROWSE_BY_COLORS, POWERED_BY_UNSPLASH,
+                        false, GenericModelFactory.ColorTypeModel.createModelFromStringList(colorsList), true));
+            }
         }
 
         if(sequenceOfLayout.contains(FAVOURITE_PHOTOGRAPHER_IMAGES)){
-            //TODO: DO API call
-        }
-
-    }
-
-    private synchronized Integer addSequentially(String type, GenericModelFactory model){
-        try {
-            if(allData.size() == 0) {
-                allData.addModel(type, model);
-                return 0;
-            }
-            int pos = sequenceOfLayout.indexOf(type);
-            for (int i = 0; i < allData.size(); i++) {
-                int addedPos = sequenceOfLayout.indexOf(allData.getType(i));
-                if(addedPos > pos){
-                    allData.addModel(pos, type, model);
-                    return i;
+            unsplashHelper.getUserPhotos("rpnickson", new GetUnsplashPhotosListener() {
+                @Override
+                public void onSuccess(List<UnsplashPhotos> photos) {
+                    allData.addSequentially(FAVOURITE_PHOTOGRAPHER_IMAGES, GenericModelFactory.getFavouritePhotographerTypeObject(
+                            FAVOURITE_PHOTOGRAPHER_IMAGES, POWERED_BY_UNSPLASH, photos));
                 }
-            }
-            allData.addModel(type, model);
-            return allData.size() - 1;
-        }catch (Exception e){
-            Log.e(TAG, "addSequentially: ", e);
-            return null;
+
+                @Override
+                public void onFailed(JSONArray errors) {
+                    Log.e(TAG, "onFailed: " + errors);
+                }
+            });
         }
+
     }
 
     private Double convertToCelsius(Double kelvin){

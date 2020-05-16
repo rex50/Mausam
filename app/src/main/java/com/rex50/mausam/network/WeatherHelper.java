@@ -6,7 +6,7 @@ import android.location.Location;
 import com.rex50.mausam.interfaces.LocationResultListener;
 import com.rex50.mausam.interfaces.WeatherResultListener;
 import com.rex50.mausam.utils.DataParser;
-import com.rex50.mausam.utils.MausamSharedPrefs;
+import com.rex50.mausam.storage.MausamSharedPrefs;
 
 import org.joda.time.DateTime;
 import org.json.JSONObject;

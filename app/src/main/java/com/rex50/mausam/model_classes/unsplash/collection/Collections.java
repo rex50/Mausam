@@ -7,7 +7,7 @@ import com.rex50.mausam.model_classes.unsplash.photos.User;
 
 import java.util.List;
 
-public class Collection {
+public class Collections {
 
     @SerializedName("id")
     @Expose

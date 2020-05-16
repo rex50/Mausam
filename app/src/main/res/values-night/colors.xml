@@ -29,6 +29,8 @@
     <!--General-->
     <color name="black_to_white">@color/white</color>
     <color name="white_to_black">@color/black</color>
+    <color name="white_to_accent">@color/colorAccent</color>
+    <color name="accent_to_oliveBlack">@color/oliveBlack</color>
 
     <!--Text-->
     <color name="titleColor">@color/white</color>
@@ -39,7 +41,7 @@
     <color name="weather_card_detail_text_color">@color/white</color>
 
     <!--Button-->
-    <color name="more_button">@color/colorAccent</color>
+    <color name="more_button">@color/taupeGray</color>
 
 
 <!--    Old colors-->

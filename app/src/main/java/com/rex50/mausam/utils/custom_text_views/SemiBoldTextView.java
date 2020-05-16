@@ -30,8 +30,14 @@ public class SemiBoldTextView extends AppCompatTextView {
     }
 
     private void setCustomTypeface(Context context){
-        Typeface face=Typeface.createFromAsset(context.getAssets(), "fonts/Asap-SemiBold.ttf");
+        Typeface face=Typeface.createFromAsset(context.getAssets(), getFontPath());
         this.setTypeface(face);
+    }
+
+    private String getFontPath(){
+//        return "fonts/Asap-SemiBold.ttf";
+        return "fonts/Poppins-SemiBold.ttf";
+//        return "fonts/Roboto-Bold.ttf";
     }
 
 }

@@ -16,22 +16,22 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 import com.rex50.mausam.R;
-import com.rex50.mausam.baseClasses.BaseActivity;
+import com.rex50.mausam.base_classes.BaseActivity;
 import com.rex50.mausam.interfaces.LocationResultListener;
 import com.rex50.mausam.interfaces.WeatherResultListener;
 import com.rex50.mausam.model_classes.weather.WeatherModelClass;
 import com.rex50.mausam.network.APIManager;
 import com.rex50.mausam.network.MausamLocationManager;
+import com.rex50.mausam.storage.MausamSharedPrefs;
+import com.rex50.mausam.utils.CustomViewPager;
 import com.rex50.mausam.utils.DataParser;
 import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.LastLocationProvider;
 import com.rex50.mausam.utils.MaterialSnackBar;
-import com.rex50.mausam.utils.MausamSharedPrefs;
 import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
 import com.rex50.mausam.views.fragments.HomeFragment;
 import com.rex50.mausam.views.fragments.SearchFragment;
@@ -178,11 +178,12 @@ public class MainActivity extends BaseActivity implements
 
     private void init() {
         lastLocationProvider = new LastLocationProvider(this);
-        ViewPager viewPager = findViewById(R.id.testViewpager);
+        CustomViewPager viewPager = findViewById(R.id.homeViewPager);
+        viewPager.setPagingEnabled(false);
         List<Fragment> mFragmentList = new ArrayList<>();
         mFragmentList.add(new HomeFragment());
         mFragmentList.add(new SearchFragment());
-        mFragmentList.add(new SearchFragment());
+        //mFragmentList.add(new SearchFragment());
 
         FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             @Override
@@ -201,7 +202,7 @@ public class MainActivity extends BaseActivity implements
         tabFlashyAnimator = new FlashyTabBar(tabLayout);
         tabFlashyAnimator.addTabItem("Home", R.drawable.ic_logo);
         tabFlashyAnimator.addTabItem("Search", R.drawable.ic_search);
-        tabFlashyAnimator.addTabItem("Favourites", R.drawable.ic_search);
+        //tabFlashyAnimator.addTabItem("Favourites", R.drawable.ic_search);
         tabFlashyAnimator.highLightTab(0);
         viewPager.addOnPageChangeListener(tabFlashyAnimator);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

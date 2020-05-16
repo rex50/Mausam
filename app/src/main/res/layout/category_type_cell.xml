@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:cardCornerRadius="75dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:foreground="?android:selectableItemBackground"
+        android:requiresFadingEdge="vertical"
+        app:cardElevation="8dp">
+
+        <View
+            android:id="@+id/viewColor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/more_button"/>
+
+        <View
+            android:id="@+id/background_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/accent_to_transparent_overlay"
+            android:rotation="90"
+            android:alpha="0.5"
+            android:visibility="visible"/>
+
+        <com.rex50.mausam.utils.custom_text_views.BoldTextView
+            android:id="@+id/txt_category_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/color_name"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

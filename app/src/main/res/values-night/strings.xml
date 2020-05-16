@@ -13,6 +13,4 @@
     <string name="no_permission_error_msg">Location permission is needed to show latest weather details. Please go to settings and allow Location Permission.</string>
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

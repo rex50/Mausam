@@ -11,8 +11,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.rex50.mausam.R;
 import com.rex50.mausam.model_classes.weather.WeatherModelClass;
 import com.rex50.mausam.utils.MaterialSnackBar;
-import com.rex50.mausam.utils.MausamSharedPrefs;
-import com.rex50.mausam.baseClasses.BaseActivity;
+import com.rex50.mausam.storage.MausamSharedPrefs;
+import com.rex50.mausam.base_classes.BaseActivity;
 import com.rex50.mausam.views.fragments.SearchFragment;
 
 public class SearchCityActivity extends BaseActivity implements SearchFragment.OnFragmentInteractionListener{

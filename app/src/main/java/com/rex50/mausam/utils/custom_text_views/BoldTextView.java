@@ -30,8 +30,14 @@ public class BoldTextView extends AppCompatTextView {
     }
 
     private void setCustomTypeface(Context context) {
-        Typeface face= Typeface.createFromAsset(context.getAssets(), "fonts/Asap-Bold.ttf");
+        Typeface face= Typeface.createFromAsset(context.getAssets(), getFontPath());
         this.setTypeface(face, Typeface.BOLD);
+    }
+
+    private String getFontPath(){
+//        return "fonts/Asap-Bold.ttf";
+        return "fonts/Poppins-Bold.ttf";
+//        return "fonts/Roboto-Black.ttf";
     }
 
 }

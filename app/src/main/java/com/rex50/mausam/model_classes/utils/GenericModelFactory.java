@@ -1,6 +1,8 @@
 package com.rex50.mausam.model_classes.utils;
 
 import com.rex50.mausam.R;
+import com.rex50.mausam.model_classes.unsplash.collection.Collections;
+import com.rex50.mausam.model_classes.unsplash.collection.Tag;
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos;
 import com.rex50.mausam.model_classes.unsplash.photos.User;
 
@@ -15,11 +17,13 @@ public class GenericModelFactory {
 
     private UserTypeModel userTypeModel;
 
-    private TextTypeModel textTypeModel;
+    private TagTypeModel textTypeModel;
 
     private ColorTypeModel colorTypeModel;
 
     private CollectionTypeModel collectionTypeModel;
+
+    private CategoryTypeModel categoryTypeModel;
 
     private FavouritePhotographerTypeModel favouritePhotographerTypeModel;
 
@@ -61,36 +65,47 @@ public class GenericModelFactory {
         return generalTypeModel;
     }
 
-    public static GenericModelFactory getCollectionTypeObject(String title, String desc, boolean hasMore, List<UnsplashPhotos> photosList){
+    public static GenericModelFactory getCollectionTypeObject(String title, String desc, boolean hasMore, List<Collections> collectionsList){
         GenericModelFactory generalTypeModel = new GenericModelFactory();
         generalTypeModel.setTitle(title);
         generalTypeModel.setDesc(desc);
         generalTypeModel.setHasMore(hasMore);
         generalTypeModel.setItemType(COLLECTION_TYPE);
         generalTypeModel.setItemLayout(R.layout.collection_type_cell);
-        generalTypeModel.setCollectionTypeModel(new CollectionTypeModel(photosList));
+        generalTypeModel.setCollectionTypeModel(new CollectionTypeModel(collectionsList));
         return generalTypeModel;
     }
 
-    public static GenericModelFactory getTextTypeObject(String title, String desc, boolean hasMore, List<String> tagsList){
+    public static GenericModelFactory getTagTypeObject(String title, String desc, boolean hasMore, List<Tag> tagsList, boolean shuffleList){
         GenericModelFactory textTypeModel = new GenericModelFactory();
         textTypeModel.setTitle(title);
         textTypeModel.setDesc(desc);
         textTypeModel.setHasMore(hasMore);
-        textTypeModel.setItemType(TEXT_TYPE);
-        textTypeModel.setItemLayout(R.layout.text_type_cell);
-        textTypeModel.setTextTypeModel(new TextTypeModel(tagsList));
+        textTypeModel.setItemType(TAG_TYPE);
+        textTypeModel.setItemLayout(R.layout.tag_type_cell);
+        textTypeModel.setTagTypeModel(new TagTypeModel(tagsList, shuffleList));
         return textTypeModel;
     }
 
-    public static GenericModelFactory getColorTypeObject(String title, String desc, boolean hasMore, List<ColorModel> colorsList){
+    public static GenericModelFactory getColorTypeObject(String title, String desc, boolean hasMore, List<ColorModel> colorsList, boolean shuffleList){
         GenericModelFactory textTypeModel = new GenericModelFactory();
         textTypeModel.setTitle(title);
         textTypeModel.setDesc(desc);
         textTypeModel.setHasMore(hasMore);
         textTypeModel.setItemType(COLOR_TYPE);
         textTypeModel.setItemLayout(R.layout.color_type_cell);
-        textTypeModel.setColorTypeModel(new ColorTypeModel(colorsList));
+        textTypeModel.setColorTypeModel(new ColorTypeModel(colorsList, shuffleList));
+        return textTypeModel;
+    }
+
+    public static GenericModelFactory getCategoryTypeObject(String title, String desc, boolean hasMore, List<String> categories, boolean shuffleList){
+        GenericModelFactory textTypeModel = new GenericModelFactory();
+        textTypeModel.setTitle(title);
+        textTypeModel.setDesc(desc);
+        textTypeModel.setHasMore(hasMore);
+        textTypeModel.setItemType(CATEGORY_TYPE);
+        textTypeModel.setItemLayout(R.layout.category_type_cell);
+        textTypeModel.setCategoryTypeModel(new CategoryTypeModel(categories, shuffleList));
         return textTypeModel;
     }
 
@@ -98,9 +113,10 @@ public class GenericModelFactory {
         GenericModelFactory favouriteModel = new GenericModelFactory();
         favouriteModel.setTitle(title);
         favouriteModel.setDesc(desc);
-        favouriteModel.setItemType(GENERAL_TYPE);
-        favouriteModel.setViewType(FAVOURITE_PHOTOGRAPHER_PHOTOS_TYPE);
-        favouriteModel.setItemLayout(R.layout.general_type_cell);
+        favouriteModel.setHasMore(false);
+        favouriteModel.setItemType(FAV_PHOTOGRAPHER_PHOTOS_TYPE);
+        favouriteModel.setViewType(FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE);
+        favouriteModel.setItemLayout(R.layout.fav_photograher_photo_type_cell);
         favouriteModel.setFavouritePhotographerTypeModel(new FavouritePhotographerTypeModel(photosList));
         return favouriteModel;
     }
@@ -156,24 +172,21 @@ public class GenericModelFactory {
 
     public static class CollectionTypeModel{
 
-        //TODO : use Collection instead of UnsplashPhotos later
-
-        private List<UnsplashPhotos> photosList = new ArrayList<>();
+        private List<Collections> collections = new ArrayList<>();
 
         private CollectionTypeModel(){}
 
-        CollectionTypeModel(List<UnsplashPhotos> photosList){
-            setPhotosList(photosList);
+        CollectionTypeModel(List<Collections> collectionsList){
+            setCollections(collectionsList);
         }
 
-        private void setPhotosList(List<UnsplashPhotos> photosList) {
-            this.photosList = photosList;
+        public List<Collections> getCollections() {
+            return collections;
         }
 
-        public List<UnsplashPhotos> getPhotosList() {
-            return photosList;
+        public void setCollections(List<Collections> collections) {
+            this.collections = collections;
         }
-
     }
 
     public static class UserTypeModel{
@@ -196,22 +209,48 @@ public class GenericModelFactory {
 
     }
 
-    public static class TextTypeModel {
+    public static class TagTypeModel {
 
-        private List<String> tagsList = new ArrayList<>();
+        private List<Tag> tagsList = new ArrayList<>();
 
-        private TextTypeModel(){}
+        private TagTypeModel(){}
 
-        private TextTypeModel(List<String> usersList){
-            setTagsList(usersList);
+        private TagTypeModel(List<Tag> tagsList, boolean shuffle){
+            if(shuffle){
+                java.util.Collections.shuffle(tagsList);
+            }
+            setTagsList(tagsList);
         }
 
-        private void setTagsList(List<String> tags) {
+        private void setTagsList(List<Tag> tags) {
             this.tagsList = tags;
         }
 
-        public List<String> getTagsList() {
+        public List<Tag> getTagsList() {
             return tagsList;
+        }
+
+    }
+
+    public static class CategoryTypeModel {
+
+        private List<String> categories = new ArrayList<>();
+
+        private CategoryTypeModel(){}
+
+        private CategoryTypeModel(List<String> categories, boolean shuffle){
+            if(shuffle){
+                java.util.Collections.shuffle(categories);
+            }
+            setCategories(categories);
+        }
+
+        private void setCategories(List<String> categories) {
+            this.categories = categories;
+        }
+
+        public List<String> getCategories() {
+            return categories;
         }
 
     }
@@ -222,8 +261,26 @@ public class GenericModelFactory {
 
         private ColorTypeModel(){}
 
-        private ColorTypeModel(List<ColorModel> usersList){
-            setColorsList(usersList);
+        private ColorTypeModel(List<ColorModel> colorsList, boolean shuffle){
+            if(shuffle){
+                java.util.Collections.shuffle(colorsList);
+            }
+            setColorsList(colorsList);
+        }
+
+        public static List<ColorModel> createModelFromStringList(List<String> colors){
+            List<ColorModel> list = new ArrayList<>();
+
+            for(String color : colors){
+                try {
+                    String[] arr = color.split("_");
+                    list.add(new ColorModel(arr[0], arr[1]));
+                }catch (NullPointerException e){
+                    throw new IllegalArgumentException("Invalid color string \"" + color + "\" : Correct format is \"[@colorName]_#[@colorCode]");
+                }
+            }
+
+            return list;
         }
 
         private void setColorsList(List<ColorModel> colorsList) {
@@ -236,18 +293,18 @@ public class GenericModelFactory {
 
     }
 
-    public class ColorModel{
+    public static class ColorModel{
         String colorName;
-        int colorCode;
+        String colorCode;
 
         private ColorModel(){}
 
-        public ColorModel(String colorName, int colorCode){
+        public ColorModel(String colorName, String colorCode){
             setColorName(colorName);
             setColorCode(colorCode);
         }
 
-        private void setColorCode(int colorCode) {
+        private void setColorCode(String colorCode) {
             this.colorCode = colorCode;
         }
 
@@ -255,7 +312,7 @@ public class GenericModelFactory {
             this.colorName = colorName;
         }
 
-        public int getColorCode() {
+        public String getColorCode() {
             return colorCode;
         }
 
@@ -281,11 +338,11 @@ public class GenericModelFactory {
         return userTypeModel;
     }
 
-    private void setTextTypeModel(TextTypeModel textTypeModel) {
+    private void setTagTypeModel(TagTypeModel textTypeModel) {
         this.textTypeModel = textTypeModel;
     }
 
-    public TextTypeModel getTextTypeModel() {
+    public TagTypeModel getTagTypeModel() {
         return textTypeModel;
     }
 
@@ -303,6 +360,14 @@ public class GenericModelFactory {
 
     public ColorTypeModel getColorTypeModel() {
         return colorTypeModel;
+    }
+
+    private void setCategoryTypeModel(CategoryTypeModel categoryTypeModel) {
+        this.categoryTypeModel = categoryTypeModel;
+    }
+
+    public CategoryTypeModel getCategoryTypeModel(){
+        return categoryTypeModel;
     }
 
     private void setFavouritePhotographerTypeModel(FavouritePhotographerTypeModel favouritePhotographerTypeModel) {

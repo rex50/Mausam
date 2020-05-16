@@ -9,7 +9,7 @@ import android.os.Handler;
 import androidx.core.content.ContextCompat;
 
 import com.rex50.mausam.R;
-import com.rex50.mausam.baseClasses.BaseActivity;
+import com.rex50.mausam.base_classes.BaseActivity;
 
 public class Splash extends BaseActivity {
 

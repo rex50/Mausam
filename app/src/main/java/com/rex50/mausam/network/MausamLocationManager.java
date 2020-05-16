@@ -15,16 +15,10 @@ import android.util.Log;
 import androidx.core.content.ContextCompat;
 
 import com.rex50.mausam.utils.LastLocationProvider;
-import com.rex50.mausam.utils.MausamSharedPrefs;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import static com.rex50.mausam.utils.Utils.*;
 

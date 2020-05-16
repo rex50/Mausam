@@ -1,4 +1,4 @@
-package com.rex50.mausam.utils;
+package com.rex50.mausam.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;

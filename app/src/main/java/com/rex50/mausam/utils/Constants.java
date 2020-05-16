@@ -23,20 +23,26 @@ public class Constants {
 
         public static final int AD_TYPE = 10010;
         public static final int ITEM_CATEGORY_TYPE = R.layout.item_category;
-        public static final int FAVOURITE_PHOTOGRAPHER_PHOTOS_TYPE = R.layout.item_category + 1;
+        public static final int FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE = R.layout.item_category + 1;
         public static final int END_IMAGE = 10012;
 
 
         public static final int GENERAL_TYPE = R.layout.general_type_cell;
+        public static final int FAV_PHOTOGRAPHER_PHOTOS_TYPE = R.layout.fav_photograher_photo_type_cell;
         public static final int COLOR_TYPE = R.layout.color_type_cell;
+        public static final int CATEGORY_TYPE = R.layout.category_type_cell;
         public static final int USER_TYPE = R.layout.user_type_cell;
         public static final int COLLECTION_TYPE = R.layout.collection_type_cell;
-        public static final int TEXT_TYPE = R.layout.text_type_cell;
+        public static final int TAG_TYPE = R.layout.tag_type_cell;
 
     }
 
     public static class Providers {
         public static final String POWERED_BY_UNSPLASH = "Powered by Unsplash";
+    }
+
+    public static class ApiConstants{
+        public static final String UNSPLASH_USERNAME = "unsplash_username";
     }
 
 }

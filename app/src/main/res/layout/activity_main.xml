@@ -30,9 +30,9 @@
             app:tabMode="fixed"
             android:layout_alignParentBottom="true" />
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/testViewpager"
-            android:layout_width="wrap_content"
+        <com.rex50.mausam.utils.CustomViewPager
+            android:id="@+id/homeViewPager"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/tabLayout"/>
 

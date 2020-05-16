@@ -23,7 +23,7 @@ import com.rex50.mausam.model_classes.weather.WeatherModelClass;
 import com.rex50.mausam.network.APIManager;
 import com.rex50.mausam.utils.DataParser;
 import com.rex50.mausam.utils.MaterialSnackBar;
-import com.rex50.mausam.utils.MausamSharedPrefs;
+import com.rex50.mausam.storage.MausamSharedPrefs;
 import com.rex50.mausam.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
