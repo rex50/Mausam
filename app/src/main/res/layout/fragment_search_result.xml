@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/weather_details_holder"
+        android:id="@+id/weatherDetailsHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -23,7 +23,7 @@
             android:gravity="center">
 
             <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                android:id="@+id/txt_current_weather"
+                android:id="@+id/tvCurrentWeather"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="50"
@@ -49,7 +49,7 @@
         </LinearLayout>
 
         <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
-            android:id="@+id/txt_weather_description"
+            android:id="@+id/tvWeatherDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -59,7 +59,7 @@
             android:layout_marginBottom="20dp"/>
 
         <com.rex50.mausam.utils.custom_text_views.BoldTextView
-            android:id="@+id/txt_current_location"
+            android:id="@+id/tvCurrentLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="City"

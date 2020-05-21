@@ -6,13 +6,11 @@ import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModel;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.rex50.mausam.R;
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos;
-import com.rex50.mausam.model_classes.unsplash.photos.Urls;
 import com.rex50.mausam.views.adapters.HomeAdapter;
 import com.stfalcon.imageviewer.StfalconImageViewer;
 import com.thekhaeng.pushdownanim.PushDownAnim;
@@ -20,7 +18,7 @@ import com.thekhaeng.pushdownanim.PushDownAnim;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllContentModel extends ViewModel {
+public class AllContentModel{
 
     private static final String TAG = "AllContentModel";
     private final Context context;
@@ -171,7 +169,7 @@ public class AllContentModel extends ViewModel {
     }
 
     public GenericModelFactory getModel(int pos){
-        return /*models.size() > pos ?*/ models.get(pos) /*: getDummyModel(pos)*/;
+        return models.get(pos);
     }
 
     public String getType(int pos){
@@ -180,61 +178,6 @@ public class AllContentModel extends ViewModel {
 
     public int size(){
         return models == null ? 0 : models.size();
-    }
-
-
-
-    /*private static GenericModelFactory getDummyModel(int type){
-        if(type%6 == 0){
-            return GenericModelFactory.getFavouritePhotographerTypeObject("Favourite Title " + (type + 1), "Description " + (type + 1), getDummyPhotos(10));
-        }else if(type%5 == 0){
-            return GenericModelFactory.getColorTypeObject("Color Title " + (type + 1), "Description " + (type + 1), false, getDummyTags(10));
-        }else if(type%4 == 0){
-            return GenericModelFactory.getTextTypeObject("Tag Title " + (type + 1), "Description " + (type + 1), false, getDummyTags(10));
-        }else if(type%3 == 0){
-            return GenericModelFactory.getGeneralTypeObject("General Title " + (type + 1), "Description " + (type + 1), true, getDummyPhotos(10));
-        }else if(type%2 == 0){
-            return GenericModelFactory.getUserTypeObject("User Title" + (type + 1), "Description " + (type + 1), true, getDummyPhotos(10));
-        }else {
-            return GenericModelFactory.getCollectionTypeObject("Collections Title" + (type + 1), "Description " + (type + 1), true, getDummyPhotos(10));
-        }
-    }*/
-
-    public static List<GenericModelFactory> getDummyModelsList(int size){
-        if(size > 0){
-            List<GenericModelFactory> list = new ArrayList<>();
-            /*for (int i = 0; i < size; i++) {
-                list.add(getDummyModel(i));
-            }*/
-            return list;
-        }else
-            return new ArrayList<>();
-    }
-
-    private static List<UnsplashPhotos> getDummyPhotos(int size){
-        if(size > 0){
-            List<UnsplashPhotos> list = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                UnsplashPhotos photos = new UnsplashPhotos();
-                Urls urls = new Urls();
-                urls.setSmall("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80");
-                photos.setUrls(urls);
-                list.add(photos);
-            }
-            return list;
-        }else
-            return new ArrayList<>();
-    }
-
-    private static List<String> getDummyTags(int size){
-        if(size > 0){
-            List<String> list = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                list.add("Tag "+ i);
-            }
-            return list;
-        }else
-            return new ArrayList<>();
     }
 
 }

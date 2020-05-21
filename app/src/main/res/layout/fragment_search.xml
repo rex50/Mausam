@@ -10,10 +10,11 @@
         android:id="@+id/header"/>
 
     <LinearLayout
-        android:id="@+id/container_search_providers"
+        android:id="@+id/containerSearchProviders"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:visibility="visible"
         android:layout_below="@+id/header">
 
         <com.rex50.mausam.utils.custom_text_views.BoldTextView
@@ -60,7 +61,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/etxt_search"
+        android:id="@+id/etvSearch"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:focusable="true"
@@ -71,27 +72,27 @@
         android:singleLine="true"
         android:textSize="14sp"
         android:hint="@string/search_box_hint"
-        android:background="@drawable/bg_general_edittext"
+        android:background="@drawable/bg_general_edit_text"
         android:layout_margin="10dp"
         android:drawableEnd="@drawable/ic_search"
         android:drawablePadding="5dp"
         android:textColorHint="@color/taupeGray"
-        android:layout_below="@+id/container_search_providers"
+        android:layout_below="@+id/containerSearchProviders"
         android:imeOptions="actionSearch" />
 
     <com.rex50.mausam.utils.custom_text_views.RegularTextView
-        android:id="@+id/txt_error"
+        android:id="@+id/tvSearchError"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@color/satinRed"
         android:layout_margin="10dp"
         android:textAlignment="center"
-        android:layout_below="@+id/etxt_search"
+        android:layout_below="@+id/etvSearch"
         android:textSize="12sp"/>
 
     <Button
-        android:id="@+id/btn_next_search"
+        android:id="@+id/btnNextSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/skip_btn_text"

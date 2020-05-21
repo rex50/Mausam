@@ -61,10 +61,13 @@ public class MainActivity extends BaseActivity implements
     private FragmentManager fragmentManager;
     private LinearLayout locationLoader;
     private CustomErrorPage noInternetErrorPage, noGpsErrorPage, noPermissionErrorPage;
-    private Fragment homeFragment;
+    private HomeFragment homeFragment;
+    private SearchFragment searchFragment;
     private Boolean isGettingWeather = false, isFirstWeatherFetched = false;
     private LastLocationProvider lastLocationProvider;
     private FlashyTabBar tabFlashyAnimator;
+    private FragmentStatePagerAdapter fragmentAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,14 +181,34 @@ public class MainActivity extends BaseActivity implements
 
     private void init() {
         lastLocationProvider = new LastLocationProvider(this);
+        prepareFragments();
+//        tabFlashyAnimator.setBadge(3,2);
+//        tabFlashyAnimator.setBadge(1, 2);
+        locationLoader = findViewById(R.id.location_loader);
+        noGpsErrorPage = new CustomErrorPage(R.drawable.location_permission, getString(R.string.no_gps_error_msg));
+        noInternetErrorPage = new CustomErrorPage(R.drawable.no_internet, getString(R.string.no_internet_error_msg));
+        noPermissionErrorPage = new CustomErrorPage(R.drawable.location_permission, getString(R.string.no_permission_error_msg));
+        fragmentManager = getSupportFragmentManager();
+        toggleLocationLoader(false);
+    }
+
+    private void prepareFragments() {
         CustomViewPager viewPager = findViewById(R.id.homeViewPager);
         viewPager.setPagingEnabled(false);
         List<Fragment> mFragmentList = new ArrayList<>();
-        mFragmentList.add(new HomeFragment());
-        mFragmentList.add(new SearchFragment());
-        //mFragmentList.add(new SearchFragment());
+        homeFragment = new HomeFragment();
+        searchFragment = new SearchFragment();
 
-        FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+        mFragmentList.add(homeFragment);
+        mFragmentList.add(searchFragment);
+        //mFragmentList.add(new SearchFragment());
+        viewPager.setAdapter(getFragmentAdapter(mFragmentList));
+
+        setupTabLayout(viewPager);
+    }
+
+    private FragmentStatePagerAdapter getFragmentAdapter(List<Fragment> mFragmentList) {
+         return new FragmentStatePagerAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             @Override
             public Fragment getItem(int position) {
                 return mFragmentList.get(position);
@@ -196,7 +219,9 @@ public class MainActivity extends BaseActivity implements
                 return mFragmentList.size();
             }
         };
-        viewPager.setAdapter(adapter);
+    }
+
+    private void setupTabLayout(CustomViewPager viewPager) {
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
         tabFlashyAnimator = new FlashyTabBar(tabLayout);
@@ -213,11 +238,16 @@ public class MainActivity extends BaseActivity implements
                 }else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }*/
+                if(tab.getPosition() == 1 && searchFragment != null){
+                    searchFragment.setFocusToSearchBox(true);
+                }
+
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                if(searchFragment != null)
+                    searchFragment.setFocusToSearchBox(false);
             }
 
             @Override
@@ -225,26 +255,20 @@ public class MainActivity extends BaseActivity implements
 
             }
         });
-//        tabFlashyAnimator.setBadge(3,2);
-//        tabFlashyAnimator.setBadge(1, 2);
-        locationLoader = findViewById(R.id.location_loader);
-        noGpsErrorPage = new CustomErrorPage(R.drawable.location_permission, getString(R.string.no_gps_error_msg));
-        noInternetErrorPage = new CustomErrorPage(R.drawable.no_internet, getString(R.string.no_internet_error_msg));
-        noPermissionErrorPage = new CustomErrorPage(R.drawable.location_permission, getString(R.string.no_permission_error_msg));
-        fragmentManager = getSupportFragmentManager();
-        toggleLocationLoader(false);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        tabFlashyAnimator.onStart((TabLayout) findViewById(R.id.tabLayout));
+        if(tabFlashyAnimator != null)
+            tabFlashyAnimator.onStart(findViewById(R.id.tabLayout));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        tabFlashyAnimator.onStop();
+        if(tabFlashyAnimator != null)
+            tabFlashyAnimator.onStop();
     }
 
     private void getWeatherDetails(){
@@ -498,6 +522,11 @@ public class MainActivity extends BaseActivity implements
                 locationLoader.setVisibility(View.GONE);
             }
         });
+    }
+
+    @Override
+    public void startMorePhotosActivity() {
+
     }
 
     /*private void toggleLocationGPSError(boolean state){

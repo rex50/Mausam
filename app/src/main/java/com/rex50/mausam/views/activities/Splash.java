@@ -17,7 +17,7 @@ public class Splash extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //TODO: check for location permission is allowed or not, if not then open location activity else home
-        int SPLASH_TIME_OUT = 1000;
+        int SPLASH_TIME_OUT = 300;
         new Handler().postDelayed(() -> {
             Intent intent;
             if(ContextCompat.checkSelfPermission(Splash.this,

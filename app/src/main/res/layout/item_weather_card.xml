@@ -18,7 +18,7 @@
         android:foreground="?selectableItemBackground">
 
         <LinearLayout
-            android:id="@+id/weather_details_holder"
+            android:id="@+id/weatherDetailsHolder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -27,12 +27,12 @@
             android:animateLayoutChanges="true">
 
             <LinearLayout
-                android:id="@+id/temp_holder"
+                android:id="@+id/tempHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                    android:id="@+id/txt_current_weather"
+                    android:id="@+id/tvCurrentWeather"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="32"
@@ -57,7 +57,7 @@
             </LinearLayout>
 
             <com.rex50.mausam.utils.custom_text_views.BoldTextView
-                android:id="@+id/txt_current_location"
+                android:id="@+id/tvCurrentLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
@@ -66,7 +66,7 @@
                 android:textSize="24sp" />
 
             <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
-                android:id="@+id/txt_weather_description"
+                android:id="@+id/tvWeatherDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -82,7 +82,7 @@
                 android:textColor="@color/defaultDark" />-->
 
             <LinearLayout
-                android:id="@+id/weather_extra_info_holder"
+                android:id="@+id/weatherExtraInfoHolder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -122,7 +122,7 @@
                                 android:textSize="12sp"/>
 
                             <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                                android:id="@+id/txt_min_temp"
+                                android:id="@+id/tvMinTemp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -147,7 +147,7 @@
                                 android:textSize="12sp"/>
 
                             <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                                android:id="@+id/txt_max_temp"
+                                android:id="@+id/tvMaxTemp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -179,7 +179,7 @@
                                 android:textSize="12sp" />
 
                             <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                                android:id="@+id/txt_pressure"
+                                android:id="@+id/tvPressure"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -203,7 +203,7 @@
                                 android:textSize="12sp"/>
 
                             <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                                android:id="@+id/txt_humidity"
+                                android:id="@+id/tvHumidity"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -250,7 +250,7 @@
                                 android:textSize="12sp"/>
 
                             <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                                android:id="@+id/txt_wind_speed"
+                                android:id="@+id/tvWindSpeed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -274,7 +274,7 @@
                                 android:textSize="12sp"/>
 
                             <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                                android:id="@+id/txt_wind_degree"
+                                android:id="@+id/tvWindDegree"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -288,7 +288,7 @@
             </LinearLayout>
 
             <com.rex50.mausam.utils.custom_text_views.BoldTextView
-                android:id="@+id/btn_more_weather_details"
+                android:id="@+id/btnMoreWeatherDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/last_updated_time"

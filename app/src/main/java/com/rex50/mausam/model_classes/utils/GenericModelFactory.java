@@ -1,5 +1,7 @@
 package com.rex50.mausam.model_classes.utils;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.rex50.mausam.R;
 import com.rex50.mausam.model_classes.unsplash.collection.Collections;
 import com.rex50.mausam.model_classes.unsplash.collection.Tag;
@@ -9,7 +11,15 @@ import com.rex50.mausam.model_classes.unsplash.photos.User;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.*;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.CATEGORY_TYPE;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.COLLECTION_TYPE;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.COLOR_TYPE;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.FAV_PHOTOGRAPHER_PHOTOS_TYPE;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.GENERAL_TYPE;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.ITEM_CATEGORY_TYPE;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.TAG_TYPE;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.USER_TYPE;
 
 public class GenericModelFactory {
 
@@ -38,6 +48,8 @@ public class GenericModelFactory {
     private String title = "", desc = "";
 
     private boolean hasMore = true;
+
+    private int scrollDirection = LinearLayoutManager.HORIZONTAL;
 
     //private int endImage = R.drawable.banner_bg_1;
 
@@ -117,6 +129,7 @@ public class GenericModelFactory {
         favouriteModel.setItemType(FAV_PHOTOGRAPHER_PHOTOS_TYPE);
         favouriteModel.setViewType(FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE);
         favouriteModel.setItemLayout(R.layout.fav_photograher_photo_type_cell);
+        favouriteModel.setScrollDirection(LinearLayoutManager.VERTICAL);
         favouriteModel.setFavouritePhotographerTypeModel(new FavouritePhotographerTypeModel(photosList));
         return favouriteModel;
     }
@@ -406,6 +419,10 @@ public class GenericModelFactory {
         this.itemLayout = itemLayout;
     }
 
+    private void setScrollDirection(int scrollDirection) {
+        this.scrollDirection = scrollDirection;
+    }
+
     public String getDesc() {
         return desc;
     }
@@ -434,7 +451,10 @@ public class GenericModelFactory {
         return itemLayout;
     }
 
-    /*private void setEndImage(int imageRes){
+    public int getScrollDirection() {
+        return scrollDirection;
+    }
+     /*private void setEndImage(int imageRes){
         this.endImage = imageRes;
     }
 

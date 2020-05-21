@@ -3,9 +3,6 @@ package com.rex50.mausam.views.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.rex50.mausam.model_classes.weather.WeatherModelClass;
+import androidx.fragment.app.Fragment;
+
 import com.rex50.mausam.R;
+import com.rex50.mausam.model_classes.weather.WeatherModelClass;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -85,14 +84,14 @@ public class SearchResultFragment extends Fragment {
     }
 
     private void init() {
-        txtWeather = view.findViewById(R.id.txt_current_weather);
-        txtLocation = view.findViewById(R.id.txt_current_location);
-        txtWeatherDesc = view.findViewById(R.id.txt_weather_description);
+        txtWeather = view.findViewById(R.id.tvCurrentWeather);
+        txtLocation = view.findViewById(R.id.tvCurrentLocation);
+        txtWeatherDesc = view.findViewById(R.id.tvWeatherDescription);
         txtWeatherMsg = view.findViewById(R.id.txt_weather_msg);
         btn_back = view.findViewById(R.id.btn_back);
         btn_back.setOnClickListener(v -> mListener.goBack());
 
-        weatherDetailsHolder = view.findViewById(R.id.weather_details_holder);
+        weatherDetailsHolder = view.findViewById(R.id.weatherDetailsHolder);
 
         //for celsius = kelvin - 273.15
         Double temp = mWeatherDetails.getMain().getTemp() - 273.15;

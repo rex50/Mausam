@@ -71,4 +71,8 @@ public class SearchCityActivity extends BaseActivity implements SearchFragment.O
         return materialSnackBar;
     }
 
+    @Override
+    public void startMorePhotosActivity() {
+        //Do nothing
+    }
 }

@@ -1,51 +1,54 @@
 <resources>
     <string name="app_name">Mausam</string>
 
-    <!--    Titles-->
+    <!--Titles-->
     <string name="permission_title">Permissions</string>
     <string name="location_perm_title">Location</string>
     <string name="storage_perm_title">Storage</string>
     <string name="search_loc_title">Search location</string>
+    <string name="search_wallpaper_title">Search wallpapers</string>
 
-    <!--    Descriptions-->
+    <!--Descriptions-->
     <string name="permission_desc">Will you please allow Mausam this permission.</string>
     <string name="location_desc">With this permission, Mausam can automatically detect your location</string>
     <string name="storage_desc">With this permission, Mausam can download wallpapers and store in the phone storage.</string>
     <string name="search_loc_desc">We understand you don’t want to reveal your  location but Mausam needs it show weather and wallpapers based on it. </string>
+    <string name="search_wallpaper_desc">search photos by some of the best photographer’s spread across the world and available on Unsplash.</string>
 
-    <!--    Hints-->
+    <!--Hints/messages/btn-->
     <string name="search_loc_box_hint">Search place here</string>
+    <string name="search_box_hint">Search here</string>
+    <string name="set_as_wallpaper">Set as wallpaper</string>
+    <string name="download_image">Download image</string>
+    <string name="add_to_favourites">Add to favourites</string>
+    <string name="share">Share</string>
+    <string name="more_details">More Details</string>
+    <string name="mausam_logo">Mausam Logo</string>
+    <string name="skip_btn_text">Skip</string>
+    <string name="choose_search_provider_title">Choose search provider</string>
+    <string name="last_updated_time">Last updated %s mins ago</string>
+    <string name="preview_image">Preview Image</string>
+    <string name="photographer_s_image">photographer\'s image</string>
+    <string name="settings_button">Settings button</string>
 
-    <!--    Dummy text-->
+    <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>
     <string name="dummy_error">Some error has occurred and this is dummy message</string>
     <string name="lorem_ipsum">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s</string>
+    <string name="color_name">Color name</string>
 
     <!--Error messages-->
     <string name="contain_number_error_msg">Please write a location name without Number</string>
-    <string name="contain_speciall_chars_error_msg">Please write a location name without using space or special characters</string>
+    <string name="contain_special_chars_error_msg">Please write a location name without using space or special characters</string>
     <string name="empty_error_msg">Please enter location name to continue</string>
     <string name="no_gps_error_msg">Can\'t find location when GPS is off.</string>
     <string name="no_permission_error_msg">Location permission is needed to show latest weather details. Please go to settings and allow Location Permission.</string>
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
     <string name="search_city_error">%s place weather information not found, you can skip this by the way.</string>
 
-    <string name="skip_btn_text">Skip</string>
-    <string name="choose_search_provider_title">Choose search provider</string>
-    <string name="unsplash_txt">Unsplash</string>
-    <string name="pixabay_txt">Pixabay</string>
-    <string name="search_box_hint">Search here</string>
-    <string name="last_updated_time">Last updated %s mins ago</string>
-    <string name="preview_image">Preview Image</string>
-    <string name="photographer_s_image">photographer\'s image</string>
-    <string name="color_name">Color name</string>
-    <string name="mausam_logo">Mausam Logo</string>
-    <string name="settings_button">Settings button</string>
-    <string name="set_as_wallpaper">Set as wallpaper</string>
-    <string name="download_image">Download image</string>
-    <string name="add_to_favourites">Add to favourites</string>
-    <string name="share">Share</string>
-    <string name="more_details">More Details</string>
+    <!--Static strings-->
+    <string name="unsplash_txt" translatable="false">Unsplash</string>
+    <string name="pixabay_txt" translatable="false">Pixabay</string>
 
 
     <!--Colors array-->

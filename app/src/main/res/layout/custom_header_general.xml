@@ -6,10 +6,10 @@
     android:paddingEnd="10dp"
     android:paddingBottom="10dp"
     android:paddingTop="20dp"
-    android:layout_marginBottom="30dp">
+    android:layout_marginBottom="20dp">
 
     <com.rex50.mausam.utils.custom_text_views.BoldTextView
-        android:id="@+id/txt_page_title"
+        android:id="@+id/txtPageTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/dummy_title"
@@ -19,7 +19,7 @@
         android:textColor="@color/titleColor"/>
 
     <com.rex50.mausam.utils.custom_text_views.BoldTextView
-        android:id="@+id/txt_page_desc"
+        android:id="@+id/txtPageDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/lorem_ipsum"
