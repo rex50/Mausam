@@ -20,7 +20,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     protected MaterialSnackBar materialSnackBar;
     protected GPSRequestHelper gpsRequestHelper;
-    protected MausamSharedPrefs sharedPrefs;
+    @Nullable protected MausamSharedPrefs mausamSharedPrefs;
     private NetworkChangeReceiver networkChangeReceiver;
 
     @Override
@@ -28,7 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         materialSnackBar = new MaterialSnackBar(this, findViewById(android.R.id.content));
         gpsRequestHelper = new GPSRequestHelper(this);
-        sharedPrefs = new MausamSharedPrefs(this);
+        mausamSharedPrefs = new MausamSharedPrefs(this);
         setContentView(getLayoutResource());
         networkChangeReceiver = new NetworkChangeReceiver(){
             @Override

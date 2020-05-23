@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".views.activities.MainActivity"
+    tools:context=".views.activities.ActMain"
     android:background="?android:attr/windowBackground">
 
-<!--    <include layout="@layout/custom_header_home" />-->
+<!--    <include layout="@layout/header_custom_home" />-->
 
     <RelativeLayout
         android:layout_width="match_parent"

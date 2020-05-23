@@ -25,7 +25,7 @@ import com.rex50.mausam.utils.Utils
 import com.thekhaeng.pushdownanim.PushDownAnim
 import org.apache.commons.lang3.StringUtils
 
-class ContentAdapter(private var context: Context?, private var model: GenericModelFactory?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AdaptContent(private var context: Context?, private var model: GenericModelFactory?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var childClickListener: OnChildItemClickListener? = null
 

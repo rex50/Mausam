@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.rex50.mausam.R;
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos;
-import com.rex50.mausam.views.adapters.HomeAdapter;
+import com.rex50.mausam.views.adapters.AdaptHome;
 import com.stfalcon.imageviewer.StfalconImageViewer;
 import com.thekhaeng.pushdownanim.PushDownAnim;
 
@@ -24,7 +24,7 @@ public class AllContentModel{
     private final Context context;
     private List<GenericModelFactory> models;
     private List<String> sequenceOfLayout;
-    private HomeAdapter adapter;
+    private AdaptHome adapter;
 
     private List<String> types;
 
@@ -88,7 +88,7 @@ public class AllContentModel{
         }
     }
 
-    public void setAdapter(@Nullable HomeAdapter adapter){
+    public void setAdapter(@Nullable AdaptHome adapter){
         this.adapter = adapter;
     }
 
@@ -139,7 +139,7 @@ public class AllContentModel{
                 .withHiddenStatusBar(false)
                 .withStartPosition(childPos);
         imageViewerBuilder.withBackgroundColorResource(R.color.white_to_black);
-        View dialogLayout = View.inflate(context, R.layout.full_screen_image_overlay, null);
+        View dialogLayout = View.inflate(context, R.layout.overlay_full_screen_image, null);
 
         PushDownAnim.setPushDownAnimTo(dialogLayout.findViewById(R.id.btn_set_wallpaper),
                 dialogLayout.findViewById(R.id.btn_download_image),

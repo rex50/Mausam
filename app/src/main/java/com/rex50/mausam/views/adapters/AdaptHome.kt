@@ -16,7 +16,7 @@ import com.rex50.mausam.model_classes.utils.AllContentModel
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
 
-class HomeAdapter(private var context: Context?, private var allContentModel: AllContentModel?) :
+class AdaptHome(private var context: Context?, private var allContentModel: AllContentModel?) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var groupItemClickListener: OnGroupItemClickListener? = null
@@ -37,7 +37,7 @@ class HomeAdapter(private var context: Context?, private var allContentModel: Al
                 txtDesc.text = model.desc
                 btnMore.visibility = if (model.isHasMore) View.VISIBLE else View.GONE
                 //TODO : try not to create adapter here
-                val adapter = ContentAdapter(context, model)
+                val adapter = AdaptContent(context, model)
                 contentRecyclerView.layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
                 adapter.setChildClickListener(OnChildItemClickListener { o, childImgView, childPos ->
                     groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)

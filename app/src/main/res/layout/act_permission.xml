@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.activities.PermissionActivity"
+    tools:context=".views.activities.ActPermission"
     android:orientation="vertical">
 
-<!--    <include layout="@layout/custom_header_home"/>-->
+<!--    <include layout="@layout/header_custom_home"/>-->
 
     <com.rex50.mausam.utils.custom_text_views.BoldTextView
         android:id="@+id/permission_title"
@@ -56,7 +56,7 @@
         </LinearLayout>
 
         <Switch
-            android:id="@+id/btn_ask_location_permission"
+            android:id="@+id/switchLocPermission"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:track="@drawable/track_selector"
@@ -101,7 +101,7 @@
         </LinearLayout>
 
         <Switch
-            android:id="@+id/btn_ask_storage_permission"
+            android:id="@+id/switchStoragePermission"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:track="@drawable/track_selector"
@@ -111,7 +111,7 @@
 
 
     <Button
-        android:id="@+id/btn_skip_permission"
+        android:id="@+id/btnSkipPermission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/skip_btn_text"

@@ -18,16 +18,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".views.activities.SearchCityActivity"></activity>
-        <activity android:name=".views.activities.PermissionActivity" />
-        <activity android:name=".views.activities.Splash">
+        <activity android:name=".views.activities.ActSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.activities.MainActivity" />
+        <activity android:name=".views.activities.ActSearchCity"/>
+        <activity android:name=".views.activities.ActPermission" />
+        <activity android:name=".views.activities.ActMain" />
 
         <receiver
             android:name=".recievers.NetworkChangeReceiver"

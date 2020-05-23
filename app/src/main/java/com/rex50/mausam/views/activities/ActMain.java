@@ -33,9 +33,9 @@ import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.LastLocationProvider;
 import com.rex50.mausam.utils.MaterialSnackBar;
 import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
-import com.rex50.mausam.views.fragments.HomeFragment;
-import com.rex50.mausam.views.fragments.SearchFragment;
-import com.rex50.mausam.views.fragments.SearchResultFragment;
+import com.rex50.mausam.views.fragments.FragHome;
+import com.rex50.mausam.views.fragments.FragSearch;
+import com.rex50.mausam.views.fragments.FragSearchResult;
 
 import org.joda.time.DateTime;
 import org.json.JSONObject;
@@ -52,17 +52,17 @@ import static com.rex50.mausam.utils.Utils.getConnectivityStatus;
 
 //import com.cuberto.flashytabbarandroid.TabFlashyAnimator;
 
-public class MainActivity extends BaseActivity implements
-        SearchFragment.OnFragmentInteractionListener,
-        HomeFragment.OnFragmentInteractionListener,
-        SearchResultFragment.OnFragmentInteractionListener {
+public class ActMain extends BaseActivity implements
+        FragSearch.OnFragmentInteractionListener,
+        FragHome.OnFragmentInteractionListener,
+        FragSearchResult.OnFragmentInteractionListener {
 
-    private String TAG = "MainActivity";
+    private String TAG = "ActMain";
     private FragmentManager fragmentManager;
     private LinearLayout locationLoader;
     private CustomErrorPage noInternetErrorPage, noGpsErrorPage, noPermissionErrorPage;
-    private HomeFragment homeFragment;
-    private SearchFragment searchFragment;
+    private FragHome fragHome;
+    private FragSearch fragSearch;
     private Boolean isGettingWeather = false, isFirstWeatherFetched = false;
     private LastLocationProvider lastLocationProvider;
     private FlashyTabBar tabFlashyAnimator;
@@ -159,7 +159,7 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void loadOfflineWeatherData() {
-        JSONObject weatherJSON = sharedPrefs.getLastWeatherData();
+        JSONObject weatherJSON = mausamSharedPrefs.getLastWeatherData();
         if(weatherJSON != null){
             /*if(!isPermissionEnabled())
                 materialSnackBar.showActionSnackBar(getString(R.string.no_permission_error_msg), "OK", MaterialSnackBar.LENGTH_INDEFINITE, () -> materialSnackBar.dismiss());
@@ -176,7 +176,7 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     protected int getLayoutResource() {
-        return R.layout.activity_main;
+        return R.layout.act_main;
     }
 
     private void init() {
@@ -196,11 +196,11 @@ public class MainActivity extends BaseActivity implements
         CustomViewPager viewPager = findViewById(R.id.homeViewPager);
         viewPager.setPagingEnabled(false);
         List<Fragment> mFragmentList = new ArrayList<>();
-        homeFragment = new HomeFragment();
-        searchFragment = new SearchFragment();
+        fragHome = new FragHome();
+        fragSearch = new FragSearch();
 
-        mFragmentList.add(homeFragment);
-        mFragmentList.add(searchFragment);
+        mFragmentList.add(fragHome);
+        mFragmentList.add(fragSearch);
         //mFragmentList.add(new SearchFragment());
         viewPager.setAdapter(getFragmentAdapter(mFragmentList));
 
@@ -238,16 +238,16 @@ public class MainActivity extends BaseActivity implements
                 }else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }*/
-                if(tab.getPosition() == 1 && searchFragment != null){
-                    searchFragment.setFocusToSearchBox(true);
+                if(tab.getPosition() == 1 && fragSearch != null){
+                    fragSearch.setFocusToSearchBox(true);
                 }
 
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                if(searchFragment != null)
-                    searchFragment.setFocusToSearchBox(false);
+                if(fragSearch != null)
+                    fragSearch.setFocusToSearchBox(false);
             }
 
             @Override
@@ -341,7 +341,7 @@ public class MainActivity extends BaseActivity implements
                         break;
 
                     case PAGE_NOT_FOUND :
-                        if(getConnectivityStatus(MainActivity.this) != TYPE_NOT_CONNECTED){
+                        if(getConnectivityStatus(ActMain.this) != TYPE_NOT_CONNECTED){
                             materialSnackBar.show("No internet connection", MaterialSnackBar.LENGTH_INDEFINITE);
                         }
                         break;
@@ -353,7 +353,7 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void internetStatus(int internetType) {
         if(internetType == TYPE_NOT_CONNECTED) {
-            JSONObject weatherJSON = sharedPrefs.getLastWeatherData();
+            JSONObject weatherJSON = mausamSharedPrefs.getLastWeatherData();
             if(weatherJSON == null){
                 noInternetErrorPage.show();
                 removeAllFragments();
@@ -374,7 +374,7 @@ public class MainActivity extends BaseActivity implements
     private void loadFragment(Fragment fragment, boolean addToBackStack) {
         Fragment fragment1 = fragmentManager.findFragmentByTag(fragment.getTag());
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        if(fragment1 != null && fragment1.isAdded() || fragment instanceof HomeFragment){
+        if(fragment1 != null && fragment1.isAdded() || fragment instanceof FragHome){
             fragmentTransaction.replace(R.id.home_content, fragment, fragment.getTag());
         }else{
             fragmentTransaction.add(R.id.home_content, fragment, fragment.getTag());
@@ -404,7 +404,7 @@ public class MainActivity extends BaseActivity implements
     public void onWeatherSearchSuccess(WeatherModelClass weatherDetails) {
         fragmentManager.popBackStack();
         toggleLocationLoader(false);
-        SearchResultFragment fragment = new SearchResultFragment();
+        FragSearchResult fragment = new FragSearchResult();
         fragment.setWeatherDetails(weatherDetails);
         loadFragment(fragment, true);
     }
@@ -416,7 +416,7 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public MausamSharedPrefs getSharedPrefs() {
-        return sharedPrefs;
+        return mausamSharedPrefs;
     }
 
     @Override
@@ -426,7 +426,7 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void startSearchScreen() {
-        loadFragment(new SearchFragment(), true);
+        loadFragment(new FragSearch(), true);
     }
 
     @Override
@@ -492,15 +492,15 @@ public class MainActivity extends BaseActivity implements
                         break;
 
                     case PAGE_NOT_FOUND :
-                        if(getConnectivityStatus(MainActivity.this) != TYPE_NOT_CONNECTED){
+                        if(getConnectivityStatus(ActMain.this) != TYPE_NOT_CONNECTED){
                             materialSnackBar.show("No internet connection", MaterialSnackBar.LENGTH_INDEFINITE);
                         }
                         break;
                 }
             }
         });*/
-        if(sharedPrefs.getLastWeatherData() != null){
-            WeatherModelClass weatherModelClass = new DataParser().parseWeatherData(sharedPrefs.getLastWeatherData());
+        if(mausamSharedPrefs.getLastWeatherData() != null){
+            WeatherModelClass weatherModelClass = new DataParser().parseWeatherData(mausamSharedPrefs.getLastWeatherData());
             requestWeather(weatherModelClass.getCoord().getLat(), weatherModelClass.getCoord().getLon(), listener);
         }else {
             //TODO : listener.onFailed();
@@ -564,7 +564,7 @@ public class MainActivity extends BaseActivity implements
 
         private void show(){
             runOnUiThread(() -> {
-                Glide.with(MainActivity.this).load(errorImgId).into(locationErrorImg);
+                Glide.with(ActMain.this).load(errorImgId).into(locationErrorImg);
                 errorMsgTxt.setText(errorMsg);
                 errorLayout.setVisibility(View.VISIBLE);
                 isShowing = true;
@@ -622,13 +622,13 @@ public class MainActivity extends BaseActivity implements
                 materialSnackBar.dismiss();
                 if(weatherListener != null){
                     //Get weather data only after 15 minutes as servers are updated at the interval of 10 minutes
-                    if(sharedPrefs.getLastWeatherUpdated() != null){
+                    if(mausamSharedPrefs.getLastWeatherUpdated() != null){
                         DateTime currentTime = DateTime.now();
-                        if(!sharedPrefs.getLastWeatherUpdated().isAfter(currentTime.minusMinutes(15))){
+                        if(!mausamSharedPrefs.getLastWeatherUpdated().isAfter(currentTime.minusMinutes(15))){
                             requestWeather(location.getLatitude(), location.getLongitude(), weatherListener);
                         }else {
                             DataParser parser = new DataParser();
-                            weatherListener.onSuccess(parser.parseWeatherData(sharedPrefs.getLastWeatherData()));
+                            weatherListener.onSuccess(parser.parseWeatherData(mausamSharedPrefs.getLastWeatherData()));
                         }
                     }else {
                         requestWeather(location.getLatitude(), location.getLongitude(), weatherListener);
@@ -661,8 +661,8 @@ public class MainActivity extends BaseActivity implements
             @Override
             public void onWeatherResponseSuccess(JSONObject response) {
                 materialSnackBar.dismiss();
-                sharedPrefs.setLastWeatherData(response);
-                sharedPrefs.setLastWeatherUpdated(DateTime.now());
+                mausamSharedPrefs.setLastWeatherData(response);
+                mausamSharedPrefs.setLastWeatherUpdated(DateTime.now());
                 DataParser parser = new DataParser();
                 if(weatherListener != null)
                     weatherListener.onSuccess(parser.parseWeatherData(response));

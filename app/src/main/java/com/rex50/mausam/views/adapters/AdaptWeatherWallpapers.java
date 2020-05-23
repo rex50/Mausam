@@ -17,12 +17,12 @@ import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos;
 
 import java.util.List;
 
-public class WeatherWallpapersAdapter extends RecyclerView.Adapter<WeatherWallpapersAdapter.WeatherWallpapersViewHolder> {
+public class AdaptWeatherWallpapers extends RecyclerView.Adapter<AdaptWeatherWallpapers.WeatherWallpapersViewHolder> {
 
     private Context context;
     private List<UnsplashPhotos> photosList;
 
-    public WeatherWallpapersAdapter(Context context, List<UnsplashPhotos> photosList){
+    public AdaptWeatherWallpapers(Context context, List<UnsplashPhotos> photosList){
         this.context = context;
         this.photosList = photosList;
     }

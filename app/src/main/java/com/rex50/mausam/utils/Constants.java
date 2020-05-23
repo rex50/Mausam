@@ -28,12 +28,12 @@ public class Constants {
 
 
         public static final int GENERAL_TYPE = R.layout.general_type_cell;
-        public static final int FAV_PHOTOGRAPHER_PHOTOS_TYPE = R.layout.fav_photograher_photo_type_cell;
-        public static final int COLOR_TYPE = R.layout.color_type_cell;
-        public static final int CATEGORY_TYPE = R.layout.category_type_cell;
-        public static final int USER_TYPE = R.layout.user_type_cell;
-        public static final int COLLECTION_TYPE = R.layout.collection_type_cell;
-        public static final int TAG_TYPE = R.layout.tag_type_cell;
+        public static final int FAV_PHOTOGRAPHER_PHOTOS_TYPE = R.layout.cell_type_fav_photograher_photo;
+        public static final int COLOR_TYPE = R.layout.cell_type_color;
+        public static final int CATEGORY_TYPE = R.layout.cell_type_category;
+        public static final int USER_TYPE = R.layout.cell_type_user;
+        public static final int COLLECTION_TYPE = R.layout.cell_type_collection;
+        public static final int TAG_TYPE = R.layout.cell_type_tag;
 
     }
 

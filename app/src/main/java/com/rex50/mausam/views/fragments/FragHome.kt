@@ -24,23 +24,23 @@ import com.rex50.mausam.utils.Constants.AvailableLayouts
 import com.rex50.mausam.utils.Utils
 import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showView
-import com.rex50.mausam.views.adapters.HomeAdapter
-import kotlinx.android.synthetic.main.fragment_home.*
+import com.rex50.mausam.views.adapters.AdaptHome
+import kotlinx.android.synthetic.main.frag_home.*
 import kotlinx.android.synthetic.main.item_weather_card.*
 import org.json.JSONArray
 import java.util.*
 
-class HomeFragment : BaseFragment() {
+class FragHome : BaseFragment() {
     private var allData: AllContentModel? = null
     private var sequenceOfLayout: MutableList<String> = ArrayList()
-    private var homeAdapter: HomeAdapter? = null
+    private var adaptHome: AdaptHome? = null
 
     private var mWeatherDetails: WeatherModelClass? = null
     private val mParam2: String? = null
     private var mListener: OnFragmentInteractionListener? = null
 
 
-    override fun getResourceLayout(): Int = R.layout.fragment_home
+    override fun getResourceLayout(): Int = R.layout.frag_home
 
     override fun initView() {
         arguments?.getSerializable(ARG_PARAM1)?.apply {
@@ -112,7 +112,7 @@ class HomeFragment : BaseFragment() {
             @Override
             public void onSuccess(SearchedPhotos photos) {
                 if(null == weatherWallpapersAdapter) {
-                    weatherWallpapersAdapter = new WeatherWallpapersAdapter(getContext(), photos.getResults());
+                    weatherWallpapersAdapter = new AdaptWeatherWallpapers(getContext(), photos.getResults());
                     weatherWallpaperRecycler.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
                     weatherWallpaperRecycler.setAdapter(weatherWallpapersAdapter);
                 }else{
@@ -134,7 +134,7 @@ class HomeFragment : BaseFragment() {
             @Override
             public void onSuccess(SearchedPhotos photos) {
                 if(null == locationWallpaperAdapter) {
-                    locationWallpaperAdapter = new WeatherWallpapersAdapter(getContext(), photos.getResults());
+                    locationWallpaperAdapter = new AdaptWeatherWallpapers(getContext(), photos.getResults());
                     locationWallpaperRecycler.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
                     locationWallpaperRecycler.setAdapter(locationWallpaperAdapter);
                 }else{
@@ -230,16 +230,16 @@ class HomeFragment : BaseFragment() {
     private fun prepareHomeRecycler(sequenceOfLayout: List<String>) {
         val unsplashHelper = UnsplashHelper(activity)
         allData = AllContentModel(activity)
-        homeAdapter = HomeAdapter(activity, allData)
+        adaptHome = AdaptHome(activity, allData)
         recHomeContent?.apply {
             layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
-            adapter = homeAdapter
+            adapter = adaptHome
         }
 
         allData?.apply {
             setSequenceOfLayouts(sequenceOfLayout)
-            setAdapter(homeAdapter)
+            setAdapter(adaptHome)
             setOnClickListener()
         }
 
@@ -396,8 +396,8 @@ class HomeFragment : BaseFragment() {
         private const val ARG_PARAM2 = "param2"
         private const val TAG = "HomeFragment"
 
-        fun newInstance(weatherDetails: WeatherModelClass?): HomeFragment {
-            val fragment = HomeFragment()
+        fun newInstance(weatherDetails: WeatherModelClass?): FragHome {
+            val fragment = FragHome()
             val args = Bundle()
             args.putSerializable(ARG_PARAM1, weatherDetails)
             fragment.arguments = args

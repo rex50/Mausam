@@ -19,18 +19,18 @@ import com.rex50.mausam.network.APIManager.WeatherAPICallBackResponse
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Utils.TextValidationInterface
-import kotlinx.android.synthetic.main.custom_header_general.*
-import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.android.synthetic.main.header_custom_general.*
+import kotlinx.android.synthetic.main.frag_search.*
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
 import java.util.*
 
-class SearchFragment : BaseFragment() {
+class FragSearch : BaseFragment() {
     var searchOnlyCity = false
 
     private var mListener: OnFragmentInteractionListener? = null
 
-    override fun getResourceLayout(): Int = R.layout.fragment_search
+    override fun getResourceLayout(): Int = R.layout.frag_search
 
     override fun initView() {
 
@@ -208,8 +208,8 @@ class SearchFragment : BaseFragment() {
         private const val ARG_PARAM1 = "param1"
 
         @JvmStatic
-        fun newInstance(searchOnlyCity: Boolean): SearchFragment {
-            val fragment = SearchFragment()
+        fun newInstance(searchOnlyCity: Boolean): FragSearch {
+            val fragment = FragSearch()
             val args = Bundle()
             args.putBoolean(ARG_PARAM1, searchOnlyCity)
             fragment.arguments = args

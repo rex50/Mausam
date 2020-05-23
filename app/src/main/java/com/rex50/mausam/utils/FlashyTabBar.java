@@ -55,7 +55,7 @@ public class FlashyTabBar extends ViewPager.SimpleOnPageChangeListener {
     }
 
     private void getTabView(int position, TabLayout.Tab tab, boolean isSelected) {
-        View view = tab.getCustomView() == null ? LayoutInflater.from(tabLayout.getContext()).inflate(R.layout.custom_tab, null) : tab.getCustomView();
+        View view = tab.getCustomView() == null ? LayoutInflater.from(tabLayout.getContext()).inflate(R.layout.tab_custom, null) : tab.getCustomView();
         if (tab.getCustomView() == null) {
             tab.setCustomView(view);
         }

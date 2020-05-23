@@ -72,7 +72,7 @@ public class GenericModelFactory {
         generalTypeModel.setDesc(desc);
         generalTypeModel.setHasMore(hasMore);
         generalTypeModel.setItemType(USER_TYPE);
-        generalTypeModel.setItemLayout(R.layout.user_type_cell);
+        generalTypeModel.setItemLayout(R.layout.cell_type_user);
         generalTypeModel.setUserTypeModel(new UserTypeModel(usersList));
         return generalTypeModel;
     }
@@ -83,7 +83,7 @@ public class GenericModelFactory {
         generalTypeModel.setDesc(desc);
         generalTypeModel.setHasMore(hasMore);
         generalTypeModel.setItemType(COLLECTION_TYPE);
-        generalTypeModel.setItemLayout(R.layout.collection_type_cell);
+        generalTypeModel.setItemLayout(R.layout.cell_type_collection);
         generalTypeModel.setCollectionTypeModel(new CollectionTypeModel(collectionsList));
         return generalTypeModel;
     }
@@ -94,7 +94,7 @@ public class GenericModelFactory {
         textTypeModel.setDesc(desc);
         textTypeModel.setHasMore(hasMore);
         textTypeModel.setItemType(TAG_TYPE);
-        textTypeModel.setItemLayout(R.layout.tag_type_cell);
+        textTypeModel.setItemLayout(R.layout.cell_type_tag);
         textTypeModel.setTagTypeModel(new TagTypeModel(tagsList, shuffleList));
         return textTypeModel;
     }
@@ -105,7 +105,7 @@ public class GenericModelFactory {
         textTypeModel.setDesc(desc);
         textTypeModel.setHasMore(hasMore);
         textTypeModel.setItemType(COLOR_TYPE);
-        textTypeModel.setItemLayout(R.layout.color_type_cell);
+        textTypeModel.setItemLayout(R.layout.cell_type_color);
         textTypeModel.setColorTypeModel(new ColorTypeModel(colorsList, shuffleList));
         return textTypeModel;
     }
@@ -116,7 +116,7 @@ public class GenericModelFactory {
         textTypeModel.setDesc(desc);
         textTypeModel.setHasMore(hasMore);
         textTypeModel.setItemType(CATEGORY_TYPE);
-        textTypeModel.setItemLayout(R.layout.category_type_cell);
+        textTypeModel.setItemLayout(R.layout.cell_type_category);
         textTypeModel.setCategoryTypeModel(new CategoryTypeModel(categories, shuffleList));
         return textTypeModel;
     }
@@ -128,7 +128,7 @@ public class GenericModelFactory {
         favouriteModel.setHasMore(false);
         favouriteModel.setItemType(FAV_PHOTOGRAPHER_PHOTOS_TYPE);
         favouriteModel.setViewType(FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE);
-        favouriteModel.setItemLayout(R.layout.fav_photograher_photo_type_cell);
+        favouriteModel.setItemLayout(R.layout.cell_type_fav_photograher_photo);
         favouriteModel.setScrollDirection(LinearLayoutManager.VERTICAL);
         favouriteModel.setFavouritePhotographerTypeModel(new FavouritePhotographerTypeModel(photosList));
         return favouriteModel;
