@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rex50.mausam.R
@@ -19,11 +20,8 @@ import com.rex50.mausam.model_classes.utils.AllContentModel
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.model_classes.weather.WeatherModelClass
 import com.rex50.mausam.network.UnsplashHelper
-import com.rex50.mausam.utils.Constants
+import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.AvailableLayouts
-import com.rex50.mausam.utils.Utils
-import com.rex50.mausam.utils.hideView
-import com.rex50.mausam.utils.showView
 import com.rex50.mausam.views.adapters.AdaptHome
 import kotlinx.android.synthetic.main.frag_home.*
 import kotlinx.android.synthetic.main.item_weather_card.*
@@ -205,10 +203,10 @@ class FragHome : BaseFragment() {
             }
         }
         btnSearch?.setOnClickListener {
-            if (Utils.getConnectivityStatus(activity) != Utils.TYPE_NOT_CONNECTED) {
+            if (Utils.getConnectivityStatus(mContext) != Utils.TYPE_NOT_CONNECTED) {
                 mListener?.startSearchScreen()
             } else {
-                Toast.makeText(activity, "Please connect to internet first.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(mContext, "Please connect to internet first.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -228,11 +226,11 @@ class FragHome : BaseFragment() {
     }
 
     private fun prepareHomeRecycler(sequenceOfLayout: List<String>) {
-        val unsplashHelper = UnsplashHelper(activity)
-        allData = AllContentModel(activity)
-        adaptHome = AdaptHome(activity, allData)
+        val unsplashHelper = UnsplashHelper(mContext)
+        allData = AllContentModel()
+        adaptHome = AdaptHome(mContext, allData)
         recHomeContent?.apply {
-            layoutManager = LinearLayoutManager(activity)
+            layoutManager = LinearLayoutManager(mContext)
             setHasFixedSize(true)
             adapter = adaptHome
         }
@@ -240,7 +238,55 @@ class FragHome : BaseFragment() {
         allData?.apply {
             setSequenceOfLayouts(sequenceOfLayout)
             setAdapter(adaptHome)
-            setOnClickListener()
+            setOnClickListener(object : OnGroupItemClickListener{
+                override fun onItemClick(o: Any?, childImgView: ImageView?, groupPos: Int, childPos: Int) {
+                    object : GenericModelCastHelper(o) {
+
+                        override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+
+                        }
+
+                        override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
+                            generalTypeModel?.apply {
+                                ImageViewerHelper(mContext).showImagesInFullScreen(photosList,
+                                        childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+                                    override fun onDownload(photoInfo: UnsplashPhotos) {
+                                        //TODO
+                                    }
+                                })
+                            }
+                        }
+
+                        override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                            favPhotographerTypeModel?.apply {
+                                ImageViewerHelper(mContext).showImagesInFullScreen(photosList,
+                                        childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+                                    override fun onDownload(photoInfo: UnsplashPhotos) {
+                                        //TODO
+                                    }
+                                })
+                            }
+                        }
+
+                        override fun onTagType(tagTypeModel: GenericModelFactory.TagTypeModel?) {
+                            mListener?.startMorePhotosActivity(tagTypeModel?.tagsList?.get(childPos)?.title)
+                        }
+
+                        override fun onColorType(colorTypeModel: GenericModelFactory.ColorTypeModel?) {
+                            mListener?.startMorePhotosActivity(colorTypeModel?.colorsList?.get(childPos)?.colorName)
+                        }
+
+                        override fun onCategoryType(categoryTypeModel: GenericModelFactory.CategoryTypeModel?) {
+                            mListener?.startMorePhotosActivity(categoryTypeModel?.categories?.get(childPos))
+                        }
+
+                    }
+                }
+
+                override fun onMoreClicked(o: Any?, title: String?, groupPos: Int) {
+                    mListener?.startMorePhotosActivity(title)
+                }
+            })
         }
 
         if (sequenceOfLayout.contains(AvailableLayouts.WEATHER_BASED_WALLPAPERS)) {
@@ -285,7 +331,7 @@ class FragHome : BaseFragment() {
                     allData?.addSequentially(AvailableLayouts.POPULAR_WALLPAPERS,
                             GenericModelFactory.getGeneralTypeObject(AvailableLayouts.POPULAR_WALLPAPERS, Constants.Providers.POWERED_BY_UNSPLASH, true, photos))
                     if (sequenceOfLayout.contains(AvailableLayouts.POPULAR_PHOTOGRAPHERS)) {
-                        allData!!.addSequentially(AvailableLayouts.POPULAR_PHOTOGRAPHERS,
+                        allData?.addSequentially(AvailableLayouts.POPULAR_PHOTOGRAPHERS,
                                 GenericModelFactory.getUserTypeObject(AvailableLayouts.POPULAR_PHOTOGRAPHERS, Constants.Providers.POWERED_BY_UNSPLASH, false, userList))
                     }
                 }
@@ -298,8 +344,8 @@ class FragHome : BaseFragment() {
         if (sequenceOfLayout.contains(AvailableLayouts.FEATURED_COLLECTIONS)) {
             unsplashHelper.getCollectionsAndTags(1, 10, object : GetUnsplashCollectionsAndTagsListener {
                 override fun onSuccess(collection: List<Collections>, tagsList: List<Tag>) {
-                    allData!!.addSequentially(AvailableLayouts.FEATURED_COLLECTIONS,
-                            GenericModelFactory.getCollectionTypeObject(AvailableLayouts.FEATURED_COLLECTIONS, Constants.Providers.POWERED_BY_UNSPLASH, false, collection))
+                    allData?.addSequentially(AvailableLayouts.FEATURED_COLLECTIONS,
+                            GenericModelFactory.getCollectionTypeObject(AvailableLayouts.FEATURED_COLLECTIONS, Constants.Providers.POWERED_BY_UNSPLASH, true, collection))
                     if (sequenceOfLayout.contains(AvailableLayouts.POPULAR_TAGS)) {
                         allData?.addSequentially(AvailableLayouts.POPULAR_TAGS,
                                 GenericModelFactory.getTagTypeObject(AvailableLayouts.POPULAR_TAGS, Constants.Providers.POWERED_BY_UNSPLASH, false, tagsList, true))
@@ -312,14 +358,14 @@ class FragHome : BaseFragment() {
             })
         }
         if (sequenceOfLayout.contains(AvailableLayouts.BROWSE_BY_CATEGORIES)) {
-            activity?.apply {
+            mContext?.apply {
                 val categories = listOf<String>(*resources.getStringArray(R.array.categories))
                 allData?.addSequentially(AvailableLayouts.BROWSE_BY_CATEGORIES, GenericModelFactory.getCategoryTypeObject(AvailableLayouts.BROWSE_BY_CATEGORIES,
                         Constants.Providers.POWERED_BY_UNSPLASH, false, categories, true))
             }
         }
         if (sequenceOfLayout.contains(AvailableLayouts.BROWSE_BY_COLORS)) {
-            activity?.apply {
+            mContext?.apply {
                 val colorsList = listOf<String>(*resources.getStringArray(R.array.colors))
                 allData!!.addSequentially(AvailableLayouts.BROWSE_BY_COLORS, GenericModelFactory.getColorTypeObject(AvailableLayouts.BROWSE_BY_COLORS, Constants.Providers.POWERED_BY_UNSPLASH,
                         false, GenericModelFactory.ColorTypeModel.createModelFromStringList(colorsList), true))
@@ -384,7 +430,7 @@ class FragHome : BaseFragment() {
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri?)
-
+        fun startMorePhotosActivity(searchTerm: String?)
         fun startSearchScreen()
         val lastLocationDetails: Bundle?
         fun requestWeather(listener: WeatherResultListener?) //        void getWeatherWallpaper();

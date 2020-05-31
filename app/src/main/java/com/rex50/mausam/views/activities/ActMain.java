@@ -1,6 +1,7 @@
 package com.rex50.mausam.views.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import com.rex50.mausam.model_classes.weather.WeatherModelClass;
 import com.rex50.mausam.network.APIManager;
 import com.rex50.mausam.network.MausamLocationManager;
 import com.rex50.mausam.storage.MausamSharedPrefs;
+import com.rex50.mausam.utils.Constants;
 import com.rex50.mausam.utils.CustomViewPager;
 import com.rex50.mausam.utils.DataParser;
 import com.rex50.mausam.utils.FlashyTabBar;
@@ -239,7 +241,7 @@ public class ActMain extends BaseActivity implements
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }*/
                 if(tab.getPosition() == 1 && fragSearch != null){
-                    fragSearch.setFocusToSearchBox(true);
+                    fragSearch.setFocusToSearchBox(false);
                 }
 
             }
@@ -525,8 +527,11 @@ public class ActMain extends BaseActivity implements
     }
 
     @Override
-    public void startMorePhotosActivity() {
-
+    public void startMorePhotosActivity(String searchTerm) {
+        startActivity(new Intent(this, ActWallpapersList.class)
+                .putExtra(Constants.IntentConstants.SEARCH_TERM, searchTerm)
+                .putExtra(Constants.IntentConstants.SEARCH_DESC, Constants.Providers.POWERED_BY_UNSPLASH)
+        );
     }
 
     /*private void toggleLocationGPSError(boolean state){

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -39,6 +40,10 @@ public class MaterialSnackBar {
         this.layout = v;
     }
 
+    public void show(@StringRes int msg, @MaterialSnackBarDuration int duration) {
+        show(context.getString(msg), duration, null);
+    }
+
     public void show(String msg, @MaterialSnackBarDuration int duration) {
         show(msg, duration, null);
     }
@@ -50,6 +55,10 @@ public class MaterialSnackBar {
         } else {
             showToast(msg, duration);
         }
+    }
+
+    public void showActionSnackBar(@StringRes int msg, @StringRes int action, @MaterialSnackBarDuration int duration, SnackBarListener listener) {
+        showActionSnackBar(context.getString(msg), context.getString(action), null, duration, listener);
     }
 
     public void showActionSnackBar(String msg, String action, @MaterialSnackBarDuration int duration, SnackBarListener listener) {

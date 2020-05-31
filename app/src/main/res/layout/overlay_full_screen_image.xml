@@ -1,83 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom">
+    android:gravity="bottom"
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
-        android:layout_marginBottom="20dp"
-        app:cardElevation="8dp"
-        app:cardCornerRadius="8dp">
+        android:layout_marginBottom="25dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/accent_to_oliveBlack"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:gravity="center">
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/btn_set_wallpaper"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:animateLayoutChanges="true"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:id="@+id/lnlOtherButtons"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="match_parent"
+                    android:animateLayoutChanges="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/btnSetWallpaper"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:contentDescription="@string/set_as_wallpaper"
+                        android:focusable="true"
+                        android:foreground="?selectableItemBackground"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_image"
+                        android:tint="@color/white_to_accent"
+                        tools:ignore="UnusedAttribute" />
+
+                    <ImageView
+                        android:id="@+id/btnDownloadImage"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:contentDescription="@string/download_image"
+                        android:focusable="true"
+                        android:foreground="?selectableItemBackground"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_download"
+                        android:tint="@color/white_to_accent"
+                        tools:ignore="UnusedAttribute" />
+
+                    <ImageView
+                        android:id="@+id/btnFavImage"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:contentDescription="@string/add_to_favourites"
+                        android:focusable="true"
+                        android:foreground="?selectableItemBackground"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_heart"
+                        android:tint="@color/white_to_accent"
+                        tools:ignore="UnusedAttribute" />
+
+                    <ImageView
+                        android:id="@+id/btnShareImage"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:contentDescription="@string/share"
+                        android:focusable="true"
+                        android:foreground="?selectableItemBackground"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_share"
+                        android:tint="@color/white_to_accent"
+                        tools:ignore="UnusedAttribute" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/btnMoreAboutImage"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:contentDescription="@string/more_details"
+                    android:focusable="true"
+                    android:foreground="?selectableItemBackground"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_more_vertical"
+                    android:tint="@color/white_to_accent"
+                    tools:ignore="UnusedAttribute" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lnlExtraInfo"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_margin="20dp"
+                android:gravity="center"
                 android:clickable="true"
                 android:focusable="true"
-                android:contentDescription="@string/set_as_wallpaper"
-                android:tint="@color/white_to_accent"
-                android:src="@drawable/ic_image"/>
-
-            <ImageView
-                android:id="@+id/btn_download_image"
-                android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="@string/download_image"
-                android:tint="@color/white_to_accent"
-                android:src="@drawable/ic_download"/>
+                tools:visibility="visible">
 
-            <ImageView
-                android:id="@+id/btn_fav_image"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="@string/add_to_favourites"
-                android:tint="@color/white_to_accent"
-                android:src="@drawable/ic_heart"/>
+                <!--
 
-            <ImageView
-                android:id="@+id/btn_share_image"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="@string/share"
-                android:tint="@color/white_to_accent"
-                android:src="@drawable/ic_share"/>
+                This code is for user info
 
-            <ImageView
-                android:id="@+id/btn_more_about_image"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="@string/more_details"
-                android:tint="@color/white_to_accent"
-                android:src="@drawable/ic_more_vertical"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:cardCornerRadius="40dp"
+                    android:elevation="4dp">
+
+                    <ImageView
+                        android:id="@+id/ivPhotographer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/photographer_s_image"
+                        tools:srcCompat="@tools:sample/avatars" />
+
+                </androidx.cardview.widget.CardView>
+
+                <com.rex50.mausam.utils.custom_text_views.BoldTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="@tools:sample/full_names"
+                    android:textColor="@color/white"/>-->
+
+                <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                    android:id="@+id/tvPhotoDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="5dp"
+                    tools:text="@tools:sample/lorem" />
+
+                <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                    android:id="@+id/tvPhotoCreated"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    tools:text="@tools:sample/date/ddmmyy" />
+
+                <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                    android:id="@+id/tvPhotoColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/color"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="14sp" />
+
+                <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                    android:id="@+id/tvPhotoLikes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/likes"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="14sp" />
+
+                <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                    android:id="@+id/tvPhotoHeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/height"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="14sp" />
+
+                <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                    android:id="@+id/tvPhotoWidth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/width"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

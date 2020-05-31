@@ -12,5 +12,6 @@
     <string name="no_gps_error_msg">Can\'t find location when GPS is off.</string>
     <string name="no_permission_error_msg">Location permission is needed to show latest weather details. Please go to settings and allow Location Permission.</string>
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
+    <string name="failed_getting_wallpapers_error_msg">Sorry, failed while getting beautiful wallpapers. Please try again.</string>
 
 </resources>

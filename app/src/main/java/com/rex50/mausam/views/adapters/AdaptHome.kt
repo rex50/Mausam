@@ -15,34 +15,42 @@ import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.model_classes.utils.AllContentModel
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
+import com.rex50.mausam.utils.hideView
+import com.rex50.mausam.utils.showView
 
 class AdaptHome(private var context: Context?, private var allContentModel: AllContentModel?) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var groupItemClickListener: OnGroupItemClickListener? = null
+    var itemClickListener: OnGroupItemClickListener? = null
 
     class EndImageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imageView: ImageView = itemView.findViewById(R.id.wallpaper_img)
     }
 
     class ItemCategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var txtTitle: TextView = itemView.findViewById(R.id.txt_category_title)
-        private var txtDesc: TextView = itemView.findViewById(R.id.txt_category_desc)
-        private var btnMore: Button = itemView.findViewById(R.id.btn_category_more)
-        private var contentRecyclerView: RecyclerView = itemView.findViewById(R.id.recycler_category_items)
+        private var txtTitle: TextView? = itemView.findViewById(R.id.txt_category_title)
+        private var txtDesc: TextView? = itemView.findViewById(R.id.txt_category_desc)
+        private var btnMore: Button? = itemView.findViewById(R.id.btn_category_more)
+        private var contentRecyclerView: RecyclerView? = itemView.findViewById(R.id.recycler_category_items)
 
         fun bind(context: Context?, model: GenericModelFactory?, groupItemClickListener: OnGroupItemClickListener?, spanCount: Int, groupPosition: Int) {
             model?.apply {
-                txtTitle.text = model.title
-                txtDesc.text = model.desc
-                btnMore.visibility = if (model.isHasMore) View.VISIBLE else View.GONE
-                //TODO : try not to create adapter here
-                val adapter = AdaptContent(context, model)
-                contentRecyclerView.layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
-                adapter.setChildClickListener(OnChildItemClickListener { o, childImgView, childPos ->
-                    groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
+                txtTitle?.text = model.title
+                txtDesc?.text = model.desc
+                btnMore?.apply {
+                    if (model.isHasMore) showView() else hideView()
+                    setOnClickListener { groupItemClickListener?.onMoreClicked(model, model.title, groupPosition) }
+                }
+
+                //TODO : Check if any other optimal solution is available
+                val adapter: AdaptContent? = AdaptContent(context, model)
+                contentRecyclerView?.layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
+                adapter?.setChildClickListener(object : OnChildItemClickListener {
+                    override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
+                        groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
+                    }
                 })
-                contentRecyclerView.adapter = adapter
+                contentRecyclerView?.adapter = adapter
             }
         }
     }
@@ -61,12 +69,12 @@ class AdaptHome(private var context: Context?, private var allContentModel: AllC
             when(viewType){
                 RecyclerItemTypes.ITEM_CATEGORY_TYPE -> {
                     val itemHolder = holder as ItemCategoryHolder
-                    itemHolder.bind(context, this, groupItemClickListener, 1, position)
+                    itemHolder.bind(context, this, itemClickListener, 1, position)
                 }
 
                 RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE -> {
                     val itemHolder = holder as ItemCategoryHolder
-                    itemHolder.bind(context, this, groupItemClickListener, 2, position)
+                    itemHolder.bind(context, this, itemClickListener, 2, position)
                 }
 
                 RecyclerItemTypes.END_IMAGE -> {

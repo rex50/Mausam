@@ -51,6 +51,6 @@ class ActSearchCity : BaseActivity(), FragSearch.OnFragmentInteractionListener {
 
     override val snackBar: MaterialSnackBar? = materialSnackBar
 
-    override fun startMorePhotosActivity() { //Do nothing
+    override fun startMorePhotosActivity(searchTerm: String?) { //Do nothing
     }
 }

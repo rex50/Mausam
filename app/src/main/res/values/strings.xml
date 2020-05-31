@@ -7,6 +7,12 @@
     <string name="storage_perm_title">Storage</string>
     <string name="search_loc_title">Search location</string>
     <string name="search_wallpaper_title">Search wallpapers</string>
+    <string name="search_results_title">Wallpapers</string>
+    <string name="Images">Images</string>
+    <string name="likes">Likes</string>
+    <string name="height">Height</string>
+    <string name="width">Width</string>
+
 
     <!--Descriptions-->
     <string name="permission_desc">Will you please allow Mausam this permission.</string>
@@ -30,6 +36,9 @@
     <string name="preview_image">Preview Image</string>
     <string name="photographer_s_image">photographer\'s image</string>
     <string name="settings_button">Settings button</string>
+    <string name="ok_caps">OK</string>
+    <string name="wallpapers">wallpapers</string>
+    <string name="loading_data">loading data</string>
 
     <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>
@@ -45,10 +54,14 @@
     <string name="no_permission_error_msg">Location permission is needed to show latest weather details. Please go to settings and allow Location Permission.</string>
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
     <string name="search_city_error">%s place weather information not found, you can skip this by the way.</string>
+    <string name="failed_getting_wallpapers_error_msg">Sorry, failed while getting beautiful wallpapers. Please try again.</string>
 
     <!--Static strings-->
     <string name="unsplash_txt" translatable="false">Unsplash</string>
     <string name="pixabay_txt" translatable="false">Pixabay</string>
+    <string name="Description">Description</string>
+    <string name="color">Color</string>
+    <string name="created_on">Created on</string>
 
 
     <!--Colors array-->

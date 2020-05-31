@@ -19,8 +19,8 @@ import com.rex50.mausam.network.APIManager.WeatherAPICallBackResponse
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Utils.TextValidationInterface
-import kotlinx.android.synthetic.main.header_custom_general.*
 import kotlinx.android.synthetic.main.frag_search.*
+import kotlinx.android.synthetic.main.header_custom_general.*
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
 import java.util.*
@@ -38,7 +38,7 @@ class FragSearch : BaseFragment() {
             searchOnlyCity = this
         }
 
-        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        mContext?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         if (resources.getBoolean(R.bool.hide_search_providers)) {
             containerSearchProviders?.hideView()
@@ -74,7 +74,7 @@ class FragSearch : BaseFragment() {
             false
         })
 
-        etvSearch?.setOnEditorActionListener(OnEditorActionListener { textView: TextView?, actionId: Int, keyEvent: KeyEvent? ->
+        etvSearch?.setOnEditorActionListener(OnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 onSearchClickAction()
                 return@OnEditorActionListener true
@@ -92,6 +92,7 @@ class FragSearch : BaseFragment() {
 
     override fun load() {
         //TODO
+        // can show some tags to search
     }
 
     private fun onSearchClickAction() {
@@ -102,18 +103,9 @@ class FragSearch : BaseFragment() {
     }
 
     private fun searchWallpapers() {
-        //TODO
         val searchTerm = etvSearch?.text.toString()
-
-        /*UnsplashHelper(context).getSearchedPhotos(searchTerm, 1, 20, object: GetUnsplashSearchedPhotosListener{
-            override fun onSuccess(photos: SearchedPhotos?) {
-
-            }
-
-            override fun onFailed(errors: JSONArray?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })*/
+        mListener?.startMorePhotosActivity(searchTerm)
+        hideKeyboard()
     }
 
     private fun validateCity(city: String) {
@@ -139,7 +131,7 @@ class FragSearch : BaseFragment() {
     }
 
     fun setErrorMsg(msg: String?) {
-        tvSearchError!!.text = msg
+        tvSearchError?.text = msg
     }
 
     override fun onAttach(context: Context) {
@@ -165,7 +157,7 @@ class FragSearch : BaseFragment() {
     }
 
     private fun startWeatherSearch(place: String) {
-        val apiManager = APIManager.getInstance(activity)
+        val apiManager = APIManager.getInstance(mContext)
         val urlExtras = HashMap<String, String>()
         urlExtras["q"] = place
         apiManager.searchWeather(APIManager.SERVICE_CURRENT_WEATHER, urlExtras, object : WeatherAPICallBackResponse {
@@ -182,7 +174,7 @@ class FragSearch : BaseFragment() {
             }
 
             override fun onWeatherResponseFailure(errorCode: Int, msg: String) {
-                etvSearch!!.isEnabled = true
+                etvSearch?.isEnabled = true
                 when (errorCode) {
                     Utils.PAGE_NOT_FOUND -> mListener?.snackBar?.show("Something is wrong. Please try again", MaterialSnackBar.LENGTH_LONG)
                     Utils.CITY_NOT_FOUND -> {
@@ -199,7 +191,7 @@ class FragSearch : BaseFragment() {
         fun onFragmentInteraction(uri: Uri?)
         fun onWeatherSearchSuccess(weatherDetails: WeatherModelClass?)
         fun nextBtnClicked()
-        fun startMorePhotosActivity()
+        fun startMorePhotosActivity(searchTerm: String?)
         val sharedPrefs: MausamSharedPrefs?
         val snackBar: MaterialSnackBar?
     }

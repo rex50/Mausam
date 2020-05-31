@@ -22,6 +22,8 @@
     <color name="graniteGray">#606060</color>
     <color name="taupeGray">#8A8A8A</color>
     <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="dark">#121212</color>
 
 
 <!--    UI colors-->
@@ -30,6 +32,7 @@
     <color name="black_to_white">@color/white</color>
     <color name="white_to_black">@color/black</color>
     <color name="white_to_accent">@color/colorAccent</color>
+    <color name="white_to_dark">@color/dark</color>
     <color name="accent_to_oliveBlack">@color/oliveBlack</color>
 
     <!--Text-->

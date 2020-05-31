@@ -1,5 +1,6 @@
 package com.rex50.mausam.base_classes
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,12 +16,12 @@ abstract class BaseFragment : Fragment(){
         return inflater.inflate(getResourceLayout(), container, false)
     }
 
-    var activity: BaseActivity? = null
+    var mContext: Activity? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is BaseActivity)
-            activity = context
+            mContext = context
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

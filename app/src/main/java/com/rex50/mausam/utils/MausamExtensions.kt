@@ -6,7 +6,12 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.joda.time.DateTime
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun String.isInt(): Boolean = when(toIntOrNull()){
     null -> false
@@ -55,4 +60,36 @@ fun View.setEnabled(){
 
 fun View.setDisabled(){
     isEnabled = false
+}
+
+fun View.isViewVisible(): Boolean = visibility == VISIBLE
+
+fun String.toDateFormat(pattern: String) : String {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+    val dateTime = DateTime(dateFormat.parse(this))
+    return dateTime.toString(pattern)
+}
+
+
+
+/**
+ * Animations
+ */
+
+fun FloatingActionButton.toNormal(){
+    layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT).apply {
+        addRule(RelativeLayout.ALIGN_PARENT_START)
+        addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        setMargins(16, 16, 16, 16)
+    }
+    rotation = 0F
+}
+
+fun FloatingActionButton.toRightAndRotate(){
+    layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT).apply {
+        addRule(RelativeLayout.ALIGN_PARENT_END)
+        addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        setMargins(16, 16, 16, 16)
+    }
+    rotation = 90F
 }

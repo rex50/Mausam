@@ -112,16 +112,16 @@ public class UnsplashHelper {
     public void getSearchedPhotos(String searchTerm, int page, @perPageRestriction int perPage, GetUnsplashSearchedPhotosListener listener){
         HashMap<String, String> extras = new HashMap<>();
         extras.put("query", searchTerm);
-        extras.put("page", page < 1 ? String.valueOf(page) : "1");
+        extras.put("page", page < 1 ? "1" : String.valueOf(page));
         extras.put("per_page", String.valueOf(perPage));
-        String response = KeyValuesRepository.getValue(context, searchTerm);
+        String response = KeyValuesRepository.getValue(context, searchTerm+page+perPage);
         if(null == response || response.isEmpty()){
             apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_SEARCHED_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
                 @Override
                 public void onSuccess(String response) {
                     SearchedPhotos photos = DataParser.parseSearchedPhotos(response);
                     listener.onSuccess(photos);
-                    KeyValuesRepository.insert(context, searchTerm, response);
+                    KeyValuesRepository.insert(context, searchTerm+page+perPage, response);
                 }
 
                 @Override
