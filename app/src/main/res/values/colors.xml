@@ -28,12 +28,21 @@
 
 <!--    UI colors-->
 
-    <!--General-->
+    <!--  Notes
+
+    -> Define {color_in_light}_to_{color_in_dark}
+     color_in_light : color will applied in light mode ~~ assign value of this color in this xml
+     color_in_dark : color will applied in dark mode
+
+     -->
+
+    <!-- light to dark -->
     <color name="black_to_white">@color/black</color>
     <color name="white_to_black">@color/white</color>
     <color name="white_to_accent">@color/white</color>
     <color name="white_to_dark">@color/white</color>
     <color name="accent_to_oliveBlack">@color/colorAccent</color>
+    <color name="magicMint_to_dark">@color/magicMint</color>
 
     <!--Text-->
     <color name="titleColor">@color/black</color>

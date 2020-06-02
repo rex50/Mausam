@@ -35,6 +35,10 @@ class Constants {
         const val POWERED_BY_UNSPLASH = "Powered by Unsplash"
     }
 
+    object Units {
+        const val PX = "px"
+    }
+
     object ApiConstants {
         const val UNSPLASH_USERNAME = "unsplash_username"
     }

@@ -62,13 +62,21 @@ fun View.setDisabled(){
     isEnabled = false
 }
 
-fun View.isViewVisible(): Boolean = visibility == VISIBLE
+fun View?.isViewVisible(): Boolean = if(this == null) false else visibility == VISIBLE
 
 fun String.toDateFormat(pattern: String) : String {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
     val dateTime = DateTime(dateFormat.parse(this))
     return dateTime.toString(pattern)
 }
+
+fun String.addBefore(text: String?): String = text?.takeIf { it.isNotEmpty() }?.let {
+    "$text $this"
+}?: this
+
+fun String.addAfter(text: String?): String = text?.takeIf { it.isNotEmpty() }?.let {
+    "$this $text"
+}?: this
 
 
 
