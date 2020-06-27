@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Mausam</string>
 
     <!--Titles-->
@@ -12,6 +12,14 @@
     <string name="likes">Likes</string>
     <string name="height">Height</string>
     <string name="width">Width</string>
+    <string name="Description">Description</string>
+    <string name="color">Color</string>
+    <string name="created_on">Created on</string>
+    <string name="portfolio">Portfolio</string>
+    <string name="instagram">Instagram</string>
+    <string name="twitter">Twitter</string>
+    <string name="see_more_photos">See more photos</string>
+    <string name="visit_this_page">Visit this page</string>
 
 
     <!--Descriptions-->
@@ -39,6 +47,15 @@
     <string name="ok_caps">OK</string>
     <string name="wallpapers">wallpapers</string>
     <string name="loading_data">loading data</string>
+    <string name="saved_to_downloads">Saved in Pictures/Mausam/Downloads</string>
+    <string name="saved_to_fav">Saved in Pictures/Mausam/Favourites</string>
+    <string name="download_started">Download started</string>
+    <string name="adding_to_fav">Adding to Favourites</string>
+    <string name="added_to_fav">Added to Favourites</string>
+    <string name="removed_from_fav">Removed from Favourites</string>
+    <string name="already_downloaded">Already downloaded</string>
+    <string name="share_body">Here is a awesome photo %s by %s\n\nGet Mausam app on Playstore and experience a new world of images.\nPowered by Unsplash</string>
+    <string name="preparing_home">Preparing home…</string>
 
     <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>
@@ -55,53 +72,54 @@
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
     <string name="search_city_error">%s place weather information not found, you can skip this by the way.</string>
     <string name="failed_getting_wallpapers_error_msg">Sorry, failed while getting beautiful wallpapers. Please try again.</string>
+    <string name="failed_getting_collection_error_msg">Sorry, failed while getting collections. Please try again.</string>
+    <string name="failed_to_download_no_internet">Error while saving image. Please check your internet.</string>
+    <string name="failed_to_download_no_space">Error while saving image. Please check available storage.</string>
+    <string name="failed_to_load_image">Unable to load image.\nPlease check your internet.</string>
 
     <!--Static strings-->
     <string name="unsplash_txt" translatable="false">Unsplash</string>
     <string name="pixabay_txt" translatable="false">Pixabay</string>
-    <string name="Description">Description</string>
-    <string name="color">Color</string>
-    <string name="created_on">Created on</string>
 
 
     <!--Colors array-->
     <string-array name="colors">
-        <item>Red_#FF0000</item>
-        <item>Orange_#FF7F00</item>
-        <item>Yellow_#FFFF00</item>
-        <item>Green_#00FF00</item>
-        <item>Turquoise_#30D5C8</item>
-        <item>Blue_#0000FF</item>
-        <item>Lilac_#C8A2C8</item>
-        <item>Pink_#FFC0CB</item>
-        <item>White_#FFFFFF</item>
-        <item>Gray_#808080</item>
-        <item>Black_#000000</item>
-        <item>Brown_#964B00</item>
+        <item>Red~~#FF0000</item>
+        <item>Orange~~#FF7F00</item>
+        <item>Yellow~~#FFFF00</item>
+        <item>Green~~#00FF00</item>
+        <item>Turquoise~~#30D5C8</item>
+        <item>Blue~~#0000FF</item>
+        <item>Lilac~~#C8A2C8</item>
+        <item>Pink~~#FFC0CB</item>
+        <item>White~~#FFFFFF</item>
+        <item>Gray~~#808080</item>
+        <item>Black~~#000000</item>
+        <item>Brown~~#964B00</item>
     </string-array>
 
     <!--    Categories array-->
-    <string-array name="categories">
-        <item>Fashion</item>
-        <item>Nature</item>
-        <item>Backgrounds</item>
-        <item>Science</item>
-        <item>Education</item>
-        <item>People</item>
-        <item>Feelings</item>
-        <item>Religion</item>
-        <item>Health</item>
-        <item>Places</item>
-        <item>Animals</item>
-        <item>Industry</item>
-        <item>Food</item>
-        <item>Computer</item>
-        <item>Sports</item>
-        <item>Transportation</item>
-        <item>Travel</item>
-        <item>Buildings</item>
-        <item>Business</item>
-        <item>Music</item>
+    <string-array name="categories" tools:ignore="TypographyDashes">
+        <item>Fashion~~https://images.unsplash.com/photo-1469334031218-e382a71b716b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=&amp;h=300&amp;q=80</item>
+        <item>Nature~~https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
+        <item>Backgrounds~~https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item>Science~~https://images.unsplash.com/photo-1507668077129-56e32842fceb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item>Education~~https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item>People~~https://images.unsplash.com/photo-1513682121497-80211f36a7d3?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item>Feelings~~https://images.unsplash.com/photo-1550263305-c8851928f1f5?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
+        <item>Religion~~https://images.unsplash.com/photo-1519799478955-1c5b789a6bfb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
+        <item>Health~~https://images.unsplash.com/photo-1543362906-acfc16c67564?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
+        <item>Places~~https://images.unsplash.com/photo-1571262428487-5544c6d0eb23?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item >Animals~~https://images.unsplash.com/photo-1504006833117-8886a355efbf?ixlib=rb-1.2.1&amp;amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;amp;auto=format&amp;amp;fit=crop&amp;w=300&amp;h=300&amp;amp;q=80</item>
+        <item>Industry~~https://images.unsplash.com/photo-1455165814004-1126a7199f9b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item>Food~~https://images.unsplash.com/photo-1506354666786-959d6d497f1a?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item>Computer~~https://images.unsplash.com/photo-1547658718-1cdaa0852790?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item>Sports~~https://images.unsplash.com/photo-1495555687398-3f50d6e79e1e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item>Transportation~~https://images.unsplash.com/photo-1542352187-9cd40de06215?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
+        <item>Travel~~https://images.unsplash.com/photo-1531219432768-9f540ce91ef3?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
+        <item>Buildings~~https://images.unsplash.com/photo-1486174975375-bd1c9e108596?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
+        <item>Business~~https://images.unsplash.com/photo-1507679799987-c73779587ccf?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
+        <item>Music~~https://images.unsplash.com/photo-1484755560615-a4c64e778a6c?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
     </string-array>
 
 </resources>

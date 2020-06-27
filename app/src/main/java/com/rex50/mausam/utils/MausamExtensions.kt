@@ -2,12 +2,15 @@ package com.rex50.mausam.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
@@ -46,6 +49,22 @@ fun Context.showKeyBoard(view: View?) {
     }
 }
 
+fun Fragment.showToast(msg: String){
+    context?.showToast(msg)
+}
+
+fun Activity.showToast(msg: String){
+    toast(this, msg)
+}
+
+fun Context.showToast(msg: String){
+    toast(this, msg)
+}
+
+private fun toast(context: Context?, msg: String){
+    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+}
+
 fun View.showView(){
     visibility = VISIBLE
 }
@@ -78,7 +97,28 @@ fun String.addAfter(text: String?): String = text?.takeIf { it.isNotEmpty() }?.l
     "$this $text"
 }?: this
 
+fun String?.optString() : String =
+        this ?: "null"
 
+fun String?.getTextOrEmpty() : String =
+        if (optString().equals("null", ignoreCase = true)) "" else this!!
+
+fun Any?.isNull(): Boolean = this == null
+
+fun Any?.isNotNull(): Boolean = this != null
+
+fun Context.lifecycleOwner(): LifecycleOwner? {
+    var curContext = this
+    var maxDepth = 20
+    while (maxDepth-- > 0 && this !is LifecycleOwner) {
+        curContext = (this as ContextWrapper).baseContext
+    }
+    return if (curContext is LifecycleOwner) {
+        curContext
+    } else {
+        null
+    }
+}
 
 /**
  * Animations

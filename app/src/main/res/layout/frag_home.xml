@@ -15,8 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/header"
             android:paddingTop="?attr/actionBarSize"
-            android:clipToPadding="false"
-            android:scrollbars="none">
+            android:clipToPadding="false">
 
             <LinearLayout
                 android:id="@+id/linearView"
@@ -28,7 +27,7 @@
 
                 <include
                     layout="@layout/item_weather_card"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recHomeContent"
@@ -60,6 +59,7 @@
         android:background="@drawable/bg_general_accent_dark"
         android:padding="8dp"
         android:src="@drawable/ic_search"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:contentDescription="@string/search_box_hint" />
 
 </RelativeLayout>

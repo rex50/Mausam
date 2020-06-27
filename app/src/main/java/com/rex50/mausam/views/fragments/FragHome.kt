@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.item_weather_card.*
 import org.json.JSONArray
 import java.util.*
 
-class FragHome : BaseFragment() {
+class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
     private var allData: AllContentModel? = null
     private var sequenceOfLayout: MutableList<String> = ArrayList()
     private var adaptHome: AdaptHome? = null
@@ -228,6 +228,7 @@ class FragHome : BaseFragment() {
     private fun prepareHomeRecycler(sequenceOfLayout: List<String>) {
         val unsplashHelper = UnsplashHelper(mContext)
         allData = AllContentModel()
+        allData?.setContentInsertListener(this)
         adaptHome = AdaptHome(mContext, allData)
         recHomeContent?.apply {
             layoutManager = LinearLayoutManager(mContext)
@@ -238,56 +239,10 @@ class FragHome : BaseFragment() {
         allData?.apply {
             setSequenceOfLayouts(sequenceOfLayout)
             setAdapter(adaptHome)
-            setOnClickListener(object : OnGroupItemClickListener{
-                override fun onItemClick(o: Any?, childImgView: ImageView?, groupPos: Int, childPos: Int) {
-                    object : GenericModelCastHelper(o) {
-
-                        override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
-
-                        }
-
-                        override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
-                            generalTypeModel?.apply {
-                                ImageViewerHelper(mContext).showImagesInFullScreen(photosList,
-                                        childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
-                                    override fun onDownload(photoInfo: UnsplashPhotos) {
-                                        //TODO
-                                    }
-                                })
-                            }
-                        }
-
-                        override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
-                            favPhotographerTypeModel?.apply {
-                                ImageViewerHelper(mContext).showImagesInFullScreen(photosList,
-                                        childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
-                                    override fun onDownload(photoInfo: UnsplashPhotos) {
-                                        //TODO
-                                    }
-                                })
-                            }
-                        }
-
-                        override fun onTagType(tagTypeModel: GenericModelFactory.TagTypeModel?) {
-                            mListener?.startMorePhotosActivity(tagTypeModel?.tagsList?.get(childPos)?.title)
-                        }
-
-                        override fun onColorType(colorTypeModel: GenericModelFactory.ColorTypeModel?) {
-                            mListener?.startMorePhotosActivity(colorTypeModel?.colorsList?.get(childPos)?.colorName)
-                        }
-
-                        override fun onCategoryType(categoryTypeModel: GenericModelFactory.CategoryTypeModel?) {
-                            mListener?.startMorePhotosActivity(categoryTypeModel?.categories?.get(childPos))
-                        }
-
-                    }
-                }
-
-                override fun onMoreClicked(o: Any?, title: String?, groupPos: Int) {
-                    mListener?.startMorePhotosActivity(title)
-                }
-            })
+            initItemClicks(this)
         }
+
+        mListener?.getMaterialSnackBar()?.showIndeterminateBar(R.string.preparing_home)
 
         if (sequenceOfLayout.contains(AvailableLayouts.WEATHER_BASED_WALLPAPERS)) {
             unsplashHelper.getSearchedPhotos("Summer", 1, 20, object : GetUnsplashSearchedPhotosListener {
@@ -298,6 +253,7 @@ class FragHome : BaseFragment() {
 
                 override fun onFailed(errors: JSONArray) {
                     Log.e(TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
                 }
             })
         }
@@ -310,6 +266,7 @@ class FragHome : BaseFragment() {
 
                 override fun onFailed(errors: JSONArray) {
                     Log.e(TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
                 }
             })
         }
@@ -322,11 +279,12 @@ class FragHome : BaseFragment() {
 
                 override fun onFailed(errors: JSONArray) {
                     Log.e(TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
                 }
             })
         }
         if (sequenceOfLayout.contains(AvailableLayouts.POPULAR_WALLPAPERS)) {
-            unsplashHelper.getPhotosAndUsers(UnsplashHelper.ORDER_BY_DEFAULT, object : GetUnsplashPhotosAndUsersListener {
+            unsplashHelper.getPhotosAndUsers(UnsplashHelper.ORDER_BY_POPULAR, object : GetUnsplashPhotosAndUsersListener {
                 override fun onSuccess(photos: List<UnsplashPhotos>, userList: List<User>) {
                     allData?.addSequentially(AvailableLayouts.POPULAR_WALLPAPERS,
                             GenericModelFactory.getGeneralTypeObject(AvailableLayouts.POPULAR_WALLPAPERS, Constants.Providers.POWERED_BY_UNSPLASH, true, photos))
@@ -338,6 +296,7 @@ class FragHome : BaseFragment() {
 
                 override fun onFailed(errors: JSONArray) {
                     Log.e(TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
                 }
             })
         }
@@ -354,6 +313,7 @@ class FragHome : BaseFragment() {
 
                 override fun onFailed(errors: JSONArray) {
                     Log.e(TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
                 }
             })
         }
@@ -361,15 +321,15 @@ class FragHome : BaseFragment() {
             mContext?.apply {
                 val categories = listOf<String>(*resources.getStringArray(R.array.categories))
                 allData?.addSequentially(AvailableLayouts.BROWSE_BY_CATEGORIES, GenericModelFactory.getCategoryTypeObject(AvailableLayouts.BROWSE_BY_CATEGORIES,
-                        Constants.Providers.POWERED_BY_UNSPLASH, false, categories, true))
-            }
+                        Constants.Providers.POWERED_BY_UNSPLASH, false, GenericModelFactory.CategoryTypeModel.createModelFromStringList(categories), true))
+            }?: allData?.increaseResponseCount()
         }
         if (sequenceOfLayout.contains(AvailableLayouts.BROWSE_BY_COLORS)) {
             mContext?.apply {
                 val colorsList = listOf<String>(*resources.getStringArray(R.array.colors))
                 allData!!.addSequentially(AvailableLayouts.BROWSE_BY_COLORS, GenericModelFactory.getColorTypeObject(AvailableLayouts.BROWSE_BY_COLORS, Constants.Providers.POWERED_BY_UNSPLASH,
                         false, GenericModelFactory.ColorTypeModel.createModelFromStringList(colorsList), true))
-            }
+            }?: allData?.increaseResponseCount()
         }
         if (sequenceOfLayout.contains(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)) {
             unsplashHelper.getUserPhotos("rpnickson", object : GetUnsplashPhotosListener {
@@ -380,9 +340,175 @@ class FragHome : BaseFragment() {
 
                 override fun onFailed(errors: JSONArray) {
                     Log.e(TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
                 }
             })
         }
+    }
+
+    private fun initItemClicks(allContentModel: AllContentModel) {
+        allContentModel.setOnClickListener(object : OnGroupItemClickListener{
+            override fun onItemClick(o: Any?, childImgView: ImageView?, groupPos: Int, childPos: Int) {
+                object : GenericModelCastHelper(o) {
+
+                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+                        showToast("Work in progress")
+                    }
+
+                    override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
+                        generalTypeModel?.apply {
+                            ImageViewerHelper(mContext).showImagesInFullScreen(photosList,
+                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+
+                                override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            showToast(getString(R.string.download_started))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            showToast(getString(R.string.failed_to_download_no_internet))
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            ImageActionHelper.setWallpaper(mContext, imageMeta?.getUri())
+                                        }
+                                    })
+                                }
+
+                                override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            showToast(getString(R.string.download_started))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            showToast(getString(R.string.failed_to_download_no_internet))
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            if(msg.isNotEmpty()){
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            showToast(getString(R.string.adding_to_fav))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            showToast(getString(R.string.failed_to_download_no_internet))
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            if(msg.isNotEmpty()){
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onShare(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.shareImage(mContext, "Share", photoInfo.user.name, photoInfo.links.html)
+                                }
+                            })
+                        }
+                    }
+
+                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                        favPhotographerTypeModel?.apply {
+                            ImageViewerHelper(mContext).showImagesInFullScreen(photosList,
+                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+                                override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            showToast(getString(R.string.download_started))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            showToast(getString(R.string.failed_to_download_no_internet))
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            ImageActionHelper.setWallpaper(mContext, Uri.parse(imageMeta?.relativePath))
+                                        }
+                                    })
+                                }
+
+                                override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            showToast(getString(R.string.download_started))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            showToast(getString(R.string.failed_to_download_no_internet))
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            if(msg.isNotEmpty()){
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            showToast(getString(R.string.adding_to_fav))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            showToast(getString(R.string.failed_to_download_no_internet))
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            if(msg.isNotEmpty()){
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onShare(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.shareImage(mContext, "Share", photoInfo.user.name, photoInfo.links.html)
+                                }
+                            })
+                        }
+                    }
+
+                    override fun onTagType(tagTypeModel: GenericModelFactory.TagTypeModel?) {
+                        mListener?.startMorePhotosActivity(tagTypeModel?.tagsList?.get(childPos)?.title)
+                    }
+
+                    override fun onColorType(colorTypeModel: GenericModelFactory.ColorTypeModel?) {
+                        mListener?.startMorePhotosActivity(colorTypeModel?.colorsList?.get(childPos)?.colorName)
+                    }
+
+                    override fun onCategoryType(categoryTypeModel: GenericModelFactory.CategoryTypeModel?) {
+                        mListener?.startMorePhotosActivity(categoryTypeModel?.categories?.get(childPos)?.categoryName)
+                    }
+
+                }
+            }
+
+            override fun onMoreClicked(o: Any?, title: String?, groupPos: Int) {
+                object : GenericModelCastHelper(o){
+                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+                        mListener?.startMoreFeaturedCollections(collectionTypeModel?.collections)
+                    }
+
+                    override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
+                        mListener?.startMorePhotosActivity(title)
+                    }
+                }
+            }
+        })
     }
 
     private fun convertToCelsius(kelvin: Double): Double {
@@ -391,6 +517,14 @@ class FragHome : BaseFragment() {
 
     private fun getFormattedString(someNumber: Double): String {
         return String.format("%.1f", someNumber)
+    }
+
+    override fun onContentAddedCount(loadedCount: Int, totalCount: Int) {
+
+    }
+
+    override fun onAllContentLoaded() {
+        mListener?.getMaterialSnackBar()?.dismiss()
     }
 
     /*private EndlessRecyclerOnScrollListener endlessListener = new EndlessRecyclerOnScrollListener() {
@@ -433,7 +567,9 @@ class FragHome : BaseFragment() {
         fun startMorePhotosActivity(searchTerm: String?)
         fun startSearchScreen()
         val lastLocationDetails: Bundle?
+        fun getMaterialSnackBar(): MaterialSnackBar?
         fun requestWeather(listener: WeatherResultListener?) //        void getWeatherWallpaper();
+        fun startMoreFeaturedCollections(collections: List<Collections>?)
     }
 
     companion object {

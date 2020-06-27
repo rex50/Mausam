@@ -50,27 +50,30 @@ android {
 dependencies {
     def room_version = "2.2.5"
     def glide_version = "4.11.0"
-    def material_version = "1.2.0-alpha06"
+    def material_version = "1.3.0-alpha01"
     def joda_version = "2.10.3"
     def lang_version = "3.5"
-    def ktx_version = "1.2.0"
+    def ktx_version = "1.3.0"
     def gson_version = "2.8.6"
     def volley_version = "1.1.1"
     def cardview_version = "1.0.0"
     def play_service_location_version = "17.0.0"
     def switcher_version = "1.1.0"
-    def imageViewer_version = "1.0.1"
+    //def imageViewer_version = "1.0.1"
     def photo_view_version = "2.3.0"
     def ripple_effect_version = "1.3"
     def push_down_effect_version = "1.1.1"
     def transition_everywhere_version = "2.1.0"
+    def snack_progress_bar_version = "6.4.0"
+    def lottie_version = "3.0.7"
+    def rex50_imageViewer_version = "1.0.1.3"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.gms:play-services-plus:17.0.0'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
@@ -93,7 +96,7 @@ dependencies {
 
     implementation "com.bitvale:switcher:$switcher_version"
 
-    implementation "com.github.stfalcon:stfalcon-imageviewer:$imageViewer_version"
+    //implementation "com.github.stfalcon:stfalcon-imageviewer:$imageViewer_version"
     implementation "com.github.chrisbanes:PhotoView:$photo_view_version"
 
     //Click effect
@@ -103,6 +106,10 @@ dependencies {
     }
 
     implementation "com.andkulikov:transitionseverywhere:$transition_everywhere_version"
+
+    implementation "com.github.tingyik90:snackprogressbar:$snack_progress_bar_version"
+    implementation "com.airbnb.android:lottie:$lottie_version"
+    implementation "com.github.rex50:StfalconImageViewer:$rex50_imageViewer_version"
 
     //For testing
     /*implementation "com.google.firebase:firebase-inappmessaging-display:19.0.3"

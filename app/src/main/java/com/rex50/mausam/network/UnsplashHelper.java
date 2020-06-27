@@ -29,7 +29,7 @@ public class UnsplashHelper {
     private final String TAG = "UnsplashHelper";
     private final String collectionKey = "popularCollectionAndTags";
 
-    //Unsplash Constants
+    //Unsplash order by Constants
     public final static String ORDER_BY_DEFAULT = "latest";
     public final static String ORDER_BY_LATEST = "latest";
     public final static String ORDER_BY_OLDEST = "oldest";
@@ -40,13 +40,26 @@ public class UnsplashHelper {
     private @interface OrderPhotosByRestriction {
     }
 
+
+    //Unsplash orientation Constants
+    public final static String ORIENTATION_UNSPECIFIED = "unspecified";
+    public final static String ORIENTATION_LANDSCAPE = "landscape";
+    public final static String ORIENTATION_PORTRAIT = "portrait";
+    public final static String ORIENTATION_SQUARISH = "squarish";
+
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({ORIENTATION_UNSPECIFIED, ORIENTATION_LANDSCAPE, ORIENTATION_PORTRAIT, ORIENTATION_SQUARISH})
+    private @interface PhotosOrientationRestriction {
+    }
+
     @Retention(RetentionPolicy.SOURCE)
     @IntRange(from = 1, to = 20)
-    private @interface perPageRestriction{}
+    private @interface PerPageRestriction {}
 
     APIManager apiManager;
 
     private Context context;
+    private String defaultOrientation = ORIENTATION_PORTRAIT;
 
     private UnsplashHelper(){
     }
@@ -56,10 +69,28 @@ public class UnsplashHelper {
         apiManager = APIManager.getInstance(context);
     }
 
-    public void getPhotosAndUsers(@OrderPhotosByRestriction String orderBy, GetUnsplashPhotosAndUsersListener listener){
+    public UnsplashHelper(Context context, @PhotosOrientationRestriction String defaultOrientation){
+        this.context = context;
+        apiManager = APIManager.getInstance(context);
+        this.defaultOrientation = defaultOrientation;
+    }
+
+    public void getPhotosAndUsers(@OrderPhotosByRestriction String orderBy, GetUnsplashPhotosAndUsersListener listener) {
+        getPhotosAndUsers(orderBy, 1, 10, defaultOrientation,listener);
+    }
+
+    public void getPhotosAndUsers(@OrderPhotosByRestriction String orderBy, int page, @PerPageRestriction int perPage, GetUnsplashPhotosAndUsersListener listener) {
+        getPhotosAndUsers(orderBy, page, perPage, defaultOrientation,listener);
+    }
+
+    public void getPhotosAndUsers(@OrderPhotosByRestriction String orderBy, int page, @PerPageRestriction int perPage, @PhotosOrientationRestriction String orientation, GetUnsplashPhotosAndUsersListener listener){
         HashMap<String, String> extras = new HashMap<>();
         extras.put("order_by", orderBy);
-        String response = KeyValuesRepository.getValue(context, orderBy);
+        extras.put("page", page < 1 ? "1" : String.valueOf(page));
+        extras.put("per_page", String.valueOf(perPage));
+        if(!orientation.equalsIgnoreCase(ORIENTATION_UNSPECIFIED))
+            extras.put("orientation", orientation);
+        String response = KeyValuesRepository.getValue(context, orderBy+page+perPage);
         if(response == null || response.isEmpty()){
             apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
                 @Override
@@ -109,11 +140,17 @@ public class UnsplashHelper {
         }
     }*/
 
-    public void getSearchedPhotos(String searchTerm, int page, @perPageRestriction int perPage, GetUnsplashSearchedPhotosListener listener){
+    public void getSearchedPhotos(String searchTerm, int page, @PerPageRestriction int perPage, GetUnsplashSearchedPhotosListener listener){
+        getSearchedPhotos(searchTerm, page, perPage, defaultOrientation, listener);
+    }
+
+    public void getSearchedPhotos(String searchTerm, int page, @PerPageRestriction int perPage, @PhotosOrientationRestriction String photosOrientation, GetUnsplashSearchedPhotosListener listener){
         HashMap<String, String> extras = new HashMap<>();
         extras.put("query", searchTerm);
         extras.put("page", page < 1 ? "1" : String.valueOf(page));
         extras.put("per_page", String.valueOf(perPage));
+        if(!photosOrientation.equals(ORIENTATION_UNSPECIFIED))
+            extras.put("orientation", photosOrientation);
         String response = KeyValuesRepository.getValue(context, searchTerm+page+perPage);
         if(null == response || response.isEmpty()){
             apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_SEARCHED_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
@@ -135,18 +172,18 @@ public class UnsplashHelper {
         }
     }
 
-    public void getCollectionsAndTags(int page, @perPageRestriction int perPage, GetUnsplashCollectionsAndTagsListener listener){
+    public void getCollectionsAndTags(int page, @PerPageRestriction int perPage, GetUnsplashCollectionsAndTagsListener listener){
         HashMap<String, String> extras = new HashMap<>();
-        extras.put("page", page < 1 ? String.valueOf(page) : "1");
+        extras.put("page", page < 1 ? "1" : String.valueOf(page));
         extras.put("per_page", String.valueOf(perPage));
-        String response = KeyValuesRepository.getValue(context, collectionKey);
+        String response = KeyValuesRepository.getValue(context, collectionKey+page+perPage);
         if(null == response || response.isEmpty()){
             apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTIONS, extras, new APIManager.UnsplashAPICallResponse() {
                 @Override
                 public void onSuccess(String response) {
                     CollectionsAndTags obj = DataParser.parseCollections(response, true);
                     listener.onSuccess(obj.getCollectionsList(), obj.getTagsList());
-                    KeyValuesRepository.insert(context, collectionKey, response);
+                    KeyValuesRepository.insert(context, collectionKey+page+perPage, response);
                 }
 
                 @Override

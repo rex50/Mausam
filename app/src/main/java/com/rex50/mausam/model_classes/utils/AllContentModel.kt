@@ -9,6 +9,8 @@ class AllContentModel {
     private var sequenceOfLayout: List<String>
     private var adapter: AdaptHome? = null
     private val types: MutableList<String>
+    private var responsesCount = 0
+    private var insertedListener: ContentInsertedListener? = null
 
 
     companion object {
@@ -35,13 +37,18 @@ class AllContentModel {
         sequenceOfLayout = sequence
     }
 
+    fun setContentInsertListener(insertedListener: ContentInsertedListener?){
+        this.insertedListener = insertedListener
+    }
+
     @Synchronized
     fun addSequentially(type: String, model: GenericModelFactory): Int? {
         check(sequenceOfLayout.isNotEmpty()) { "set sequence before using addSequentially()" }
+        increaseResponseCount()
         return try {
             if (size() == 0) {
                 addModel(type, model)
-                adapter?.notifyDataSetChanged()
+                insertedListener?.onContentAdded(type, model, 0)
                 return 0
             }
             val pos = sequenceOfLayout.indexOf(type)
@@ -49,18 +56,25 @@ class AllContentModel {
                 val addedPos = sequenceOfLayout.indexOf(getType(i))
                 if (addedPos > pos) {
                     addModel(i, type, model)
-                     //TODO: adapter?.notifyItemInserted(i);
-                    adapter?.notifyDataSetChanged()
+                    insertedListener?.onContentAdded(type, model, i)
                     return i
                 }
             }
             addModel(type, model)
-             //TODO: adapter.notifyItemInserted(size()-1);
-            adapter?.notifyDataSetChanged()
+            insertedListener?.onContentAdded(type, model, size()-1)
             size() - 1
         } catch (e: Exception) {
             Log.e(TAG, "addSequentially: ", e)
             null
+        }
+    }
+
+    fun increaseResponseCount(){
+        responsesCount++
+        insertedListener?.onContentAddedCount(responsesCount, sequenceOfLayout.size)
+        if (sequenceOfLayout.size == responsesCount) {
+            adapter?.notifyDataSetChanged()
+            insertedListener?.onAllContentLoaded()
         }
     }
 
@@ -84,6 +98,14 @@ class AllContentModel {
 
     fun size(): Int {
         return models?.size ?: 0
+    }
+
+    interface ContentInsertedListener{
+        fun onContentAdded(type: String, model: GenericModelFactory, insertedPos: Int){}
+
+        fun onContentAddedCount(loadedCount: Int, totalCount: Int){}
+
+        fun onAllContentLoaded()
     }
 
 }

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.rex50.mausam">
-    <!-- To access Google+ APIs: -->
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".views.activities.ActSplash">
             <intent-filter>
@@ -26,18 +27,29 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.activities.ActSearchCity" />
-        <activity android:name=".views.activities.ActWallpapersList"/>
+        <activity android:name=".views.activities.ActWallpapersList" />
         <activity android:name=".views.activities.ActPermission" />
         <activity android:name=".views.activities.ActMain" />
+        <activity android:name=".views.activities.ActCollectionsList"/>
 
         <receiver
-            android:name=".recievers.NetworkChangeReceiver"
+            android:name=".receivers.NetworkChangeReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_STATE" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

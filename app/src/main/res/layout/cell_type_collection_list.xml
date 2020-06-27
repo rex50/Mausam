@@ -8,14 +8,14 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
-        android:layout_width="240dp"
+        android:layout_width="match_parent"
         android:layout_height="240dp"
         app:cardCornerRadius="6dp"
-        android:layout_margin="8dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?android:selectableItemBackground"
-        app:cardElevation="4dp">
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 tools:srcCompat="@tools:sample/avatars"
-                android:contentDescription="image" />
+                android:contentDescription="@string/preview_image" />
 
             <View
                 android:layout_width="match_parent"
@@ -102,7 +102,7 @@
                 android:id="@+id/txt_collection_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Iranians, around the world, men and women and children."
+                tools:text="Iranians, around the world, men and women and children."
                 android:textSize="10sp"
                 android:maxLines="3"
                 android:textColor="@color/white"
@@ -116,7 +116,7 @@
                 android:id="@+id/txt_collection_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Iranians"
+                tools:text="Iranians"
                 android:textSize="16sp"
                 android:textColor="@color/white"
                 android:layout_marginStart="10dp"

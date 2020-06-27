@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/rlWallpapers"
+    android:id="@+id/rlCollection"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -44,13 +44,13 @@
             app:layout_collapseMode="pin">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recSearchedWallpapers"
+                android:id="@+id/recSearchedCollection"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingBottom="100dp"
-                android:paddingTop="@dimen/recycler_item_offset_grid"
-                android:paddingStart="@dimen/recycler_item_offset_grid"
-                android:paddingEnd="@dimen/recycler_item_offset_grid"
+                android:paddingTop="@dimen/recycler_item_offset_linear"
+                android:paddingStart="@dimen/recycler_item_offset_linear"
+                android:paddingEnd="@dimen/recycler_item_offset_linear"
                 android:clipToPadding="false"
                 android:layout_below="@+id/header" />
 
@@ -68,7 +68,7 @@
         android:contentDescription="@string/loading_data" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabSearchedWallpaperBack"
+        android:id="@+id/fabSearchedCollectionBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_left"

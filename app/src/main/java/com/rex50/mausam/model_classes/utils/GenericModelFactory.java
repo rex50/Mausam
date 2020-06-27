@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.CATEGORY_TYPE;
+import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.COLLECTION_LIST_TYPE;
 import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.COLLECTION_TYPE;
 import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.COLOR_TYPE;
 import static com.rex50.mausam.utils.Constants.RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE;
@@ -43,7 +44,7 @@ public class GenericModelFactory {
 
     private int itemType = GENERAL_TYPE;
 
-    private int itemLayout = R.layout.general_type_cell;
+    private int itemLayout = R.layout.cell_type_general;
 
     private String title = "", desc = "";
 
@@ -61,7 +62,7 @@ public class GenericModelFactory {
         generalTypeModel.setDesc(desc);
         generalTypeModel.setHasMore(hasMore);
         generalTypeModel.setItemType(GENERAL_TYPE);
-        generalTypeModel.setItemLayout(R.layout.general_type_cell);
+        generalTypeModel.setItemLayout(R.layout.cell_type_general);
         generalTypeModel.setGeneralTypeModel(new GeneralTypeModel(photosList));
         return generalTypeModel;
     }
@@ -88,6 +89,17 @@ public class GenericModelFactory {
         return generalTypeModel;
     }
 
+    public static GenericModelFactory getCollectionListTypeObject(String title, String desc, boolean hasMore, List<Collections> collectionsList){
+        GenericModelFactory generalTypeModel = new GenericModelFactory();
+        generalTypeModel.setTitle(title);
+        generalTypeModel.setDesc(desc);
+        generalTypeModel.setHasMore(hasMore);
+        generalTypeModel.setItemType(COLLECTION_LIST_TYPE);
+        generalTypeModel.setItemLayout(R.layout.cell_type_collection_list);
+        generalTypeModel.setCollectionTypeModel(new CollectionTypeModel(collectionsList));
+        return generalTypeModel;
+    }
+
     public static GenericModelFactory getTagTypeObject(String title, String desc, boolean hasMore, List<Tag> tagsList, boolean shuffleList){
         GenericModelFactory textTypeModel = new GenericModelFactory();
         textTypeModel.setTitle(title);
@@ -110,7 +122,7 @@ public class GenericModelFactory {
         return textTypeModel;
     }
 
-    public static GenericModelFactory getCategoryTypeObject(String title, String desc, boolean hasMore, List<String> categories, boolean shuffleList){
+    public static GenericModelFactory getCategoryTypeObject(String title, String desc, boolean hasMore, List<CategoryModel> categories, boolean shuffleList){
         GenericModelFactory textTypeModel = new GenericModelFactory();
         textTypeModel.setTitle(title);
         textTypeModel.setDesc(desc);
@@ -138,7 +150,7 @@ public class GenericModelFactory {
         GenericModelFactory modelFactory = new GenericModelFactory();
         modelFactory.setEndImage(res);
         modelFactory.setViewType(END_IMAGE);
-        modelFactory.setViewLayout(R.layout.general_type_cell);
+        modelFactory.setViewLayout(R.layout.cell_type_general);
         return modelFactory;
     }*/
 
@@ -247,25 +259,68 @@ public class GenericModelFactory {
 
     public static class CategoryTypeModel {
 
-        private List<String> categories = new ArrayList<>();
+        private List<CategoryModel> categories = new ArrayList<>();
 
         private CategoryTypeModel(){}
 
-        private CategoryTypeModel(List<String> categories, boolean shuffle){
+        private CategoryTypeModel(List<CategoryModel> categories, boolean shuffle){
             if(shuffle){
                 java.util.Collections.shuffle(categories);
             }
             setCategories(categories);
         }
 
-        private void setCategories(List<String> categories) {
+        public static List<CategoryModel> createModelFromStringList(List<String> categories){
+            List<CategoryModel> list = new ArrayList<>();
+
+            for(String category : categories){
+                try {
+                    String[] arr = category.split("~~");
+                    list.add(new CategoryModel(arr[0], arr[1]));
+                }catch (NullPointerException e){
+                    throw new IllegalArgumentException("Invalid category string \"" + category + "\" : Correct format is \"[@categoryName]~~[@categoryImage]");
+                }
+            }
+
+            return list;
+        }
+
+        private void setCategories(List<CategoryModel> categories) {
             this.categories = categories;
         }
 
-        public List<String> getCategories() {
+        public List<CategoryModel> getCategories() {
             return categories;
         }
 
+    }
+
+    public static class CategoryModel{
+        String categoryName;
+        String categoryImg;
+
+        private CategoryModel(){}
+
+        public CategoryModel(String categoryName, String categoryImg){
+            setCategoryName(categoryName);
+            setCategoryImg(categoryImg);
+        }
+
+        private void setCategoryImg(String colorCode) {
+            this.categoryImg = colorCode;
+        }
+
+        private void setCategoryName(String colorName) {
+            this.categoryName = colorName;
+        }
+
+        public String getCategoryImg() {
+            return categoryImg;
+        }
+
+        public String getCategoryName() {
+            return categoryName;
+        }
     }
 
     public static class ColorTypeModel {
@@ -286,10 +341,10 @@ public class GenericModelFactory {
 
             for(String color : colors){
                 try {
-                    String[] arr = color.split("_");
+                    String[] arr = color.split("~~");
                     list.add(new ColorModel(arr[0], arr[1]));
                 }catch (NullPointerException e){
-                    throw new IllegalArgumentException("Invalid color string \"" + color + "\" : Correct format is \"[@colorName]_#[@colorCode]");
+                    throw new IllegalArgumentException("Invalid color string \"" + color + "\" : Correct format is \"[@colorName]~~#[@colorCode]");
                 }
             }
 

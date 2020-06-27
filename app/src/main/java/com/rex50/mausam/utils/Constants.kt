@@ -22,12 +22,13 @@ class Constants {
         const val ITEM_CATEGORY_TYPE = R.layout.item_category
         const val FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE = R.layout.item_category + 1
         const val END_IMAGE = 10012
-        const val GENERAL_TYPE = R.layout.general_type_cell
+        const val GENERAL_TYPE = R.layout.cell_type_general
         const val FAV_PHOTOGRAPHER_PHOTOS_TYPE = R.layout.cell_type_fav_photograher_photo
         const val COLOR_TYPE = R.layout.cell_type_color
         const val CATEGORY_TYPE = R.layout.cell_type_category
         const val USER_TYPE = R.layout.cell_type_user
         const val COLLECTION_TYPE = R.layout.cell_type_collection
+        const val COLLECTION_LIST_TYPE = R.layout.cell_type_collection_list
         const val TAG_TYPE = R.layout.cell_type_tag
     }
 
@@ -39,6 +40,23 @@ class Constants {
         const val PX = "px"
     }
 
+    object Image {
+        const val JPEG_NAME_PATTERN = "%s.jpg"
+        const val DOWNLOAD_RELATIVE_PATH = "Pictures/Mausam/Downloads/"
+        const val FAV_RELATIVE_PATH = "Pictures/Mausam/Favourites/"
+        const val SAVE_MIME_TYPE = "image/jpg"
+    }
+
+    object Util {
+        const val VALUE_DIVIDER = "~Mausam~"
+    }
+
+    object File {
+        const val READ_ONLY = "r"
+        const val READ_AND_WRITE = "rw"
+        const val TRUNCATE_OR_OVERWRITE = "rwt"
+    }
+
     object ApiConstants {
         const val UNSPLASH_USERNAME = "unsplash_username"
     }
@@ -46,5 +64,6 @@ class Constants {
     object IntentConstants {
         const val SEARCH_TERM = "searchTerm"
         const val SEARCH_DESC = "searchDesc"
+        const val SEARCH_FEAT_COLLECTION = "searchFeaturedCollection"
     }
 }

@@ -15,6 +15,7 @@ import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.model_classes.utils.AllContentModel
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
+import com.rex50.mausam.utils.ItemOffsetDecoration
 import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showView
 
@@ -50,6 +51,7 @@ class AdaptHome(private var context: Context?, private var allContentModel: AllC
                         groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
                     }
                 })
+                contentRecyclerView?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
                 contentRecyclerView?.adapter = adapter
             }
         }

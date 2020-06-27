@@ -49,10 +49,15 @@ class ActPermission : BaseActivity(), View.OnClickListener {
                             LOCATION_REQUEST_CODE)
                 }
             } else {
-                materialSnackBar.showActionSnackBar("You have denied this permission. You can allow this permission from settings",
-                        "OK", MaterialSnackBar.LENGTH_INDEFINITE) {
-                    materialSnackBar.dismiss()
-                }
+                materialSnackBar.showActionSnackBar(
+                        "You have denied this permission. You can allow this permission from settings",
+                        "OK",
+                        MaterialSnackBar.LENGTH_INDEFINITE,
+                        object : MaterialSnackBar.SnackBarListener{
+                    override fun onActionPressed() {
+                        materialSnackBar.dismiss()
+                    }
+                })
             }
         }
     }
@@ -70,10 +75,15 @@ class ActPermission : BaseActivity(), View.OnClickListener {
                             STORAGE_REQUEST_CODE)
                 }
             } else {
-                materialSnackBar.showActionSnackBar("You have denied this permission. You can allow this permission from settings",
-                        "OK", MaterialSnackBar.LENGTH_INDEFINITE) {
-                    materialSnackBar.dismiss()
-                }
+                materialSnackBar.showActionSnackBar(
+                        "You have denied this permission. You can allow this permission from settings",
+                        "OK",
+                        MaterialSnackBar.LENGTH_INDEFINITE,
+                        object : MaterialSnackBar.SnackBarListener{
+                    override fun onActionPressed() {
+                        materialSnackBar.dismiss()
+                    }
+                })
             }
         }
     }
@@ -100,7 +110,15 @@ class ActPermission : BaseActivity(), View.OnClickListener {
             } else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                                 Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    materialSnackBar.showActionSnackBar("Location can't be detected automatically without this permission. So please allow Mausam this permission.", "OK", MaterialSnackBar.LENGTH_INDEFINITE) { materialSnackBar.dismiss() }
+                    materialSnackBar.showActionSnackBar(
+                            "Location can't be detected automatically without this permission. So please allow Mausam this permission.",
+                            "OK",
+                            MaterialSnackBar.LENGTH_INDEFINITE,
+                            object : MaterialSnackBar.SnackBarListener{
+                        override fun onActionPressed() {
+                            materialSnackBar.dismiss()
+                        }
+                    })
                     switchLocPermission?.isChecked = false
                 } else {
                     switchLocPermission?.apply {
@@ -108,15 +126,20 @@ class ActPermission : BaseActivity(), View.OnClickListener {
                         isEnabled = false
                     }
                     mausamSharedPrefs?.isLocationPermanentlyDenied = true
-                    materialSnackBar.showActionSnackBar("You have denied this permission earlier but can allow it from settings",
-                            "OK", MaterialSnackBar.LENGTH_INDEFINITE) {
-                        mausamSharedPrefs?.apply {
-                            if (isStoragePermanentlyDenied) {
-                                //TODO : start SearchActivity
+                    materialSnackBar.showActionSnackBar(
+                            "You have denied this permission earlier but can allow it from settings",
+                            "OK",
+                            MaterialSnackBar.LENGTH_INDEFINITE
+                            , object : MaterialSnackBar.SnackBarListener{
+                        override fun onActionPressed() {
+                            mausamSharedPrefs?.apply {
+                                if (isStoragePermanentlyDenied) {
+                                    //TODO : start SearchActivity
+                                }
                             }
+                            materialSnackBar.dismiss()
                         }
-                        materialSnackBar.dismiss()
-                    }
+                    })
                 }
             }
         } else if (requestCode == STORAGE_REQUEST_CODE) {
@@ -142,7 +165,15 @@ class ActPermission : BaseActivity(), View.OnClickListener {
             } else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    materialSnackBar.showActionSnackBar("Wallpaper download feature will not work without this permission. So please allow Mausam this permission.", "OK", MaterialSnackBar.LENGTH_INDEFINITE) { materialSnackBar.dismiss() }
+                    materialSnackBar.showActionSnackBar(
+                            "Wallpaper download feature will not work without this permission. So please allow Mausam this permission.",
+                            "OK",
+                            MaterialSnackBar.LENGTH_INDEFINITE
+                            , object : MaterialSnackBar.SnackBarListener{
+                        override fun onActionPressed() {
+                            materialSnackBar.dismiss()
+                        }
+                    })
                     switchStoragePermission?.isChecked = false
                 } else {
                     switchStoragePermission?.apply {
@@ -150,15 +181,20 @@ class ActPermission : BaseActivity(), View.OnClickListener {
                         isChecked = false
                     }
                     mausamSharedPrefs?.isStoragePermanentlyDenied = true
-                    materialSnackBar.showActionSnackBar("You have denied this permission earlier but can allow it from settings", "OK", MaterialSnackBar.LENGTH_INDEFINITE
-                    ) {
-                        materialSnackBar.dismiss()
-                        mausamSharedPrefs?.isLocationPermanentlyDenied?.apply {
-                            if(this){
-                                //TODO : start SearchActivity
+                    materialSnackBar.showActionSnackBar(
+                            "You have denied this permission earlier but can allow it from settings",
+                            "OK",
+                            MaterialSnackBar.LENGTH_INDEFINITE
+                            , object : MaterialSnackBar.SnackBarListener{
+                        override fun onActionPressed() {
+                            materialSnackBar.dismiss()
+                            mausamSharedPrefs?.isLocationPermanentlyDenied?.apply {
+                                if(this){
+                                    //TODO : start SearchActivity
+                                }
                             }
                         }
-                    }
+                    })
                 }
             }
         } else {

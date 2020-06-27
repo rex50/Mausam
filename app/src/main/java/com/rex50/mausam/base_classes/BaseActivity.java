@@ -9,7 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.rex50.mausam.recievers.NetworkChangeReceiver;
+import com.rex50.mausam.receivers.NetworkChangeReceiver;
 import com.rex50.mausam.utils.GPSRequestHelper;
 import com.rex50.mausam.utils.MaterialSnackBar;
 import com.rex50.mausam.storage.MausamSharedPrefs;

@@ -21,7 +21,7 @@ import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
-import com.rex50.mausam.utils.Utils
+import com.rex50.mausam.utils.getTextOrEmpty
 import com.thekhaeng.pushdownanim.PushDownAnim
 import org.apache.commons.lang3.StringUtils
 
@@ -89,7 +89,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
 
         fun bind(userModel: User?) {
             context?.apply {
-                val name = Utils.getTextOrEmpty(userModel?.firstName) + " " + Utils.getTextOrEmpty(userModel?.lastName)
+                val name = userModel?.firstName.getTextOrEmpty() + " " + userModel?.lastName.getTextOrEmpty()
                 txtUserName?.text = name
                 userImg?.let {
                     Glide.with(this)
@@ -198,10 +198,20 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
     }
 
     inner class CategoryTypeHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var categoryName: TextView? = itemView.findViewById(R.id.txt_category_name)
-        private var cardView = itemView.findViewById<CardView>(R.id.cardView)
-        fun bind(name: String?) {
-            categoryName?.text = name.toString()
+        private val categoryName: TextView? = itemView.findViewById(R.id.txt_category_name)
+        private val cardView = itemView.findViewById<CardView>(R.id.cardView)
+        private val ivCategory = itemView.findViewById<ImageView>(R.id.ivCategory)
+        fun bind(model: GenericModelFactory.CategoryModel?) {
+            categoryName?.text = model?.categoryName?.toString()
+            context?.apply {
+                ivCategory?.let{
+                    Glide.with(this)
+                            .load(model?.categoryImg) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                            .into(it)
+                }
+            }
         }
 
         fun setClickListener(listener: View.OnClickListener?) {
@@ -219,7 +229,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
             RecyclerItemTypes.USER_TYPE -> UserTypeHolder(v)
             RecyclerItemTypes.COLOR_TYPE -> ColorTypeHolder(v)
             RecyclerItemTypes.GENERAL_TYPE -> GeneralTypeHolder(v)
-            RecyclerItemTypes.COLLECTION_TYPE -> CollectionTypeHolder(v)
+            RecyclerItemTypes.COLLECTION_TYPE, RecyclerItemTypes.COLLECTION_LIST_TYPE -> CollectionTypeHolder(v)
             RecyclerItemTypes.TAG_TYPE -> TextTypeHolder(v)
             RecyclerItemTypes.CATEGORY_TYPE -> CategoryTypeHolder(v)
             RecyclerItemTypes.FAV_PHOTOGRAPHER_PHOTOS_TYPE -> FavPhotographerPhotosTypeHolder(v)
@@ -245,7 +255,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
                     colorHolder.bind(colorTypeModel?.colorsList?.get(position))
                     colorHolder.setClickListener(View.OnClickListener { childClickListener?.onItemClick(model?.colorTypeModel, null, position) })
                 }
-                RecyclerItemTypes.COLLECTION_TYPE -> {
+                RecyclerItemTypes.COLLECTION_TYPE, RecyclerItemTypes.COLLECTION_LIST_TYPE -> {
                     val collectionHolder = holder as CollectionTypeHolder
                     collectionHolder.bind(collectionTypeModel?.collections?.get(position))
                     collectionHolder.setClickListener(View.OnClickListener { childClickListener?.onItemClick(model?.collectionTypeModel, null, position) })
@@ -271,7 +281,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
     }
 
     override fun getItemViewType(position: Int): Int {
-        return model?.itemLayout ?: R.layout.general_type_cell
+        return model?.itemLayout ?: R.layout.cell_type_general
     }
 
     override fun getItemCount(): Int {
@@ -282,7 +292,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         return model?.let {
             when (it.itemType) {
                 RecyclerItemTypes.GENERAL_TYPE -> it.generalTypeModel?.photosList?.size ?: 0
-                RecyclerItemTypes.COLLECTION_TYPE -> it.collectionTypeModel?.collections?.size ?: 0
+                RecyclerItemTypes.COLLECTION_TYPE, RecyclerItemTypes.COLLECTION_LIST_TYPE -> it.collectionTypeModel?.collections?.size ?: 0
                 RecyclerItemTypes.COLOR_TYPE -> it.colorTypeModel?.colorsList?.size ?: 0
                 RecyclerItemTypes.USER_TYPE -> it.userTypeModel?.usersList?.size ?: 0
                 RecyclerItemTypes.TAG_TYPE -> it.tagTypeModel?.tagsList?.size ?: 0

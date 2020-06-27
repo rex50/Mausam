@@ -1,4 +1,4 @@
-package com.rex50.mausam.recievers;
+package com.rex50.mausam.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

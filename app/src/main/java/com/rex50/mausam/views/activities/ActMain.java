@@ -24,6 +24,7 @@ import com.rex50.mausam.R;
 import com.rex50.mausam.base_classes.BaseActivity;
 import com.rex50.mausam.interfaces.LocationResultListener;
 import com.rex50.mausam.interfaces.WeatherResultListener;
+import com.rex50.mausam.model_classes.unsplash.collection.Collections;
 import com.rex50.mausam.model_classes.weather.WeatherModelClass;
 import com.rex50.mausam.network.APIManager;
 import com.rex50.mausam.network.MausamLocationManager;
@@ -39,6 +40,7 @@ import com.rex50.mausam.views.fragments.FragHome;
 import com.rex50.mausam.views.fragments.FragSearch;
 import com.rex50.mausam.views.fragments.FragSearchResult;
 
+import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.json.JSONObject;
 
@@ -532,6 +534,19 @@ public class ActMain extends BaseActivity implements
                 .putExtra(Constants.IntentConstants.SEARCH_TERM, searchTerm)
                 .putExtra(Constants.IntentConstants.SEARCH_DESC, Constants.Providers.POWERED_BY_UNSPLASH)
         );
+    }
+
+    @Override
+    public void startMoreFeaturedCollections(@Nullable List<? extends Collections> collections) {
+        startActivity(new Intent(this, ActCollectionsList.class)
+                .putExtra(Constants.IntentConstants.SEARCH_FEAT_COLLECTION, true)
+        );
+    }
+
+    @Nullable
+    @Override
+    public MaterialSnackBar getMaterialSnackBar() {
+        return materialSnackBar;
     }
 
     /*private void toggleLocationGPSError(boolean state){
