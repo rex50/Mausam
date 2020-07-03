@@ -21,6 +21,7 @@ import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
+import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.utils.getTextOrEmpty
 import com.thekhaeng.pushdownanim.PushDownAnim
 import org.apache.commons.lang3.StringUtils
@@ -28,6 +29,7 @@ import org.apache.commons.lang3.StringUtils
 class AdaptContent(private var context: Context?, private var model: GenericModelFactory?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var childClickListener: OnChildItemClickListener? = null
+    private var gradientHelper = GradientHelper.getInstance(context)
 
     fun setChildClickListener(childClickListener: OnChildItemClickListener?) {
         this.childClickListener = childClickListener
@@ -198,12 +200,14 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
     }
 
     inner class CategoryTypeHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val categoryName: TextView? = itemView.findViewById(R.id.txt_category_name)
+        private val categoryName: TextView? = itemView.findViewById(R.id.tvCategoryName)
         private val cardView = itemView.findViewById<CardView>(R.id.cardView)
         private val ivCategory = itemView.findViewById<ImageView>(R.id.ivCategory)
+        private val vBgOverlay = itemView.findViewById<View>(R.id.vBgOverlay)
         fun bind(model: GenericModelFactory.CategoryModel?) {
             categoryName?.text = model?.categoryName?.toString()
             context?.apply {
+                vBgOverlay.background = gradientHelper?.getRandomLeftRightGradient()
                 ivCategory?.let{
                     Glide.with(this)
                             .load(model?.categoryImg) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")

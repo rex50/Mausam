@@ -62,6 +62,10 @@ class Constants {
     }
 
     object IntentConstants {
+        const val WALLPAPER_LIST_DATA = "wallpaperListData"
+        const val LIST_MODE_POPULAR_WALLPAPER = "popularWallpaperListMode"
+        const val LIST_MODE_PHOTOGRAPHER_WALLPAPER = "photographerWallpaperListMode"
+        const val LIST_MODE_GENERAL_WALLPAPER = "generalWallpaperListMode"
         const val SEARCH_TERM = "searchTerm"
         const val SEARCH_DESC = "searchDesc"
         const val SEARCH_FEAT_COLLECTION = "searchFeaturedCollection"

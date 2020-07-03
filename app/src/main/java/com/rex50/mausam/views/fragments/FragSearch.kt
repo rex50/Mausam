@@ -1,5 +1,6 @@
 package com.rex50.mausam.views.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -19,6 +20,9 @@ import com.rex50.mausam.network.APIManager.WeatherAPICallBackResponse
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Utils.TextValidationInterface
+import com.rex50.mausam.utils.GradientHelper
+import com.rex50.mausam.views.activities.MoreData
+import com.rex50.mausam.views.activities.MoreWallpaperListData
 import kotlinx.android.synthetic.main.frag_search.*
 import kotlinx.android.synthetic.main.header_custom_general.*
 import org.apache.commons.lang3.StringUtils
@@ -32,6 +36,7 @@ class FragSearch : BaseFragment() {
 
     override fun getResourceLayout(): Int = R.layout.frag_search
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
 
         arguments?.getBoolean(ARG_PARAM1)?.apply {
@@ -40,10 +45,12 @@ class FragSearch : BaseFragment() {
 
         mContext?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
+        gradientLine?.background = GradientHelper.getInstance(mContext)?.getRandomLeftRightGradient()
+
         if (resources.getBoolean(R.bool.hide_search_providers)) {
             containerSearchProviders?.hideView()
-            txtPageTitle?.setText(R.string.search_wallpaper_title)
-            txtPageDesc?.setText(R.string.search_wallpaper_desc)
+            tvPageTitle?.setText(R.string.search_wallpaper_title)
+            tvPageDesc?.setText(R.string.search_wallpaper_desc)
             etvSearch?.setHint(R.string.search_box_hint)
         }
 
@@ -53,8 +60,8 @@ class FragSearch : BaseFragment() {
                 showView()
                 setOnClickListener { mListener?.nextBtnClicked() }
             }
-            txtPageTitle?.setText(R.string.search_loc_title)
-            txtPageDesc?.setText(R.string.search_loc_desc)
+            tvPageTitle?.setText(R.string.search_loc_title)
+            tvPageDesc?.setText(R.string.search_loc_desc)
             etvSearch?.setHint(R.string.search_loc_box_hint)
         }
 
@@ -104,7 +111,16 @@ class FragSearch : BaseFragment() {
 
     private fun searchWallpapers() {
         val searchTerm = etvSearch?.text.toString()
-        mListener?.startMorePhotosActivity(searchTerm)
+        mListener?.startMorePhotosActivity(
+                MoreWallpaperListData(
+                        Constants.IntentConstants.LIST_MODE_GENERAL_WALLPAPER,
+                        null,
+                        MoreData(
+                                searchTerm,
+                                Constants.Providers.POWERED_BY_UNSPLASH
+                        )
+                )
+        )
         hideKeyboard()
     }
 
@@ -191,7 +207,8 @@ class FragSearch : BaseFragment() {
         fun onFragmentInteraction(uri: Uri?)
         fun onWeatherSearchSuccess(weatherDetails: WeatherModelClass?)
         fun nextBtnClicked()
-        fun startMorePhotosActivity(searchTerm: String?)
+        //fun startMorePhotosActivity(listMode: String?, searchTerm: String?, desc: String?)
+        fun startMorePhotosActivity(data: MoreWallpaperListData)
         val sharedPrefs: MausamSharedPrefs?
         val snackBar: MaterialSnackBar?
     }

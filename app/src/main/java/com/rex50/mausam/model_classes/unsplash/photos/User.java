@@ -1,10 +1,13 @@
 
 package com.rex50.mausam.model_classes.unsplash.photos;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+public class User implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -57,6 +60,90 @@ public class User {
     @SerializedName("accepted_tos")
     @Expose
     private Boolean acceptedTos;
+
+    protected User(Parcel in) {
+        id = in.readString();
+        updatedAt = in.readString();
+        username = in.readString();
+        name = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        twitterUsername = in.readString();
+        portfolioUrl = in.readString();
+        bio = in.readString();
+        location = in.readString();
+        profileImage = in.readParcelable(ProfileImage.class.getClassLoader());
+        instagramUsername = in.readString();
+        if (in.readByte() == 0) {
+            totalCollections = null;
+        } else {
+            totalCollections = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            totalLikes = null;
+        } else {
+            totalLikes = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            totalPhotos = null;
+        } else {
+            totalPhotos = in.readInt();
+        }
+        byte tmpAcceptedTos = in.readByte();
+        acceptedTos = tmpAcceptedTos == 0 ? null : tmpAcceptedTos == 1;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(updatedAt);
+        dest.writeString(username);
+        dest.writeString(name);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(twitterUsername);
+        dest.writeString(portfolioUrl);
+        dest.writeString(bio);
+        dest.writeString(location);
+        dest.writeParcelable(profileImage, flags);
+        dest.writeString(instagramUsername);
+        if (totalCollections == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(totalCollections);
+        }
+        if (totalLikes == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(totalLikes);
+        }
+        if (totalPhotos == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(totalPhotos);
+        }
+        dest.writeByte((byte) (acceptedTos == null ? 0 : acceptedTos ? 1 : 2));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getId() {
         return id;

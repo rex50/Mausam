@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lnlHeaderPhotographer"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="10dp"
+    android:paddingTop="20dp"
+    android:layout_marginBottom="16dp"
+    android:animateLayoutChanges="true"
+    android:gravity="top">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.rex50.mausam.utils.custom_text_views.BoldTextView
+                android:id="@+id/tvPageTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/dummy_title"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="2dp"
+                android:textColor="@color/titleColor"/>
+
+            <View
+                android:id="@+id/gradientLine"
+                android:layout_width="80dp"
+                android:layout_height="8dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_weather_details"/>
+
+            <com.rex50.mausam.utils.custom_text_views.BoldTextView
+                android:id="@+id/tvPageDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lorem_ipsum"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/descColor"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="50dp"
+            android:requiresFadingEdge="vertical"
+            android:layout_margin="8dp"
+            app:cardElevation="4dp">
+
+            <ImageView
+                android:id="@+id/user_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:srcCompat="@tools:sample/avatars"
+                android:contentDescription="@string/photographer_s_image" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnAddFavUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_to_favourites"
+        android:textColor="@color/white"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/colorAccent"
+        android:visibility="visible"
+        tools:visibility="visible"
+        android:textAllCaps="false"
+        android:elevation="4dp"/>
+
+    <Button
+        android:id="@+id/btnBrowseUserCollections"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/accent_to_white"
+        android:text="@string/see_collections"
+        style="?attr/materialButtonOutlinedStyle"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/btnMore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/accent_to_white"
+        android:text="@string/more"
+        style="?attr/materialButtonOutlinedStyle"
+        android:visibility="visible"
+        tools:visibility="visible"
+        android:textAllCaps="false" />
+
+    <LinearLayout
+        android:id="@+id/lnlUserButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="gone"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnUserPortfolio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/portfolio"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/btnUserInstagram"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/instagram"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/btnUserTwitter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/twitter"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/btnUserMorePhotos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/see_more_photos"
+            android:visibility="gone"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/btnUserVisitThisPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/visit_this_page"
+            android:textAllCaps="false"/>
+
+    </LinearLayout>
+
+</LinearLayout>

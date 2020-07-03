@@ -7,11 +7,18 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.rex50.mausam.R
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 import java.util.*
@@ -96,6 +103,20 @@ fun String.addBefore(text: String?): String = text?.takeIf { it.isNotEmpty() }?.
 fun String.addAfter(text: String?): String = text?.takeIf { it.isNotEmpty() }?.let {
     "$this $text"
 }?: this
+
+fun ImageView.loadImage(url: String){
+    loadImage(url, R.drawable.ic_loader)
+}
+
+fun ImageView.loadImage(url: String, @DrawableRes preLoader: Int){
+    Glide.with(context)
+            .load(url)
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+            .apply(RequestOptions().format(DecodeFormat.PREFER_ARGB_8888))
+            .thumbnail(Glide.with(this).load(preLoader))
+            //.transition(DrawableTransitionOptions.withCrossFade())
+            .into(this)
+}
 
 fun String?.optString() : String =
         this ?: "null"

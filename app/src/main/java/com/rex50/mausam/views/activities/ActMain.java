@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.StringDef;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -36,14 +37,18 @@ import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.LastLocationProvider;
 import com.rex50.mausam.utils.MaterialSnackBar;
 import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
+import com.rex50.mausam.views.fragments.FragFavourites;
 import com.rex50.mausam.views.fragments.FragHome;
 import com.rex50.mausam.views.fragments.FragSearch;
 import com.rex50.mausam.views.fragments.FragSearchResult;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.json.JSONObject;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +63,7 @@ import static com.rex50.mausam.utils.Utils.getConnectivityStatus;
 
 public class ActMain extends BaseActivity implements
         FragSearch.OnFragmentInteractionListener,
+        FragFavourites.OnFragmentInteractionListener,
         FragHome.OnFragmentInteractionListener,
         FragSearchResult.OnFragmentInteractionListener {
 
@@ -67,10 +73,18 @@ public class ActMain extends BaseActivity implements
     private CustomErrorPage noInternetErrorPage, noGpsErrorPage, noPermissionErrorPage;
     private FragHome fragHome;
     private FragSearch fragSearch;
+    private FragFavourites fragFav;
     private Boolean isGettingWeather = false, isFirstWeatherFetched = false;
     private LastLocationProvider lastLocationProvider;
     private FlashyTabBar tabFlashyAnimator;
     private FragmentStatePagerAdapter fragmentAdapter;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({ Constants.IntentConstants.LIST_MODE_GENERAL_WALLPAPER,
+            Constants.IntentConstants.LIST_MODE_POPULAR_WALLPAPER,
+            Constants.IntentConstants.LIST_MODE_PHOTOGRAPHER_WALLPAPER})
+    public @interface wallpaperListMode {
+    }
 
 
     @Override
@@ -202,11 +216,13 @@ public class ActMain extends BaseActivity implements
         List<Fragment> mFragmentList = new ArrayList<>();
         fragHome = new FragHome();
         fragSearch = new FragSearch();
+        fragFav = new FragFavourites();
 
         mFragmentList.add(fragHome);
         mFragmentList.add(fragSearch);
-        //mFragmentList.add(new SearchFragment());
+        mFragmentList.add(fragFav);
         viewPager.setAdapter(getFragmentAdapter(mFragmentList));
+        viewPager.setOffscreenPageLimit(mFragmentList.size());
 
         setupTabLayout(viewPager);
     }
@@ -231,7 +247,7 @@ public class ActMain extends BaseActivity implements
         tabFlashyAnimator = new FlashyTabBar(tabLayout);
         tabFlashyAnimator.addTabItem("Home", R.drawable.ic_logo);
         tabFlashyAnimator.addTabItem("Search", R.drawable.ic_search);
-        //tabFlashyAnimator.addTabItem("Favourites", R.drawable.ic_search);
+        tabFlashyAnimator.addTabItem("Favourites", R.drawable.ic_heart);
         tabFlashyAnimator.highLightTab(0);
         viewPager.addOnPageChangeListener(tabFlashyAnimator);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -528,11 +544,19 @@ public class ActMain extends BaseActivity implements
         });
     }
 
-    @Override
-    public void startMorePhotosActivity(String searchTerm) {
+    /*@Override
+    public void startMorePhotosActivity(@wallpaperListMode String listMode, String searchTerm, String desc) {
         startActivity(new Intent(this, ActWallpapersList.class)
+                .putExtra(Constants.IntentConstants.WALLPAPER_LIST_MODE, listMode)
                 .putExtra(Constants.IntentConstants.SEARCH_TERM, searchTerm)
-                .putExtra(Constants.IntentConstants.SEARCH_DESC, Constants.Providers.POWERED_BY_UNSPLASH)
+                .putExtra(Constants.IntentConstants.SEARCH_DESC, desc)
+        );
+    }*/
+
+    @Override
+    public void startMorePhotosActivity(@NotNull MoreWallpaperListData data) {
+        startActivity(new Intent(this, ActWallpapersList.class)
+                .putExtra(Constants.IntentConstants.WALLPAPER_LIST_DATA, data)
         );
     }
 

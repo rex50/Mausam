@@ -87,6 +87,7 @@
                         android:foreground="?selectableItemBackground"
                         android:scaleType="center"
                         android:src="@drawable/ic_heart"
+                        android:visibility="gone"
                         android:tint="@color/white_to_accent"
                         tools:ignore="UnusedAttribute" />
 
@@ -320,7 +321,7 @@
                 android:elevation="0dp"
                 app:cardElevation="0dp"
                 app:cardCornerRadius="27dp"
-                android:backgroundTint="@color/colorAccent"
+                android:backgroundTint="@color/oliveBlack"
                 android:layout_margin="2dp">
 
                 <ImageView

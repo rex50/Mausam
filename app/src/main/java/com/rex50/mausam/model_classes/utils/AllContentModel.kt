@@ -11,6 +11,7 @@ class AllContentModel {
     private val types: MutableList<String>
     private var responsesCount = 0
     private var insertedListener: ContentInsertedListener? = null
+    @Volatile private var allContentLoaded = false
 
 
     companion object {
@@ -72,7 +73,8 @@ class AllContentModel {
     fun increaseResponseCount(){
         responsesCount++
         insertedListener?.onContentAddedCount(responsesCount, sequenceOfLayout.size)
-        if (sequenceOfLayout.size == responsesCount) {
+        if (sequenceOfLayout.size == responsesCount && !allContentLoaded) {
+            allContentLoaded = true
             adapter?.notifyDataSetChanged()
             insertedListener?.onAllContentLoaded()
         }

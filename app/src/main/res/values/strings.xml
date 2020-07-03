@@ -7,8 +7,9 @@
     <string name="storage_perm_title">Storage</string>
     <string name="search_loc_title">Search location</string>
     <string name="search_wallpaper_title">Search wallpapers</string>
+    <string name="favourites_title">Your Favourites</string>
     <string name="search_results_title">Wallpapers</string>
-    <string name="Images">Images</string>
+    <string name="images">Images</string>
     <string name="likes">Likes</string>
     <string name="height">Height</string>
     <string name="width">Width</string>
@@ -20,6 +21,8 @@
     <string name="twitter">Twitter</string>
     <string name="see_more_photos">See more photos</string>
     <string name="visit_this_page">Visit this page</string>
+    <string name="photographer_photo">Photographer\'s photos</string>
+    <string name="photo_by_photographer">Photos by %s</string>
 
 
     <!--Descriptions-->
@@ -28,6 +31,7 @@
     <string name="storage_desc">With this permission, Mausam can download wallpapers and store in the phone storage.</string>
     <string name="search_loc_desc">We understand you don’t want to reveal your  location but Mausam needs it show weather and wallpapers based on it. </string>
     <string name="search_wallpaper_desc">search photos by some of the best photographer’s spread across the world and available on Unsplash.</string>
+    <string name="favourites_desc">All your favourite photographers and wallpapers will appear here.</string>
 
     <!--Hints/messages/btn-->
     <string name="search_loc_box_hint">Search place here</string>
@@ -56,6 +60,7 @@
     <string name="already_downloaded">Already downloaded</string>
     <string name="share_body">Here is a awesome photo %s by %s\n\nGet Mausam app on Playstore and experience a new world of images.\nPowered by Unsplash</string>
     <string name="preparing_home">Preparing home…</string>
+    <string name="coming_soon">Coming soon&#8230;</string>
 
     <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>
@@ -80,10 +85,25 @@
     <!--Static strings-->
     <string name="unsplash_txt" translatable="false">Unsplash</string>
     <string name="pixabay_txt" translatable="false">Pixabay</string>
+    <string name="downloading">Downloading...</string>
+    <string name="more">More</string>
+    <string name="see_collections">See Collections</string>
 
+
+    <!--Colors for gradient array-->
+    <string-array name="array_gradients">
+        <item>#00ff87~~#60efff</item>
+        <item>#40c9ff~~#e81cff</item>
+        <item>#ff930f~~#fff95b</item>
+        <item>#ff0f7b~~#f89b29</item>
+        <item>#696eff~~#f8acff</item>
+        <item>#f492f0~~#a18dce</item>
+        <item>#f9b16e~~#f68080</item>
+        <item>#439cfb~~#f187fb</item>
+    </string-array>
 
     <!--Colors array-->
-    <string-array name="colors">
+    <string-array name="array_colors_type">
         <item>Red~~#FF0000</item>
         <item>Orange~~#FF7F00</item>
         <item>Yellow~~#FFFF00</item>
@@ -99,7 +119,7 @@
     </string-array>
 
     <!--    Categories array-->
-    <string-array name="categories" tools:ignore="TypographyDashes">
+    <string-array name="array_categories_type" tools:ignore="TypographyDashes">
         <item>Fashion~~https://images.unsplash.com/photo-1469334031218-e382a71b716b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=&amp;h=300&amp;q=80</item>
         <item>Nature~~https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
         <item>Backgrounds~~https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
@@ -120,6 +140,7 @@
         <item>Buildings~~https://images.unsplash.com/photo-1486174975375-bd1c9e108596?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
         <item>Business~~https://images.unsplash.com/photo-1507679799987-c73779587ccf?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
         <item>Music~~https://images.unsplash.com/photo-1484755560615-a4c64e778a6c?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
+        <item>Abstract~~https://images.unsplash.com/photo-1537237858032-3ad1b513cbcc?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
     </string-array>
 
 </resources>

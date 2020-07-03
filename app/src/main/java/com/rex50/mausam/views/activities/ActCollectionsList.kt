@@ -16,6 +16,7 @@ import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.SEARCH_FEAT_COLLECTION
+import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.adapters.AdaptContent
 import kotlinx.android.synthetic.main.act_collections_list.*
 import kotlinx.android.synthetic.main.act_wallpaper_list.*
@@ -48,13 +49,16 @@ class ActCollectionsList : BaseActivity() {
     }
 
     private fun init() {
-        txtPageTitle?.text = pageTitle.takeIf { it.isNotEmpty() }?.let {
+
+        gradientLine?.background = GradientHelper.getInstance(this)?.getRandomLeftRightGradient()
+
+        tvPageTitle?.text = pageTitle.takeIf { it.isNotEmpty() }?.let {
             StringUtils.capitalize(pageTitle)
-        }?: getString(R.string.Images)
+        }?: getString(R.string.images)
 
         pageDescription.takeIf { it.isNotEmpty() }?.apply {
-            txtPageDesc?.text = this
-        }?: txtPageDesc?.hideView()
+            tvPageDesc?.text = this
+        }?: tvPageDesc?.hideView()
 
         fabSearchedCollectionBack?.setOnClickListener{onBackPressed()}
 
@@ -75,20 +79,13 @@ class ActCollectionsList : BaseActivity() {
 
     private fun initRecycler() {
 
-        //val imageViewer: ImageViewerHelper? = ImageViewerHelper(this)
-
         val layoutManager = GridLayoutManager(this, 1, LinearLayoutManager.VERTICAL, false)
 
         collectionsModel = GenericModelFactory.getCollectionListTypeObject(pageTitle, pageDescription, false, collectionList)
         adapter = AdaptContent(this, collectionsModel)
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
-                /*imageViewer?.showImagesInFullScreen(wallpapersList, childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
-                    override fun onDownload(photoInfo: UnsplashPhotos) {
-                        super.onDownload(photoInfo)
-
-                    }
-                })*/
+                showToast("Work in progress")
             }
         })
 
@@ -170,6 +167,14 @@ class ActCollectionsList : BaseActivity() {
                 })
             }
         })
+    }
+
+    override fun onBackPressed() {
+        if(scrollToTopActive){
+            recSearchedCollection?.smoothScrollToPosition(0)
+            ablCollectionList?.setExpanded(true)
+        }else
+            super.onBackPressed()
     }
 
     override fun internetStatus(internetType: Int) {

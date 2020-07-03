@@ -22,8 +22,12 @@ import com.rex50.mausam.model_classes.weather.WeatherModelClass
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.AvailableLayouts
+import com.rex50.mausam.views.activities.MoreData
+import com.rex50.mausam.views.activities.MoreWallpaperListData
 import com.rex50.mausam.views.adapters.AdaptHome
+import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.frag_home.*
+import kotlinx.android.synthetic.main.header_custom_home.*
 import kotlinx.android.synthetic.main.item_weather_card.*
 import org.json.JSONArray
 import java.util.*
@@ -43,6 +47,11 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
     override fun initView() {
         arguments?.getSerializable(ARG_PARAM1)?.apply {
             mWeatherDetails = this as WeatherModelClass?
+        }
+        PushDownAnim.setPushDownAnimTo(btnSettings)
+                .setScale(0.8F)
+                .setOnClickListener {
+            showToast("Work in progress")
         }
     }
 
@@ -222,7 +231,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
         add(AvailableLayouts.POPULAR_TAGS)
         add(AvailableLayouts.BROWSE_BY_COLORS)
         add(AvailableLayouts.BROWSE_BY_CATEGORIES)
-        add(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)
+        //add(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)
     }
 
     private fun prepareHomeRecycler(sequenceOfLayout: List<String>) {
@@ -245,10 +254,12 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
         mListener?.getMaterialSnackBar()?.showIndeterminateBar(R.string.preparing_home)
 
         if (sequenceOfLayout.contains(AvailableLayouts.WEATHER_BASED_WALLPAPERS)) {
-            unsplashHelper.getSearchedPhotos("Summer", 1, 20, object : GetUnsplashSearchedPhotosListener {
+            val seasons = arrayListOf("late winter", "spring", "monsoon", "autumn", "summer", "early winter")
+            val season = seasons.random()
+            unsplashHelper.getSearchedPhotos(season, 1, 20, object : GetUnsplashSearchedPhotosListener {
                 override fun onSuccess(photos: SearchedPhotos) {
                     allData?.addSequentially(AvailableLayouts.WEATHER_BASED_WALLPAPERS,
-                            GenericModelFactory.getGeneralTypeObject(AvailableLayouts.WEATHER_BASED_WALLPAPERS, Constants.Providers.POWERED_BY_UNSPLASH, false, photos.results))
+                            GenericModelFactory.getGeneralTypeObject(AvailableLayouts.WEATHER_BASED_WALLPAPERS, /*Constants.Providers.POWERED_BY_UNSPLASH*/ season, false, photos.results))
                 }
 
                 override fun onFailed(errors: JSONArray) {
@@ -258,10 +269,17 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
             })
         }
         if (sequenceOfLayout.contains(AvailableLayouts.LOCATION_BASED_WALLPAPERS)) {
-            unsplashHelper.getSearchedPhotos("Surat", 1, 20, object : GetUnsplashSearchedPhotosListener {
+            val places = arrayListOf("Gujarat", "Orissa", "Bengaluru", "Hydrebad", "Kolkata",
+                    "Hong Kong", "London", "Malaysia", "Punjab", "Mumbai", "Chennai", "Paris", "USA", "Sri Lanka",
+                    "Russia", "Pakistan", "Bangladesh", "Tibet", "Berlin", "Bhutan", "Africa", "Australia", "England")
+            val place = places.random()
+            unsplashHelper.getSearchedPhotos(place, 1, 20, object : GetUnsplashSearchedPhotosListener {
                 override fun onSuccess(photos: SearchedPhotos) {
-                    allData?.addSequentially(AvailableLayouts.LOCATION_BASED_WALLPAPERS,
-                            GenericModelFactory.getGeneralTypeObject(AvailableLayouts.LOCATION_BASED_WALLPAPERS, Constants.Providers.POWERED_BY_UNSPLASH, false, photos.results))
+                    if(!photos.results.isNullOrEmpty()){
+                        allData?.addSequentially(AvailableLayouts.LOCATION_BASED_WALLPAPERS,
+                                GenericModelFactory.getGeneralTypeObject(AvailableLayouts.LOCATION_BASED_WALLPAPERS, /*Constants.Providers.POWERED_BY_UNSPLASH*/ place, false, photos.results))
+                    }else
+                        allData?.increaseResponseCount()
                 }
 
                 override fun onFailed(errors: JSONArray) {
@@ -296,7 +314,12 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                 override fun onFailed(errors: JSONArray) {
                     Log.e(TAG, "onFailed: $errors")
-                    allData?.increaseResponseCount()
+                    allData?.apply {
+                        increaseResponseCount()
+                        if (sequenceOfLayout.contains(AvailableLayouts.POPULAR_PHOTOGRAPHERS)) {
+                            increaseResponseCount()
+                        }
+                    }
                 }
             })
         }
@@ -313,26 +336,31 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                 override fun onFailed(errors: JSONArray) {
                     Log.e(TAG, "onFailed: $errors")
-                    allData?.increaseResponseCount()
+                    allData?.apply {
+                        increaseResponseCount()
+                        if (sequenceOfLayout.contains(AvailableLayouts.POPULAR_TAGS)) {
+                            increaseResponseCount()
+                        }
+                    }
                 }
             })
         }
         if (sequenceOfLayout.contains(AvailableLayouts.BROWSE_BY_CATEGORIES)) {
             mContext?.apply {
-                val categories = listOf<String>(*resources.getStringArray(R.array.categories))
+                val categories = listOf<String>(*resources.getStringArray(R.array.array_categories_type))
                 allData?.addSequentially(AvailableLayouts.BROWSE_BY_CATEGORIES, GenericModelFactory.getCategoryTypeObject(AvailableLayouts.BROWSE_BY_CATEGORIES,
                         Constants.Providers.POWERED_BY_UNSPLASH, false, GenericModelFactory.CategoryTypeModel.createModelFromStringList(categories), true))
             }?: allData?.increaseResponseCount()
         }
         if (sequenceOfLayout.contains(AvailableLayouts.BROWSE_BY_COLORS)) {
             mContext?.apply {
-                val colorsList = listOf<String>(*resources.getStringArray(R.array.colors))
+                val colorsList = listOf<String>(*resources.getStringArray(R.array.array_colors_type))
                 allData!!.addSequentially(AvailableLayouts.BROWSE_BY_COLORS, GenericModelFactory.getColorTypeObject(AvailableLayouts.BROWSE_BY_COLORS, Constants.Providers.POWERED_BY_UNSPLASH,
                         false, GenericModelFactory.ColorTypeModel.createModelFromStringList(colorsList), true))
             }?: allData?.increaseResponseCount()
         }
         if (sequenceOfLayout.contains(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)) {
-            unsplashHelper.getUserPhotos("rpnickson", object : GetUnsplashPhotosListener {
+            unsplashHelper.getUserPhotos("rpnickson", 1, 20, object : GetUnsplashPhotosListener {
                 override fun onSuccess(photos: List<UnsplashPhotos>) {
                     allData?.addSequentially(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES, GenericModelFactory.getFavouritePhotographerTypeObject(
                             AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES, Constants.Providers.POWERED_BY_UNSPLASH, photos))
@@ -349,6 +377,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
     private fun initItemClicks(allContentModel: AllContentModel) {
         allContentModel.setOnClickListener(object : OnGroupItemClickListener{
             override fun onItemClick(o: Any?, childImgView: ImageView?, groupPos: Int, childPos: Int) {
+
                 object : GenericModelCastHelper(o) {
 
                     override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
@@ -357,7 +386,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                     override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
                         generalTypeModel?.apply {
-                            ImageViewerHelper(mContext).showImagesInFullScreen(photosList,
+                            ImageViewerHelper(mContext).with(photosList,
                                     childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
 
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
@@ -415,13 +444,23 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.shareImage(mContext, "Share", photoInfo.user.name, photoInfo.links.html)
                                 }
-                            })
+
+                                override fun onUserPhotos(user: User) {
+                                    mListener?.startMorePhotosActivity(
+                                            MoreWallpaperListData(
+                                                    Constants.IntentConstants.LIST_MODE_PHOTOGRAPHER_WALLPAPER,
+                                                    user,
+                                                    null
+                                            )
+                                    )
+                                }
+                            }).show()
                         }
                     }
 
                     override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
                         favPhotographerTypeModel?.apply {
-                            ImageViewerHelper(mContext).showImagesInFullScreen(photosList,
+                            ImageViewerHelper(mContext).with(photosList,
                                     childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
@@ -478,22 +517,58 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.shareImage(mContext, "Share", photoInfo.user.name, photoInfo.links.html)
                                 }
-                            })
+                            }).show()
                         }
                     }
 
                     override fun onTagType(tagTypeModel: GenericModelFactory.TagTypeModel?) {
-                        mListener?.startMorePhotosActivity(tagTypeModel?.tagsList?.get(childPos)?.title)
+                        mListener?.startMorePhotosActivity(
+                                MoreWallpaperListData(
+                                        Constants.IntentConstants.LIST_MODE_GENERAL_WALLPAPER,
+                                        null,
+                                        MoreData(
+                                                tagTypeModel?.tagsList?.get(childPos)?.title,
+                                                Constants.Providers.POWERED_BY_UNSPLASH
+                                        )
+                                )
+                        )
                     }
 
                     override fun onColorType(colorTypeModel: GenericModelFactory.ColorTypeModel?) {
-                        mListener?.startMorePhotosActivity(colorTypeModel?.colorsList?.get(childPos)?.colorName)
+                        mListener?.startMorePhotosActivity(
+                                MoreWallpaperListData(
+                                        Constants.IntentConstants.LIST_MODE_GENERAL_WALLPAPER,
+                                        null,
+                                        MoreData(
+                                                colorTypeModel?.colorsList?.get(childPos)?.colorName,
+                                                Constants.Providers.POWERED_BY_UNSPLASH
+                                        )
+                                )
+                        )
                     }
 
                     override fun onCategoryType(categoryTypeModel: GenericModelFactory.CategoryTypeModel?) {
-                        mListener?.startMorePhotosActivity(categoryTypeModel?.categories?.get(childPos)?.categoryName)
+                        mListener?.startMorePhotosActivity(
+                                MoreWallpaperListData(
+                                        Constants.IntentConstants.LIST_MODE_GENERAL_WALLPAPER,
+                                        null,
+                                        MoreData(
+                                                categoryTypeModel?.categories?.get(childPos)?.categoryName,
+                                                Constants.Providers.POWERED_BY_UNSPLASH
+                                        )
+                                )
+                        )
                     }
 
+                    override fun onUserType(userTypeModel: GenericModelFactory.UserTypeModel?) {
+                        mListener?.startMorePhotosActivity(
+                                MoreWallpaperListData(
+                                        Constants.IntentConstants.LIST_MODE_PHOTOGRAPHER_WALLPAPER,
+                                        userTypeModel?.usersList?.get(childPos),
+                                        null
+                                )
+                        )
+                    }
                 }
             }
 
@@ -504,7 +579,13 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                     }
 
                     override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
-                        mListener?.startMorePhotosActivity(title)
+                        mListener?.startMorePhotosActivity(
+                                MoreWallpaperListData(
+                                        Constants.IntentConstants.LIST_MODE_POPULAR_WALLPAPER,
+                                        null,
+                                        MoreData(title, Constants.Providers.POWERED_BY_UNSPLASH)
+                                )
+                        )
                     }
                 }
             }
@@ -520,19 +601,13 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
     }
 
     override fun onContentAddedCount(loadedCount: Int, totalCount: Int) {
-
+        //TODO: calculate percentage
     }
 
     override fun onAllContentLoaded() {
         mListener?.getMaterialSnackBar()?.dismiss()
     }
 
-    /*private EndlessRecyclerOnScrollListener endlessListener = new EndlessRecyclerOnScrollListener() {
-        @Override
-        public void onLoadMore() {
-
-        }
-    };*/
     override fun onResume() {
         super.onResume()
     }
@@ -552,23 +627,13 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
         mListener = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html) for more information.
-     */
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri?)
-        fun startMorePhotosActivity(searchTerm: String?)
+        fun startMorePhotosActivity(data: MoreWallpaperListData)
         fun startSearchScreen()
         val lastLocationDetails: Bundle?
         fun getMaterialSnackBar(): MaterialSnackBar?
-        fun requestWeather(listener: WeatherResultListener?) //        void getWeatherWallpaper();
+        fun requestWeather(listener: WeatherResultListener?) //void getWeatherWallpaper();
         fun startMoreFeaturedCollections(collections: List<Collections>?)
     }
 

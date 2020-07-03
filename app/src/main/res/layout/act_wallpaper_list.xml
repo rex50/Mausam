@@ -14,11 +14,13 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/ablWallpaperList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white_to_dark">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/ctlWallpaperList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -26,9 +28,19 @@
                 <include layout="@layout/header_custom_general"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/header"
+                    android:id="@+id/headerGeneral"
                     android:layout_marginBottom="20dp"
                     app:layout_collapseMode="parallax"
+                    android:visibility="gone"
+                    app:layout_collapseParallaxMultiplier="0.7"/>
+
+                <include layout="@layout/header_custom_photographer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/headerPhotographer"
+                    android:layout_marginBottom="20dp"
+                    app:layout_collapseMode="parallax"
+                    android:visibility="gone"
                     app:layout_collapseParallaxMultiplier="0.7"/>
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -54,18 +66,19 @@
                 android:clipToPadding="false"
                 android:layout_below="@+id/header" />
 
+            <ImageView
+                android:id="@+id/ivLoader"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_loader"
+                android:layout_gravity="top"
+                android:layout_marginTop="50dp"
+                android:visibility="visible"
+                android:contentDescription="@string/loading_data" />
+
         </androidx.cardview.widget.CardView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <ImageView
-        android:id="@+id/ivLoader"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:src="@drawable/ic_loader"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        android:contentDescription="@string/loading_data" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabSearchedWallpaperBack"

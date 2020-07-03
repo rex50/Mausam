@@ -27,7 +27,10 @@ import static com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME;
 public class UnsplashHelper {
 
     private final String TAG = "UnsplashHelper";
-    private final String collectionKey = "popularCollectionAndTags";
+    private static final String PHOTOGRAPHER_KEY= "key_photographer_";
+    private static final String COLLECTION_KEY= "key_collection_";
+    private static final String PHOTOS_KEY= "key_photos_";
+    private static final String SEARCHED_PHOTOS_KEY= "key_searched_photo_";
 
     //Unsplash order by Constants
     public final static String ORDER_BY_DEFAULT = "latest";
@@ -90,7 +93,7 @@ public class UnsplashHelper {
         extras.put("per_page", String.valueOf(perPage));
         if(!orientation.equalsIgnoreCase(ORIENTATION_UNSPECIFIED))
             extras.put("orientation", orientation);
-        String response = KeyValuesRepository.getValue(context, orderBy+page+perPage);
+        String response = KeyValuesRepository.getValue(context, PHOTOS_KEY+orderBy+page+perPage);
         if(response == null || response.isEmpty()){
             apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
                 @Override
@@ -98,7 +101,7 @@ public class UnsplashHelper {
                     //prefs.setPhotosResponseMap(orderBy, response);
                     PhotosAndUsers photosAndUsers = DataParser.parseUnsplashData(response, true);
                     listener.onSuccess(photosAndUsers.getPhotosList(), photosAndUsers.getUserList());
-                    KeyValuesRepository.insert(context, orderBy, response);
+                    KeyValuesRepository.insert(context, PHOTOS_KEY+orderBy+page+perPage, response);
                 }
 
                 @Override
@@ -151,14 +154,14 @@ public class UnsplashHelper {
         extras.put("per_page", String.valueOf(perPage));
         if(!photosOrientation.equals(ORIENTATION_UNSPECIFIED))
             extras.put("orientation", photosOrientation);
-        String response = KeyValuesRepository.getValue(context, searchTerm+page+perPage);
+        String response = KeyValuesRepository.getValue(context, SEARCHED_PHOTOS_KEY+searchTerm+page+perPage);
         if(null == response || response.isEmpty()){
             apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_SEARCHED_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
                 @Override
                 public void onSuccess(String response) {
                     SearchedPhotos photos = DataParser.parseSearchedPhotos(response);
                     listener.onSuccess(photos);
-                    KeyValuesRepository.insert(context, searchTerm+page+perPage, response);
+                    KeyValuesRepository.insert(context, SEARCHED_PHOTOS_KEY+searchTerm+page+perPage, response);
                 }
 
                 @Override
@@ -176,14 +179,14 @@ public class UnsplashHelper {
         HashMap<String, String> extras = new HashMap<>();
         extras.put("page", page < 1 ? "1" : String.valueOf(page));
         extras.put("per_page", String.valueOf(perPage));
-        String response = KeyValuesRepository.getValue(context, collectionKey+page+perPage);
+        String response = KeyValuesRepository.getValue(context, COLLECTION_KEY+page+perPage);
         if(null == response || response.isEmpty()){
             apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTIONS, extras, new APIManager.UnsplashAPICallResponse() {
                 @Override
                 public void onSuccess(String response) {
                     CollectionsAndTags obj = DataParser.parseCollections(response, true);
                     listener.onSuccess(obj.getCollectionsList(), obj.getTagsList());
-                    KeyValuesRepository.insert(context, collectionKey+page+perPage, response);
+                    KeyValuesRepository.insert(context, COLLECTION_KEY+page+perPage, response);
                 }
 
                 @Override
@@ -198,17 +201,19 @@ public class UnsplashHelper {
         }
     }
 
-    public void getUserPhotos(String unsplashUserName, GetUnsplashPhotosListener listener){
+    public void getUserPhotos(String unsplashUserName, int page, @PerPageRestriction int perPage, GetUnsplashPhotosListener listener){
         HashMap<String, String> extras = new HashMap<>();
         extras.put(UNSPLASH_USERNAME, unsplashUserName);
-        String response = KeyValuesRepository.getValue(context, unsplashUserName);
+        extras.put("page", page < 1 ? "1" : String.valueOf(page));
+        extras.put("per_page", String.valueOf(perPage));
+        String response = KeyValuesRepository.getValue(context, PHOTOGRAPHER_KEY+unsplashUserName+page+perPage);
         if(response == null || response.isEmpty()) {
             apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS_BY_USER, extras, new APIManager.UnsplashAPICallResponse() {
                 @Override
                 public void onSuccess(String response) {
                     PhotosAndUsers photosAndUsers = DataParser.parseUnsplashData(response, true);
                     listener.onSuccess(photosAndUsers.getPhotosList());
-                    KeyValuesRepository.insert(context, unsplashUserName, response);
+                    KeyValuesRepository.insert(context, PHOTOGRAPHER_KEY+unsplashUserName+page+perPage, response);
                 }
 
                 @Override

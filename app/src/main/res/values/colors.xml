@@ -40,6 +40,7 @@
     <color name="black_to_white">@color/black</color>
     <color name="white_to_black">@color/white</color>
     <color name="white_to_accent">@color/white</color>
+    <color name="accent_to_white">@color/colorAccent</color>
     <color name="white_to_dark">@color/white</color>
     <color name="accent_to_oliveBlack">@color/colorAccent</color>
     <color name="magicMint_to_dark">@color/magicMint</color>

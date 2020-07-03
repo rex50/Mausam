@@ -1,6 +1,5 @@
 package com.rex50.mausam.utils
 
-import android.animation.ValueAnimator
 import android.content.*
 import android.content.Intent.*
 import android.graphics.Bitmap
@@ -20,8 +19,6 @@ import androidx.transition.Fade
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import com.airbnb.lottie.LottieAnimationView
-import com.airbnb.lottie.LottieComposition
-import com.airbnb.lottie.LottieDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.DecodeFormat
@@ -36,6 +33,7 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.rex50.mausam.R
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
+import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.stfalcon.imageviewer.StfalconImageViewer
 import com.stfalcon.imageviewer.loader.ImageLoader
@@ -50,6 +48,11 @@ class ImageViewerHelper (){
     private var context: Context? = null
     private var selectedPhotoPos = 0
     private var animatePhotographer = true
+    private var showPhotographer = true
+
+    private lateinit var photosList: List<UnsplashPhotos>
+    private var childImgView: ImageView? = null
+    private var childPos: Int = 0
 
     private var dialogLayout: View? = null
     private var preLoaderAnimLayout: View? = null
@@ -82,9 +85,9 @@ class ImageViewerHelper (){
     private var ivPhotographer: ImageView? = null
     private var tvPhotographerName: TextView? = null
     private var lnlUserButtons: LinearLayout? = null
-    private var waveLoader: LottieAnimationView? = null
-    private var errorLoader: LottieAnimationView? = null
-    private var errorLayout: LinearLayout? = null
+    private var preLoader: LottieAnimationView? = null
+    private var animError: LottieAnimationView? = null
+    private var lnlError: LinearLayout? = null
 
     private var imageViewer: StfalconImageViewer<UnsplashPhotos>? = null
 
@@ -96,76 +99,92 @@ class ImageViewerHelper (){
     private fun initLayout(context: Context?) {
         context?.apply {
 
-            preLoaderAnimLayout = View.inflate(this, R.layout.pre_loader_view, null)
-            waveLoader = preLoaderAnimLayout?.findViewById(R.id.waveLoader)
-            errorLoader = preLoaderAnimLayout?.findViewById(R.id.errorLoader)
-            errorLayout = preLoaderAnimLayout?.findViewById(R.id.lnlError)
+            preLoaderAnimLayout = View.inflate(this, R.layout.anim_view, null)
+            preLoaderAnimLayout?.apply {
+                preLoader = findViewById(R.id.preLoader)
+                animError = findViewById(R.id.animError)
+                lnlError = findViewById(R.id.lnlError)
+            }
 
             dialogLayout = View.inflate(this, R.layout.overlay_full_screen_image, null)
+            dialogLayout?.apply {
+                lnlOtherButtons = findViewById(R.id.lnlOtherButtons)
+                lnlExtraInfo = findViewById(R.id.lnlExtraInfo)
+                rlUserInfo = findViewById(R.id.rlUserInfo)
+                rlImageOverlay = findViewById(R.id.rlImageOverlay)
 
-            lnlOtherButtons = dialogLayout?.findViewById(R.id.lnlOtherButtons)
-            lnlExtraInfo = dialogLayout?.findViewById(R.id.lnlExtraInfo)
-            rlUserInfo = dialogLayout?.findViewById(R.id.rlUserInfo)
-            rlImageOverlay = dialogLayout?.findViewById(R.id.rlImageOverlay)
+                btnSetWall = findViewById(R.id.btnSetWallpaper)
+                btnDownload = findViewById(R.id.btnDownloadImage)
+                btnFav = findViewById(R.id.btnFavImage)
+                btnShare = findViewById(R.id.btnShareImage)
+                btnMore = findViewById(R.id.btnMoreAboutImage)
 
-            btnSetWall = dialogLayout?.findViewById(R.id.btnSetWallpaper)
-            btnDownload = dialogLayout?.findViewById(R.id.btnDownloadImage)
-            btnFav = dialogLayout?.findViewById(R.id.btnFavImage)
-            btnShare = dialogLayout?.findViewById(R.id.btnShareImage)
-            btnMore = dialogLayout?.findViewById(R.id.btnMoreAboutImage)
+                tvDesc = findViewById(R.id.tvPhotoDesc)
+                tvCreated = findViewById(R.id.tvPhotoCreated)
+                tvColor = findViewById(R.id.tvPhotoColor)
+                tvLikes = findViewById(R.id.tvPhotoLikes)
+                tvHeight = findViewById(R.id.tvPhotoHeight)
+                tvWidth = findViewById(R.id.tvPhotoWidth)
 
-            tvDesc = dialogLayout?.findViewById(R.id.tvPhotoDesc)
-            tvCreated = dialogLayout?.findViewById(R.id.tvPhotoCreated)
-            tvColor = dialogLayout?.findViewById(R.id.tvPhotoColor)
-            tvLikes = dialogLayout?.findViewById(R.id.tvPhotoLikes)
-            tvHeight = dialogLayout?.findViewById(R.id.tvPhotoHeight)
-            tvWidth = dialogLayout?.findViewById(R.id.tvPhotoWidth)
+                btnUserInstagram = findViewById(R.id.btnUserInstagram)
+                btnUserPortfolio = findViewById(R.id.btnUserPortfolio)
+                btnUserTwitter = findViewById(R.id.btnUserTwitter)
+                btnUserMorePhotos = findViewById(R.id.btnUserMorePhotos)
+                btnUserVisitThisPage = findViewById(R.id.btnUserVisitThisPage)
 
-            btnUserInstagram = dialogLayout?.findViewById(R.id.btnUserInstagram)
-            btnUserPortfolio = dialogLayout?.findViewById(R.id.btnUserPortfolio)
-            btnUserTwitter = dialogLayout?.findViewById(R.id.btnUserTwitter)
-            btnUserMorePhotos = dialogLayout?.findViewById(R.id.btnUserMorePhotos)
-            btnUserVisitThisPage = dialogLayout?.findViewById(R.id.btnUserVisitThisPage)
-
-            cardPhotographerImg = dialogLayout?.findViewById(R.id.cardPhotographerImg)
-            ivPhotographer = dialogLayout?.findViewById(R.id.ivPhotographer)
-            tvPhotographerName = dialogLayout?.findViewById(R.id.tvPhotographerName)
-            lnlUserButtons = dialogLayout?.findViewById(R.id.lnlUserButtons)
+                cardPhotographerImg = findViewById(R.id.cardPhotographerImg)
+                ivPhotographer = findViewById(R.id.ivPhotographer)
+                tvPhotographerName = findViewById(R.id.tvPhotographerName)
+                lnlUserButtons = findViewById(R.id.lnlUserButtons)
+            }
         }
     }
 
-    fun showImagesInFullScreen(photosList: List<UnsplashPhotos>, childImgView: ImageView? = null, childPos: Int = 0, actionListener: ImageActionListener? = null) {
+    fun with(photosList: List<UnsplashPhotos>, childImgView: ImageView? = null, childPos: Int = 0, actionListener: ImageActionListener? = null) : ImageViewerHelper {
         context?.apply {
             selectedPhotoPos = childPos
             animatePhotographer = true
 
-            initClicks(photosList, actionListener)
+            this@ImageViewerHelper.photosList = photosList
+            this@ImageViewerHelper.childPos = childPos
+            this@ImageViewerHelper.childImgView = childImgView
 
-            photosList[childPos].apply {
-                bindPhotographerInfo(this)
-                bindImageInfo(this)
-            }
+            initClicks(actionListener)
 
-            waveLoader?.apply {
+            preLoader?.apply {
                 scale = 0.5F
                 speed = 0.8F
             }
-            errorLoader?.apply {
+            animError?.apply {
                 setAnimation(R.raw.error_lochness_monster)
                 scale = 0.2F
                 speed = 0.8F
             }
 
-            imageViewer = getViewer(this, photosList, childPos, childImgView)
-            imageViewer?.show()
+            imageViewer = getViewer(this)
         }
+        return this
     }
 
-    private fun getViewer(context: Context?, photosList: List<UnsplashPhotos>, childPos: Int, childImgView: ImageView?): StfalconImageViewer<UnsplashPhotos>? {
+    fun showPhotographer(showPhotographer: Boolean) : ImageViewerHelper{
+        this.showPhotographer = showPhotographer
+        return this
+    }
+
+    fun show(){
+        photosList[childPos].apply {
+            bindPhotographerInfo(this)
+            bindImageInfo(this)
+        }
+        imageViewer?.show()
+    }
+
+    private fun getViewer(context: Context?): StfalconImageViewer<UnsplashPhotos>? {
+
         val imageViewerBuilder = StfalconImageViewer.Builder(context, photosList,
                 ImageLoader { imageView: ImageView?, unsplashPhotos: UnsplashPhotos ->
-                    errorLayout?.hideView()
-                    waveLoader?.showView()
+                    lnlError?.hideView()
+                    preLoader?.showView()
                     imageView?.apply {
                         Glide.with(this)
                                 .load(unsplashPhotos.urls.regular)
@@ -174,34 +193,19 @@ class ImageViewerHelper (){
                                 .transition(DrawableTransitionOptions.withCrossFade())
                                 .addListener(object: RequestListener<Drawable>{
                                     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                                        waveLoader?.hideView()
-                                        errorLayout?.showView()
+                                        preLoader?.hideView()
+                                        lnlError?.showView()
                                         return false
                                     }
 
                                     override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                                        waveLoader?.hideView()
-                                        errorLayout?.hideView()
+                                        preLoader?.hideView()
+                                        lnlError?.hideView()
                                         return false
                                     }
 
                                 })
                                 .into(this)
-                        /*.into(object: CustomTarget<Drawable>(){
-                            override fun onLoadCleared(placeholder: Drawable?) {
-                            }
-
-                            override fun onResourceReady(resource: Drawable, transition: com.bumptech.glide.request.transition.Transition<in Drawable>?) {
-                                setImageDrawable(resource)
-                                waveLoader?.hideView()
-                            }
-
-                            override fun onLoadFailed(errorDrawable: Drawable?) {
-                                setImageDrawable(errorDrawable)
-                                waveLoader?.hideView()
-                            }
-
-                        })*/
                     }
                 })
                 .withHiddenStatusBar(false)
@@ -222,7 +226,7 @@ class ImageViewerHelper (){
         return imageViewerBuilder?.build()
     }
 
-    private fun initClicks(photosList: List<UnsplashPhotos>, actionListener: ImageActionListener? = null) {
+    private fun initClicks(actionListener: ImageActionListener? = null) {
         context?.apply {
             PushDownAnim.setPushDownAnimTo(btnSetWall, btnDownload, btnFav, btnShare, btnMore, rlUserInfo,
                     btnUserPortfolio, btnUserInstagram, btnUserTwitter, btnUserMorePhotos, btnUserVisitThisPage)
@@ -269,7 +273,8 @@ class ImageViewerHelper (){
                                     startSimpleTransition()
                                     if(isViewVisible()) {
                                         animatePhotographer = true
-                                        rlUserInfo?.showView()
+                                        if(showPhotographer)
+                                            rlUserInfo?.showView()
                                         hideView()
                                         //lnlOtherButtons?.showView()
                                         startSimpleTransition()
@@ -294,22 +299,29 @@ class ImageViewerHelper (){
 
                             R.id.btnUserPortfolio -> {
                                 openUrl(photosList[selectedPhotoPos].user.portfolioUrl)
+                                rlUserInfo?.performClick()
                             }
 
                             R.id.btnUserInstagram -> {
                                 openInstagramProfile(photosList[selectedPhotoPos].user.instagramUsername)
+                                rlUserInfo?.performClick()
                             }
 
                             R.id.btnUserTwitter -> {
                                 openTwitterProfile(photosList[selectedPhotoPos].user.twitterUsername)
+                                rlUserInfo?.performClick()
                             }
 
                             R.id.btnUserMorePhotos -> {
-                                //TODO: open more photos of current user
+                                photosList[selectedPhotoPos].user?.apply {
+                                    actionListener?.onUserPhotos(this)
+                                }
+                                rlUserInfo?.performClick()
                             }
 
                             R.id.btnUserVisitThisPage -> {
                                 openUrl(photosList[selectedPhotoPos].links.html)
+                                rlUserInfo?.performClick()
                             }
                         }
                     }
@@ -332,33 +344,27 @@ class ImageViewerHelper (){
 
     private fun bindPhotographerInfo(photo: UnsplashPhotos){
         rlUserInfo?.hideView()
-        if(animatePhotographer)
-            startFadeTransition()
-        photo.user.apply {
-            ivPhotographer?.apply {
-                Glide.with(this)
-                        .load(profileImage.medium)
-                        .diskCacheStrategy(DiskCacheStrategy.DATA)
-                        .apply(RequestOptions().format(DecodeFormat.PREFER_ARGB_8888))
-                        .thumbnail(Glide.with(this).load(R.drawable.ic_loader))
-                        //.transition(DrawableTransitionOptions.withCrossFade())
-                        .into(this)
+        if(showPhotographer) {
+            if (animatePhotographer)
+                startFadeTransition()
+            photo.user.apply {
+                ivPhotographer?.loadImage(profileImage.medium)
+                tvPhotographerName?.text = name
+                btnUserPortfolio?.apply {
+                    if (portfolioUrl.isNullOrEmpty()) hideView() else showView()
+                }
+                btnUserInstagram?.apply {
+                    if (instagramUsername.isNullOrEmpty()) hideView() else showView()
+                }
+                btnUserTwitter?.apply {
+                    if (twitterUsername.isNullOrEmpty()) hideView() else showView()
+                }
+                btnUserVisitThisPage?.apply {
+                    if (photo.links.html.isNullOrEmpty()) hideView() else showView()
+                }
+                if (animatePhotographer)
+                    rlUserInfo?.showView()
             }
-            tvPhotographerName?.text = name
-            btnUserPortfolio?.apply {
-                if(portfolioUrl.isNullOrEmpty()) hideView() else showView()
-            }
-            btnUserInstagram?.apply {
-                if(instagramUsername.isNullOrEmpty()) hideView() else showView()
-            }
-            btnUserTwitter?.apply {
-                if(twitterUsername.isNullOrEmpty()) hideView() else showView()
-            }
-            btnUserVisitThisPage?.apply {
-                if(photo.links.html.isNullOrEmpty()) hideView() else showView()
-            }
-            if(animatePhotographer)
-                rlUserInfo?.showView()
         }
     }
 
@@ -433,6 +439,8 @@ class ImageViewerHelper (){
         open fun onShare(photoInfo: UnsplashPhotos, name: String){}
 
         open fun onMore(){}
+
+        open fun onUserPhotos(user: User) {}
 
     }
 }

@@ -8,6 +8,7 @@ import android.os.Handler
 import androidx.core.content.ContextCompat
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
+import com.rex50.mausam.utils.GradientHelper
 
 class ActSplash : BaseActivity() {
 
@@ -21,6 +22,7 @@ class ActSplash : BaseActivity() {
         super.onCreate(savedInstanceState)
         //TODO: check for location permission is allowed or not, if not then open location activity else home
         Handler().postDelayed({
+            GradientHelper.init(this)
             val intent: Intent = if (ContextCompat.checkSelfPermission(this@ActSplash,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED && !mausamSharedPrefs!!.isLocationPermanentlyDenied) {

@@ -1,6 +1,7 @@
 package com.rex50.mausam.views.adapters
 
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.rex50.mausam.model_classes.utils.AllContentModel
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
 import com.rex50.mausam.utils.ItemOffsetDecoration
+import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showView
 
@@ -32,10 +34,14 @@ class AdaptHome(private var context: Context?, private var allContentModel: AllC
         private var txtTitle: TextView? = itemView.findViewById(R.id.txt_category_title)
         private var txtDesc: TextView? = itemView.findViewById(R.id.txt_category_desc)
         private var btnMore: Button? = itemView.findViewById(R.id.btn_category_more)
+        private var line: View? = itemView.findViewById(R.id.gradientLineCategory)
         private var contentRecyclerView: RecyclerView? = itemView.findViewById(R.id.recycler_category_items)
 
-        fun bind(context: Context?, model: GenericModelFactory?, groupItemClickListener: OnGroupItemClickListener?, spanCount: Int, groupPosition: Int) {
+        fun bind(context: Context?, model: GenericModelFactory?, gradient: GradientDrawable?, groupItemClickListener: OnGroupItemClickListener?, spanCount: Int, groupPosition: Int) {
             model?.apply {
+                gradient?.apply {
+                    line?.background = this
+                }
                 txtTitle?.text = model.title
                 txtDesc?.text = model.desc
                 btnMore?.apply {
@@ -71,12 +77,12 @@ class AdaptHome(private var context: Context?, private var allContentModel: AllC
             when(viewType){
                 RecyclerItemTypes.ITEM_CATEGORY_TYPE -> {
                     val itemHolder = holder as ItemCategoryHolder
-                    itemHolder.bind(context, this, itemClickListener, 1, position)
+                    itemHolder.bind(context, this, GradientHelper.getInstance(context)?.getGradient(), itemClickListener, 1, position)
                 }
 
                 RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE -> {
                     val itemHolder = holder as ItemCategoryHolder
-                    itemHolder.bind(context, this, itemClickListener, 2, position)
+                    itemHolder.bind(context, this, GradientHelper.getInstance(context)?.getGradient(), itemClickListener, 2, position)
                 }
 
                 RecyclerItemTypes.END_IMAGE -> {

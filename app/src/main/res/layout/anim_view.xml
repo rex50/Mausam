@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/waveLoader"
+        android:id="@+id/preLoader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -21,11 +21,11 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:visibility="visible"
+        android:visibility="gone"
         android:orientation="vertical">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/errorLoader"
+            android:id="@+id/animError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:lottie_loop="true"
@@ -33,7 +33,7 @@
             app:lottie_autoPlay="true"/>
 
         <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
-            android:id="@+id/loaderText"
+            android:id="@+id/tvError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
@@ -41,6 +41,7 @@
             android:gravity="center"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
             android:text="@string/failed_to_load_image"/>
 
     </LinearLayout>
