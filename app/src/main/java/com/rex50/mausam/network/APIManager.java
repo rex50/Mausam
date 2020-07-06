@@ -20,8 +20,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
+import static com.rex50.mausam.utils.Constants.ApiConstants.COLLECTION_ID;
 import static com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME;
 import static com.rex50.mausam.utils.Utils.CITY_NOT_FOUND;
 import static com.rex50.mausam.utils.Utils.PAGE_NOT_FOUND;
@@ -33,7 +35,6 @@ public final class APIManager {
     private static String baseUrlUnsplash = "https://api.unsplash.com/";
 
     private static String appId;
-    private static String access_key;
     Properties properties;
 
     private static volatile APIManager apiManager;
@@ -49,7 +50,8 @@ public final class APIManager {
     public static final int SERVICE_GET_FEATURED_COLLECTIONS = 8; //JSONArray response
     public static final int SERVICE_GET_USER_PUBLIC_PROFILE = 9; //JSONObject response
     public static final int SERVICE_GET_PHOTOS_BY_USER = 10; //JSONArray response
-    public static final int SERVICE_GET_SEARCHED_PHOTOS = 11; //JSONObject response
+    public static final int SERVICE_GET_SEARCHED_PHOTOS = 11; //JSONArray response
+    public static final int SERVICE_GET_COLLECTIONS_BY_USER = 12; //JSONObject response
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SERVICE_CURRENT_WEATHER, SERVICE_SEARCH_WEATHER_BY_PLACE})
@@ -59,7 +61,7 @@ public final class APIManager {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SERVICE_GET_PHOTOS, SERVICE_GET_PHOTOS_BY_ID, SERVICE_GET_RANDOM_PHOTO, SERVICE_GET_COLLECTION_PHOTOS,
             SERVICE_GET_COLLECTIONS, SERVICE_GET_FEATURED_COLLECTIONS, SERVICE_GET_USER_PUBLIC_PROFILE,
-            SERVICE_GET_PHOTOS_BY_USER, SERVICE_GET_SEARCHED_PHOTOS})
+            SERVICE_GET_PHOTOS_BY_USER, SERVICE_GET_SEARCHED_PHOTOS, SERVICE_GET_COLLECTIONS_BY_USER})
     private @interface UnsplashApiService {
     }
 
@@ -112,6 +114,10 @@ public final class APIManager {
     private static final String URL_GET_PHOTOS_BY_USER =
             "users/%s/photos";
 
+    private static final String URL_GET_COLLECTIONS_BY_USER =
+            "users/%s/collections";
+
+
 
     private volatile HashMap<Integer, String> serviceTable;
 
@@ -126,7 +132,6 @@ public final class APIManager {
                 if (instance == null) {
                     apiManager = instance = new APIManager(ctx);
                     appId = ctx.getString(R.string.openWeatherAppId);
-//                    access_key = ctx.getString(R.string.unsplashAccessKey);
                     setupServiceTable(apiManager);
                 }
             }
@@ -155,14 +160,24 @@ public final class APIManager {
         mgr.serviceTable.put(SERVICE_GET_USER_PUBLIC_PROFILE, URL_GET_USER_PUBLIC_PROFILE);
         mgr.serviceTable.put(SERVICE_GET_PHOTOS_BY_USER, URL_GET_PHOTOS_BY_USER);
         mgr.serviceTable.put(SERVICE_GET_SEARCHED_PHOTOS, URL_GET_SEARCHED_PHOTOS);
+        mgr.serviceTable.put(SERVICE_GET_COLLECTIONS_BY_USER, URL_GET_COLLECTIONS_BY_USER);
     }
 
     private String generateUrl(String baseUrl,int service, HashMap<String, String> urlExtras) {
         Uri.Builder uri = Uri.parse(baseUrl).buildUpon();
         switch (service){
             case SERVICE_GET_PHOTOS_BY_USER:
-                uri.path(String.format(serviceTable.get(service), urlExtras.get(UNSPLASH_USERNAME)));
+            case SERVICE_GET_COLLECTIONS_BY_USER:
+                if(!urlExtras.containsKey(UNSPLASH_USERNAME))
+                    throw new IllegalArgumentException("For " + service + ", " + UNSPLASH_USERNAME + " is required");
+                uri.path(String.format(Objects.requireNonNull(serviceTable.get(service)), urlExtras.get(UNSPLASH_USERNAME)));
                 urlExtras.remove(UNSPLASH_USERNAME);
+                break;
+            case SERVICE_GET_COLLECTION_PHOTOS:
+                if(!urlExtras.containsKey(COLLECTION_ID))
+                    throw new IllegalArgumentException("For " + service + ", " + COLLECTION_ID + " is required");
+                uri.path(String.format(Objects.requireNonNull(serviceTable.get(service)), urlExtras.get(COLLECTION_ID)));
+                urlExtras.remove(COLLECTION_ID);
                 break;
             default:
                 uri.path(serviceTable.get(service));
@@ -202,22 +217,22 @@ public final class APIManager {
         volleySingleton.addToRequestQueue(jsonObjectRequest);
     }
 
-    protected void makeUnsplashRequest(@UnsplashApiService int service, HashMap<String, String> urlExtras, UnsplashAPICallResponse listner){
+    protected void makeUnsplashRequest(@UnsplashApiService int service, HashMap<String, String> urlExtras, UnsplashAPICallResponse listener){
         urlExtras.put("client_id", ctx.getString(R.string.unsplashAccessKey));
         StringRequest stringRequest = new StringRequest(Request.Method.GET, generateUrl(baseUrlUnsplash, service, urlExtras),
                 response -> {
                     if(!response.contains("\"errors\":")){
-                        listner.onSuccess(response);
+                        listener.onSuccess(response);
                     }else {
                         try {
                             JSONObject object = new JSONObject(response);
-                            listner.onFailed(object.optJSONArray("errors"));
+                            listener.onFailed(object.optJSONArray("errors"));
                         } catch (JSONException e) {
-                            listner.onFailed(new JSONArray());
+                            listener.onFailed(new JSONArray());
                         }
                     }
                 }, error -> {
-                    listner.onFailed(new JSONArray());
+                    listener.onFailed(new JSONArray());
                 }){
             @Override
             public Map<String, String> getHeaders(){

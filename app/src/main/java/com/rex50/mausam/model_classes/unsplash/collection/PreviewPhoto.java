@@ -1,11 +1,14 @@
 
 package com.rex50.mausam.model_classes.unsplash.collection;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.rex50.mausam.model_classes.unsplash.photos.Urls;
 
-public class PreviewPhoto {
+public class PreviewPhoto implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -19,6 +22,38 @@ public class PreviewPhoto {
     @SerializedName("urls")
     @Expose
     private Urls urls;
+
+    protected PreviewPhoto(Parcel in) {
+        id = in.readString();
+        createdAt = in.readString();
+        updatedAt = in.readString();
+        urls = in.readParcelable(Urls.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(createdAt);
+        dest.writeString(updatedAt);
+        dest.writeParcelable(urls, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<PreviewPhoto> CREATOR = new Creator<PreviewPhoto>() {
+        @Override
+        public PreviewPhoto createFromParcel(Parcel in) {
+            return new PreviewPhoto(in);
+        }
+
+        @Override
+        public PreviewPhoto[] newArray(int size) {
+            return new PreviewPhoto[size];
+        }
+    };
 
     public String getId() {
         return id;

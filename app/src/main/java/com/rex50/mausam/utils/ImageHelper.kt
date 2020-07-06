@@ -208,7 +208,7 @@ class ImageViewerHelper (){
                                 .into(this)
                     }
                 })
-                .withHiddenStatusBar(false)
+                .withHiddenStatusBar(true)
                 .withStartPosition(childPos)
                 .withBackgroundColorResource(R.color.white_to_black)
                 .withOverlayView(dialogLayout)
@@ -236,7 +236,7 @@ class ImageViewerHelper (){
 
                             R.id.btnSetWallpaper -> {
                                 photosList[selectedPhotoPos].apply {
-                                    var name = getFormattedDesc(description, altDescription)
+                                    val name = getFormattedDesc(description, altDescription)
                                     //if(name.length > 20) name = name.substring(0, 20)
                                     actionListener?.onSetWallpaper(this, name)
                                 }
@@ -244,7 +244,7 @@ class ImageViewerHelper (){
 
                             R.id.btnDownloadImage -> {
                                 photosList[selectedPhotoPos].apply {
-                                    var name = getFormattedDesc(description, altDescription)
+                                    val name = getFormattedDesc(description, altDescription)
                                     //if(name.length > 20) name = name.substring(0, 20)
                                     actionListener?.onDownload(this, name)
                                 }
@@ -253,7 +253,7 @@ class ImageViewerHelper (){
                             R.id.btnFavImage -> {
                                 //btnFav?.setColorFilter(ContextCompat.getColor(this, R.color.satinRed))
                                 photosList[selectedPhotoPos].apply {
-                                    var name = getFormattedDesc(description, altDescription)
+                                    val name = getFormattedDesc(description, altDescription)
                                     //if(name.length > 20) name = name.substring(0, 20)
                                     actionListener?.onFavourite(this, name)
                                 }
@@ -261,7 +261,7 @@ class ImageViewerHelper (){
 
                             R.id.btnShareImage -> {
                                 photosList[selectedPhotoPos].apply {
-                                    var name = getFormattedDesc(description, altDescription)
+                                    val name = getFormattedDesc(description, altDescription)
                                     //if(name.length > 20) name = name.substring(0, 20)
                                     actionListener?.onShare(this, name)
                                 }

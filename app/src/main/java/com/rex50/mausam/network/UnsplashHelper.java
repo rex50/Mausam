@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.HashMap;
 
+import static com.rex50.mausam.utils.Constants.ApiConstants.COLLECTION_ID;
 import static com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME;
 
 public class UnsplashHelper {
@@ -29,6 +30,7 @@ public class UnsplashHelper {
     private final String TAG = "UnsplashHelper";
     private static final String PHOTOGRAPHER_KEY= "key_photographer_";
     private static final String COLLECTION_KEY= "key_collection_";
+    private static final String COLLECTION_PHOTOS_KEY= "key_collection_photo_";
     private static final String PHOTOS_KEY= "key_photos_";
     private static final String SEARCHED_PHOTOS_KEY= "key_searched_photo_";
 
@@ -175,6 +177,36 @@ public class UnsplashHelper {
         }
     }
 
+    public void getCollectionPhotos(String collectionId, GetUnsplashSearchedPhotosListener listener){
+        getSearchedPhotos(collectionId, 1, 20, defaultOrientation, listener);
+    }
+
+    public void getCollectionPhotos(String collectionId, int page, @PerPageRestriction int perPage, GetUnsplashPhotosListener listener){
+        HashMap<String, String> extras = new HashMap<>();
+        extras.put(COLLECTION_ID, collectionId);
+        extras.put("page", page < 1 ? "1" : String.valueOf(page));
+        extras.put("per_page", String.valueOf(perPage));
+        String response = KeyValuesRepository.getValue(context, COLLECTION_PHOTOS_KEY+collectionId+page+perPage);
+        if(null == response || response.isEmpty()){
+            apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTION_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
+                @Override
+                public void onSuccess(String response) {
+                    PhotosAndUsers photosAndUsers = DataParser.parseUnsplashData(response, false);
+                    listener.onSuccess(photosAndUsers.getPhotosList());
+                    KeyValuesRepository.insert(context, COLLECTION_PHOTOS_KEY+collectionId+page+perPage, response);
+                }
+
+                @Override
+                public void onFailed(JSONArray errors) {
+                    listener.onFailed(errors);
+                }
+            });
+        }else {
+            Log.e(TAG, "getCollectionPhotos: getting from DB");
+            listener.onSuccess(DataParser.parseUnsplashData(response, false).getPhotosList());
+        }
+    }
+
     public void getCollectionsAndTags(int page, @PerPageRestriction int perPage, GetUnsplashCollectionsAndTagsListener listener){
         HashMap<String, String> extras = new HashMap<>();
         extras.put("page", page < 1 ? "1" : String.valueOf(page));
@@ -224,6 +256,33 @@ public class UnsplashHelper {
         } else {
             PhotosAndUsers photosAndUsers = DataParser.parseUnsplashData(response, true);
             listener.onSuccess(photosAndUsers.getPhotosList());
+        }
+    }
+
+    public void getUserCollections(String unsplashUserName, int page, @PerPageRestriction int perPage, GetUnsplashCollectionsAndTagsListener listener){
+        HashMap<String, String> extras = new HashMap<>();
+        extras.put(UNSPLASH_USERNAME, unsplashUserName);
+        extras.put("page", page < 1 ? "1" : String.valueOf(page));
+        extras.put("per_page", String.valueOf(perPage));
+        String response = KeyValuesRepository.getValue(context, COLLECTION_KEY+unsplashUserName+page+perPage);
+        if(response == null || response.isEmpty()) {
+            apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTIONS_BY_USER, extras, new APIManager.UnsplashAPICallResponse() {
+                @Override
+                public void onSuccess(String response) {
+                    CollectionsAndTags obj = DataParser.parseCollections(response, true);
+                    listener.onSuccess(obj.getCollectionsList(), obj.getTagsList());
+                    KeyValuesRepository.insert(context, COLLECTION_KEY+unsplashUserName+page+perPage, response);
+                }
+
+                @Override
+                public void onFailed(JSONArray errors) {
+                    listener.onFailed(errors);
+                }
+            });
+        } else {
+            Log.e(TAG, "getCollectionsAndTags: getting from DB");
+            CollectionsAndTags obj = DataParser.parseCollections(response, true);
+            listener.onSuccess(obj.getCollectionsList(), obj.getTagsList());
         }
     }
 

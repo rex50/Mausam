@@ -7,16 +7,16 @@
     android:padding="16dp">
 
     <View
-        android:id="@+id/gradientLineCategory"
+        android:id="@+id/vGradientLineCategory"
         android:layout_width="8dp"
         android:layout_height="0dp"
         android:background="@drawable/bg_weather_details"
-        app:layout_constraintBottom_toBottomOf="@+id/txt_category_desc"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCategoryDesc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.rex50.mausam.utils.custom_text_views.BoldTextView
-        android:id="@+id/txt_category_title"
+        android:id="@+id/tvCategoryTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -24,12 +24,12 @@
         android:text="@string/dummy_title"
         android:textColor="@color/titleColor"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_category_more"
-        app:layout_constraintStart_toEndOf="@+id/gradientLineCategory"
+        app:layout_constraintEnd_toStartOf="@+id/btnCategoryMore"
+        app:layout_constraintStart_toEndOf="@+id/vGradientLineCategory"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.rex50.mausam.utils.custom_text_views.BoldTextView
-        android:id="@+id/txt_category_desc"
+        android:id="@+id/tvCategoryDesc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -37,12 +37,12 @@
         android:text="@string/lorem_ipsum"
         android:textColor="@color/descColor"
         android:textSize="10sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_category_more"
-        app:layout_constraintStart_toEndOf="@+id/gradientLineCategory"
-        app:layout_constraintTop_toBottomOf="@+id/txt_category_title" />
+        app:layout_constraintEnd_toStartOf="@+id/btnCategoryMore"
+        app:layout_constraintStart_toEndOf="@+id/vGradientLineCategory"
+        app:layout_constraintTop_toBottomOf="@+id/tvCategoryTitle" />
 
     <Button
-        android:id="@+id/btn_category_more"
+        android:id="@+id/btnCategoryMore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/more"

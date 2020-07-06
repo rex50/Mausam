@@ -1,6 +1,7 @@
 package com.rex50.mausam.views.activities
 
 import android.animation.LayoutTransition
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,16 +14,16 @@ import com.rex50.mausam.interfaces.OnChildItemClickListener
 import com.rex50.mausam.model_classes.unsplash.collection.Collections
 import com.rex50.mausam.model_classes.unsplash.collection.Tag
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
+import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
-import com.rex50.mausam.utils.Constants.IntentConstants.SEARCH_FEAT_COLLECTION
+import com.rex50.mausam.utils.Constants.IntentConstants.LIST_DATA
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.adapters.AdaptContent
 import kotlinx.android.synthetic.main.act_collections_list.*
 import kotlinx.android.synthetic.main.act_wallpaper_list.*
 import kotlinx.android.synthetic.main.act_wallpaper_list.ivLoader
 import kotlinx.android.synthetic.main.header_custom_general.*
-import org.apache.commons.lang3.StringUtils
 import org.json.JSONArray
 
 class ActCollectionsList : BaseActivity() {
@@ -33,14 +34,11 @@ class ActCollectionsList : BaseActivity() {
 
     override fun getLayoutResource(): Int = R.layout.act_collections_list
 
-    private var showFeatured = false
-
-    private var pageTitle = ""
-    private var pageDescription = ""
     private var collectionList = ArrayList<Collections>()
     private var collectionsModel: GenericModelFactory? = null
     private var adapter: AdaptContent? = null
     private var scrollToTopActive = false
+    private var listData: MoreListData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,15 +50,16 @@ class ActCollectionsList : BaseActivity() {
 
         gradientLine?.background = GradientHelper.getInstance(this)?.getRandomLeftRightGradient()
 
-        tvPageTitle?.text = pageTitle.takeIf { it.isNotEmpty() }?.let {
-            StringUtils.capitalize(pageTitle)
-        }?: getString(R.string.images)
+        listData?.getBgImgUrl()?.takeIf { it.isNotEmpty() }?.apply {
+            ivHeaderImg?.loadImage(this, null)
+            flHeaderBg?.showView()
+        }
 
-        pageDescription.takeIf { it.isNotEmpty() }?.apply {
-            tvPageDesc?.text = this
-        }?: tvPageDesc?.hideView()
+        tvPageTitle?.text = listData?.getTitle(this)
 
-        fabSearchedCollectionBack?.setOnClickListener{onBackPressed()}
+        tvPageDesc?.text = listData?.getDesc()
+
+        fabSearchedCollectionBack?.setOnClickListener{ if(scrollToTopActive) scrollToTop() else onBackPressed() }
 
         initRecycler()
 
@@ -70,10 +69,8 @@ class ActCollectionsList : BaseActivity() {
     }
 
     private fun getArgs() {
-        intent?.getBooleanExtra(SEARCH_FEAT_COLLECTION, false)?.apply {
-            showFeatured = this
-            pageTitle = if(this) "Featured Collections" else "Collections"
-            pageDescription = Constants.Providers.POWERED_BY_UNSPLASH
+        intent?.getParcelableExtra<MoreListData>(LIST_DATA)?.apply {
+            listData = this
         }
     }
 
@@ -81,11 +78,20 @@ class ActCollectionsList : BaseActivity() {
 
         val layoutManager = GridLayoutManager(this, 1, LinearLayoutManager.VERTICAL, false)
 
-        collectionsModel = GenericModelFactory.getCollectionListTypeObject(pageTitle, pageDescription, false, collectionList)
+        collectionsModel = GenericModelFactory.getCollectionListTypeObject(listData?.getTitle(this), listData?.getDesc(), false, collectionList)
         adapter = AdaptContent(this, collectionsModel)
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
-                showToast("Work in progress")
+                object : GenericModelCastHelper(o) {
+                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+                        startMorePhotosActivity(
+                                MoreListData(
+                                        Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
+                                        collectionInfo = collectionTypeModel?.collections?.get(childPos)
+                                )
+                        )
+                    }
+                }
             }
         })
 
@@ -132,49 +138,93 @@ class ActCollectionsList : BaseActivity() {
 
     private fun getCollectionsOf(page: Int) {
 
-        UnsplashHelper(this).getCollectionsAndTags(page, 20, object: GetUnsplashCollectionsAndTagsListener {
+        when(listData?.listMode){
+            Constants.ListModes.LIST_MODE_COLLECTIONS -> {
+                getFeaturedCollectionsOf(page)
+            }
+
+            Constants.ListModes.LIST_MODE_USER_COLLECTIONS -> {
+                getUserCollectionsOf(page)
+            }
+        }
+
+    }
+
+    private fun getUserCollectionsOf(page: Int) {
+        UnsplashHelper(this).getUserCollections(listData?.photographerInfo?.username, page, 20, object : GetUnsplashCollectionsAndTagsListener {
             override fun onSuccess(collection: MutableList<Collections>?, tagsList: MutableList<Tag>?) {
                 ivLoader?.hideView()
-                collection?.apply {
-                    when(page){
-                        INITIAL_PAGE -> {
-                            collectionList.clear()
-                            collectionList.addAll(collection)
-                            adapter?.notifyItemRangeInserted(0, 20)
-                        }
-
-                        else -> {
-                            val lastSize = collectionList.size
-                            collectionList.addAll(collection)
-                            adapter?.notifyItemRangeInserted(lastSize, 20)
-                        }
-                    }
-                }
+                editList(page, collection)
             }
 
             override fun onFailed(errors: JSONArray?) {
                 ivLoader?.hideView()
-                materialSnackBar.showActionSnackBar(
-                        R.string.failed_getting_collection_error_msg,
-                        R.string.ok_caps,
-                        MaterialSnackBar.LENGTH_INDEFINITE,
-                        object : MaterialSnackBar.SnackBarListener{
+                showErrorMsg()
+            }
+        })
+    }
+
+    private fun getFeaturedCollectionsOf(page: Int){
+        UnsplashHelper(this).getCollectionsAndTags(page, 20, object: GetUnsplashCollectionsAndTagsListener {
+            override fun onSuccess(collection: MutableList<Collections>?, tagsList: MutableList<Tag>?) {
+                ivLoader?.hideView()
+                editList(page, collection)
+            }
+
+            override fun onFailed(errors: JSONArray?) {
+                ivLoader?.hideView()
+                showErrorMsg()
+            }
+        })
+    }
+
+    private fun showErrorMsg() {
+        materialSnackBar.showActionSnackBar(
+                R.string.failed_getting_collection_error_msg,
+                R.string.ok_caps,
+                MaterialSnackBar.LENGTH_INDEFINITE,
+                object : MaterialSnackBar.SnackBarListener{
                     override fun onActionPressed() {
                         if(collectionList.isEmpty())
                             onBackPressed()
                         materialSnackBar.dismiss()
                     }
                 })
-            }
-        })
     }
 
-    override fun onBackPressed() {
-        if(scrollToTopActive){
-            recSearchedCollection?.smoothScrollToPosition(0)
-            ablCollectionList?.setExpanded(true)
-        }else
-            super.onBackPressed()
+    private fun editList(page: Int, collections: List<Collections>?){
+        collections?.apply {
+            when(page){
+                INITIAL_PAGE -> {
+                    collectionList.clear()
+                    collectionList.addAll(collections)
+                    adapter?.notifyItemRangeInserted(0, collections.size)
+                }
+
+                else -> {
+                    val lastSize = collectionList.size
+                    collectionList.addAll(collections)
+                    adapter?.notifyItemRangeInserted(lastSize, collections.size)
+                }
+            }
+        }
+    }
+
+    private fun startMorePhotosActivity(data: MoreListData) {
+        startActivity(
+                Intent(
+                        this,
+                        ActWallpapersList::class.java
+                ).putExtra(
+                        LIST_DATA,
+                        data
+                )
+        )
+    }
+
+    private fun scrollToTop(){
+        recSearchedCollection?.smoothScrollToPosition(0)
+        ablCollectionList?.setExpanded(true)
     }
 
     override fun internetStatus(internetType: Int) {

@@ -14,6 +14,8 @@ import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
+import com.rex50.mausam.model_classes.utils.MoreData
+import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.model_classes.weather.WeatherModelClass
 import com.rex50.mausam.network.APIManager
 import com.rex50.mausam.network.APIManager.WeatherAPICallBackResponse
@@ -21,8 +23,6 @@ import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Utils.TextValidationInterface
 import com.rex50.mausam.utils.GradientHelper
-import com.rex50.mausam.views.activities.MoreData
-import com.rex50.mausam.views.activities.MoreWallpaperListData
 import kotlinx.android.synthetic.main.frag_search.*
 import kotlinx.android.synthetic.main.header_custom_general.*
 import org.apache.commons.lang3.StringUtils
@@ -112,10 +112,9 @@ class FragSearch : BaseFragment() {
     private fun searchWallpapers() {
         val searchTerm = etvSearch?.text.toString()
         mListener?.startMorePhotosActivity(
-                MoreWallpaperListData(
-                        Constants.IntentConstants.LIST_MODE_GENERAL_WALLPAPER,
-                        null,
-                        MoreData(
+                MoreListData(
+                        Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
+                        generalInfo = MoreData(
                                 searchTerm,
                                 Constants.Providers.POWERED_BY_UNSPLASH
                         )
@@ -208,7 +207,7 @@ class FragSearch : BaseFragment() {
         fun onWeatherSearchSuccess(weatherDetails: WeatherModelClass?)
         fun nextBtnClicked()
         //fun startMorePhotosActivity(listMode: String?, searchTerm: String?, desc: String?)
-        fun startMorePhotosActivity(data: MoreWallpaperListData)
+        fun startMorePhotosActivity(data: MoreListData)
         val sharedPrefs: MausamSharedPrefs?
         val snackBar: MaterialSnackBar?
     }

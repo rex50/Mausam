@@ -1,6 +1,9 @@
 
 package com.rex50.mausam.model_classes.unsplash.collection;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.rex50.mausam.model_classes.unsplash.photos.DownloadLinks;
@@ -9,7 +12,7 @@ import com.rex50.mausam.model_classes.unsplash.photos.User;
 
 import java.util.List;
 
-public class CoverPhoto {
+public class CoverPhoto implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -34,7 +37,7 @@ public class CoverPhoto {
     private String color;
     @SerializedName("description")
     @Expose
-    private Object description;
+    private String description;
     @SerializedName("alt_description")
     @Expose
     private String altDescription;
@@ -59,6 +62,48 @@ public class CoverPhoto {
     @SerializedName("user")
     @Expose
     private User user;
+
+    protected CoverPhoto(Parcel in) {
+        id = in.readString();
+        createdAt = in.readString();
+        updatedAt = in.readString();
+        promotedAt = in.readString();
+        if (in.readByte() == 0) {
+            width = null;
+        } else {
+            width = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            height = null;
+        } else {
+            height = in.readInt();
+        }
+        color = in.readString();
+        description = in.readString();
+        altDescription = in.readString();
+        urls = in.readParcelable(Urls.class.getClassLoader());
+        links = in.readParcelable(DownloadLinks.class.getClassLoader());
+        if (in.readByte() == 0) {
+            likes = null;
+        } else {
+            likes = in.readInt();
+        }
+        byte tmpLikedByUser = in.readByte();
+        likedByUser = tmpLikedByUser == 0 ? null : tmpLikedByUser == 1;
+        user = in.readParcelable(User.class.getClassLoader());
+    }
+
+    public static final Creator<CoverPhoto> CREATOR = new Creator<CoverPhoto>() {
+        @Override
+        public CoverPhoto createFromParcel(Parcel in) {
+            return new CoverPhoto(in);
+        }
+
+        @Override
+        public CoverPhoto[] newArray(int size) {
+            return new CoverPhoto[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -116,11 +161,11 @@ public class CoverPhoto {
         this.color = color;
     }
 
-    public Object getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(Object description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -188,4 +233,41 @@ public class CoverPhoto {
         this.user = user;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(createdAt);
+        dest.writeString(updatedAt);
+        dest.writeString(promotedAt);
+        if (width == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(width);
+        }
+        if (height == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(height);
+        }
+        dest.writeString(color);
+        dest.writeString(description);
+        dest.writeString(altDescription);
+        dest.writeParcelable(urls, flags);
+        dest.writeParcelable(links, flags);
+        if (likes == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(likes);
+        }
+        dest.writeByte((byte) (likedByUser == null ? 0 : likedByUser ? 1 : 2));
+        dest.writeParcelable(user, flags);
+    }
 }

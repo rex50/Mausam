@@ -5,9 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rex50.mausam.R
@@ -20,6 +18,8 @@ import com.rex50.mausam.utils.ItemOffsetDecoration
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showView
+import kotlinx.android.synthetic.main.header_custom_category.view.*
+import kotlinx.android.synthetic.main.item_category.view.*
 
 class AdaptHome(private var context: Context?, private var allContentModel: AllContentModel?) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -27,38 +27,35 @@ class AdaptHome(private var context: Context?, private var allContentModel: AllC
     var itemClickListener: OnGroupItemClickListener? = null
 
     class EndImageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var imageView: ImageView = itemView.findViewById(R.id.wallpaper_img)
+        var imageView: ImageView = itemView.findViewById(R.id.ivPhoto)
     }
 
     class ItemCategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var txtTitle: TextView? = itemView.findViewById(R.id.txt_category_title)
-        private var txtDesc: TextView? = itemView.findViewById(R.id.txt_category_desc)
-        private var btnMore: Button? = itemView.findViewById(R.id.btn_category_more)
-        private var line: View? = itemView.findViewById(R.id.gradientLineCategory)
-        private var contentRecyclerView: RecyclerView? = itemView.findViewById(R.id.recycler_category_items)
 
-        fun bind(context: Context?, model: GenericModelFactory?, gradient: GradientDrawable?, groupItemClickListener: OnGroupItemClickListener?, spanCount: Int, groupPosition: Int) {
+        fun bind(context: Context?, model: GenericModelFactory?, gradient: GradientDrawable?, groupItemClickListener: OnGroupItemClickListener?, spanCount: Int, groupPosition: Int) = with(itemView) {
             model?.apply {
                 gradient?.apply {
-                    line?.background = this
+                    vGradientLineCategory?.background = this
                 }
-                txtTitle?.text = model.title
-                txtDesc?.text = model.desc
-                btnMore?.apply {
+                tvCategoryTitle?.text = model.title
+                tvCategoryDesc?.text = model.desc
+                btnCategoryMore?.apply {
                     if (model.isHasMore) showView() else hideView()
                     setOnClickListener { groupItemClickListener?.onMoreClicked(model, model.title, groupPosition) }
                 }
 
                 //TODO : Check if any other optimal solution is available
                 val adapter: AdaptContent? = AdaptContent(context, model)
-                contentRecyclerView?.layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
+                recCategoryItems?.layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
                 adapter?.setChildClickListener(object : OnChildItemClickListener {
                     override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
                         groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
                     }
                 })
-                contentRecyclerView?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
-                contentRecyclerView?.adapter = adapter
+                if(recCategoryItems?.itemDecorationCount == 0){
+                    recCategoryItems?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
+                }
+                recCategoryItems?.adapter = adapter
             }
         }
     }

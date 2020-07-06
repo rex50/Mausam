@@ -1,10 +1,13 @@
 
 package com.rex50.mausam.model_classes.unsplash.collection;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Source {
+public class Source implements Parcelable {
 
     @SerializedName("ancestry")
     @Expose
@@ -27,6 +30,42 @@ public class Source {
     @SerializedName("cover_photo")
     @Expose
     private CoverPhoto coverPhoto;
+
+    protected Source(Parcel in) {
+        title = in.readString();
+        subtitle = in.readString();
+        description = in.readString();
+        metaTitle = in.readString();
+        metaDescription = in.readString();
+        coverPhoto = in.readParcelable(CoverPhoto.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(subtitle);
+        dest.writeString(description);
+        dest.writeString(metaTitle);
+        dest.writeString(metaDescription);
+        dest.writeParcelable(coverPhoto, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Source> CREATOR = new Creator<Source>() {
+        @Override
+        public Source createFromParcel(Parcel in) {
+            return new Source(in);
+        }
+
+        @Override
+        public Source[] newArray(int size) {
+            return new Source[size];
+        }
+    };
 
     public Ancestry getAncestry() {
         return ancestry;

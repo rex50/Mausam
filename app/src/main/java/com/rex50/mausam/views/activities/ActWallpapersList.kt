@@ -3,10 +3,9 @@ package com.rex50.mausam.views.activities
 import android.animation.LayoutTransition
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -22,13 +21,12 @@ import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.unsplash.searched_photos.SearchedPhotos
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
+import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.GradientHelper
-import com.rex50.mausam.views.activities.ActMain.wallpaperListMode
 import com.rex50.mausam.views.adapters.AdaptContent
 import kotlinx.android.synthetic.main.act_wallpaper_list.*
-import org.apache.commons.lang3.StringUtils
 import org.json.JSONArray
 
 class ActWallpapersList : BaseActivity() {
@@ -41,7 +39,7 @@ class ActWallpapersList : BaseActivity() {
     private var adapter: AdaptContent? = null
     private var scrollToTopActive = false
     private var unsplashHelper: UnsplashHelper? = null
-    private var listData: MoreWallpaperListData? = null
+    private var listData: MoreListData? = null
 
     override fun getLayoutResource(): Int = R.layout.act_wallpaper_list
 
@@ -55,7 +53,7 @@ class ActWallpapersList : BaseActivity() {
     }
 
     private fun getArgs() {
-        intent?.getParcelableExtra<MoreWallpaperListData>(Constants.IntentConstants.WALLPAPER_LIST_DATA)?.apply {
+        intent?.getParcelableExtra<MoreListData>(Constants.IntentConstants.LIST_DATA)?.apply {
             listData = this
         }
     }
@@ -64,7 +62,7 @@ class ActWallpapersList : BaseActivity() {
 
         initHeader()
 
-        fabSearchedWallpaperBack?.setOnClickListener{ onBackPressed() }
+        fabSearchedWallpaperBack?.setOnClickListener{ if(scrollToTopActive) scrollToTop() else onBackPressed() }
 
         unsplashHelper = UnsplashHelper(this)
 
@@ -78,20 +76,19 @@ class ActWallpapersList : BaseActivity() {
 
     private fun initHeader() {
         when(listData?.listMode){
-            Constants.IntentConstants.LIST_MODE_PHOTOGRAPHER_WALLPAPER -> {
+            Constants.ListModes.LIST_MODE_USER_PHOTOS -> {
                 headerPhotographer?.apply {
                     showView()
+
                     findViewById<View>(R.id.gradientLine)?.background =
                             GradientHelper.getInstance(this@ActWallpapersList)?.getRandomLeftRightGradient()
 
+                    findViewById<TextView>(R.id.tvPageTitle)?.text = listData?.getTitle(this@ActWallpapersList)
+
+                    findViewById<TextView>(R.id.tvPageDesc)?.text = listData?.getDesc()
+
                     listData?.photographerInfo?.apply {
-                        findViewById<ImageView>(R.id.user_img)?.loadImage(profileImage.large)
-
-                        findViewById<TextView>(R.id.tvPageTitle)?.text = name?.takeIf { it.isNotEmpty() }?.let {
-                            getString(R.string.photo_by_photographer, StringUtils.capitalize(name))
-                        }?: getString(R.string.photographer_photo)
-
-                        findViewById<TextView>(R.id.tvPageDesc)?.text = listData?.getDesc()
+                        findViewById<ImageView>(R.id.ivUser)?.loadImage(profileImage.large)
 
                         totalCollections?.takeIf { it > 0 }?.apply {
                             findViewById<Button>(R.id.btnBrowseUserCollections)?.apply {
@@ -99,8 +96,12 @@ class ActWallpapersList : BaseActivity() {
                                 text = collectionText
                                 showView()
                                 setOnClickListener {
-                                    showToast("Work in progress")
-                                    //TODO : start user's collection list
+                                    showUserCollections(
+                                            MoreListData(
+                                                    Constants.ListModes.LIST_MODE_USER_COLLECTIONS,
+                                                    listData?.photographerInfo
+                                            )
+                                    )
                                 }
                             }
                         }
@@ -119,24 +120,30 @@ class ActWallpapersList : BaseActivity() {
                             }*/
                         }
                     }
-
                 }
             }
 
             else -> {
                 headerGeneral?.apply {
                     showView()
+
                     findViewById<View>(R.id.gradientLine)?.background =
                             GradientHelper.getInstance(this@ActWallpapersList)?.getRandomLeftRightGradient()
 
-                    listData?.generalInfo?.apply {
-                        findViewById<TextView>(R.id.tvPageTitle)?.text = searchTerm?.takeIf { it.isNotEmpty() }?.let {
-                            StringUtils.capitalize(searchTerm)
-                        }?: getString(R.string.images)
+                    listData?.apply {
+                        findViewById<TextView>(R.id.tvPageTitle)?.text = getTitle(this@ActWallpapersList)
 
-                        desc?.takeIf { it.isNotEmpty() }?.apply {
-                            findViewById<TextView>(R.id.tvPageDesc)?.text = this
-                        }?: findViewById<TextView>(R.id.tvPageDesc).hideView()
+                        findViewById<TextView>(R.id.tvPageDesc)?.apply {
+                            getDesc().takeIf { it.isNotEmpty() }?.apply {
+                                text = this
+                            }?: hideView()
+                        }
+
+                        getBgImgUrl().takeIf { it.isNotEmpty() }?.apply {
+                            findViewById<ImageView>(R.id.ivHeaderImg)?.loadImage(this, null)
+                            findViewById<FrameLayout>(R.id.flHeaderBg)?.showView()
+                        }
+
                     }
                 }
             }
@@ -147,7 +154,7 @@ class ActWallpapersList : BaseActivity() {
 
         val layoutManager = GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false)
 
-        wallpapersModel = GenericModelFactory.getFavouritePhotographerTypeObject(listData?.getTitle(), listData?.getDesc(), wallpapersList)
+        wallpapersModel = GenericModelFactory.getFavouritePhotographerTypeObject(listData?.getTitle(this), listData?.getDesc(), wallpapersList)
         adapter = AdaptContent(this, wallpapersModel)
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
@@ -215,9 +222,10 @@ class ActWallpapersList : BaseActivity() {
 
                                 override fun onUserPhotos(user: User) {
                                     startMorePhotosActivity(
-                                            MoreWallpaperListData(
-                                                    Constants.IntentConstants.LIST_MODE_PHOTOGRAPHER_WALLPAPER,
+                                            MoreListData(
+                                                    Constants.ListModes.LIST_MODE_USER_PHOTOS,
                                                     user,
+                                                    null,
                                                     null
                                             )
                                     )
@@ -271,18 +279,22 @@ class ActWallpapersList : BaseActivity() {
     }
 
     private fun getWallpapersOf(page: Int){
-        Constants.IntentConstants.apply {
+        Constants.ListModes.apply {
             when(listData?.listMode){
-                LIST_MODE_POPULAR_WALLPAPER -> {
+                LIST_MODE_POPULAR_PHOTOS -> {
                     getPopularWallpapersOf(page)
                 }
 
-                LIST_MODE_PHOTOGRAPHER_WALLPAPER -> {
+                LIST_MODE_USER_PHOTOS -> {
                     getPhotographerWallpapersOf(page)
                 }
 
-                LIST_MODE_GENERAL_WALLPAPER -> {
+                LIST_MODE_GENERAL_PHOTOS -> {
                     getSearchedWallpapersOf(page)
+                }
+
+                LIST_MODE_COLLECTION_PHOTOS -> {
+                    getCollectionPhotosOf(page)
                 }
             }
         }
@@ -321,11 +333,28 @@ class ActWallpapersList : BaseActivity() {
     }
 
     private fun getSearchedWallpapersOf(page: Int) {
-        unsplashHelper?.getSearchedPhotos(listData?.getTitle(), page, 20, object: GetUnsplashSearchedPhotosListener {
+        unsplashHelper?.getSearchedPhotos(listData?.generalInfo?.term, page, 20, object: GetUnsplashSearchedPhotosListener {
             override fun onSuccess(photos: SearchedPhotos?) {
                 ivLoader?.hideView()
                 photos?.apply {
                     updateList(page, results)
+                }
+            }
+
+            override fun onFailed(errors: JSONArray?) {
+                ivLoader?.hideView()
+                showErrorMsg()
+            }
+        })
+    }
+
+    private fun getCollectionPhotosOf(page: Int) {
+        unsplashHelper?.getCollectionPhotos(listData?.collectionInfo?.id.toString(), page, 20, object: GetUnsplashPhotosListener {
+
+            override fun onSuccess(photos: MutableList<UnsplashPhotos>?) {
+                ivLoader?.hideView()
+                photos?.apply {
+                    updateList(page, this)
                 }
             }
 
@@ -366,93 +395,36 @@ class ActWallpapersList : BaseActivity() {
         })
     }
 
-    private fun startMorePhotosActivity(data: MoreWallpaperListData) {
+    private fun startMorePhotosActivity(data: MoreListData) {
         startActivity(
                 Intent(
                         this,
                         ActWallpapersList::class.java
                 ).putExtra(
-                        Constants.IntentConstants.WALLPAPER_LIST_DATA,
+                        Constants.IntentConstants.LIST_DATA,
                         data
                 )
         )
     }
 
-    override fun onBackPressed() {
-        if(scrollToTopActive) {
-            recSearchedWallpapers?.smoothScrollToPosition(0)
-            ablWallpaperList?.setExpanded(true)
-        }else
-            super.onBackPressed()
+    private fun showUserCollections(data: MoreListData){
+        startActivity(
+                Intent(
+                        this,
+                        ActCollectionsList::class.java
+                ).putExtra(
+                        Constants.IntentConstants.LIST_DATA,
+                        data
+                )
+        )
+    }
+
+    private fun scrollToTop(){
+        recSearchedWallpapers?.smoothScrollToPosition(0)
+        ablWallpaperList?.setExpanded(true)
     }
 
     override fun internetStatus(internetType: Int) {
 
-    }
-}
-
-data class MoreWallpaperListData(
-        @wallpaperListMode var listMode: String? = Constants.IntentConstants.LIST_MODE_GENERAL_WALLPAPER,
-        var photographerInfo: User?,
-        var generalInfo: MoreData?
-): Parcelable {
-
-    fun getTitle(): String = generalInfo?.searchTerm ?: ""
-
-    fun getDesc(): String = photographerInfo?.bio?.takeIf { it.isNotEmpty() } ?: generalInfo?.desc ?: Constants.Providers.POWERED_BY_UNSPLASH
-
-    constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readParcelable(User::class.java.classLoader),
-            parcel.readParcelable(MoreData::class.java.classLoader)
-    )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(listMode)
-        parcel.writeParcelable(photographerInfo, flags)
-        parcel.writeParcelable(generalInfo, flags)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<MoreWallpaperListData> {
-        override fun createFromParcel(parcel: Parcel): MoreWallpaperListData {
-            return MoreWallpaperListData(parcel)
-        }
-
-        override fun newArray(size: Int): Array<MoreWallpaperListData?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
-
-data class MoreData(
-        var searchTerm: String?,
-        var desc: String?
-): Parcelable {
-    constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readString()
-    )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(searchTerm)
-        parcel.writeString(desc)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<MoreData> {
-        override fun createFromParcel(parcel: Parcel): MoreData {
-            return MoreData(parcel)
-        }
-
-        override fun newArray(size: Int): Array<MoreData?> {
-            return arrayOfNulls(size)
-        }
     }
 }

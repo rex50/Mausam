@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
+import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.model_classes.weather.WeatherModelClass
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.MaterialSnackBar
@@ -51,7 +52,7 @@ class ActSearchCity : BaseActivity(), FragSearch.OnFragmentInteractionListener {
 
     override val snackBar: MaterialSnackBar? = materialSnackBar
 
-    override fun startMorePhotosActivity(data: MoreWallpaperListData) {
+    override fun startMorePhotosActivity(data: MoreListData) {
         //Nothing
     }
 }

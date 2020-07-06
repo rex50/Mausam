@@ -21,8 +21,10 @@
     <string name="twitter">Twitter</string>
     <string name="see_more_photos">See more photos</string>
     <string name="visit_this_page">Visit this page</string>
-    <string name="photographer_photo">Photographer\'s photos</string>
+    <string name="photographer_photos">Photographer\'s photos</string>
+    <string name="photographer_collections">Photographer\'s collections</string>
     <string name="photo_by_photographer">Photos by %s</string>
+    <string name="collection_by_photographer">Collections by %s</string>
 
 
     <!--Descriptions-->
@@ -30,7 +32,7 @@
     <string name="location_desc">With this permission, Mausam can automatically detect your location</string>
     <string name="storage_desc">With this permission, Mausam can download wallpapers and store in the phone storage.</string>
     <string name="search_loc_desc">We understand you don’t want to reveal your  location but Mausam needs it show weather and wallpapers based on it. </string>
-    <string name="search_wallpaper_desc">search photos by some of the best photographer’s spread across the world and available on Unsplash.</string>
+    <string name="search_wallpaper_desc">search photos by some of the best photographers spread across the world and available on Unsplash.</string>
     <string name="favourites_desc">All your favourite photographers and wallpapers will appear here.</string>
 
     <!--Hints/messages/btn-->
@@ -61,6 +63,9 @@
     <string name="share_body">Here is a awesome photo %s by %s\n\nGet Mausam app on Playstore and experience a new world of images.\nPowered by Unsplash</string>
     <string name="preparing_home">Preparing home…</string>
     <string name="coming_soon">Coming soon&#8230;</string>
+    <string name="downloading">Downloading&#8230;</string>
+    <string name="more">More</string>
+    <string name="see_collections">See Collections</string>
 
     <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>
@@ -85,9 +90,6 @@
     <!--Static strings-->
     <string name="unsplash_txt" translatable="false">Unsplash</string>
     <string name="pixabay_txt" translatable="false">Pixabay</string>
-    <string name="downloading">Downloading...</string>
-    <string name="more">More</string>
-    <string name="see_collections">See Collections</string>
 
 
     <!--Colors for gradient array-->

@@ -1,10 +1,13 @@
 
 package com.rex50.mausam.model_classes.unsplash.collection;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Tag {
+public class Tag implements Parcelable {
 
     @SerializedName("type")
     @Expose
@@ -15,6 +18,36 @@ public class Tag {
     @SerializedName("source")
     @Expose
     private Source source;
+
+    protected Tag(Parcel in) {
+        type = in.readString();
+        title = in.readString();
+        source = in.readParcelable(Source.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(type);
+        dest.writeString(title);
+        dest.writeParcelable(source, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Tag> CREATOR = new Creator<Tag>() {
+        @Override
+        public Tag createFromParcel(Parcel in) {
+            return new Tag(in);
+        }
+
+        @Override
+        public Tag[] newArray(int size) {
+            return new Tag[size];
+        }
+    };
 
     public String getType() {
         return type;

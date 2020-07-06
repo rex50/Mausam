@@ -4,6 +4,12 @@ import com.rex50.mausam.R
 
 class Constants {
 
+    companion object {
+        const val PHOTOS = "Photos"
+        const val COLLECTIONS = "Collections"
+        const val COLLECTIONS_PHOTOS = "Collections Photos"
+    }
+
     object AvailableLayouts {
         const val WEATHER_BASED_WALLPAPERS = "Weather based wallpapers"
         const val LOCATION_BASED_WALLPAPERS = "Location based wallpapers"
@@ -59,15 +65,20 @@ class Constants {
 
     object ApiConstants {
         const val UNSPLASH_USERNAME = "unsplash_username"
+        const val COLLECTION_ID = "collection_id"
     }
 
     object IntentConstants {
-        const val WALLPAPER_LIST_DATA = "wallpaperListData"
-        const val LIST_MODE_POPULAR_WALLPAPER = "popularWallpaperListMode"
-        const val LIST_MODE_PHOTOGRAPHER_WALLPAPER = "photographerWallpaperListMode"
-        const val LIST_MODE_GENERAL_WALLPAPER = "generalWallpaperListMode"
-        const val SEARCH_TERM = "searchTerm"
-        const val SEARCH_DESC = "searchDesc"
+        const val LIST_DATA = "wallpaperListData"
         const val SEARCH_FEAT_COLLECTION = "searchFeaturedCollection"
+    }
+
+    object ListModes {
+        const val LIST_MODE_POPULAR_PHOTOS = "popularPhotosListMode"
+        const val LIST_MODE_USER_PHOTOS = "userPhotosListMode"
+        const val LIST_MODE_GENERAL_PHOTOS = "generalPhotosListMode"
+        const val LIST_MODE_COLLECTION_PHOTOS = "collectionPhotosListMode"
+        const val LIST_MODE_COLLECTIONS = "collectionListMode"
+        const val LIST_MODE_USER_COLLECTIONS = "userCollectionListMode"
     }
 }

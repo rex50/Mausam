@@ -25,7 +25,7 @@ import com.rex50.mausam.R;
 import com.rex50.mausam.base_classes.BaseActivity;
 import com.rex50.mausam.interfaces.LocationResultListener;
 import com.rex50.mausam.interfaces.WeatherResultListener;
-import com.rex50.mausam.model_classes.unsplash.collection.Collections;
+import com.rex50.mausam.model_classes.utils.MoreListData;
 import com.rex50.mausam.model_classes.weather.WeatherModelClass;
 import com.rex50.mausam.network.APIManager;
 import com.rex50.mausam.network.MausamLocationManager;
@@ -80,9 +80,12 @@ public class ActMain extends BaseActivity implements
     private FragmentStatePagerAdapter fragmentAdapter;
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({ Constants.IntentConstants.LIST_MODE_GENERAL_WALLPAPER,
-            Constants.IntentConstants.LIST_MODE_POPULAR_WALLPAPER,
-            Constants.IntentConstants.LIST_MODE_PHOTOGRAPHER_WALLPAPER})
+    @StringDef({ Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
+            Constants.ListModes.LIST_MODE_POPULAR_PHOTOS,
+            Constants.ListModes.LIST_MODE_USER_PHOTOS,
+            Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
+            Constants.ListModes.LIST_MODE_COLLECTIONS,
+            Constants.ListModes.LIST_MODE_USER_COLLECTIONS})
     public @interface wallpaperListMode {
     }
 
@@ -544,26 +547,18 @@ public class ActMain extends BaseActivity implements
         });
     }
 
-    /*@Override
-    public void startMorePhotosActivity(@wallpaperListMode String listMode, String searchTerm, String desc) {
-        startActivity(new Intent(this, ActWallpapersList.class)
-                .putExtra(Constants.IntentConstants.WALLPAPER_LIST_MODE, listMode)
-                .putExtra(Constants.IntentConstants.SEARCH_TERM, searchTerm)
-                .putExtra(Constants.IntentConstants.SEARCH_DESC, desc)
-        );
-    }*/
-
     @Override
-    public void startMorePhotosActivity(@NotNull MoreWallpaperListData data) {
+    public void startMorePhotosActivity(@NotNull MoreListData data) {
         startActivity(new Intent(this, ActWallpapersList.class)
-                .putExtra(Constants.IntentConstants.WALLPAPER_LIST_DATA, data)
+                .putExtra(Constants.IntentConstants.LIST_DATA, data)
         );
     }
 
     @Override
-    public void startMoreFeaturedCollections(@Nullable List<? extends Collections> collections) {
+    public void startMoreFeaturedCollections(@NotNull MoreListData data) {
         startActivity(new Intent(this, ActCollectionsList.class)
                 .putExtra(Constants.IntentConstants.SEARCH_FEAT_COLLECTION, true)
+                .putExtra(Constants.IntentConstants.LIST_DATA, data)
         );
     }
 

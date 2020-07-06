@@ -33,7 +33,7 @@ public class AdaptWeatherWallpapers extends RecyclerView.Adapter<AdaptWeatherWal
 
         WeatherWallpapersViewHolder(@NonNull View itemView) {
             super(itemView);
-            wallpaperImageView = itemView.findViewById(R.id.wallpaper_img);
+            wallpaperImageView = itemView.findViewById(R.id.ivPhoto);
         }
     }
 

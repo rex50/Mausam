@@ -3,6 +3,8 @@ package com.rex50.mausam.utils
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.res.Resources
+import android.util.TypedValue
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -11,11 +13,14 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.Resource
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rex50.mausam.R
@@ -91,7 +96,7 @@ fun View.setDisabled(){
 fun View?.isViewVisible(): Boolean = if(this == null) false else visibility == VISIBLE
 
 fun String.toDateFormat(pattern: String) : String {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssSSS", Locale.getDefault())
     val dateTime = DateTime(dateFormat.parse(this))
     return dateTime.toString(pattern)
 }
@@ -108,12 +113,12 @@ fun ImageView.loadImage(url: String){
     loadImage(url, R.drawable.ic_loader)
 }
 
-fun ImageView.loadImage(url: String, @DrawableRes preLoader: Int){
+fun ImageView.loadImage(url: String, @DrawableRes preLoader: Int?){
     Glide.with(context)
             .load(url)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
             .apply(RequestOptions().format(DecodeFormat.PREFER_ARGB_8888))
-            .thumbnail(Glide.with(this).load(preLoader))
+            .thumbnail(Glide.with(this).load(if(preLoader.isNotNull()) preLoader else ""))
             //.transition(DrawableTransitionOptions.withCrossFade())
             .into(this)
 }
@@ -141,24 +146,34 @@ fun Context.lifecycleOwner(): LifecycleOwner? {
     }
 }
 
+fun Context?.calculateDp(px: Int) : Int = calculateDp(this?.resources, px)
+fun Fragment?.calculateDp(px: Int) : Int = calculateDp(this?.resources, px)
+fun Activity?.calculateDp(px: Int) : Int = calculateDp(this?.resources, px)
+fun calculateDp(r: Resources?, px: Int) : Int =
+        TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                px.toFloat(),
+                r?.displayMetrics
+        ).toInt()
+
 /**
  * Animations
  */
 
 fun FloatingActionButton.toNormal(){
-    layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT).apply {
-        addRule(RelativeLayout.ALIGN_PARENT_START)
-        addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-        setMargins(16, 16, 16, 16)
+    layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT).also {
+        it.addRule(RelativeLayout.ALIGN_PARENT_START)
+        it.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        it.setMargins(marginStart, marginTop, marginEnd, marginBottom)
     }
     rotation = 0F
 }
 
 fun FloatingActionButton.toRightAndRotate(){
-    layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT).apply {
-        addRule(RelativeLayout.ALIGN_PARENT_END)
-        addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-        setMargins(16, 16, 16, 16)
+    layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT).also {
+        it.addRule(RelativeLayout.ALIGN_PARENT_END)
+        it.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        it.setMargins(marginStart, marginTop, marginEnd, marginBottom)
     }
     rotation = 90F
 }

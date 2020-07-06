@@ -23,6 +23,8 @@ import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.utils.getTextOrEmpty
+import com.rex50.mausam.utils.hideView
+import com.rex50.mausam.utils.isNotNull
 import com.thekhaeng.pushdownanim.PushDownAnim
 import org.apache.commons.lang3.StringUtils
 
@@ -36,7 +38,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
     }
 
     inner class GeneralTypeHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView: ImageView? = itemView.findViewById(R.id.wallpaper_img)
+        val imageView: ImageView? = itemView.findViewById(R.id.ivPhoto)
         private val cardView: CardView? = itemView.findViewById(R.id.cardView)
 
         fun bind(photo: UnsplashPhotos?) {
@@ -61,7 +63,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
     }
 
     inner class FavPhotographerPhotosTypeHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView: ImageView? = itemView.findViewById(R.id.wallpaper_img)
+        val imageView: ImageView? = itemView.findViewById(R.id.ivPhoto)
         private val cardView: CardView? = itemView.findViewById(R.id.cardView)
         fun bind(photo: UnsplashPhotos?) {
             context?.apply {
@@ -85,9 +87,9 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
     }
 
     inner class UserTypeHolder internal constructor(v: View) : RecyclerView.ViewHolder(v) {
-        private var userImg: ImageView? = v.findViewById(R.id.user_img)
-        private var txtUserName: TextView? = v.findViewById(R.id.txt_user_name)
-        private var userLayout: LinearLayout? = v.findViewById(R.id.userLayout)
+        private var userImg: ImageView? = v.findViewById(R.id.ivUser)
+        private var txtUserName: TextView? = v.findViewById(R.id.tvUserName)
+        private var userLayout: LinearLayout? = v.findViewById(R.id.lnlUser)
 
         fun bind(userModel: User?) {
             context?.apply {
@@ -113,8 +115,8 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
     }
 
     inner class ColorTypeHolder internal constructor(v: View) : RecyclerView.ViewHolder(v) {
-        private var cardColor: View? = v.findViewById(R.id.viewColor)
-        private var txtColorName: TextView? = v.findViewById(R.id.txt_color_name)
+        private var cardColor: View? = v.findViewById(R.id.vBgColor)
+        private var txtColorName: TextView? = v.findViewById(R.id.tvColorName)
         private var cardView: CardView? = v.findViewById(R.id.cardView)
         fun bind(colorModel: GenericModelFactory.ColorModel?) {
             cardColor?.setBackgroundColor(Color.parseColor(colorModel?.colorCode))
@@ -131,46 +133,53 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
     }
 
     inner class CollectionTypeHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var imgMain: ImageView? = itemView.findViewById(R.id.wallpaper_img_main)
-        private var imgPreview1: ImageView? = itemView.findViewById(R.id.wallpaper_img_1)
-        private var imgPreview2: ImageView? = itemView.findViewById(R.id.wallpaper_img_2)
-        private var imgPreview3: ImageView? = itemView.findViewById(R.id.wallpaper_img_3)
-        private var txtTitle: TextView? = itemView.findViewById(R.id.txt_collection_title)
-        private var txtDesc: TextView? = itemView.findViewById(R.id.txt_collection_desc)
+        private var imgMain: ImageView? = itemView.findViewById(R.id.ivPhotoCover)
+        private var imgPreview1: ImageView? = itemView.findViewById(R.id.ivPhotoPreview1)
+        private var imgPreview2: ImageView? = itemView.findViewById(R.id.ivPhotoPreview2)
+        private var imgPreview3: ImageView? = itemView.findViewById(R.id.ivPhotoPreview3)
+        private var txtTitle: TextView? = itemView.findViewById(R.id.tvCollectionTitle)
+        private var txtDesc: TextView? = itemView.findViewById(R.id.tvCollectionDesc)
         private var cardView: CardView? = itemView.findViewById(R.id.cardView)
         fun bind(collection: Collections?) {
             collection?.let {
                 context?.apply {
+
                     txtTitle?.text = StringUtils.capitalize(it.title?.trim())
+
                     txtDesc?.text = it.description?.trim()
-                    imgMain?.apply {
+
+                    imgMain?.takeIf { collection.coverPhoto.isNotNull() }?.apply {
                         Glide.with(context)
-                                .load(collection.coverPhoto.urls.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
+                                .load(collection.coverPhoto?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
                                 .transition(DrawableTransitionOptions.withCrossFade())
                                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                                 .into(this)
                     }
-                    imgPreview1?.apply {
+
+                    imgPreview1?.takeIf { collection.previewPhotos?.size ?: 0 > 0 }?.apply {
                         Glide.with(context)
-                                .load(collection.previewPhotos[0].urls.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
+                                .load(collection.previewPhotos[0]?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
                                 .transition(DrawableTransitionOptions.withCrossFade())
                                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                                 .into(this)
-                    }
-                    imgPreview2?.apply {
+                    }?: (imgPreview1?.parent as View?)?.hideView()
+
+                    imgPreview2.takeIf { collection.previewPhotos?.size ?: 0 > 1 }?.apply {
                         Glide.with(context)
-                                .load(collection.previewPhotos[1].urls.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
+                                .load(collection.previewPhotos[1]?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
                                 .transition(DrawableTransitionOptions.withCrossFade())
                                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                                 .into(this)
-                    }
-                    imgPreview3?.apply {
+                    }?: (imgPreview2?.parent as View?)?.hideView()
+
+                    imgPreview3?.takeIf { collection.previewPhotos?.size ?: 0 > 2 }?.apply {
                         Glide.with(context)
-                                .load(collection.previewPhotos[2].urls.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
+                                .load(collection.previewPhotos[2]?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
                                 .transition(DrawableTransitionOptions.withCrossFade())
                                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                                 .into(this)
-                    }
+                    }?: (imgPreview3?.parent as View?)?.hideView()
+
                 }
             }
         }
@@ -185,7 +194,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
     }
 
     inner class TextTypeHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var btnTag: Button? = itemView.findViewById(R.id.btn_tag)
+        private var btnTag: Button? = itemView.findViewById(R.id.btnTag)
         fun bind(title: String?) {
             btnTag?.text = title.toString()
         }

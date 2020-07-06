@@ -7,16 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/waveLoader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        app:lottie_rawRes="@raw/preloader_wave"
-        app:lottie_loop="true"
-        android:visibility="visible"
-        app:lottie_autoPlay="true"/>-->
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cardImgActions"
         android:layout_width="match_parent"
@@ -130,7 +120,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="15dp"
         android:layout_alignParentBottom="true"
         app:cardCornerRadius="8dp"
         app:cardElevation="8dp">
