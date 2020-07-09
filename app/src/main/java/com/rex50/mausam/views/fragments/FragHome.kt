@@ -24,6 +24,7 @@ import com.rex50.mausam.model_classes.weather.WeatherModelClass
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.AvailableLayouts
+import com.rex50.mausam.views.MausamApplication
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.frag_home.*
@@ -51,9 +52,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
         }
         PushDownAnim.setPushDownAnimTo(btnSettings)
                 .setScale(0.8F)
-                .setOnClickListener {
-            showToast("Work in progress")
-        }
+                .setOnClickListener { mListener?.startSettings() }
     }
 
     override fun load() {
@@ -377,6 +376,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
     private fun initItemClicks(allContentModel: AllContentModel) {
         allContentModel.setOnClickListener(object : OnGroupItemClickListener{
+
             override fun onItemClick(o: Any?, childImgView: ImageView?, groupPos: Int, childPos: Int) {
 
                 object : GenericModelCastHelper(o) {
@@ -392,6 +392,10 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                     override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
                         generalTypeModel?.apply {
+
+                            //val materialBottomSheet = MaterialBottomSheet()
+                            //materialBottomSheet.show(childFragmentManager, MaterialBottomSheet.TAG)
+
                             ImageViewerHelper(mContext).with(photosList,
                                     childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
 
@@ -459,7 +463,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                             )
                                     )
                                 }
-                            }).show()
+                            }).setDataSaverMode(MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false).show()
                         }
                     }
 
@@ -522,7 +526,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.shareImage(mContext, "Share", photoInfo.user.name, photoInfo.links.html)
                                 }
-                            }).show()
+                            }).setDataSaverMode(MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false).show()
                         }
                     }
 
@@ -571,9 +575,11 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
                 }
+
             }
 
             override fun onMoreClicked(o: Any?, title: String?, groupPos: Int) {
+
                 object : GenericModelCastHelper(o){
                     override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
                         mListener?.startMoreFeaturedCollections(
@@ -598,6 +604,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
                 }
+
             }
         })
     }
@@ -645,6 +652,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
         fun getMaterialSnackBar(): MaterialSnackBar?
         fun requestWeather(listener: WeatherResultListener?) //void getWeatherWallpaper();
         fun startMoreFeaturedCollections(data: MoreListData)
+        fun startSettings()
     }
 
     companion object {

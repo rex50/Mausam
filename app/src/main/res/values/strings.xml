@@ -25,15 +25,38 @@
     <string name="photographer_collections">Photographer\'s collections</string>
     <string name="photo_by_photographer">Photos by %s</string>
     <string name="collection_by_photographer">Collections by %s</string>
+    <string name="settings">Settings</string>
+    <string name="dark_mode">Force dark mode</string>
+    <string name="data_saver">Data saver</string>
+    <string name="cache">Cache</string>
+    <string name="curr_loc">Current location</string>
+    <string name="buy_me_a_coffee">Buy me a coffee</string>
+    <string name="buy_me_a_pizza">Buy me a Pizza</string>
+    <string name="buy_me_a_healthy_meal">Buy me a healthy meal</string>
 
 
     <!--Descriptions-->
     <string name="permission_desc">Will you please allow Mausam this permission.</string>
     <string name="location_desc">With this permission, Mausam can automatically detect your location</string>
+    <string name="dark_mode_on_desc">The Force will be with you. Always. 🤺</string>
+    <string name="dark_mode_off_desc">Currently following system theme.</string>
+    <string name="data_saver_desc">Enabling this option will use low quality images for viewing.</string>
+    <string name="cache_desc">If you’re short on storage just click on that CLEAR button.</string>
+    <string name="curr_loc_desc">Change location.</string>
     <string name="storage_desc">With this permission, Mausam can download wallpapers and store in the phone storage.</string>
     <string name="search_loc_desc">We understand you don’t want to reveal your  location but Mausam needs it show weather and wallpapers based on it. </string>
     <string name="search_wallpaper_desc">search photos by some of the best photographers spread across the world and available on Unsplash.</string>
     <string name="favourites_desc">All your favourite photographers and wallpapers will appear here.</string>
+    <string name="imp_info_desc">All your favourites are stored locally so if you uninstall app or clear data of Mausam then you will lose your favourites.</string>
+    <string name="support_desc">Your donation keeps Mausam app advertisement free.</string>
+    <string name="share_app_desc">Share this beautiful app with your friends and family.</string>
+    <string name="leave_review_desc">Leave a review and rate the app on Playstore.</string>
+    <string name="report_app_desc">Report bugs or send feedback of Mausam.</string>
+    <string name="designed_developed_by_desc">Mausam is solely designed and developed by</string>
+    <string name="privacy_desc">Mausam (version 0.0.8) does not use any of your personal data and store them on any of our server as I can not afford one 😂.\n\nRead Mausam’s <b>Privacy Policy</b> for more.</string>
+    <string name="buy_me_a_pizza_desc">and show me how much you care and love Mausam.</string>
+    <string name="buy_me_a_coffee_desc">and show me how much you love Mausam.</string>
+    <string name="buy_me_a_healthy_meal_desc">and you save Mausam from advertisements.</string>
 
     <!--Hints/messages/btn-->
     <string name="search_loc_box_hint">Search place here</string>
@@ -66,6 +89,11 @@
     <string name="downloading">Downloading&#8230;</string>
     <string name="more">More</string>
     <string name="see_collections">See Collections</string>
+    <string name="clear">Clear</string>
+    <string name="imp_info">Important information</string>
+    <string name="support">Support development by Donation</string>
+    <string name="calculating">calculating</string>
+    <string name="using_cache"><b>Currently using %s MB approx</b></string>
 
     <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>
@@ -90,6 +118,8 @@
     <!--Static strings-->
     <string name="unsplash_txt" translatable="false">Unsplash</string>
     <string name="pixabay_txt" translatable="false">Pixabay</string>
+    <string name="developer" translatable="false">Pavitra Raut.</string>
+
 
 
     <!--Colors for gradient array-->
@@ -132,7 +162,7 @@
         <item>Religion~~https://images.unsplash.com/photo-1519799478955-1c5b789a6bfb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
         <item>Health~~https://images.unsplash.com/photo-1543362906-acfc16c67564?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
         <item>Places~~https://images.unsplash.com/photo-1571262428487-5544c6d0eb23?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
-        <item >Animals~~https://images.unsplash.com/photo-1504006833117-8886a355efbf?ixlib=rb-1.2.1&amp;amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;amp;auto=format&amp;amp;fit=crop&amp;w=300&amp;h=300&amp;amp;q=80</item>
+        <item>Animals~~https://images.unsplash.com/photo-1504006833117-8886a355efbf?ixlib=rb-1.2.1&amp;amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;amp;auto=format&amp;amp;fit=crop&amp;w=300&amp;h=300&amp;amp;q=80</item>
         <item>Industry~~https://images.unsplash.com/photo-1455165814004-1126a7199f9b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
         <item>Food~~https://images.unsplash.com/photo-1506354666786-959d6d497f1a?ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>
         <item>Computer~~https://images.unsplash.com/photo-1547658718-1cdaa0852790?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=80</item>

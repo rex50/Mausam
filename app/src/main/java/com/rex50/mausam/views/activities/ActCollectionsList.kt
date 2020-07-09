@@ -26,13 +26,14 @@ import kotlinx.android.synthetic.main.act_wallpaper_list.ivLoader
 import kotlinx.android.synthetic.main.header_custom_general.*
 import org.json.JSONArray
 
-class ActCollectionsList : BaseActivity() {
+class ActCollectionsList() : BaseActivity() {
 
     companion object{
         const val INITIAL_PAGE = 1
     }
 
-    override fun getLayoutResource(): Int = R.layout.act_collections_list
+    override val layoutResource: Int
+        get() = R.layout.act_collections_list
 
     private var collectionList = ArrayList<Collections>()
     private var collectionsModel: GenericModelFactory? = null
@@ -40,8 +41,7 @@ class ActCollectionsList : BaseActivity() {
     private var scrollToTopActive = false
     private var listData: MoreListData? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun loadAct(savedInstanceState: Bundle?) {
         getArgs()
         init()
     }
@@ -51,7 +51,7 @@ class ActCollectionsList : BaseActivity() {
         gradientLine?.background = GradientHelper.getInstance(this)?.getRandomLeftRightGradient()
 
         listData?.getBgImgUrl()?.takeIf { it.isNotEmpty() }?.apply {
-            ivHeaderImg?.loadImage(this, null)
+            ivHeaderImg?.loadImageWithPreLoader(this, null)
             flHeaderBg?.showView()
         }
 
@@ -179,7 +179,7 @@ class ActCollectionsList : BaseActivity() {
     }
 
     private fun showErrorMsg() {
-        materialSnackBar.showActionSnackBar(
+        materialSnackBar?.showActionSnackBar(
                 R.string.failed_getting_collection_error_msg,
                 R.string.ok_caps,
                 MaterialSnackBar.LENGTH_INDEFINITE,
@@ -187,7 +187,7 @@ class ActCollectionsList : BaseActivity() {
                     override fun onActionPressed() {
                         if(collectionList.isEmpty())
                             onBackPressed()
-                        materialSnackBar.dismiss()
+                        materialSnackBar?.dismiss()
                     }
                 })
     }

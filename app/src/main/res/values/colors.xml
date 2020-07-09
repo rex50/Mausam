@@ -25,6 +25,7 @@
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="dark">#121212</color>
+    <color name="transparentMagicMint">#80A5E4DA</color>
 
 <!--    UI colors-->
 
@@ -54,7 +55,7 @@
     <color name="weather_card_detail_text_color">@color/white</color>
 
     <!--Button-->
-    <color name="more_button">@color/black</color>
+    <color name="more_button">@color/colorAccent</color>
 
 
 <!--    Old colors-->

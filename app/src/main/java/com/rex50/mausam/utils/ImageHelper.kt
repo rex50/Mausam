@@ -45,6 +45,7 @@ import java.io.*
 
 class ImageViewerHelper (){
 
+    private var isDataSaverMode = false
     private var context: Context? = null
     private var selectedPhotoPos = 0
     private var animatePhotographer = true
@@ -171,6 +172,11 @@ class ImageViewerHelper (){
         return this
     }
 
+    fun setDataSaverMode(isDataSaverMode: Boolean): ImageViewerHelper{
+        this.isDataSaverMode = isDataSaverMode
+        return this
+    }
+
     fun show(){
         photosList[childPos].apply {
             bindPhotographerInfo(this)
@@ -187,7 +193,7 @@ class ImageViewerHelper (){
                     preLoader?.showView()
                     imageView?.apply {
                         Glide.with(this)
-                                .load(unsplashPhotos.urls.regular)
+                                .load(unsplashPhotos.urls.getRegular(isDataSaverMode))
                                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                                 .apply(RequestOptions().format(DecodeFormat.PREFER_ARGB_8888))
                                 .transition(DrawableTransitionOptions.withCrossFade())
@@ -348,7 +354,7 @@ class ImageViewerHelper (){
             if (animatePhotographer)
                 startFadeTransition()
             photo.user.apply {
-                ivPhotographer?.loadImage(profileImage.medium)
+                ivPhotographer?.loadImageWithPreLoader(profileImage.medium)
                 tvPhotographerName?.text = name
                 btnUserPortfolio?.apply {
                     if (portfolioUrl.isNullOrEmpty()) hideView() else showView()

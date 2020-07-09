@@ -46,7 +46,11 @@ public class Urls implements Parcelable {
     };
 
     public String getRaw() {
-        return raw;
+        return getRaw(false);
+    }
+
+    public String getRaw(boolean isDataSaverMode) {
+        return isDataSaverMode ? full : raw;
     }
 
     public void setRaw(String raw) {
@@ -54,7 +58,11 @@ public class Urls implements Parcelable {
     }
 
     public String getFull() {
-        return full;
+        return getFull(false);
+    }
+
+    public String getFull(boolean isDataSaverMode) {
+        return isDataSaverMode ? regular : full;
     }
 
     public void setFull(String full) {
@@ -62,7 +70,11 @@ public class Urls implements Parcelable {
     }
 
     public String getRegular() {
-        return regular;
+        return getRegular(false);
+    }
+
+    public String getRegular(boolean isDataSaverMode) {
+        return isDataSaverMode ? small : regular;
     }
 
     public void setRegular(String regular) {
@@ -70,7 +82,11 @@ public class Urls implements Parcelable {
     }
 
     public String getSmall() {
-        return small;
+        return getSmall(false);
+    }
+
+    public String getSmall(boolean isDataSaverMode) {
+        return isDataSaverMode ? thumb : small;
     }
 
     public void setSmall(String small) {

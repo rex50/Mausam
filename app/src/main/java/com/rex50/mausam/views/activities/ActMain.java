@@ -89,17 +89,14 @@ public class ActMain extends BaseActivity implements
     public @interface wallpaperListMode {
     }
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void loadAct(@Nullable Bundle savedInstanceState) {
         //Firebase init
         /*FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
         instanceId.getInstanceId();*/
         /*FirebaseAnalytics analytis = FirebaseAnalytics.getInstance(this);
         analytis.logEvent("on_main_activity", new Bundle());*/
 
-
-        super.onCreate(savedInstanceState);
         init();
         /*if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -620,6 +617,11 @@ public class ActMain extends BaseActivity implements
         private boolean isShowing(){
             return isShowing;
         }
+    }
+
+    @Override
+    public void startSettings() {
+        startActivity(new Intent(this, ActSettings.class));
     }
 
     private void toggleSearchLoader(boolean state){

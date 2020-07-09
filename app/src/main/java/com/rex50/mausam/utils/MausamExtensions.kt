@@ -17,10 +17,9 @@ import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.Resource
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rex50.mausam.R
@@ -109,16 +108,21 @@ fun String.addAfter(text: String?): String = text?.takeIf { it.isNotEmpty() }?.l
     "$this $text"
 }?: this
 
-fun ImageView.loadImage(url: String){
-    loadImage(url, R.drawable.ic_loader)
+fun ImageView.loadImage(url: String?){
+    Glide.with(context)
+            .load(url) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .into(this)
+    //loadImageWithThumbnail(url, R.drawable.ic_loader)
 }
 
-fun ImageView.loadImage(url: String, @DrawableRes preLoader: Int?){
+fun ImageView.loadImageWithPreLoader(url: String?, @DrawableRes preLoader: Int? = R.drawable.ic_loader){
     Glide.with(context)
             .load(url)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
             .apply(RequestOptions().format(DecodeFormat.PREFER_ARGB_8888))
-            .thumbnail(Glide.with(this).load(if(preLoader.isNotNull()) preLoader else ""))
+            .thumbnail(Glide.with(this).load(preLoader))
             //.transition(DrawableTransitionOptions.withCrossFade())
             .into(this)
 }

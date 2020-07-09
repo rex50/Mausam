@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".views.MausamApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -30,7 +31,8 @@
         <activity android:name=".views.activities.ActWallpapersList" />
         <activity android:name=".views.activities.ActPermission" />
         <activity android:name=".views.activities.ActMain" />
-        <activity android:name=".views.activities.ActCollectionsList"/>
+        <activity android:name=".views.activities.ActCollectionsList" />
+        <activity android:name=".views.activities.ActSettings" />
 
         <receiver
             android:name=".receivers.NetworkChangeReceiver"
@@ -48,7 +50,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 

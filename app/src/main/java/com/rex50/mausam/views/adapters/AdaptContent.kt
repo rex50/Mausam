@@ -20,11 +20,9 @@ import com.rex50.mausam.model_classes.unsplash.collection.Collections
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
+import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
-import com.rex50.mausam.utils.GradientHelper
-import com.rex50.mausam.utils.getTextOrEmpty
-import com.rex50.mausam.utils.hideView
-import com.rex50.mausam.utils.isNotNull
+import com.rex50.mausam.views.MausamApplication
 import com.thekhaeng.pushdownanim.PushDownAnim
 import org.apache.commons.lang3.StringUtils
 
@@ -32,6 +30,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
 
     private var childClickListener: OnChildItemClickListener? = null
     private var gradientHelper = GradientHelper.getInstance(context)
+    private val isDataSaverMode = MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false
 
     fun setChildClickListener(childClickListener: OnChildItemClickListener?) {
         this.childClickListener = childClickListener
@@ -42,15 +41,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         private val cardView: CardView? = itemView.findViewById(R.id.cardView)
 
         fun bind(photo: UnsplashPhotos?) {
-            context?.apply {
-                imageView?.let {
-                    Glide.with(this)
-                            .load(photo?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .into(it)
-                }
-            }
+            imageView?.loadImage(photo?.urls?.getSmall(isDataSaverMode))
         }
 
         fun setClickListener(listener: View.OnClickListener?) {
@@ -66,15 +57,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         val imageView: ImageView? = itemView.findViewById(R.id.ivPhoto)
         private val cardView: CardView? = itemView.findViewById(R.id.cardView)
         fun bind(photo: UnsplashPhotos?) {
-            context?.apply {
-                imageView?.let {
-                    Glide.with(this)
-                            .load(photo?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .into(it)
-                }
-            }
+            imageView?.loadImage(photo?.urls?.getSmall(isDataSaverMode))
         }
 
         fun setClickListener(listener: View.OnClickListener?) {
@@ -92,17 +75,11 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         private var userLayout: LinearLayout? = v.findViewById(R.id.lnlUser)
 
         fun bind(userModel: User?) {
-            context?.apply {
-                val name = userModel?.firstName.getTextOrEmpty() + " " + userModel?.lastName.getTextOrEmpty()
-                txtUserName?.text = name
-                userImg?.let {
-                    Glide.with(this)
-                            .load(userModel?.profileImage?.large) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .into(it)
-                }
-            }
+            val name = userModel?.firstName.getTextOrEmpty() + " " + userModel?.lastName.getTextOrEmpty()
+
+            txtUserName?.text = name
+
+            userImg?.loadImage(userModel?.profileImage?.getLarge(isDataSaverMode))
         }
 
         fun setClickListener(listener: View.OnClickListener?) {
@@ -120,6 +97,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         private var cardView: CardView? = v.findViewById(R.id.cardView)
         fun bind(colorModel: GenericModelFactory.ColorModel?) {
             cardColor?.setBackgroundColor(Color.parseColor(colorModel?.colorCode))
+
             txtColorName?.text = colorModel?.colorName
         }
 
@@ -142,45 +120,20 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         private var cardView: CardView? = itemView.findViewById(R.id.cardView)
         fun bind(collection: Collections?) {
             collection?.let {
-                context?.apply {
+                txtTitle?.text = StringUtils.capitalize(it.title?.trim())
 
-                    txtTitle?.text = StringUtils.capitalize(it.title?.trim())
+                txtDesc?.text = it.description?.trim()
 
-                    txtDesc?.text = it.description?.trim()
+                imgMain?.takeIf { collection.coverPhoto.isNotNull() }?.loadImage(collection.coverPhoto?.urls?.getSmall(isDataSaverMode))
 
-                    imgMain?.takeIf { collection.coverPhoto.isNotNull() }?.apply {
-                        Glide.with(context)
-                                .load(collection.coverPhoto?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                                .into(this)
-                    }
+                imgPreview1?.takeIf { collection.previewPhotos?.size ?: 0 > 0 }?.loadImage(collection.previewPhotos[0]?.urls?.getSmall(isDataSaverMode))
+                        ?: (imgPreview1?.parent as View?)?.hideView()
 
-                    imgPreview1?.takeIf { collection.previewPhotos?.size ?: 0 > 0 }?.apply {
-                        Glide.with(context)
-                                .load(collection.previewPhotos[0]?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                                .into(this)
-                    }?: (imgPreview1?.parent as View?)?.hideView()
+                imgPreview2.takeIf { collection.previewPhotos?.size ?: 0 > 1 }?.loadImage(collection.previewPhotos[1]?.urls?.getSmall(isDataSaverMode))
+                        ?: (imgPreview2?.parent as View?)?.hideView()
 
-                    imgPreview2.takeIf { collection.previewPhotos?.size ?: 0 > 1 }?.apply {
-                        Glide.with(context)
-                                .load(collection.previewPhotos[1]?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                                .into(this)
-                    }?: (imgPreview2?.parent as View?)?.hideView()
-
-                    imgPreview3?.takeIf { collection.previewPhotos?.size ?: 0 > 2 }?.apply {
-                        Glide.with(context)
-                                .load(collection.previewPhotos[2]?.urls?.small) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                                .into(this)
-                    }?: (imgPreview3?.parent as View?)?.hideView()
-
-                }
+                imgPreview3?.takeIf { collection.previewPhotos?.size ?: 0 > 2 }?.loadImage(collection.previewPhotos[2]?.urls?.getSmall(isDataSaverMode))
+                        ?: (imgPreview3?.parent as View?)?.hideView()
             }
         }
 
@@ -215,16 +168,10 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         private val vBgOverlay = itemView.findViewById<View>(R.id.vBgOverlay)
         fun bind(model: GenericModelFactory.CategoryModel?) {
             categoryName?.text = model?.categoryName?.toString()
-            context?.apply {
-                vBgOverlay.background = gradientHelper?.getRandomLeftRightGradient()
-                ivCategory?.let{
-                    Glide.with(this)
-                            .load(model?.categoryImg) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                            .into(it)
-                }
-            }
+
+            vBgOverlay.background = gradientHelper?.getRandomLeftRightGradient()
+
+            ivCategory?.loadImage(model?.categoryImg)
         }
 
         fun setClickListener(listener: View.OnClickListener?) {

@@ -58,7 +58,10 @@ public class ProfileImage implements Parcelable {
     }
 
     public String getMedium() {
-        return medium;
+        return getMedium(false);
+    }
+    public String getMedium(boolean isDataSaverMode) {
+        return isDataSaverMode ? small : medium;
     }
 
     public void setMedium(String medium) {
@@ -66,7 +69,10 @@ public class ProfileImage implements Parcelable {
     }
 
     public String getLarge() {
-        return large;
+        return getLarge(false);
+    }
+    public String getLarge(boolean isDataSaverMode) {
+        return isDataSaverMode ? medium : large;
     }
 
     public void setLarge(String large) {

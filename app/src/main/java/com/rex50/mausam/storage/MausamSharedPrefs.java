@@ -22,6 +22,9 @@ public class MausamSharedPrefs {
     private static final String LAST_LOCATION_DETAILS = "locationDetails";
     private static final String LAST_WEATHER_UPDATED = "lastWeatherUpdated";
     private static final String PHOTOS_RESPONSE = "photosResponse";
+    private static final String DARK_MODE_ENABLED = "darkModeEnabled";
+    private static final String FOLLOWING_SYSTEM_THEME = "followingSystemTheme";
+    private static final String DATA_SAVER_MODE = "followingSystemTheme";
 
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
@@ -79,6 +82,30 @@ public class MausamSharedPrefs {
     public void setUserLocation(String location){
         editor.putString(USER_LOCATION, location);
         editor.commit();
+    }
+
+    public boolean isDarkModeEnabled() {
+        return sharedPrefs.getBoolean(DARK_MODE_ENABLED, false);
+    }
+
+    public void setDarkModeEnabled(boolean darkModeEnabled){
+        editor.putBoolean(DARK_MODE_ENABLED, darkModeEnabled).commit();
+    }
+
+    public boolean isFollowingSystemTheme() {
+        return sharedPrefs.getBoolean(FOLLOWING_SYSTEM_THEME, false);
+    }
+
+    public void setFollowingSystemTheme(boolean isFollowing){
+        editor.putBoolean(FOLLOWING_SYSTEM_THEME, isFollowing).commit();
+    }
+
+    public boolean isDataSaverMode() {
+        return sharedPrefs.getBoolean(DATA_SAVER_MODE, false);
+    }
+
+    public void setDataSaverMode(boolean isFollowing){
+        editor.putBoolean(DATA_SAVER_MODE, isFollowing).commit();
     }
 
     public String getUserLocation(){

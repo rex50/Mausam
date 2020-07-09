@@ -54,7 +54,7 @@
     <color name="weather_card_detail_text_color">@color/white</color>
 
     <!--Button-->
-    <color name="more_button">@color/taupeGray</color>
+    <color name="more_button">@color/colorAccent</color>
 
 
 <!--    Old colors-->

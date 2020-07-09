@@ -41,15 +41,12 @@ class ActWallpapersList : BaseActivity() {
     private var unsplashHelper: UnsplashHelper? = null
     private var listData: MoreListData? = null
 
-    override fun getLayoutResource(): Int = R.layout.act_wallpaper_list
+    override val layoutResource: Int
+        get() = R.layout.act_wallpaper_list
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun loadAct(savedInstanceState: Bundle?) {
         getArgs()
-
         init()
-
     }
 
     private fun getArgs() {
@@ -88,7 +85,7 @@ class ActWallpapersList : BaseActivity() {
                     findViewById<TextView>(R.id.tvPageDesc)?.text = listData?.getDesc()
 
                     listData?.photographerInfo?.apply {
-                        findViewById<ImageView>(R.id.ivUser)?.loadImage(profileImage.large)
+                        findViewById<ImageView>(R.id.ivUser)?.loadImageWithPreLoader(profileImage.large)
 
                         totalCollections?.takeIf { it > 0 }?.apply {
                             findViewById<Button>(R.id.btnBrowseUserCollections)?.apply {
@@ -140,7 +137,7 @@ class ActWallpapersList : BaseActivity() {
                         }
 
                         getBgImgUrl().takeIf { it.isNotEmpty() }?.apply {
-                            findViewById<ImageView>(R.id.ivHeaderImg)?.loadImage(this, null)
+                            findViewById<ImageView>(R.id.ivHeaderImg)?.loadImageWithPreLoader(this, null)
                             findViewById<FrameLayout>(R.id.flHeaderBg)?.showView()
                         }
 
@@ -230,7 +227,9 @@ class ActWallpapersList : BaseActivity() {
                                             )
                                     )
                                 }
-                            }).showPhotographer(listData?.photographerInfo?.isNull() ?: true).show()
+                            }).showPhotographer(listData?.photographerInfo?.isNull() ?: true)
+                                    .setDataSaverMode(mausamSharedPrefs?.isDataSaverMode ?: false)
+                                    .show()
                         }
                     }
                 }
@@ -382,7 +381,7 @@ class ActWallpapersList : BaseActivity() {
     }
 
     private fun showErrorMsg(){
-        materialSnackBar.showActionSnackBar(
+        materialSnackBar?.showActionSnackBar(
                 R.string.failed_getting_wallpapers_error_msg,
                 R.string.ok_caps,
                 MaterialSnackBar.LENGTH_INDEFINITE
@@ -390,7 +389,7 @@ class ActWallpapersList : BaseActivity() {
             override fun onActionPressed() {
                 if(wallpapersList.isEmpty())
                     onBackPressed()
-                materialSnackBar.dismiss()
+                materialSnackBar?.dismiss()
             }
         })
     }

@@ -17,15 +17,14 @@ import com.rex50.mausam.views.fragments.FragSearch.Companion.newInstance
 class ActSearchCity : BaseActivity(), FragSearch.OnFragmentInteractionListener {
     private var fragmentManager: FragmentManager? = supportFragmentManager
     private var fragSearch: FragSearch? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
+    override val layoutResource: Int
+        get() = R.layout.act_search_city
+
+    override fun loadAct(savedInstanceState: Bundle?) {
         fragSearch = newInstance(true)
         loadFragment(fragSearch)
-
     }
-
-    override fun getLayoutResource(): Int = R.layout.act_search_city
 
     override fun internetStatus(internetType: Int) { //TODO : handle according to internet Status
     }

@@ -3,12 +3,16 @@ package com.rex50.mausam.views.activities
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
+import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.GradientHelper
+import com.rex50.mausam.views.MausamApplication
 
 class ActSplash : BaseActivity() {
 
@@ -16,11 +20,13 @@ class ActSplash : BaseActivity() {
         const val SPLASH_TIME_OUT = 300
     }
 
-    override fun getLayoutResource(): Int = R.layout.act_splash
+    override val layoutResource: Int
+        get() = R.layout.act_splash
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun loadAct(savedInstanceState: Bundle?) {
         //TODO: check for location permission is allowed or not, if not then open location activity else home
+        MausamApplication.getInstance()?.setAppContext(applicationContext)
         Handler().postDelayed({
             GradientHelper.init(this)
             val intent: Intent = if (ContextCompat.checkSelfPermission(this@ActSplash,
