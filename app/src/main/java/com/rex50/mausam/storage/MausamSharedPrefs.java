@@ -24,7 +24,7 @@ public class MausamSharedPrefs {
     private static final String PHOTOS_RESPONSE = "photosResponse";
     private static final String DARK_MODE_ENABLED = "darkModeEnabled";
     private static final String FOLLOWING_SYSTEM_THEME = "followingSystemTheme";
-    private static final String DATA_SAVER_MODE = "followingSystemTheme";
+    private static final String DATA_SAVER_MODE = "dataSaverMode";
 
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;

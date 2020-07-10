@@ -31,17 +31,17 @@ class ActSettings : BaseActivity() {
 
         tvPageTitle?.text = getString(R.string.settings)
 
+        tvPageDesc?.hideView()
+
         gradientLine?.background = GradientHelper.getInstance(this)?.getRandomLeftRightGradient()
 
         val isDarkMode = mausamSharedPrefs?.isDarkModeEnabled ?: false
 
-        sDarkMode.setChecked(isDarkMode)
+        val isDataSaverMode = mausamSharedPrefs?.isDataSaverMode ?: false
 
-        tvDarkModeDesc?.text = if (isDarkMode) getString(R.string.dark_mode_on_desc) else getString(R.string.dark_mode_off_desc)
+        initDarkModeFields(isDarkMode)
 
-        sDataSaver?.setChecked(mausamSharedPrefs?.isDataSaverMode ?: false)
-
-        //tvCacheDesc?.text = getString(R.string.cache_desc, getString(R.string.calculating))
+        sDataSaver?.setChecked(isDataSaverMode)
 
         lnlCurrLoc?.hideView()
 
@@ -50,13 +50,23 @@ class ActSettings : BaseActivity() {
         initClicks()
     }
 
+    private fun initDarkModeFields(isDarkMode: Boolean){
+        sDarkMode?.isEnabled = true
+        sDarkMode.setChecked(isDarkMode)
+        flHeaderBg?.takeIf { isDarkMode }?.showView() ?: flHeaderBg?.hideView()
+        ivHeaderImg?.setImageResource(R.drawable.ic_darth_vader)
+        tvDarkModeDesc?.text = if (isDarkMode) getString(R.string.dark_mode_on_desc) else getString(R.string.dark_mode_off_desc)
+    }
+
     private fun initClicks() {
 
         sDarkMode?.setOnCheckedChangeListener {
             mausamSharedPrefs?.isDarkModeEnabled = it
+            sDarkMode?.isEnabled = false
             Handler().postDelayed({
                 MausamApplication.getInstance()?.followSystemThemeIfRequired()
-            }, 600)
+                initDarkModeFields(it)
+            }, 500)
         }
 
         sDataSaver?.setOnCheckedChangeListener {
@@ -73,7 +83,7 @@ class ActSettings : BaseActivity() {
         }
 
         PushDownAnim
-                .setPushDownAnimTo(lnlBigDonation, lnlSmallDonation, lnlMediumDonation, btnShareApp, btnGotoPlayStore, btnReportBugs)
+                .setPushDownAnimTo(lnlBigDonation, lnlSmallDonation, lnlMediumDonation, btnShareApp, btnGotoPlayStore, btnReportBugs, btnResUsed)
                 .setOnClickListener {
                     when(it){
                         lnlSmallDonation -> {
@@ -99,6 +109,12 @@ class ActSettings : BaseActivity() {
                         btnReportBugs -> {
                             showToast("Report bugs")
                         }
+
+                        btnResUsed -> {
+                            showToast("Work in progress")
+                        }
+
+                        else -> showToast("Something thing is wrong. Please try again.")
                     }
                 }
     }

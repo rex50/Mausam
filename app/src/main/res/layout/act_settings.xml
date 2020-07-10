@@ -397,7 +397,7 @@
 
                     <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
                         android:background="@drawable/bg_extra_buttons"
-                        android:drawableEnd="@drawable/ic_arrow_right"
+                        android:drawableEnd="@drawable/ic_share"
                         android:gravity="center_vertical"
                         android:id="@+id/btnShareApp"
                         android:layout_height="wrap_content"
@@ -440,6 +440,21 @@
                         android:textColor="@color/black_to_white"
                         android:textSize="12sp" />
 
+                    <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                        android:background="@drawable/bg_extra_buttons"
+                        android:drawableEnd="@drawable/ic_arrow_right"
+                        android:gravity="center_vertical"
+                        android:id="@+id/btnResUsed"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="30dp"
+                        android:layout_width="match_parent"
+                        android:padding="15dp"
+                        android:text="@string/see_res_used"
+                        android:textColor="@color/black_to_white"
+                        android:textSize="12sp" />
+
                     <LinearLayout
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="30dp"
@@ -478,38 +493,6 @@
             </androidx.core.widget.NestedScrollView>
 
         </androidx.cardview.widget.CardView>
-
-
-        <!--<androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="0dp"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            app:layout_collapseMode="pin">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recSearchedWallpapers"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="100dp"
-                android:paddingTop="@dimen/recycler_item_offset_grid"
-                android:paddingStart="@dimen/recycler_item_offset_grid"
-                android:paddingEnd="@dimen/recycler_item_offset_grid"
-                android:clipToPadding="false"
-                android:layout_below="@+id/header" />
-
-            <ImageView
-                android:id="@+id/ivLoader"
-                android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_loader"
-                android:layout_gravity="top"
-                android:layout_marginTop="50dp"
-                android:visibility="gone"
-                android:contentDescription="@string/loading_data" />
-
-        </androidx.cardview.widget.CardView>-->
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
