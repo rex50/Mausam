@@ -4,6 +4,7 @@
     <dimen name="recycler_item_offset_grid">4dp</dimen>
     <dimen name="recycler_item_offset_linear">8dp</dimen>
 
+    <dimen name="_0dp">0dp</dimen>
     <dimen name="_50dp">50dp</dimen>
     <dimen name="_40dp">40dp</dimen>
     <dimen name="_30dp">30dp</dimen>

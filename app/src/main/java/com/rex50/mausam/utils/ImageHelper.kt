@@ -214,7 +214,7 @@ class ImageViewerHelper (){
                                 .into(this)
                     }
                 })
-                .withHiddenStatusBar(true)
+                .withHiddenStatusBar(false)
                 .withStartPosition(childPos)
                 .withBackgroundColorResource(R.color.white_to_black)
                 .withOverlayView(dialogLayout)
