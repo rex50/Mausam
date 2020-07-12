@@ -4,11 +4,8 @@ import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
-import android.transition.Explode
 import android.util.Log
-import android.view.Window
-import androidx.core.content.contentValuesOf
-import com.bumptech.glide.util.Util
+import com.rex50.mausam.BuildConfig
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
 import com.rex50.mausam.utils.*
@@ -30,6 +27,8 @@ class ActSettings : BaseActivity() {
     private fun init() {
 
         tvPageTitle?.text = getString(R.string.settings)
+
+        tvPrivacyDesc?.text = getString(R.string.privacy_desc, BuildConfig.VERSION_NAME)
 
         tvPageDesc?.hideView()
 

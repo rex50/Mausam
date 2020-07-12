@@ -12,7 +12,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "beta01"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue("string", "unsplashAccessKey", unsplashAccessKey)
         resValue("string", "openWeatherAppId", openWeatherAppId)
@@ -34,22 +34,6 @@ android {
 
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 
-    /*def githubProperties = new Properties()
-    githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
-    repositories {
-        maven {
-            name = "GitHubPackages"
-
-            url = uri("https://maven.pkg.github.com/Cuberto/flashy-tabbar-android")
-            credentials {
-                *//** Create github.properties in root project folder file with
-     ** gpr.usr=GITHUB_USER_ID & gpr.key=PERSONAL_ACCESS_TOKEN
-     ** Or set env variable GPR_USER & GPR_API_KEY if not adding a properties file**//*
-                username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
-                password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
-            }
-        }
-    }*/
 }
 
 dependencies {
@@ -124,6 +108,3 @@ dependencies {
 
 //    implementation "com.cuberto.flashytabbarandroid:flashytabbarandroid:1.0.0"
 }
-/*repositories {
-    mavenCentral()
-}*/

@@ -219,12 +219,10 @@ class ActWallpapersList : BaseActivity() {
                                     ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             materialBottomSheet?.downloadStarted(supportFragmentManager)
-                                            showToast(getString(R.string.download_started))
                                         }
 
                                         override fun onDownloadFailed() {
                                             materialBottomSheet?.downloadError()
-                                            showToast(getString(R.string.failed_to_download_no_internet))
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
@@ -262,7 +260,6 @@ class ActWallpapersList : BaseActivity() {
 
                                         override fun onDownloadFailed() {
                                             materialBottomSheet?.downloadError()
-                                            showToast(getString(R.string.failed_to_download_no_internet))
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {

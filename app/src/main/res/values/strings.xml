@@ -53,7 +53,7 @@
     <string name="leave_review_desc">Leave a review and rate the app on Playstore.</string>
     <string name="report_app_desc">Report bugs or send feedback of Mausam.</string>
     <string name="designed_developed_by_desc">Mausam is designed and developed by</string>
-    <string name="privacy_desc">Mausam (version 0.0.8) does not use any of your personal data and store them on any of our server as I can not afford one 😂.\n\nRead Mausam’s <b>Privacy Policy</b> for more.</string>
+    <string name="privacy_desc">Mausam (version %s) does not use any of your personal data and store them on any of our server as I can not afford one 😂.\n\nRead Mausam’s <b>Privacy Policy</b> for more.</string>
     <string name="buy_me_a_pizza_desc">and show me how much you care and love Mausam.</string>
     <string name="buy_me_a_coffee_desc">and show me how much you love Mausam.</string>
     <string name="buy_me_a_healthy_meal_desc">and you save Mausam from advertisements.</string>
