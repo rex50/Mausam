@@ -374,32 +374,6 @@ class ImageViewerHelper (){
         }
     }
 
-    private fun openTwitterProfile(twitterUsername: String) {
-        context?.apply {
-            try {
-                startActivity(Intent(ACTION_VIEW, Uri.parse("twitter://user?screen_name=$twitterUsername")))
-            } catch (e: ActivityNotFoundException) {
-                openUrl("https://twitter.com/#!/$twitterUsername")
-            }
-        }
-    }
-
-    private fun openInstagramProfile(userName: String) {
-        context?.apply {
-            try {
-                startActivity(Intent(ACTION_VIEW, Uri.parse("http://instagram.com/_u/$userName")).setPackage("com.instagram.android"))
-            } catch (e: ActivityNotFoundException) {
-                openUrl("http://instagram.com/$userName")
-            }
-        }
-    }
-
-    private fun openUrl(url: String){
-        context?.apply {
-            startActivity(Intent(ACTION_VIEW, Uri.parse(url)))
-        }
-    }
-
     private fun getFormattedLikes(likes: String) : String = likes.addBefore(context?.getString(R.string.likes))
 
     private fun getFormattedHeight(height: String) : String = height.addBefore(context?.getString(R.string.height)) + Constants.Units.PX

@@ -28,7 +28,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_to_transparent_overlay" />
+            android:background="@drawable/theme_to_transparent_overlay_horizontal" />
 
     </FrameLayout>
 

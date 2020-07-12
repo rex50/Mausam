@@ -72,6 +72,7 @@ public class User implements Parcelable {
         portfolioUrl = in.readString();
         bio = in.readString();
         location = in.readString();
+        links = in.readParcelable(UserLinks.class.getClassLoader());
         profileImage = in.readParcelable(ProfileImage.class.getClassLoader());
         instagramUsername = in.readString();
         if (in.readByte() == 0) {
@@ -105,6 +106,7 @@ public class User implements Parcelable {
         dest.writeString(portfolioUrl);
         dest.writeString(bio);
         dest.writeString(location);
+        dest.writeParcelable(links, flags);
         dest.writeParcelable(profileImage, flags);
         dest.writeString(instagramUsername);
         if (totalCollections == null) {

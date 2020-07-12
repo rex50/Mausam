@@ -95,6 +95,7 @@
     <string name="support">Support development by Donation</string>
     <string name="calculating">calculating</string>
     <string name="using_cache"><b>Currently using %s MB approx</b></string>
+    <string name="dismiss">Dismiss</string>
 
     <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>

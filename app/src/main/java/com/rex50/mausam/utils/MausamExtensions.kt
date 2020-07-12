@@ -1,9 +1,12 @@
 package com.rex50.mausam.utils
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.content.res.Resources
+import android.net.Uri
 import android.util.TypedValue
 import android.view.View
 import android.view.View.GONE
@@ -76,6 +79,10 @@ private fun toast(context: Context?, msg: String){
     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
 }
 
+fun View.toggleViewVisibility(){
+    visibility = if(isVisible) GONE else VISIBLE
+}
+
 fun View.showView(){
     visibility = VISIBLE
 }
@@ -112,7 +119,7 @@ fun ImageView.loadImage(url: String?){
     Glide.with(context)
             .load(url) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
             .transition(DrawableTransitionOptions.withCrossFade())
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
             .into(this)
     //loadImageWithThumbnail(url, R.drawable.ic_loader)
 }
@@ -125,6 +132,26 @@ fun ImageView.loadImageWithPreLoader(url: String?, @DrawableRes preLoader: Int? 
             .thumbnail(Glide.with(this).load(preLoader))
             //.transition(DrawableTransitionOptions.withCrossFade())
             .into(this)
+}
+
+fun Context.openUrl(url: String){
+    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+}
+
+fun Context.openInstagramProfile(userName: String) {
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("http://instagram.com/_u/$userName")).setPackage("com.instagram.android"))
+    } catch (e: ActivityNotFoundException) {
+        openUrl("http://instagram.com/$userName")
+    }
+}
+
+fun Context.openTwitterProfile(twitterUsername: String) {
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=$twitterUsername")))
+    } catch (e: ActivityNotFoundException) {
+        openUrl("https://twitter.com/#!/$twitterUsername")
+    }
 }
 
 fun String?.optString() : String =

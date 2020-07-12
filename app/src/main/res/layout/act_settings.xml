@@ -322,7 +322,7 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:background="@color/jetBlack"
+                            android:background="@color/liverDark"
                             android:id="@+id/lnlSmallDonation"
                             android:layout_height="wrap_content"
                             android:layout_width="match_parent"
@@ -398,6 +398,7 @@
                     <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
                         android:background="@drawable/bg_extra_buttons"
                         android:drawableEnd="@drawable/ic_share"
+                        android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:id="@+id/btnShareApp"
                         android:layout_height="wrap_content"
@@ -413,6 +414,7 @@
                     <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
                         android:background="@drawable/bg_extra_buttons"
                         android:drawableEnd="@drawable/ic_arrow_right"
+                        android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:id="@+id/btnGotoPlayStore"
                         android:layout_height="wrap_content"
@@ -428,6 +430,7 @@
                     <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
                         android:background="@drawable/bg_extra_buttons"
                         android:drawableEnd="@drawable/ic_arrow_right"
+                        android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:id="@+id/btnReportBugs"
                         android:layout_height="wrap_content"
@@ -443,6 +446,7 @@
                     <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
                         android:background="@drawable/bg_extra_buttons"
                         android:drawableEnd="@drawable/ic_arrow_right"
+                        android:drawablePadding="10dp"
                         android:gravity="center_vertical"
                         android:id="@+id/btnResUsed"
                         android:layout_height="wrap_content"

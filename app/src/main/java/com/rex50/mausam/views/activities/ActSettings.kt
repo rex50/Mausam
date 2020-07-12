@@ -149,10 +149,6 @@ class ActSettings : BaseActivity() {
         override fun onPostExecute(result: Boolean?) {
             super.onPostExecute(result)
             context?.apply {
-                //if(result == true)
-                    //showToast("Cleared cache")
-                /*else
-                    showToast("Error while clearing cache")*/
                 callback?.onCleared()
             }
         }

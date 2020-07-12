@@ -1,10 +1,13 @@
 
 package com.rex50.mausam.model_classes.unsplash.photos;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class UserLinks {
+public class UserLinks implements Parcelable {
 
     @SerializedName("self")
     @Expose
@@ -27,6 +30,28 @@ public class UserLinks {
     @SerializedName("followers")
     @Expose
     private String followers;
+
+    protected UserLinks(Parcel in) {
+        self = in.readString();
+        html = in.readString();
+        photos = in.readString();
+        likes = in.readString();
+        portfolio = in.readString();
+        following = in.readString();
+        followers = in.readString();
+    }
+
+    public static final Creator<UserLinks> CREATOR = new Creator<UserLinks>() {
+        @Override
+        public UserLinks createFromParcel(Parcel in) {
+            return new UserLinks(in);
+        }
+
+        @Override
+        public UserLinks[] newArray(int size) {
+            return new UserLinks[size];
+        }
+    };
 
     public String getSelf() {
         return self;
@@ -84,4 +109,19 @@ public class UserLinks {
         this.followers = followers;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(self);
+        dest.writeString(html);
+        dest.writeString(photos);
+        dest.writeString(likes);
+        dest.writeString(portfolio);
+        dest.writeString(following);
+        dest.writeString(followers);
+    }
 }

@@ -26,6 +26,8 @@ import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.adapters.AdaptContent
+import com.rex50.mausam.views.bottomsheets.BSDownload
+import com.rex50.mausam.views.bottomsheets.BSUserMore
 import kotlinx.android.synthetic.main.act_wallpaper_list.*
 import org.json.JSONArray
 
@@ -63,7 +65,11 @@ class ActWallpapersList : BaseActivity() {
 
         unsplashHelper = UnsplashHelper(this)
 
+        initDataModel()
+
         initRecycler()
+
+        initClicks()
 
         ivLoader?.showView()
 
@@ -109,12 +115,8 @@ class ActWallpapersList : BaseActivity() {
                         }
 
                         findViewById<Button>(R.id.btnMore)?.setOnClickListener {
-                            showToast("Work in progress, need to redesign the dialog")
-                            //TODO: show a dialog with the options
-                            /*findViewById<LinearLayout>(R.id.lnlHeaderPhotographer)?.startSimpleTransition()
-                            findViewById<LinearLayout>(R.id.lnlUserButtons)?.apply {
-                                if(isViewVisible()) hideView() else showView()
-                            }*/
+                            val bsUserMore: BSUserMore? = BSUserMore()
+                            bsUserMore?.initAndShow(supportFragmentManager, this)
                         }
                     }
                 }
@@ -147,97 +149,19 @@ class ActWallpapersList : BaseActivity() {
         }
     }
 
+    private fun initDataModel(){
+        wallpapersModel = GenericModelFactory.getFavouritePhotographerTypeObject(listData?.getTitle(this), listData?.getDesc(), wallpapersList)
+    }
+
     private fun initRecycler() {
 
         val layoutManager = GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false)
 
-        wallpapersModel = GenericModelFactory.getFavouritePhotographerTypeObject(listData?.getTitle(this), listData?.getDesc(), wallpapersList)
         adapter = AdaptContent(this, wallpapersModel)
-        adapter?.setChildClickListener(object : OnChildItemClickListener {
-            override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
-                object: GenericModelCastHelper(o){
-                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
-                        favPhotographerTypeModel?.apply {
-                            ImageViewerHelper(this@ActWallpapersList).with(photosList,
-                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
-
-                                override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
-                                        override fun onDownloadStarted() {
-                                            showToast(getString(R.string.download_started))
-                                        }
-
-                                        override fun onDownloadFailed() {
-                                            showToast(getString(R.string.failed_to_download_no_internet))
-                                        }
-
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            ImageActionHelper.setWallpaper(this@ActWallpapersList, imageMeta?.getUri())
-                                        }
-                                    })
-                                }
-
-                                override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
-                                        override fun onDownloadStarted() {
-                                            showToast(getString(R.string.download_started))
-                                        }
-
-                                        override fun onDownloadFailed() {
-                                            showToast(getString(R.string.failed_to_download_no_internet))
-                                        }
-
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            if (msg.isNotEmpty()) {
-                                                showToast(msg)
-                                            }
-                                        }
-                                    })
-                                }
-
-                                override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener {
-                                        override fun onDownloadStarted() {
-                                            showToast(getString(R.string.adding_to_fav))
-                                        }
-
-                                        override fun onDownloadFailed() {
-                                            showToast(getString(R.string.failed_to_download_no_internet))
-                                        }
-
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            if (msg.isNotEmpty()) {
-                                                showToast(msg)
-                                            }
-                                        }
-                                    })
-                                }
-
-                                override fun onShare(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.shareImage(this@ActWallpapersList, "Share", photoInfo.user.name, photoInfo.links.html)
-                                }
-
-                                override fun onUserPhotos(user: User) {
-                                    startMorePhotosActivity(
-                                            MoreListData(
-                                                    Constants.ListModes.LIST_MODE_USER_PHOTOS,
-                                                    user,
-                                                    null,
-                                                    null
-                                            )
-                                    )
-                                }
-                            }).showPhotographer(listData?.photographerInfo?.isNull() ?: true)
-                                    .setDataSaverMode(mausamSharedPrefs?.isDataSaverMode ?: false)
-                                    .show()
-                        }
-                    }
-                }
-            }
-        })
 
         recSearchedWallpapers?.layoutManager = layoutManager
-        recSearchedWallpapers?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
+        if (recSearchedWallpapers?.itemDecorationCount ?: 0 > 0)
+            recSearchedWallpapers?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
         recSearchedWallpapers?.adapter = adapter
 
         val endlessScrollListener =  object: EndlessRecyclerOnScrollListener(layoutManager){
@@ -272,9 +196,106 @@ class ActWallpapersList : BaseActivity() {
 
         }
 
+        recSearchedWallpapers.clearOnScrollListeners()
         recSearchedWallpapers.addOnScrollListener(endlessScrollListener)
         recSearchedWallpapers.addOnScrollListener(scrollListener)
 
+    }
+
+    private fun initClicks(){
+
+        val materialBottomSheet: BSDownload? = BSDownload()
+        materialBottomSheet?.isCancelable = false
+
+        adapter?.setChildClickListener(object : OnChildItemClickListener {
+            override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
+                object: GenericModelCastHelper(o){
+                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                        favPhotographerTypeModel?.apply {
+                            ImageViewerHelper(this@ActWallpapersList).with(photosList,
+                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+
+                                override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                        override fun onDownloadStarted() {
+                                            materialBottomSheet?.downloadStarted(supportFragmentManager)
+                                            showToast(getString(R.string.download_started))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            materialBottomSheet?.downloadError()
+                                            showToast(getString(R.string.failed_to_download_no_internet))
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            materialBottomSheet?.downloaded()
+                                            ImageActionHelper.setWallpaper(this@ActWallpapersList, imageMeta?.getUri())
+                                        }
+                                    })
+                                }
+
+                                override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                        override fun onDownloadStarted() {
+                                            materialBottomSheet?.downloadStarted(supportFragmentManager)
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            materialBottomSheet?.downloadError()
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            materialBottomSheet?.downloaded()
+                                            if (msg.isNotEmpty()) {
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener {
+                                        override fun onDownloadStarted() {
+                                            materialBottomSheet?.downloadStarted(supportFragmentManager)
+                                            showToast(getString(R.string.adding_to_fav))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            materialBottomSheet?.downloadError()
+                                            showToast(getString(R.string.failed_to_download_no_internet))
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            materialBottomSheet?.downloaded()
+                                            if (msg.isNotEmpty()) {
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onShare(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.shareImage(this@ActWallpapersList, "Share", photoInfo.user.name, photoInfo.links.html)
+                                }
+
+                                override fun onUserPhotos(user: User) {
+                                    startMorePhotosActivity(
+                                            MoreListData(
+                                                    Constants.ListModes.LIST_MODE_USER_PHOTOS,
+                                                    user,
+                                                    null,
+                                                    null
+                                            )
+                                    )
+                                }
+                            }).showPhotographer(listData?.photographerInfo?.isNull() ?: true)
+                                    .setDataSaverMode(mausamSharedPrefs?.isDataSaverMode ?: false)
+                                    .show()
+                        }
+                    }
+                }
+            }
+        })
     }
 
     private fun getWallpapersOf(page: Int){
