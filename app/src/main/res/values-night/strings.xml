@@ -1,17 +1,3 @@
 <resources>
     <string name="app_name">Mausam</string>
-
-    <string name="location_desc">With this permission, Mausam can automatically detect your location</string>
-    <string name="permission_desc">Will you please allow Mausam this permission.</string>
-
-
-    <!--Error messages-->
-    <string name="contain_number_error_msg">Please write a location name without Number</string>
-    <string name="contain_special_chars_error_msg">Please write a location name without using space or special characters</string>
-    <string name="empty_error_msg">Please enter location name to continue</string>
-    <string name="no_gps_error_msg">Can\'t find location when GPS is off.</string>
-    <string name="no_permission_error_msg">Location permission is needed to show latest weather details. Please go to settings and allow Location Permission.</string>
-    <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
-    <string name="failed_getting_wallpapers_error_msg">Sorry, failed while getting beautiful wallpapers. Please try again.</string>
-
 </resources>

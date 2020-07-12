@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".views.activities.ActOnBoard">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/ablWallpaperList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white_to_dark">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/ctlWallpaperList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <include layout="@layout/header_custom_general"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/headerOnBoard"
+                app:layout_collapseMode="parallax"
+                tools:visibility="visible"
+                android:visibility="visible"
+                app:layout_collapseParallaxMultiplier="0.7"/>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.rex50.mausam.utils.CustomViewPager
+        android:id="@+id/vpOnBoard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

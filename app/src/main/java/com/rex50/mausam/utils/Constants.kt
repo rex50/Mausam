@@ -11,10 +11,10 @@ class Constants {
     }
 
     object AvailableLayouts {
-        const val WEATHER_BASED_WALLPAPERS = "Weather based wallpapers"
-        const val LOCATION_BASED_WALLPAPERS = "Location based wallpapers"
-        const val TIME_BASED_WALLPAPERS = "Time based wallpapers"
-        const val POPULAR_WALLPAPERS = "Popular wallpapers"
+        const val WEATHER_BASED_WALLPAPERS = "Random weather photos"
+        const val LOCATION_BASED_WALLPAPERS = "Random location photos"
+        const val TIME_BASED_WALLPAPERS = "Random time photos"
+        const val POPULAR_WALLPAPERS = "Popular photos"
         const val POPULAR_PHOTOGRAPHERS = "Popular photographers"
         const val POPULAR_TAGS = "Popular tags"
         const val FEATURED_COLLECTIONS = "Featured collections"

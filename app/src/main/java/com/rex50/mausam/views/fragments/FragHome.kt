@@ -3,6 +3,7 @@ package com.rex50.mausam.views.fragments
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -223,7 +224,19 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
     private fun getSequenceOfLayout(): List<String> = sequenceOfLayout.apply {
         clear()
+        add(AvailableLayouts.WEATHER_BASED_WALLPAPERS)
+        add(AvailableLayouts.LOCATION_BASED_WALLPAPERS)
+        add(AvailableLayouts.TIME_BASED_WALLPAPERS)
+        add(AvailableLayouts.FEATURED_COLLECTIONS)
+        add(AvailableLayouts.POPULAR_PHOTOGRAPHERS)
+        add(AvailableLayouts.BROWSE_BY_CATEGORIES)
+        add(AvailableLayouts.POPULAR_WALLPAPERS)
         add(AvailableLayouts.POPULAR_TAGS)
+        add(AvailableLayouts.BROWSE_BY_COLORS)
+        //add(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)
+
+        //Use below format when implemented in search screen
+        /*add(AvailableLayouts.POPULAR_TAGS)
         add(AvailableLayouts.FEATURED_COLLECTIONS)
         add(AvailableLayouts.POPULAR_WALLPAPERS)
         add(AvailableLayouts.POPULAR_PHOTOGRAPHERS)
@@ -231,8 +244,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
         add(AvailableLayouts.BROWSE_BY_COLORS)
         add(AvailableLayouts.LOCATION_BASED_WALLPAPERS)
         add(AvailableLayouts.WEATHER_BASED_WALLPAPERS)
-        add(AvailableLayouts.TIME_BASED_WALLPAPERS)
-        //add(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)
+        add(AvailableLayouts.TIME_BASED_WALLPAPERS)*/
     }
 
     private fun prepareHomeRecycler(sequenceOfLayout: List<String>) {
@@ -377,8 +389,8 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
     private fun initItemClicks(allContentModel: AllContentModel) {
 
-        val materialBottomSheet: BSDownload? = BSDownload()
-        materialBottomSheet?.isCancelable = false
+        val bsDownload: BSDownload? = BSDownload()
+        bsDownload?.isCancelable = false
 
         allContentModel.setOnClickListener(object : OnGroupItemClickListener{
 
@@ -404,15 +416,15 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
-                                            materialBottomSheet?.downloadStarted(childFragmentManager)
+                                            bsDownload?.downloadStarted(childFragmentManager)
                                         }
 
                                         override fun onDownloadFailed() {
-                                            materialBottomSheet?.downloadError()
+                                            bsDownload?.downloadError()
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            materialBottomSheet?.downloaded()
+                                            bsDownload?.downloaded()
                                             ImageActionHelper.setWallpaper(mContext, imageMeta?.getUri())
                                         }
                                     })
@@ -421,15 +433,15 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
-                                            materialBottomSheet?.downloadStarted(childFragmentManager)
+                                            bsDownload?.downloadStarted(childFragmentManager)
                                         }
 
                                         override fun onDownloadFailed() {
-                                            materialBottomSheet?.downloadError()
+                                            bsDownload?.downloadError()
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            materialBottomSheet?.downloaded()
+                                            bsDownload?.downloaded()
                                             if(msg.isNotEmpty()){
                                                 showToast(msg)
                                             }
@@ -440,15 +452,15 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
-                                            materialBottomSheet?.downloadStarted(childFragmentManager)
+                                            bsDownload?.downloadStarted(childFragmentManager)
                                         }
 
                                         override fun onDownloadFailed() {
-                                            materialBottomSheet?.downloadError()
+                                            bsDownload?.downloadError()
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            materialBottomSheet?.downloaded()
+                                            bsDownload?.downloaded()
                                             if(msg.isNotEmpty()){
                                                 showToast(msg)
                                             }
@@ -479,17 +491,17 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
-                                            materialBottomSheet?.downloadStarted(childFragmentManager)
+                                            bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.download_started))
                                         }
 
                                         override fun onDownloadFailed() {
-                                            materialBottomSheet?.downloadError()
+                                            bsDownload?.downloadError()
                                             showToast(getString(R.string.failed_to_download_no_internet))
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            materialBottomSheet?.downloaded()
+                                            bsDownload?.downloaded()
                                             ImageActionHelper.setWallpaper(mContext, Uri.parse(imageMeta?.relativePath))
                                         }
                                     })
@@ -498,16 +510,16 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
-                                            materialBottomSheet?.downloadStarted(childFragmentManager)
+                                            bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.download_started))
                                         }
 
                                         override fun onDownloadFailed() {
-                                            materialBottomSheet?.downloadError()
+                                            bsDownload?.downloadError()
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            materialBottomSheet?.downloaded()
+                                            bsDownload?.downloaded()
                                             if(msg.isNotEmpty()){
                                                 showToast(msg)
                                             }
@@ -518,16 +530,16 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
-                                            materialBottomSheet?.downloadStarted(childFragmentManager)
+                                            bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.adding_to_fav))
                                         }
 
                                         override fun onDownloadFailed() {
-                                            materialBottomSheet?.downloadError()
+                                            bsDownload?.downloadError()
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            materialBottomSheet?.downloaded()
+                                            bsDownload?.downloaded()
                                             if(msg.isNotEmpty()){
                                                 showToast(msg)
                                             }
@@ -634,7 +646,9 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
     }
 
     override fun onAllContentLoaded() {
-        mListener?.getMaterialSnackBar()?.dismiss()
+        Handler().postDelayed({
+            mListener?.getMaterialSnackBar()?.dismiss()
+        }, 300)
     }
 
     override fun onResume() {

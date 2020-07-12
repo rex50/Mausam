@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
-import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.GradientHelper
+import com.rex50.mausam.utils.isStoragePermissionGranted
 import com.rex50.mausam.views.MausamApplication
 
 class ActSplash : BaseActivity() {
@@ -29,10 +29,8 @@ class ActSplash : BaseActivity() {
         MausamApplication.getInstance()?.setAppContext(applicationContext)
         Handler().postDelayed({
             GradientHelper.init(this)
-            val intent: Intent = if (ContextCompat.checkSelfPermission(this@ActSplash,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && !mausamSharedPrefs!!.isLocationPermanentlyDenied) {
-                Intent(this@ActSplash, ActPermission::class.java)
+            val intent: Intent = if (!isStoragePermissionGranted() || mausamSharedPrefs?.isFirstTime == true) {
+                Intent(this@ActSplash, ActOnBoard::class.java)
             } else {
                 Intent(this@ActSplash, ActMain::class.java)
             }

@@ -22,16 +22,17 @@ class BSDownload : MaterialBottomSheet() {
 
     override fun setupBehaviour(bottomSheetBehavior: BottomSheetBehavior<*>?) {
         bottomSheetBehavior?.apply {
-            //peekHeight = 500
-            //state = BottomSheetBehavior.STATE_EXPANDED
+            isHideable = false
+            isDraggable = false
         }
     }
 
     override fun onViewReady(view: View, savedInstanceState: Bundle?) {
         isDownloading = true
-        animBottomSheet?.speed = 0.8F
         animBottomSheet?.apply {
-            setAnimation(R.raw.preloader_free_time)
+            speed = 0.8F
+            scale = 0.7F
+            setAnimation(R.raw.l_anim_photo_saving)
         }
 
         tvBottomSheet?.text = getString(R.string.downloading)
@@ -39,7 +40,7 @@ class BSDownload : MaterialBottomSheet() {
         btnDismiss?.setOnClickListener{
             animBottomSheet?.apply {
                 pauseAnimation()
-                setAnimation(R.raw.preloader_free_time)
+                setAnimation(R.raw.l_anim_photo_saving)
             }
             dismiss()
         }
@@ -54,7 +55,7 @@ class BSDownload : MaterialBottomSheet() {
         isCancelable = true
         animBottomSheet?.apply {
             pauseAnimation()
-            setAnimation(R.raw.error_lochness_monster)
+            setAnimation(R.raw.l_anim_error_lochness_monster)
             playAnimation()
         }
         tvBottomSheet?.text = getString(R.string.failed_to_download_no_internet)

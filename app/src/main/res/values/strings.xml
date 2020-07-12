@@ -36,7 +36,7 @@
 
 
     <!--Descriptions-->
-    <string name="permission_desc">Will you please allow Mausam this permission.</string>
+    <string name="permission_desc">Please allow below permission to have a seamless experience.</string>
     <string name="location_desc">With this permission, Mausam can automatically detect your location</string>
     <string name="dark_mode_on_desc">The Force will be with you. Always.‍</string>
     <string name="dark_mode_off_desc">Currently following system theme.</string>
@@ -96,6 +96,7 @@
     <string name="calculating">calculating</string>
     <string name="using_cache"><b>Currently using %s MB approx</b></string>
     <string name="dismiss">Dismiss</string>
+    <string name="storage_perm_granted_msg">Storage permission granted 👍</string>
 
     <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>
@@ -116,12 +117,15 @@
     <string name="failed_to_download_no_internet">Error while saving image. Please check your internet.</string>
     <string name="failed_to_download_no_space">Error while saving image. Please check available storage.</string>
     <string name="failed_to_load_image">Unable to load image.\nPlease check your internet.</string>
+    <string name="no_storage_permission_msg">Please allow storage permission to perform this operation.</string>
+    <string name="something_wrong_msg">Something is wrong. Please try again</string>
+    <string name="permission_denied_earlier_msg">You have denied this permission. You can allow this permission from settings</string>
+    <string name="storage_perm_denied_msg">You have denied this permission. Please allow storage permission from settings</string>
 
     <!--Static strings-->
     <string name="unsplash_txt" translatable="false">Unsplash</string>
     <string name="pixabay_txt" translatable="false">Pixabay</string>
     <string name="developer" translatable="false">Pavitra Raut.</string>
-
 
 
     <!--Colors for gradient array-->

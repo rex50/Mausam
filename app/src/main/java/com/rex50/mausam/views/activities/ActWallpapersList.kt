@@ -204,8 +204,8 @@ class ActWallpapersList : BaseActivity() {
 
     private fun initClicks(){
 
-        val materialBottomSheet: BSDownload? = BSDownload()
-        materialBottomSheet?.isCancelable = false
+        val bsDownload: BSDownload? = BSDownload()
+        bsDownload?.isCancelable = false
 
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
@@ -218,15 +218,15 @@ class ActWallpapersList : BaseActivity() {
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
-                                            materialBottomSheet?.downloadStarted(supportFragmentManager)
+                                            bsDownload?.downloadStarted(supportFragmentManager)
                                         }
 
                                         override fun onDownloadFailed() {
-                                            materialBottomSheet?.downloadError()
+                                            bsDownload?.downloadError()
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            materialBottomSheet?.downloaded()
+                                            bsDownload?.downloaded()
                                             ImageActionHelper.setWallpaper(this@ActWallpapersList, imageMeta?.getUri())
                                         }
                                     })
@@ -235,15 +235,15 @@ class ActWallpapersList : BaseActivity() {
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
-                                            materialBottomSheet?.downloadStarted(supportFragmentManager)
+                                            bsDownload?.downloadStarted(supportFragmentManager)
                                         }
 
                                         override fun onDownloadFailed() {
-                                            materialBottomSheet?.downloadError()
+                                            bsDownload?.downloadError()
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            materialBottomSheet?.downloaded()
+                                            bsDownload?.downloaded()
                                             if (msg.isNotEmpty()) {
                                                 showToast(msg)
                                             }
@@ -254,16 +254,16 @@ class ActWallpapersList : BaseActivity() {
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
                                     ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
-                                            materialBottomSheet?.downloadStarted(supportFragmentManager)
+                                            bsDownload?.downloadStarted(supportFragmentManager)
                                             showToast(getString(R.string.adding_to_fav))
                                         }
 
                                         override fun onDownloadFailed() {
-                                            materialBottomSheet?.downloadError()
+                                            bsDownload?.downloadError()
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            materialBottomSheet?.downloaded()
+                                            bsDownload?.downloaded()
                                             if (msg.isNotEmpty()) {
                                                 showToast(msg)
                                             }
@@ -386,14 +386,18 @@ class ActWallpapersList : BaseActivity() {
         when(page){
             INITIAL_PAGE -> {
                 wallpapersList.clear()
-                wallpapersList.addAll(results)
-                adapter?.notifyItemRangeInserted(0, 20)
+                results.takeIf { it.isNotEmpty() }?.apply {
+                    wallpapersList.addAll(results)
+                    adapter?.notifyItemRangeInserted(0, results.size)
+                }
             }
 
             else -> {
                 val lastSize = wallpapersList.size
-                wallpapersList.addAll(results)
-                adapter?.notifyItemRangeInserted(lastSize, 20)
+                results.takeIf { it.isNotEmpty() }?.apply {
+                    wallpapersList.addAll(results)
+                    adapter?.notifyItemRangeInserted(lastSize, results.size)
+                }
             }
         }
     }

@@ -26,7 +26,7 @@ class FragFavourites : BaseFragment() {
 
         lnlError?.showView()
         animError?.apply {
-            setAnimation(R.raw.error_astronaout)
+            setAnimation(R.raw.l_anim_error_astronaout)
             scale = 0.2F
             speed = 0.8F
         }

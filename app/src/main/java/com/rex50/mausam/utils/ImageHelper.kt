@@ -157,7 +157,7 @@ class ImageViewerHelper (){
                 speed = 0.8F
             }
             animError?.apply {
-                setAnimation(R.raw.error_lochness_monster)
+                setAnimation(R.raw.l_anim_error_lochness_monster)
                 scale = 0.2F
                 speed = 0.8F
             }
@@ -458,10 +458,15 @@ class ImageActionHelper {
 
         fun saveImage(context: Context?, url: String, name: String, desc: String, isAddToFav: Boolean, listener: ImageSaveListener?){
             context?.let {
+
                 val dBKey = Constants.Image.DOWNLOAD_RELATIVE_PATH+name
                 val nameWithExtension = Constants.Image.JPEG_NAME_PATTERN.format(name)
 
                 fun download(){
+                    if(!it.isStoragePermissionGranted()) {
+                        listener?.response(null, it.getString(R.string.no_storage_permission_msg))
+                        return
+                    }
                     listener?.onDownloadStarted()
                     Glide.with(context)
                             .asBitmap()

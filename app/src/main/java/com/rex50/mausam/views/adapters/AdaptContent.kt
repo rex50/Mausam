@@ -11,9 +11,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rex50.mausam.R
 import com.rex50.mausam.interfaces.OnChildItemClickListener
 import com.rex50.mausam.model_classes.unsplash.collection.Collections

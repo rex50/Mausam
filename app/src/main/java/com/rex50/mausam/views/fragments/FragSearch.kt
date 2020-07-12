@@ -191,7 +191,7 @@ class FragSearch : BaseFragment() {
             override fun onWeatherResponseFailure(errorCode: Int, msg: String) {
                 etvSearch?.isEnabled = true
                 when (errorCode) {
-                    Utils.PAGE_NOT_FOUND -> mListener?.snackBar?.show("Something is wrong. Please try again", MaterialSnackBar.LENGTH_LONG)
+                    Utils.PAGE_NOT_FOUND -> mListener?.snackBar?.show(getString(R.string.something_wrong_msg), MaterialSnackBar.LENGTH_LONG)
                     Utils.CITY_NOT_FOUND -> {
                         setErrorMsg(String.format(getString(R.string.search_city_error), place))
                         etvSearch?.requestFocus()

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".views.fragments.FragStoragePerm">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/preLoader"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="@dimen/_50dp"
+        app:lottie_rawRes="@raw/l_anim_storage_perm"
+        app:lottie_speed="0.5"
+        app:lottie_scale="0.7"
+        android:layout_gravity="center"
+        app:lottie_loop="false"
+        android:visibility="visible"
+        app:lottie_autoPlay="true"/>
+
+    <LinearLayout
+        android:gravity="top"
+        android:id="@+id/lnlDarkMode"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="@dimen/_40dp"
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:orientation="vertical">
+
+            <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/storage_perm_title"
+                android:textColor="@color/titleColor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                android:id="@+id/tvDarkModeDesc"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:paddingEnd="30dp"
+                android:paddingStart="0dp"
+                android:text="@string/storage_desc"
+                android:textColor="@color/taupeGray"
+                android:textSize="10sp"
+                tools:ignore="SmallSp" />
+        </LinearLayout>
+
+        <com.bitvale.switcher.SwitcherX
+            android:checked="false"
+            android:id="@+id/sStoragePerm"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:thumb="@drawable/thumb_selector"
+            android:track="@drawable/track_selector" />
+
+    </LinearLayout>
+
+</LinearLayout>
