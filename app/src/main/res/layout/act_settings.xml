@@ -12,13 +12,13 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/ablWallpaperList"
+            android:id="@+id/ablPhotosList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white_to_dark">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:id="@+id/ctlWallpaperList"
+                android:id="@+id/ctlPhotosList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -454,6 +454,7 @@
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="30dp"
                         android:layout_width="match_parent"
+                        android:visibility="gone"
                         android:padding="15dp"
                         android:text="@string/see_res_used"
                         android:textColor="@color/black_to_white"

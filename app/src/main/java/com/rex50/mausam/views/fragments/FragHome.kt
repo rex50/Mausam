@@ -58,10 +58,10 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
     }
 
     override fun load() {
-        initWallpapers()
+        initHome()
     }
 
-    private fun initWallpapers(){
+    private fun initHome(){
         prepareHomeRecycler(getSequenceOfLayout())
     }
 
@@ -224,13 +224,13 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
     private fun getSequenceOfLayout(): List<String> = sequenceOfLayout.apply {
         clear()
-        add(AvailableLayouts.WEATHER_BASED_WALLPAPERS)
-        add(AvailableLayouts.LOCATION_BASED_WALLPAPERS)
-        add(AvailableLayouts.TIME_BASED_WALLPAPERS)
+        add(AvailableLayouts.WEATHER_BASED_PHOTOS)
+        add(AvailableLayouts.LOCATION_BASED_PHOTOS)
+        add(AvailableLayouts.TIME_BASED_PHOTOS)
         add(AvailableLayouts.FEATURED_COLLECTIONS)
         add(AvailableLayouts.POPULAR_PHOTOGRAPHERS)
         add(AvailableLayouts.BROWSE_BY_CATEGORIES)
-        add(AvailableLayouts.POPULAR_WALLPAPERS)
+        add(AvailableLayouts.POPULAR_PHOTOS)
         add(AvailableLayouts.POPULAR_TAGS)
         add(AvailableLayouts.BROWSE_BY_COLORS)
         //add(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)
@@ -266,13 +266,13 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
         mListener?.getMaterialSnackBar()?.showIndeterminateBar(R.string.preparing_home)
 
-        if (sequenceOfLayout.contains(AvailableLayouts.WEATHER_BASED_WALLPAPERS)) {
+        if (sequenceOfLayout.contains(AvailableLayouts.WEATHER_BASED_PHOTOS)) {
             val seasons = arrayListOf("late winter", "spring", "monsoon", "autumn", "summer", "early winter")
             val season = StringUtils.capitalize(seasons.random())
             unsplashHelper.getSearchedPhotos(season, 1, 20, object : GetUnsplashSearchedPhotosListener {
                 override fun onSuccess(photos: SearchedPhotos) {
-                    allData?.addSequentially(AvailableLayouts.WEATHER_BASED_WALLPAPERS,
-                            GenericModelFactory.getGeneralTypeObject(AvailableLayouts.WEATHER_BASED_WALLPAPERS, /*Constants.Providers.POWERED_BY_UNSPLASH*/ season, false, photos.results))
+                    allData?.addSequentially(AvailableLayouts.WEATHER_BASED_PHOTOS,
+                            GenericModelFactory.getGeneralTypeObject(AvailableLayouts.WEATHER_BASED_PHOTOS, /*Constants.Providers.POWERED_BY_UNSPLASH*/ season, false, photos.results))
                 }
 
                 override fun onFailed(errors: JSONArray) {
@@ -281,7 +281,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                 }
             })
         }
-        if (sequenceOfLayout.contains(AvailableLayouts.LOCATION_BASED_WALLPAPERS)) {
+        if (sequenceOfLayout.contains(AvailableLayouts.LOCATION_BASED_PHOTOS)) {
             val places = arrayListOf("Gujarat", "Orissa", "Bengaluru", "Hydrebad", "Kolkata",
                     "Hong Kong", "London", "Malaysia", "Punjab", "Mumbai", "Chennai", "Paris", "USA", "Sri Lanka",
                     "Russia", "Pakistan", "Bangladesh", "Tibet", "Berlin", "Bhutan", "Africa", "Australia", "England")
@@ -289,8 +289,8 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
             unsplashHelper.getSearchedPhotos(place, 1, 20, object : GetUnsplashSearchedPhotosListener {
                 override fun onSuccess(photos: SearchedPhotos) {
                     if(!photos.results.isNullOrEmpty()){
-                        allData?.addSequentially(AvailableLayouts.LOCATION_BASED_WALLPAPERS,
-                                GenericModelFactory.getGeneralTypeObject(AvailableLayouts.LOCATION_BASED_WALLPAPERS, /*Constants.Providers.POWERED_BY_UNSPLASH*/ place, false, photos.results))
+                        allData?.addSequentially(AvailableLayouts.LOCATION_BASED_PHOTOS,
+                                GenericModelFactory.getGeneralTypeObject(AvailableLayouts.LOCATION_BASED_PHOTOS, /*Constants.Providers.POWERED_BY_UNSPLASH*/ place, false, photos.results))
                     }else
                         allData?.increaseResponseCount()
                 }
@@ -301,11 +301,11 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                 }
             })
         }
-        if (sequenceOfLayout.contains(AvailableLayouts.TIME_BASED_WALLPAPERS)) {
+        if (sequenceOfLayout.contains(AvailableLayouts.TIME_BASED_PHOTOS)) {
             unsplashHelper.getSearchedPhotos("Night", 1, 20, object : GetUnsplashSearchedPhotosListener {
                 override fun onSuccess(photos: SearchedPhotos) {
-                    allData?.addSequentially(AvailableLayouts.TIME_BASED_WALLPAPERS,
-                            GenericModelFactory.getGeneralTypeObject(AvailableLayouts.TIME_BASED_WALLPAPERS, Constants.Providers.POWERED_BY_UNSPLASH, false, photos.results))
+                    allData?.addSequentially(AvailableLayouts.TIME_BASED_PHOTOS,
+                            GenericModelFactory.getGeneralTypeObject(AvailableLayouts.TIME_BASED_PHOTOS, Constants.Providers.POWERED_BY_UNSPLASH, false, photos.results))
                 }
 
                 override fun onFailed(errors: JSONArray) {
@@ -314,11 +314,11 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
                 }
             })
         }
-        if (sequenceOfLayout.contains(AvailableLayouts.POPULAR_WALLPAPERS)) {
+        if (sequenceOfLayout.contains(AvailableLayouts.POPULAR_PHOTOS)) {
             unsplashHelper.getPhotosAndUsers(UnsplashHelper.ORDER_BY_POPULAR, object : GetUnsplashPhotosAndUsersListener {
                 override fun onSuccess(photos: List<UnsplashPhotos>, userList: List<User>) {
-                    allData?.addSequentially(AvailableLayouts.POPULAR_WALLPAPERS,
-                            GenericModelFactory.getGeneralTypeObject(AvailableLayouts.POPULAR_WALLPAPERS, Constants.Providers.POWERED_BY_UNSPLASH, true, photos))
+                    allData?.addSequentially(AvailableLayouts.POPULAR_PHOTOS,
+                            GenericModelFactory.getGeneralTypeObject(AvailableLayouts.POPULAR_PHOTOS, Constants.Providers.POWERED_BY_UNSPLASH, true, photos))
                     if (sequenceOfLayout.contains(AvailableLayouts.POPULAR_PHOTOGRAPHERS)) {
                         allData?.addSequentially(AvailableLayouts.POPULAR_PHOTOGRAPHERS,
                                 GenericModelFactory.getUserTypeObject(AvailableLayouts.POPULAR_PHOTOGRAPHERS, Constants.Providers.POWERED_BY_UNSPLASH, false, userList))

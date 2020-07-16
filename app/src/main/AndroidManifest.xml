@@ -4,8 +4,10 @@
     package="com.rex50.mausam">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
+    <!--
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -28,8 +30,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.activities.ActSearchCity" />
-        <activity android:name=".views.activities.ActOnBoard"/>
-        <activity android:name=".views.activities.ActWallpapersList" />
+        <activity android:name=".views.activities.ActOnBoard" />
+        <activity android:name=".views.activities.ActPhotosList" />
         <activity android:name=".views.activities.ActPermission" />
         <activity android:name=".views.activities.ActMain" />
         <activity android:name=".views.activities.ActCollectionsList" />

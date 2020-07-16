@@ -6,9 +6,9 @@
     <string name="location_perm_title">Location</string>
     <string name="storage_perm_title">Storage</string>
     <string name="search_loc_title">Search location</string>
-    <string name="search_wallpaper_title">Search wallpapers</string>
+    <string name="search_photo_title">Search photos</string>
     <string name="favourites_title">Your Favourites</string>
-    <string name="search_results_title">Wallpapers</string>
+    <string name="search_results_title">Photos</string>
     <string name="images">Images</string>
     <string name="likes">Likes</string>
     <string name="height">Height</string>
@@ -43,10 +43,10 @@
     <string name="data_saver_desc">Enabling this option will use low quality images for viewing.</string>
     <string name="cache_desc">If you’re short on storage just click on that CLEAR button.</string>
     <string name="curr_loc_desc">Change location.</string>
-    <string name="storage_desc">With this permission, Mausam can download wallpapers and store in the phone storage.</string>
-    <string name="search_loc_desc">We understand you don’t want to reveal your  location but Mausam needs it show weather and wallpapers based on it. </string>
-    <string name="search_wallpaper_desc">search photos by some of the best photographers spread across the world and available on Unsplash.</string>
-    <string name="favourites_desc">All your favourite photographers and wallpapers will appear here.</string>
+    <string name="storage_desc">With this permission, Mausam can download photos and store in the phone storage.</string>
+    <string name="search_loc_desc">We understand you don’t want to reveal your  location but Mausam needs it show weather and photos based on it. </string>
+    <string name="search_photo_desc">search photos by some of the best photographers spread across the world and available on Unsplash.</string>
+    <string name="favourites_desc">All your favourite photographers and photos will appear here.</string>
     <string name="imp_info_desc">All your favourites are stored locally so if you uninstall app or clear data of Mausam then you will lose your favourites.</string>
     <string name="support_desc">Your donation keeps Mausam app advertisement free.</string>
     <string name="share_app_desc">Share this beautiful app with your friends and family.</string>
@@ -75,7 +75,7 @@
     <string name="photographer_s_image">photographer\'s image</string>
     <string name="settings_button">Settings button</string>
     <string name="ok_caps">OK</string>
-    <string name="wallpapers">wallpapers</string>
+    <string name="photos">photos</string>
     <string name="loading_data">loading data</string>
     <string name="saved_to_downloads">Saved in Pictures/Mausam/Downloads</string>
     <string name="saved_to_fav">Saved in Pictures/Mausam/Favourites</string>
@@ -112,7 +112,7 @@
     <string name="no_permission_error_msg">Location permission is needed to show latest weather details. Please go to settings and allow Location Permission.</string>
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
     <string name="search_city_error">%s place weather information not found, you can skip this by the way.</string>
-    <string name="failed_getting_wallpapers_error_msg">Sorry, failed while getting beautiful wallpapers. Please try again.</string>
+    <string name="failed_getting_photos_error_msg">Sorry, failed while getting beautiful photos. Please try again.</string>
     <string name="failed_getting_collection_error_msg">Sorry, failed while getting collections. Please try again.</string>
     <string name="failed_to_download_no_internet">Error while saving image. Please check your internet.</string>
     <string name="failed_to_download_no_space">Error while saving image. Please check available storage.</string>
@@ -126,6 +126,7 @@
     <string name="unsplash_txt" translatable="false">Unsplash</string>
     <string name="pixabay_txt" translatable="false">Pixabay</string>
     <string name="developer" translatable="false">Pavitra Raut.</string>
+    <string name="download_feature_not_possible_error_msg">Photos download feature will not work without this permission. So please allow Mausam this permission.</string>
 
 
     <!--Colors for gradient array-->

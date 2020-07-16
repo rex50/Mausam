@@ -28,23 +28,23 @@ import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.views.bottomsheets.BSUserMore
-import kotlinx.android.synthetic.main.act_wallpaper_list.*
+import kotlinx.android.synthetic.main.act_photos_list.*
 import org.json.JSONArray
 
-class ActWallpapersList : BaseActivity() {
+class ActPhotosList : BaseActivity() {
 
     companion object{
         private const val INITIAL_PAGE = 1
     }
-    private var wallpapersList = ArrayList<UnsplashPhotos>()
-    private var wallpapersModel: GenericModelFactory? = null
+    private var photosList = ArrayList<UnsplashPhotos>()
+    private var photosModel: GenericModelFactory? = null
     private var adapter: AdaptContent? = null
     private var scrollToTopActive = false
     private var unsplashHelper: UnsplashHelper? = null
     private var listData: MoreListData? = null
 
     override val layoutResource: Int
-        get() = R.layout.act_wallpaper_list
+        get() = R.layout.act_photos_list
 
     override fun loadAct(savedInstanceState: Bundle?) {
         getArgs()
@@ -61,7 +61,7 @@ class ActWallpapersList : BaseActivity() {
 
         initHeader()
 
-        fabSearchedWallpaperBack?.setOnClickListener{ if(scrollToTopActive) scrollToTop() else onBackPressed() }
+        fabSearchedPhotosBack?.setOnClickListener{ if(scrollToTopActive) scrollToTop() else onBackPressed() }
 
         unsplashHelper = UnsplashHelper(this)
 
@@ -73,7 +73,7 @@ class ActWallpapersList : BaseActivity() {
 
         ivLoader?.showView()
 
-        getWallpapersOf(1)
+        getPhotosOf(1)
 
     }
 
@@ -84,9 +84,9 @@ class ActWallpapersList : BaseActivity() {
                     showView()
 
                     findViewById<View>(R.id.gradientLine)?.background =
-                            GradientHelper.getInstance(this@ActWallpapersList)?.getRandomLeftRightGradient()
+                            GradientHelper.getInstance(this@ActPhotosList)?.getRandomLeftRightGradient()
 
-                    findViewById<TextView>(R.id.tvPageTitle)?.text = listData?.getTitle(this@ActWallpapersList)
+                    findViewById<TextView>(R.id.tvPageTitle)?.text = listData?.getTitle(this@ActPhotosList)
 
                     findViewById<TextView>(R.id.tvPageDesc)?.text = listData?.getDesc()
 
@@ -127,10 +127,10 @@ class ActWallpapersList : BaseActivity() {
                     showView()
 
                     findViewById<View>(R.id.gradientLine)?.background =
-                            GradientHelper.getInstance(this@ActWallpapersList)?.getRandomLeftRightGradient()
+                            GradientHelper.getInstance(this@ActPhotosList)?.getRandomLeftRightGradient()
 
                     listData?.apply {
-                        findViewById<TextView>(R.id.tvPageTitle)?.text = getTitle(this@ActWallpapersList)
+                        findViewById<TextView>(R.id.tvPageTitle)?.text = getTitle(this@ActPhotosList)
 
                         findViewById<TextView>(R.id.tvPageDesc)?.apply {
                             getDesc().takeIf { it.isNotEmpty() }?.apply {
@@ -150,23 +150,23 @@ class ActWallpapersList : BaseActivity() {
     }
 
     private fun initDataModel(){
-        wallpapersModel = GenericModelFactory.getFavouritePhotographerTypeObject(listData?.getTitle(this), listData?.getDesc(), wallpapersList)
+        photosModel = GenericModelFactory.getFavouritePhotographerTypeObject(listData?.getTitle(this), listData?.getDesc(), photosList)
     }
 
     private fun initRecycler() {
 
-        val layoutManager = GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false)
+        val layoutManager = GridLayoutManager(this, 1, LinearLayoutManager.VERTICAL, false)
 
-        adapter = AdaptContent(this, wallpapersModel)
+        adapter = AdaptContent(this, photosModel)
 
-        recSearchedWallpapers?.layoutManager = layoutManager
-        if (recSearchedWallpapers?.itemDecorationCount ?: 0 > 0)
-            recSearchedWallpapers?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
-        recSearchedWallpapers?.adapter = adapter
+        recSearchedPhotos?.layoutManager = layoutManager
+        if (recSearchedPhotos?.itemDecorationCount ?: 0 > 0)
+            recSearchedPhotos?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
+        recSearchedPhotos?.adapter = adapter
 
         val endlessScrollListener =  object: EndlessRecyclerOnScrollListener(layoutManager){
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                getWallpapersOf(page)
+                getPhotosOf(page)
             }
         }
 
@@ -175,7 +175,7 @@ class ActWallpapersList : BaseActivity() {
             setVisibleThreshold(4)
         }
 
-        val layoutTrans = rlWallpapers?.layoutTransition
+        val layoutTrans = rlPhotos?.layoutTransition
         layoutTrans?.setDuration(700)
         layoutTrans?.enableTransitionType(LayoutTransition.CHANGING)
 
@@ -183,7 +183,7 @@ class ActWallpapersList : BaseActivity() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                fabSearchedWallpaperBack?.apply {
+                fabSearchedPhotosBack?.apply {
                     if(layoutManager.findFirstVisibleItemPosition() > 0){
                         scrollToTopActive = true
                         toRightAndRotate()
@@ -196,9 +196,9 @@ class ActWallpapersList : BaseActivity() {
 
         }
 
-        recSearchedWallpapers.clearOnScrollListeners()
-        recSearchedWallpapers.addOnScrollListener(endlessScrollListener)
-        recSearchedWallpapers.addOnScrollListener(scrollListener)
+        recSearchedPhotos.clearOnScrollListeners()
+        recSearchedPhotos.addOnScrollListener(endlessScrollListener)
+        recSearchedPhotos.addOnScrollListener(scrollListener)
 
     }
 
@@ -212,11 +212,11 @@ class ActWallpapersList : BaseActivity() {
                 object: GenericModelCastHelper(o){
                     override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
                         favPhotographerTypeModel?.apply {
-                            ImageViewerHelper(this@ActWallpapersList).with(photosList,
+                            ImageViewerHelper(this@ActPhotosList).with(photosList,
                                     childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
 
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(supportFragmentManager)
                                         }
@@ -227,13 +227,13 @@ class ActWallpapersList : BaseActivity() {
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
                                             bsDownload?.downloaded()
-                                            ImageActionHelper.setWallpaper(this@ActWallpapersList, imageMeta?.getUri())
+                                            ImageActionHelper.setWallpaper(this@ActPhotosList, imageMeta?.getUri())
                                         }
                                     })
                                 }
 
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(supportFragmentManager)
                                         }
@@ -252,7 +252,7 @@ class ActWallpapersList : BaseActivity() {
                                 }
 
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActWallpapersList, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(supportFragmentManager)
                                             showToast(getString(R.string.adding_to_fav))
@@ -272,7 +272,7 @@ class ActWallpapersList : BaseActivity() {
                                 }
 
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.shareImage(this@ActWallpapersList, "Share", photoInfo.user.name, photoInfo.links.html)
+                                    ImageActionHelper.shareImage(this@ActPhotosList, "Share", photoInfo.user.name, photoInfo.links.html)
                                 }
 
                                 override fun onUserPhotos(user: User) {
@@ -295,19 +295,19 @@ class ActWallpapersList : BaseActivity() {
         })
     }
 
-    private fun getWallpapersOf(page: Int){
+    private fun getPhotosOf(page: Int){
         Constants.ListModes.apply {
             when(listData?.listMode){
                 LIST_MODE_POPULAR_PHOTOS -> {
-                    getPopularWallpapersOf(page)
+                    getPopularPhotosOf(page)
                 }
 
                 LIST_MODE_USER_PHOTOS -> {
-                    getPhotographerWallpapersOf(page)
+                    getPhotographerPhotosOf(page)
                 }
 
                 LIST_MODE_GENERAL_PHOTOS -> {
-                    getSearchedWallpapersOf(page)
+                    getSearchedPhotosOf(page)
                 }
 
                 LIST_MODE_COLLECTION_PHOTOS -> {
@@ -317,7 +317,7 @@ class ActWallpapersList : BaseActivity() {
         }
     }
 
-    private fun getPopularWallpapersOf(page: Int){
+    private fun getPopularPhotosOf(page: Int){
         unsplashHelper?.getPhotosAndUsers(UnsplashHelper.ORDER_BY_POPULAR, page, 20, object : GetUnsplashPhotosAndUsersListener {
             override fun onSuccess(photos: List<UnsplashPhotos>, userList: List<User>) {
                 ivLoader?.hideView()
@@ -331,7 +331,7 @@ class ActWallpapersList : BaseActivity() {
         })
     }
 
-    private fun getPhotographerWallpapersOf(page: Int){
+    private fun getPhotographerPhotosOf(page: Int){
         unsplashHelper?.getUserPhotos(listData?.photographerInfo?.username, page, 20, object : GetUnsplashPhotosListener {
             override fun onSuccess(photos: MutableList<UnsplashPhotos>?) {
                 ivLoader?.hideView()
@@ -349,7 +349,7 @@ class ActWallpapersList : BaseActivity() {
         })
     }
 
-    private fun getSearchedWallpapersOf(page: Int) {
+    private fun getSearchedPhotosOf(page: Int) {
         unsplashHelper?.getSearchedPhotos(listData?.generalInfo?.term, page, 20, object: GetUnsplashSearchedPhotosListener {
             override fun onSuccess(photos: SearchedPhotos?) {
                 ivLoader?.hideView()
@@ -385,17 +385,17 @@ class ActWallpapersList : BaseActivity() {
     private fun updateList(page: Int, results: List<UnsplashPhotos>) {
         when(page){
             INITIAL_PAGE -> {
-                wallpapersList.clear()
+                photosList.clear()
                 results.takeIf { it.isNotEmpty() }?.apply {
-                    wallpapersList.addAll(results)
+                    photosList.addAll(results)
                     adapter?.notifyItemRangeInserted(0, results.size)
                 }
             }
 
             else -> {
-                val lastSize = wallpapersList.size
+                val lastSize = photosList.size
                 results.takeIf { it.isNotEmpty() }?.apply {
-                    wallpapersList.addAll(results)
+                    photosList.addAll(results)
                     adapter?.notifyItemRangeInserted(lastSize, results.size)
                 }
             }
@@ -404,12 +404,12 @@ class ActWallpapersList : BaseActivity() {
 
     private fun showErrorMsg(){
         materialSnackBar?.showActionSnackBar(
-                R.string.failed_getting_wallpapers_error_msg,
+                R.string.failed_getting_photos_error_msg,
                 R.string.ok_caps,
                 MaterialSnackBar.LENGTH_INDEFINITE
                 , object : MaterialSnackBar.SnackBarListener{
             override fun onActionPressed() {
-                if(wallpapersList.isEmpty())
+                if(photosList.isEmpty())
                     onBackPressed()
                 materialSnackBar?.dismiss()
             }
@@ -420,7 +420,7 @@ class ActWallpapersList : BaseActivity() {
         startActivity(
                 Intent(
                         this,
-                        ActWallpapersList::class.java
+                        ActPhotosList::class.java
                 ).putExtra(
                         Constants.IntentConstants.LIST_DATA,
                         data
@@ -441,8 +441,8 @@ class ActWallpapersList : BaseActivity() {
     }
 
     private fun scrollToTop(){
-        recSearchedWallpapers?.smoothScrollToPosition(0)
-        ablWallpaperList?.setExpanded(true)
+        recSearchedPhotos?.smoothScrollToPosition(0)
+        ablPhotosList?.setExpanded(true)
     }
 
     override fun internetStatus(internetType: Int) {

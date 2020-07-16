@@ -49,8 +49,8 @@ class FragSearch : BaseFragment() {
 
         if (resources.getBoolean(R.bool.hide_search_providers)) {
             containerSearchProviders?.hideView()
-            tvPageTitle?.setText(R.string.search_wallpaper_title)
-            tvPageDesc?.setText(R.string.search_wallpaper_desc)
+            tvPageTitle?.setText(R.string.search_photo_title)
+            tvPageDesc?.setText(R.string.search_photo_desc)
             etvSearch?.setHint(R.string.search_box_hint)
         }
 
@@ -106,10 +106,10 @@ class FragSearch : BaseFragment() {
         if (searchOnlyCity)
             validateCity(StringUtils.capitalize(etvSearch?.text.toString().trim()))
         else
-            searchWallpapers()
+            searchPhotos()
     }
 
-    private fun searchWallpapers() {
+    private fun searchPhotos() {
         val searchTerm = etvSearch?.text.toString()
         mListener?.startMorePhotosActivity(
                 MoreListData(

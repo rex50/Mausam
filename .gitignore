@@ -41,3 +41,6 @@ build/
 
 /.idea/jarRepositories.xml
 /.idea/inspectionProfiles/Project_Default.xml
+/app/mapping.txt
+/app/seeds.txt
+/app/unused.txt

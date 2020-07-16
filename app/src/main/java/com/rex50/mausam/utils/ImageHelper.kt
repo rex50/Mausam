@@ -38,7 +38,6 @@ import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.stfalcon.imageviewer.StfalconImageViewer
 import com.stfalcon.imageviewer.loader.ImageLoader
 import com.thekhaeng.pushdownanim.PushDownAnim
-import com.transitionseverywhere.extra.Scale
 import org.apache.commons.lang3.StringUtils
 import java.io.*
 
@@ -404,9 +403,9 @@ class ImageViewerHelper (){
         TransitionManager.beginDelayedTransition(rlImageOverlay as ViewGroup, Fade())
     }
 
-    private fun startScaleTransition(){
+    /*private fun startScaleTransition(){
         TransitionManager.beginDelayedTransition(rlImageOverlay as ViewGroup, Scale())
-    }
+    }*/
 
     abstract class ImageActionListener {
 
@@ -430,7 +429,7 @@ class ImageActionHelper {
         fun setWallpaper(context: Context?, uri: Uri?){
             context?.takeIf { uri != null }?.apply {
                 val finalUri: Uri? = Uri.parse(uri.toString().replace("file://", ""))
-                File(finalUri?.path!!)?.let {file ->
+                File(finalUri?.path!!)?.let {
                     val intent = Intent(ACTION_ATTACH_DATA)
                             .apply {
                                 addCategory(CATEGORY_DEFAULT)

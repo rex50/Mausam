@@ -11,10 +11,10 @@ class Constants {
     }
 
     object AvailableLayouts {
-        const val WEATHER_BASED_WALLPAPERS = "Random weather photos"
-        const val LOCATION_BASED_WALLPAPERS = "Random location photos"
-        const val TIME_BASED_WALLPAPERS = "Random time photos"
-        const val POPULAR_WALLPAPERS = "Popular photos"
+        const val WEATHER_BASED_PHOTOS = "Random weather photos"
+        const val LOCATION_BASED_PHOTOS = "Random location photos"
+        const val TIME_BASED_PHOTOS = "Random time photos"
+        const val POPULAR_PHOTOS = "Popular photos"
         const val POPULAR_PHOTOGRAPHERS = "Popular photographers"
         const val POPULAR_TAGS = "Popular tags"
         const val FEATURED_COLLECTIONS = "Featured collections"
@@ -69,7 +69,7 @@ class Constants {
     }
 
     object IntentConstants {
-        const val LIST_DATA = "wallpaperListData"
+        const val LIST_DATA = "photoListData"
         const val SEARCH_FEAT_COLLECTION = "searchFeaturedCollection"
     }
 

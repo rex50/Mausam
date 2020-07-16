@@ -93,8 +93,8 @@ class FragStoragePerm : BaseFragment() {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         listener?.materialSnackBar()?.showActionSnackBar(
-                                "Wallpaper download feature will not work without this permission. So please allow Mausam this permission.",
-                                "OK",
+                                getString(R.string.download_feature_not_possible_error_msg),
+                                getString(R.string.ok_caps),
                                 MaterialSnackBar.LENGTH_INDEFINITE
                                 , object : MaterialSnackBar.SnackBarListener{
                             override fun onActionPressed() {

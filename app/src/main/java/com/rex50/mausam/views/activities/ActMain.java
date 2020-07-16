@@ -86,7 +86,7 @@ public class ActMain extends BaseActivity implements
             Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
             Constants.ListModes.LIST_MODE_COLLECTIONS,
             Constants.ListModes.LIST_MODE_USER_COLLECTIONS})
-    public @interface wallpaperListMode {
+    public @interface photosListMode {
     }
 
     @Override
@@ -546,7 +546,7 @@ public class ActMain extends BaseActivity implements
 
     @Override
     public void startMorePhotosActivity(@NotNull MoreListData data) {
-        startActivity(new Intent(this, ActWallpapersList.class)
+        startActivity(new Intent(this, ActPhotosList.class)
                 .putExtra(Constants.IntentConstants.LIST_DATA, data)
         );
     }

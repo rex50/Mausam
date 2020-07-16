@@ -21,8 +21,8 @@ import com.rex50.mausam.utils.Constants.IntentConstants.LIST_DATA
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.adapters.AdaptContent
 import kotlinx.android.synthetic.main.act_collections_list.*
-import kotlinx.android.synthetic.main.act_wallpaper_list.*
-import kotlinx.android.synthetic.main.act_wallpaper_list.ivLoader
+import kotlinx.android.synthetic.main.act_photos_list.*
+import kotlinx.android.synthetic.main.act_photos_list.ivLoader
 import kotlinx.android.synthetic.main.header_custom_general.*
 import org.json.JSONArray
 
@@ -96,7 +96,7 @@ class ActCollectionsList() : BaseActivity() {
         })
 
         recSearchedCollection?.layoutManager = layoutManager
-        recSearchedWallpapers?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
+        recSearchedPhotos?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
         recSearchedCollection?.adapter = adapter
 
         val endlessScrollListener =  object: EndlessRecyclerOnScrollListener(layoutManager){
@@ -214,7 +214,7 @@ class ActCollectionsList() : BaseActivity() {
         startActivity(
                 Intent(
                         this,
-                        ActWallpapersList::class.java
+                        ActPhotosList::class.java
                 ).putExtra(
                         LIST_DATA,
                         data

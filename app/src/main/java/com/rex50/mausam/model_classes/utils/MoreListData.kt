@@ -9,10 +9,9 @@ import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.utils.Constants
 import com.rex50.mausam.views.activities.ActMain
 import org.apache.commons.lang3.StringUtils
-import java.util.*
 
 data class MoreListData(
-        @ActMain.wallpaperListMode var listMode: String? = Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
+        @ActMain.photosListMode var listMode: String? = Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
         var photographerInfo: User? = null,
         var collectionInfo: Collections? = null,
         var generalInfo: MoreData? = null

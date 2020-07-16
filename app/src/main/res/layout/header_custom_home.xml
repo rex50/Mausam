@@ -27,7 +27,7 @@
             android:visibility="gone"
             android:src="@drawable/ic_logo" />
 
-        <com.rex50.mausam.utils.custom_text_views.BoldTextView
+        <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
             android:id="@+id/txt_logo"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
