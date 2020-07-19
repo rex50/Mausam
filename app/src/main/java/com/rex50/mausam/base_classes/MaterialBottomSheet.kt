@@ -52,8 +52,6 @@ abstract class MaterialBottomSheet : BottomSheetDialogFragment() {
     override fun onStart() {
         super.onStart()
         bottomSheetBehavior?.apply {
-            isHideable = isCancelable
-            isDraggable = isCancelable
             setupBehaviour(this)
         }
     }

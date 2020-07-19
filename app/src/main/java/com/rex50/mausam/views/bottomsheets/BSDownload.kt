@@ -47,6 +47,7 @@ class BSDownload : MaterialBottomSheet() {
     }
 
     fun downloadStarted(childFragmentManager: FragmentManager) {
+        isCancelable = false
         show(childFragmentManager, TAG)
     }
 

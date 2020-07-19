@@ -35,10 +35,12 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
 
     inner class GeneralTypeHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView? = itemView.findViewById(R.id.ivPhoto)
+        val imageViewUser: ImageView? = itemView.findViewById(R.id.ivUser)
         private val cardView: CardView? = itemView.findViewById(R.id.cardView)
 
         fun bind(photo: UnsplashPhotos?) {
             imageView?.loadImage(photo?.urls?.getSmall(isDataSaverMode))
+            //imageViewUser?.loadImage(photo?.user?.profileImage?.medium)
         }
 
         fun setClickListener(listener: View.OnClickListener?) {

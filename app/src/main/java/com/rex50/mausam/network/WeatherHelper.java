@@ -59,8 +59,7 @@ public class WeatherHelper {
                         if(!sharedPrefs.getLastWeatherUpdated().isAfter(currentTime.minusMinutes(15))){
                             requestWeather(location.getLatitude(), location.getLongitude(), weatherListener);
                         }else {
-                            DataParser parser = new DataParser();
-                            weatherListener.onSuccess(parser.parseWeatherData(sharedPrefs.getLastWeatherData()));
+                            weatherListener.onSuccess(DataParser.parseWeatherData(sharedPrefs.getLastWeatherData()));
                         }
                     }else {
                         requestWeather(location.getLatitude(), location.getLongitude(), weatherListener);
@@ -95,9 +94,8 @@ public class WeatherHelper {
 //                materialSnackBar.dismiss();
                 sharedPrefs.setLastWeatherData(response);
                 sharedPrefs.setLastWeatherUpdated(DateTime.now());
-                DataParser parser = new DataParser();
                 if(weatherListener != null)
-                    weatherListener.onSuccess(parser.parseWeatherData(response));
+                    weatherListener.onSuccess(DataParser.parseWeatherData(response));
             }
 
             @Override

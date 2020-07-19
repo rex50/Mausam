@@ -8,8 +8,8 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
         android:layout_width="270dp"
-        android:layout_height="170dp"
-        app:cardCornerRadius="85dp"
+        android:layout_height="200dp"
+        app:cardCornerRadius="6dp"
         android:layout_margin="8dp"
         android:focusable="true"
         android:clickable="true"
@@ -25,32 +25,39 @@
             android:scaleType="centerCrop"
             android:contentDescription="@string/preview_image" />
 
-        <View
-            android:id="@+id/vBgOverlay"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black"
-            android:rotation="180"
-            android:alpha="0.5"
-            android:visibility="visible"/>
+            android:layout_gravity="center">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black"
-            android:rotation="180"
-            android:alpha="0.2"
-            android:visibility="visible"/>
+            <View
+                android:id="@+id/vBgOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:rotation="180"
+                android:alpha="0.5"
+                android:visibility="visible"/>
 
-        <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
-            android:id="@+id/tvCategoryName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/color_name"
-            android:textSize="24sp"
-            android:textColor="@color/white"
-            android:layout_gravity="center"
-            android:gravity="center"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:rotation="180"
+                android:alpha="0.3"
+                android:visibility="visible"/>
+
+            <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                android:id="@+id/tvCategoryName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/category_name"
+                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                android:gravity="center"/>
+
+        </FrameLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

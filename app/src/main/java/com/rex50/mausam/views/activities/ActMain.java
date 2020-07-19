@@ -520,7 +520,7 @@ public class ActMain extends BaseActivity implements
             }
         });*/
         if(mausamSharedPrefs.getLastWeatherData() != null){
-            WeatherModelClass weatherModelClass = new DataParser().parseWeatherData(mausamSharedPrefs.getLastWeatherData());
+            WeatherModelClass weatherModelClass = DataParser.parseWeatherData(mausamSharedPrefs.getLastWeatherData());
             requestWeather(weatherModelClass.getCoord().getLat(), weatherModelClass.getCoord().getLon(), listener);
         }else {
             //TODO : listener.onFailed();
@@ -668,8 +668,7 @@ public class ActMain extends BaseActivity implements
                         if(!mausamSharedPrefs.getLastWeatherUpdated().isAfter(currentTime.minusMinutes(15))){
                             requestWeather(location.getLatitude(), location.getLongitude(), weatherListener);
                         }else {
-                            DataParser parser = new DataParser();
-                            weatherListener.onSuccess(parser.parseWeatherData(mausamSharedPrefs.getLastWeatherData()));
+                            weatherListener.onSuccess(DataParser.parseWeatherData(mausamSharedPrefs.getLastWeatherData()));
                         }
                     }else {
                         requestWeather(location.getLatitude(), location.getLongitude(), weatherListener);
@@ -704,9 +703,8 @@ public class ActMain extends BaseActivity implements
                 materialSnackBar.dismiss();
                 mausamSharedPrefs.setLastWeatherData(response);
                 mausamSharedPrefs.setLastWeatherUpdated(DateTime.now());
-                DataParser parser = new DataParser();
                 if(weatherListener != null)
-                    weatherListener.onSuccess(parser.parseWeatherData(response));
+                    weatherListener.onSuccess(DataParser.parseWeatherData(response));
                 /*else {
                     toggleLocationLoader(false);
                     Fragment fragment = HomeFragment.newInstance(weatherDetails);

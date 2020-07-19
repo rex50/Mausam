@@ -103,6 +103,7 @@
     <string name="dummy_error">Some error has occurred and this is dummy message</string>
     <string name="lorem_ipsum">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s</string>
     <string name="color_name">Color name</string>
+    <string name="category_name">Category name</string>
 
     <!--Error messages-->
     <string name="contain_number_error_msg">Please write a location name without Number</string>

@@ -204,8 +204,7 @@ class ActPhotosList : BaseActivity() {
 
     private fun initClicks(){
 
-        val bsDownload: BSDownload? = BSDownload()
-        bsDownload?.isCancelable = false
+        val bsDownload: BSDownload? = BSDownload().also { it.isCancelable = false }
 
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {

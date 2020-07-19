@@ -389,8 +389,7 @@ class FragHome : BaseFragment(), AllContentModel.ContentInsertedListener {
 
     private fun initItemClicks(allContentModel: AllContentModel) {
 
-        val bsDownload: BSDownload? = BSDownload()
-        bsDownload?.isCancelable = false
+        val bsDownload: BSDownload? = BSDownload().also { it.isCancelable = false }
 
         allContentModel.setOnClickListener(object : OnGroupItemClickListener{
 

@@ -38,6 +38,8 @@ import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.stfalcon.imageviewer.StfalconImageViewer
 import com.stfalcon.imageviewer.loader.ImageLoader
 import com.thekhaeng.pushdownanim.PushDownAnim
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
 import java.io.*
 
@@ -485,7 +487,7 @@ class ImageActionHelper {
                                         val imageMeta = SavedImageMeta(name, name, SavedImageMeta.createRelPath(name), ".jpg", isAddToFav)
                                         imageMeta.setUri(path)
                                         listener?.response(imageMeta, it.getString(R.string.saved_to_downloads))
-                                        KeyValuesRepository.insert(context, dBKey, imageMeta.getJSON())
+                                        GlobalScope.launch { KeyValuesRepository.insert(context, dBKey, imageMeta.getJSON()) }
                                     }?: listener?.response(null, it.getString(R.string.failed_to_download_no_space))
                                 }
 
@@ -501,73 +503,80 @@ class ImageActionHelper {
                             })
                 }
 
-                //check if data available in DB
-                val response = KeyValuesRepository.getValue(it, dBKey)
+                GlobalScope.launch {
+                    //check if data available in DB
+                    val response = KeyValuesRepository.getValue(it, dBKey)
 
-                response?.apply {
+                    response?.apply {
 
-                    val imageMeta = SavedImageMeta.getModelFromJSON(this)
+                        val imageMeta: SavedImageMeta? = SavedImageMeta.getModelFromJSON(this)
 
-                    val uri: Uri? = Uri.parse(imageMeta?.relativePath)
 
-                    fun checkIfFileExistsInStorage(): Boolean {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            val retCol = arrayOf(MediaStore.MediaColumns.TITLE, MediaStore.MediaColumns.RELATIVE_PATH)
-                            var cId: String?
-                            imageMeta?.getUri().toString()?.split("/").apply {
-                                cId = this?.get(lastIndex)
-                            }
-                            context.contentResolver.query(
-                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                    retCol,
-                                    MediaStore.MediaColumns._ID + "='" + cId + "'", null, null
-                            )?.use { cur ->
-                                if (cur.count == 0) {
-                                    return false
-                                }
-                                cur.moveToFirst()
-                                val id = cur.getString(cur.getColumnIndex(MediaStore.MediaColumns.TITLE))
-                                id?.takeIf { isNotEmpty() }?.apply {
-                                    return true
-                                }
-                            }
-                        }else{
-                            val file: File? = File(imageMeta?.relativePath!!)
-                            file?.apply {
-                                if(this.exists())
-                                    return true
-                            }
+                        val uri: Uri? = imageMeta?.let {
+                            Uri.parse(imageMeta.relativePath)
                         }
-                        return false
-                    }
 
-                    fun reDownload(){
-                        KeyValuesRepository.delete(context, dBKey)
-                        download()
-                    }
+                        fun checkIfFileExistsInStorage(): Boolean {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                val retCol = arrayOf(MediaStore.MediaColumns.TITLE, MediaStore.MediaColumns.RELATIVE_PATH)
+                                var cId: String?
+                                imageMeta?.getUri().toString().split("/").apply {
+                                    cId = this?.get(lastIndex)
+                                }
+                                context.contentResolver.query(
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                        retCol,
+                                        MediaStore.MediaColumns._ID + "='" + cId + "'", null, null
+                                )?.use { cur ->
+                                    if (cur.count == 0) {
+                                        return false
+                                    }
+                                    cur.moveToFirst()
+                                    val id = cur.getString(cur.getColumnIndex(MediaStore.MediaColumns.TITLE))
+                                    id?.takeIf { isNotEmpty() }?.apply {
+                                        return true
+                                    }
+                                }
+                            }else{
+                                val file: File? = File(imageMeta?.relativePath ?: "")
+                                file?.apply {
+                                    if(this.exists())
+                                        return true
+                                }
+                            }
+                            return false
+                        }
 
-                    //check if data available in Storage
-                    if(checkIfFileExistsInStorage()){
-                        uri?.apply {
-                            if(imageMeta?.isFavorite == false && isAddToFav){
-                                val value = imageMeta.also {image ->
-                                    image.isFavorite = true
-                                }
-                                KeyValuesRepository.update(it, dBKey, value.getJSON())
-                                listener?.response(value, it.getString(R.string.added_to_fav))
-                            }else if(imageMeta?.isFavorite == true && isAddToFav){
-                                val value = imageMeta.also {image ->
-                                    image.isFavorite = false
-                                }
-                                KeyValuesRepository.update(it, dBKey, value.getJSON())
-                                listener?.response(value, it.getString(R.string.removed_from_fav))
-                            }else
-                                listener?.response(imageMeta, it.getString(R.string.already_downloaded))
-                        }?: reDownload()
-                    }else{
-                        reDownload()
-                    }
-                }?: download()
+                        fun reDownload(){
+                            GlobalScope.launch {
+                                KeyValuesRepository.delete(context, dBKey)
+                            }
+                            download()
+                        }
+
+                        //check if data available in Storage
+                        if(checkIfFileExistsInStorage()){
+                            uri?.apply {
+                                if(!imageMeta.isFavorite && isAddToFav){
+                                    val value = imageMeta.also {image ->
+                                        image.isFavorite = true
+                                    }
+                                    GlobalScope.launch { KeyValuesRepository.update(it, dBKey, value.getJSON()) }
+                                    listener?.response(value, it.getString(R.string.added_to_fav))
+                                }else if(imageMeta.isFavorite && isAddToFav){
+                                    val value = imageMeta.also {image ->
+                                        image.isFavorite = false
+                                    }
+                                    GlobalScope.launch { KeyValuesRepository.update(it, dBKey, value.getJSON()) }
+                                    listener?.response(value, it.getString(R.string.removed_from_fav))
+                                }else
+                                    listener?.response(imageMeta, it.getString(R.string.already_downloaded))
+                            }?: reDownload()
+                        }else{
+                            reDownload()
+                        }
+                    }?: download()
+                }
             }
         }
 
