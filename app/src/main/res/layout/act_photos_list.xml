@@ -85,8 +85,20 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_left"
         app:backgroundTint="@color/white"
-        android:tint="@color/colorAccent"
+        android:tint= "@color/colorAccent"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_left"
+        app:backgroundTint="@color/white"
+        android:tint= "@color/colorAccent"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"/>
+
+
 
 </RelativeLayout>

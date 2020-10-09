@@ -128,6 +128,8 @@
     <string name="pixabay_txt" translatable="false">Pixabay</string>
     <string name="developer" translatable="false">Pavitra Raut.</string>
     <string name="download_feature_not_possible_error_msg">Photos download feature will not work without this permission. So please allow Mausam this permission.</string>
+    <string name="left_swipe">left swipe</string>
+    <string name="right_swipe">right swipe</string>
 
 
     <!--Colors for gradient array-->

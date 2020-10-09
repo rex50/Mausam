@@ -63,6 +63,8 @@ class ImageViewerHelper (){
     private var lnlExtraInfo: LinearLayout? = null
     private var rlUserInfo: RelativeLayout? = null
     private var rlImageOverlay: RelativeLayout? = null
+    private var btnRightSwipe: FrameLayout? = null
+    private var btnLeftSwipe: FrameLayout? = null
 
     private var btnSetWall: ImageView? = null
     private var btnDownload: ImageView? = null
@@ -114,6 +116,8 @@ class ImageViewerHelper (){
                 lnlExtraInfo = findViewById(R.id.lnlExtraInfo)
                 rlUserInfo = findViewById(R.id.rlUserInfo)
                 rlImageOverlay = findViewById(R.id.rlImageOverlay)
+                btnRightSwipe = findViewById(R.id.btnRightSwipe)
+                btnLeftSwipe = findViewById(R.id.btnLeftSwipe)
 
                 btnSetWall = findViewById(R.id.btnSetWallpaper)
                 btnDownload = findViewById(R.id.btnDownloadImage)
@@ -164,6 +168,18 @@ class ImageViewerHelper (){
             }
 
             imageViewer = getViewer(this)
+
+            handleNavBtnVisibility(childPos, photosList.lastIndex)
+
+            btnLeftSwipe?.setOnClickListener{
+                handleNavBtnVisibility(--selectedPhotoPos, photosList.lastIndex)
+                imageViewer?.setCurrentPosition(selectedPhotoPos)
+            }
+
+            btnRightSwipe?.setOnClickListener {
+                handleNavBtnVisibility(++selectedPhotoPos, photosList.lastIndex)
+                imageViewer?.setCurrentPosition(selectedPhotoPos)
+            }
         }
         return this
     }
@@ -222,6 +238,7 @@ class ImageViewerHelper (){
                 .withBackgroundView(preLoaderAnimLayout)
                 .withImageChangeListener {
                     selectedPhotoPos = it
+                    handleNavBtnVisibility(selectedPhotoPos, photosList.lastIndex)
                     photosList[selectedPhotoPos].apply {
                         bindPhotographerInfo(this)
                         bindImageInfo(this)
@@ -231,6 +248,22 @@ class ImageViewerHelper (){
             imageViewerBuilder?.withTransitionFrom(this)
         }
         return imageViewerBuilder?.build()
+    }
+
+    private fun handleNavBtnVisibility(currPos: Int, lastPos: Int) {
+        if (0 == currPos){
+            btnLeftSwipe?.hideView()
+        }
+        else if (currPos in 1 until lastPos){
+            btnRightSwipe?.showView()
+            btnLeftSwipe?.showView()
+        }
+        else if (currPos == lastPos) {
+            btnRightSwipe?.hideView()
+        }
+
+
+
     }
 
     private fun initClicks(actionListener: ImageActionListener? = null) {

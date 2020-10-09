@@ -61,6 +61,7 @@ class ActPhotosList : BaseActivity() {
 
         initHeader()
 
+        fabBack?.setOnClickListener{onBackPressed()}
         fabSearchedPhotosBack?.setOnClickListener{ if(scrollToTopActive) scrollToTop() else onBackPressed() }
 
         unsplashHelper = UnsplashHelper(this)

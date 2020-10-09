@@ -110,7 +110,8 @@ class FragSearch : BaseFragment() {
     }
 
     private fun searchPhotos() {
-        val searchTerm = etvSearch?.text.toString()
+        val searchTerm = etvSearch?.text.toString().trim().replace(" +".toRegex(), " ");
+        etvSearch.setText(searchTerm)
         mListener?.startMorePhotosActivity(
                 MoreListData(
                         Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -224,4 +225,5 @@ class FragSearch : BaseFragment() {
             return fragment
         }
     }
+
 }
