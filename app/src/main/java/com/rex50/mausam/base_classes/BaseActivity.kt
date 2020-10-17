@@ -41,6 +41,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 } else if (networkStatus == Utils.TYPE_NOT_CONNECTED) {
                     internetStatus(Utils.TYPE_NOT_CONNECTED)
                 }
+                //internetStatus(networkStatus)
             }
         }
 

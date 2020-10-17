@@ -4,34 +4,53 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
+import com.rex50.mausam.interfaces.*
+import com.rex50.mausam.model_classes.unsplash.collection.Collections
+import com.rex50.mausam.model_classes.unsplash.collection.Tag
+import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
+import com.rex50.mausam.model_classes.unsplash.photos.User
+import com.rex50.mausam.model_classes.unsplash.searched_photos.SearchedPhotos
+import com.rex50.mausam.model_classes.utils.AllContentModel
+import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.model_classes.utils.MoreData
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.model_classes.weather.WeatherModelClass
 import com.rex50.mausam.network.APIManager
 import com.rex50.mausam.network.APIManager.WeatherAPICallBackResponse
+import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Utils.TextValidationInterface
 import com.rex50.mausam.utils.GradientHelper
+import com.rex50.mausam.views.MausamApplication
+import com.rex50.mausam.views.adapters.AdaptHome
+import com.rex50.mausam.views.bottomsheets.BSDownload
 import kotlinx.android.synthetic.main.frag_search.*
+import kotlinx.android.synthetic.main.frag_search.recHomeContent
 import kotlinx.android.synthetic.main.header_custom_general.*
 import org.apache.commons.lang3.StringUtils
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
-
-class FragSearch : BaseFragment() {
+class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
     var searchOnlyCity = false
 
+    private var adaptHome: AdaptHome? = null
+    private var allData: AllContentModel? = null
+    private var sequenceOfLayout: MutableList<String> = ArrayList()
     private var mListener: OnFragmentInteractionListener? = null
 
     override fun getResourceLayout(): Int = R.layout.frag_search
@@ -98,8 +117,417 @@ class FragSearch : BaseFragment() {
     }
 
     override fun load() {
-        //TODO
-        // can show some tags to search
+        prepareHomeRecycler(getSequenceOfLayout())
+    }
+
+    private fun getSequenceOfLayout(): List<String> = sequenceOfLayout.apply {
+        clear()
+      /*  add(Constants.AvailableLayouts.WEATHER_BASED_PHOTOS)
+        add(Constants.AvailableLayouts.LOCATION_BASED_PHOTOS)
+        add(Constants.AvailableLayouts.TIME_BASED_PHOTOS)
+        add(Constants.AvailableLayouts.FEATURED_COLLECTIONS)
+        add(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)
+        add(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES)
+        add(Constants.AvailableLayouts.POPULAR_PHOTOS)
+        add(Constants.AvailableLayouts.POPULAR_TAGS)
+        add(Constants.AvailableLayouts.BROWSE_BY_COLORS)
+        //add(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)*/
+
+        //Use below format when implemented in search screen
+        add(Constants.AvailableLayouts.POPULAR_TAGS)
+        add(Constants.AvailableLayouts.FEATURED_COLLECTIONS)
+        add(Constants.AvailableLayouts.POPULAR_PHOTOS)
+        add(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)
+        add(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES)
+        add(Constants.AvailableLayouts.BROWSE_BY_COLORS)
+        add(Constants.AvailableLayouts.LOCATION_BASED_PHOTOS)
+        add(Constants.AvailableLayouts.WEATHER_BASED_PHOTOS)
+        add(Constants.AvailableLayouts.TIME_BASED_PHOTOS)
+    }
+
+    private fun prepareHomeRecycler(sequenceOfLayout: List<String>) {
+        val unsplashHelper = UnsplashHelper(mContext)
+        allData = AllContentModel()
+        allData?.setContentInsertListener(this)
+        adaptHome = AdaptHome(mContext, allData)
+        recHomeContent?.apply {
+            layoutManager = LinearLayoutManager(mContext)
+            setHasFixedSize(true)
+            adapter = adaptHome
+        }
+
+        allData?.apply {
+            setSequenceOfLayouts(sequenceOfLayout)
+            setAdapter(adaptHome)
+            initItemClicks(this)
+        }
+
+        //mListener?.getMaterialSnackBar()?.showIndeterminateBar(R.string.preparing_home)
+
+        if (sequenceOfLayout.contains(Constants.AvailableLayouts.WEATHER_BASED_PHOTOS)) {
+            val seasons = arrayListOf("late winter", "spring", "monsoon", "autumn", "summer", "early winter")
+            val season = StringUtils.capitalize(seasons.random())
+            unsplashHelper.getSearchedPhotos(season, 1, 20, object : GetUnsplashSearchedPhotosListener {
+                override fun onSuccess(photos: SearchedPhotos) {
+                    allData?.addSequentially(Constants.AvailableLayouts.WEATHER_BASED_PHOTOS,
+                            GenericModelFactory.getGeneralTypeObject(Constants.AvailableLayouts.WEATHER_BASED_PHOTOS, /*Constants.Providers.POWERED_BY_UNSPLASH*/ season, false, photos.results))
+                }
+
+                override fun onFailed(errors: JSONArray) {
+                    Log.e(FragHome.TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
+                }
+            })
+        }
+        if (sequenceOfLayout.contains(Constants.AvailableLayouts.LOCATION_BASED_PHOTOS)) {
+            val places = arrayListOf("Gujarat", "Orissa", "Bengaluru", "Hydrebad", "Kolkata",
+                    "Hong Kong", "London", "Malaysia", "Punjab", "Mumbai", "Chennai", "Paris", "USA", "Sri Lanka",
+                    "Russia", "Pakistan", "Bangladesh", "Tibet", "Berlin", "Bhutan", "Africa", "Australia", "England")
+            val place = StringUtils.capitalize(places.random())
+            unsplashHelper.getSearchedPhotos(place, 1, 20, object : GetUnsplashSearchedPhotosListener {
+                override fun onSuccess(photos: SearchedPhotos) {
+                    if(!photos.results.isNullOrEmpty()){
+                        allData?.addSequentially(Constants.AvailableLayouts.LOCATION_BASED_PHOTOS,
+                                GenericModelFactory.getGeneralTypeObject(Constants.AvailableLayouts.LOCATION_BASED_PHOTOS, /*Constants.Providers.POWERED_BY_UNSPLASH*/ place, false, photos.results))
+                    }else
+                        allData?.increaseResponseCount()
+                }
+
+                override fun onFailed(errors: JSONArray) {
+                    Log.e(FragHome.TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
+                }
+            })
+        }
+        if (sequenceOfLayout.contains(Constants.AvailableLayouts.TIME_BASED_PHOTOS)) {
+            unsplashHelper.getSearchedPhotos("Night", 1, 20, object : GetUnsplashSearchedPhotosListener {
+                override fun onSuccess(photos: SearchedPhotos) {
+                    allData?.addSequentially(Constants.AvailableLayouts.TIME_BASED_PHOTOS,
+                            GenericModelFactory.getGeneralTypeObject(Constants.AvailableLayouts.TIME_BASED_PHOTOS, Constants.Providers.POWERED_BY_UNSPLASH, false, photos.results))
+                }
+
+                override fun onFailed(errors: JSONArray) {
+                    Log.e(FragHome.TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
+                }
+            })
+        }
+        if (sequenceOfLayout.contains(Constants.AvailableLayouts.POPULAR_PHOTOS)) {
+            unsplashHelper.getPhotosAndUsers(UnsplashHelper.ORDER_BY_POPULAR, object : GetUnsplashPhotosAndUsersListener {
+                override fun onSuccess(photos: List<UnsplashPhotos>, userList: List<User>) {
+                    allData?.addSequentially(Constants.AvailableLayouts.POPULAR_PHOTOS,
+                            GenericModelFactory.getGeneralTypeObject(Constants.AvailableLayouts.POPULAR_PHOTOS, Constants.Providers.POWERED_BY_UNSPLASH, true, photos))
+                    if (sequenceOfLayout.contains(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)) {
+                        allData?.addSequentially(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS,
+                                GenericModelFactory.getUserTypeObject(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS, Constants.Providers.POWERED_BY_UNSPLASH, false, userList))
+                    }
+                }
+
+                override fun onFailed(errors: JSONArray) {
+                    Log.e(FragHome.TAG, "onFailed: $errors")
+                    allData?.apply {
+                        increaseResponseCount()
+                        if (sequenceOfLayout.contains(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)) {
+                            increaseResponseCount()
+                        }
+                    }
+                }
+            })
+        }
+        if (sequenceOfLayout.contains(Constants.AvailableLayouts.FEATURED_COLLECTIONS)) {
+            unsplashHelper.getCollectionsAndTags(1, 10, object : GetUnsplashCollectionsAndTagsListener {
+                override fun onSuccess(collection: List<Collections>, tagsList: List<Tag>) {
+                    allData?.addSequentially(Constants.AvailableLayouts.FEATURED_COLLECTIONS,
+                            GenericModelFactory.getCollectionTypeObject(Constants.AvailableLayouts.FEATURED_COLLECTIONS, Constants.Providers.POWERED_BY_UNSPLASH, true, collection))
+                    if (sequenceOfLayout.contains(Constants.AvailableLayouts.POPULAR_TAGS)) {
+                        allData?.addSequentially(Constants.AvailableLayouts.POPULAR_TAGS,
+                                GenericModelFactory.getTagTypeObject(Constants.AvailableLayouts.POPULAR_TAGS, Constants.Providers.POWERED_BY_UNSPLASH, false, tagsList, true))
+                    }
+                }
+
+                override fun onFailed(errors: JSONArray) {
+                    Log.e(FragHome.TAG, "onFailed: $errors")
+                    allData?.apply {
+                        increaseResponseCount()
+                        if (sequenceOfLayout.contains(Constants.AvailableLayouts.POPULAR_TAGS)) {
+                            increaseResponseCount()
+                        }
+                    }
+                }
+            })
+        }
+        if (sequenceOfLayout.contains(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES)) {
+            mContext?.apply {
+                val categories = listOf<String>(*resources.getStringArray(R.array.array_categories_type))
+                allData?.addSequentially(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES, GenericModelFactory.getCategoryTypeObject(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES,
+                        Constants.Providers.POWERED_BY_UNSPLASH, false, GenericModelFactory.CategoryTypeModel.createModelFromStringList(categories), true))
+            }?: allData?.increaseResponseCount()
+        }
+        if (sequenceOfLayout.contains(Constants.AvailableLayouts.BROWSE_BY_COLORS)) {
+            mContext?.apply {
+                val colorsList = listOf<String>(*resources.getStringArray(R.array.array_colors_type))
+                allData!!.addSequentially(Constants.AvailableLayouts.BROWSE_BY_COLORS, GenericModelFactory.getColorTypeObject(Constants.AvailableLayouts.BROWSE_BY_COLORS, Constants.Providers.POWERED_BY_UNSPLASH,
+                        false, GenericModelFactory.ColorTypeModel.createModelFromStringList(colorsList), true))
+            }?: allData?.increaseResponseCount()
+        }
+        if (sequenceOfLayout.contains(Constants.AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)) {
+            unsplashHelper.getUserPhotos("rpnickson", 1, 20, object : GetUnsplashPhotosListener {
+                override fun onSuccess(photos: List<UnsplashPhotos>) {
+                    allData?.addSequentially(Constants.AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES, GenericModelFactory.getFavouritePhotographerTypeObject(
+                            Constants.AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES, Constants.Providers.POWERED_BY_UNSPLASH, photos))
+                }
+
+                override fun onFailed(errors: JSONArray) {
+                    Log.e(FragHome.TAG, "onFailed: $errors")
+                    allData?.increaseResponseCount()
+                }
+            })
+        }
+    }
+
+    private fun initItemClicks(allContentModel: AllContentModel) {
+
+        val bsDownload: BSDownload? = BSDownload().also { it.isCancelable = false }
+
+        allContentModel.setOnClickListener(object : OnGroupItemClickListener {
+
+            override fun onItemClick(o: Any?, childImgView: ImageView?, groupPos: Int, childPos: Int) {
+
+                object : GenericModelCastHelper(o) {
+
+                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+                        mListener?.startMorePhotosActivity(
+                                MoreListData(
+                                        Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
+                                        collectionInfo = collectionTypeModel?.collections?.get(childPos)
+                                )
+                        )
+                    }
+
+                    override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
+                        generalTypeModel?.apply {
+
+                            ImageViewerHelper(mContext).with(photosList,
+                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+
+                                override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            bsDownload?.downloadStarted(childFragmentManager)
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            bsDownload?.downloadError()
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            ImageActionHelper.setWallpaper(mContext, imageMeta?.getUri())
+                                        }
+                                    })
+                                }
+
+                                override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            bsDownload?.downloadStarted(childFragmentManager)
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            bsDownload?.downloadError()
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            if(msg.isNotEmpty()){
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            bsDownload?.downloadStarted(childFragmentManager)
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            bsDownload?.downloadError()
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            if(msg.isNotEmpty()){
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onShare(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.shareImage(mContext, "Share", photoInfo.user.name, photoInfo.links.html)
+                                }
+
+                                override fun onUserPhotos(user: User) {
+                                    mListener?.startMorePhotosActivity(
+                                            MoreListData(
+                                                    Constants.ListModes.LIST_MODE_USER_PHOTOS,
+                                                    user
+                                            )
+                                    )
+                                }
+                            }).setDataSaverMode(MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false).show()
+                        }
+                    }
+
+                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                        favPhotographerTypeModel?.apply {
+                            ImageViewerHelper(mContext).with(photosList,
+                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+                                override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            bsDownload?.downloadStarted(childFragmentManager)
+                                            showToast(getString(R.string.download_started))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            bsDownload?.downloadError()
+                                            showToast(getString(R.string.failed_to_download_no_internet))
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            ImageActionHelper.setWallpaper(mContext, Uri.parse(imageMeta?.relativePath))
+                                        }
+                                    })
+                                }
+
+                                override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            bsDownload?.downloadStarted(childFragmentManager)
+                                            showToast(getString(R.string.download_started))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            bsDownload?.downloadError()
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            if(msg.isNotEmpty()){
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener{
+                                        override fun onDownloadStarted() {
+                                            bsDownload?.downloadStarted(childFragmentManager)
+                                            showToast(getString(R.string.adding_to_fav))
+                                        }
+
+                                        override fun onDownloadFailed() {
+                                            bsDownload?.downloadError()
+                                        }
+
+                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            if(msg.isNotEmpty()){
+                                                showToast(msg)
+                                            }
+                                        }
+                                    })
+                                }
+
+                                override fun onShare(photoInfo: UnsplashPhotos, name: String) {
+                                    ImageActionHelper.shareImage(mContext, "Share", photoInfo.user.name, photoInfo.links.html)
+                                }
+                            }).setDataSaverMode(MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false).show()
+                        }
+                    }
+
+                    override fun onTagType(tagTypeModel: GenericModelFactory.TagTypeModel?) {
+                        mListener?.startMorePhotosActivity(
+                                MoreListData(
+                                        Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
+                                        generalInfo = MoreData(
+                                                tagTypeModel?.tagsList?.get(childPos)?.title,
+                                                Constants.Providers.POWERED_BY_UNSPLASH
+                                        )
+                                )
+                        )
+                    }
+
+                    override fun onColorType(colorTypeModel: GenericModelFactory.ColorTypeModel?) {
+                        mListener?.startMorePhotosActivity(
+                                MoreListData(
+                                        Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
+                                        generalInfo = MoreData(
+                                                colorTypeModel?.colorsList?.get(childPos)?.colorName,
+                                                Constants.Providers.POWERED_BY_UNSPLASH
+                                        )
+                                )
+                        )
+                    }
+
+                    override fun onCategoryType(categoryTypeModel: GenericModelFactory.CategoryTypeModel?) {
+                        mListener?.startMorePhotosActivity(
+                                MoreListData(
+                                        Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
+                                        generalInfo = MoreData(
+                                                categoryTypeModel?.categories?.get(childPos)?.categoryName,
+                                                Constants.Providers.POWERED_BY_UNSPLASH
+                                        )
+                                )
+                        )
+                    }
+
+                    override fun onUserType(userTypeModel: GenericModelFactory.UserTypeModel?) {
+                        mListener?.startMorePhotosActivity(
+                                MoreListData(
+                                        Constants.ListModes.LIST_MODE_USER_PHOTOS,
+                                        userTypeModel?.usersList?.get(childPos)
+                                )
+                        )
+                    }
+                }
+
+            }
+
+            override fun onMoreClicked(o: Any?, title: String?, groupPos: Int) {
+
+                object : GenericModelCastHelper(o){
+                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+                        mListener?.startMoreFeaturedCollections(
+                                MoreListData(
+                                        Constants.ListModes.LIST_MODE_COLLECTIONS,
+                                        generalInfo = MoreData(
+                                                title
+                                        )
+                                )
+                        )
+                    }
+
+                    override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
+                        mListener?.startMorePhotosActivity(
+                                MoreListData(
+                                        Constants.ListModes.LIST_MODE_POPULAR_PHOTOS,
+                                        generalInfo = MoreData(
+                                                title,
+                                                Constants.Providers.POWERED_BY_UNSPLASH
+                                        )
+                                )
+                        )
+                    }
+                }
+
+            }
+        })
     }
 
     private fun onSearchClickAction() {
@@ -207,14 +635,17 @@ class FragSearch : BaseFragment() {
         fun onFragmentInteraction(uri: Uri?)
         fun onWeatherSearchSuccess(weatherDetails: WeatherModelClass?)
         fun nextBtnClicked()
+        //TODO: fun getMaterialSnackBar(): MaterialSnackBar?
         //fun startMorePhotosActivity(listMode: String?, searchTerm: String?, desc: String?)
         fun startMorePhotosActivity(data: MoreListData)
+        fun startMoreFeaturedCollections(moreListData: MoreListData)
         val sharedPrefs: MausamSharedPrefs?
         val snackBar: MaterialSnackBar?
     }
 
     companion object {
         private const val ARG_PARAM1 = "param1"
+        private const val TAG = "HomeFragment"
 
         @JvmStatic
         fun newInstance(searchOnlyCity: Boolean): FragSearch {
@@ -225,5 +656,10 @@ class FragSearch : BaseFragment() {
             return fragment
         }
     }
+
+    override fun onAllContentLoaded() {
+        //TODO("Not yet implemented")
+    }
+
 
 }

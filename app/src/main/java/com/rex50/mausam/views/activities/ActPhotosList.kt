@@ -197,9 +197,11 @@ class ActPhotosList : BaseActivity() {
 
         }
 
-        recSearchedPhotos.clearOnScrollListeners()
-        recSearchedPhotos.addOnScrollListener(endlessScrollListener)
-        recSearchedPhotos.addOnScrollListener(scrollListener)
+        recSearchedPhotos?.apply {
+            clearOnScrollListeners()
+            addOnScrollListener(endlessScrollListener)
+            addOnScrollListener(scrollListener)
+        }
 
     }
 

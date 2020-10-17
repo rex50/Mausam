@@ -619,6 +619,15 @@ public class ActMain extends BaseActivity implements
         }
     }
 
+    @Nullable
+    @Override
+    public Boolean isDataSaverMode() {
+        if (mausamSharedPrefs != null)
+            return mausamSharedPrefs.isDataSaverMode();
+        else
+            return null;
+    }
+
     @Override
     public void startSettings() {
         startActivity(new Intent(this, ActSettings.class));
