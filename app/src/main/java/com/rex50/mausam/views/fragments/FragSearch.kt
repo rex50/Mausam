@@ -117,6 +117,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
     }
 
     override fun load() {
+        lvCenter?.showView()
         prepareHomeRecycler(getSequenceOfLayout())
     }
 
@@ -150,11 +151,6 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
         allData = AllContentModel()
         allData?.setContentInsertListener(this)
         adaptHome = AdaptHome(mContext, allData)
-        recHomeContent?.apply {
-            layoutManager = LinearLayoutManager(mContext)
-            setHasFixedSize(true)
-            adapter = adaptHome
-        }
 
         allData?.apply {
             setSequenceOfLayouts(sequenceOfLayout)
@@ -658,7 +654,12 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
     }
 
     override fun onAllContentLoaded() {
-        //TODO("Not yet implemented")
+        lvCenter?.hideView()
+        recHomeContent?.apply {
+            layoutManager = LinearLayoutManager(mContext)
+            setHasFixedSize(true)
+            adapter = adaptHome
+        }
     }
 
 
