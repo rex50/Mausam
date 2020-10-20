@@ -47,6 +47,11 @@ class Constants {
     }
 
     object Image {
+
+        object Extensions {
+            const val JPG = ".jpg"
+        }
+
         const val JPEG_NAME_PATTERN = "%s.jpg"
         const val DOWNLOAD_RELATIVE_PATH = "Pictures/Mausam/Downloads/"
         const val FAV_RELATIVE_PATH = "Pictures/Mausam/Favourites/"
@@ -71,6 +76,8 @@ class Constants {
     object IntentConstants {
         const val LIST_DATA = "photoListData"
         const val SEARCH_FEAT_COLLECTION = "searchFeaturedCollection"
+        const val NAME = "name"
+        const val IS_ADD_FAV = "isAddFav"
     }
 
     object ListModes {

@@ -30,6 +30,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rex50.mausam.R
 import org.joda.time.DateTime
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,6 +38,10 @@ fun String.isInt(): Boolean = when(toIntOrNull()){
     null -> false
     else -> true
 }
+
+fun String.toBoolean(): Boolean = equals("true")
+
+fun Boolean.getString(): String = if(this) "true" else "false"
 
 fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
@@ -225,4 +230,35 @@ fun FloatingActionButton.toRightAndRotate(){
         it.setMargins(marginStart, marginTop, marginEnd, marginBottom)
     }
     rotation = 90F
+}
+
+fun checkIfFileExistsInStorage(relativePath: String?): Boolean {
+    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val retCol = arrayOf(MediaStore.MediaColumns.TITLE, MediaStore.MediaColumns.RELATIVE_PATH)
+        var cId: String?
+        imageMeta?.getUri().toString().split("/").apply {
+            cId = this?.get(lastIndex)
+        }
+        context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                retCol,
+                MediaStore.MediaColumns._ID + "='" + cId + "'", null, null
+        )?.use { cur ->
+            if (cur.count == 0) {
+                return false
+            }
+            cur.moveToFirst()
+            val id = cur.getString(cur.getColumnIndex(MediaStore.MediaColumns.TITLE))
+            id?.takeIf { isNotEmpty() }?.apply {
+                return true
+            }
+        }
+    }else{*/
+    val file: File? = File(relativePath ?: "")
+    file?.apply {
+        if(this.exists())
+            return true
+    }
+    //}
+    return false
 }

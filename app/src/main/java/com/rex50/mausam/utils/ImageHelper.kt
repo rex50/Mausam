@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -27,7 +28,6 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -38,8 +38,10 @@ import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.stfalcon.imageviewer.StfalconImageViewer
 import com.stfalcon.imageviewer.loader.ImageLoader
 import com.thekhaeng.pushdownanim.PushDownAnim
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.tonyodev.fetch2.*
+import com.tonyodev.fetch2core.Extras
+import com.tonyodev.fetch2core.Func
+import kotlinx.coroutines.*
 import org.apache.commons.lang3.StringUtils
 import java.io.*
 
@@ -458,56 +460,90 @@ class ImageActionHelper {
         }
 
         fun saveImage(context: Context?, url: String, name: String, desc: String, isAddToFav: Boolean, listener: ImageSaveListener?){
-            context?.let {
+            context?.let { ctx ->
 
                 val dBKey = Constants.Image.DOWNLOAD_RELATIVE_PATH+name
-                val nameWithExtension = Constants.Image.JPEG_NAME_PATTERN.format(name)
 
                 fun download(){
-                    if(!it.isStoragePermissionGranted()) {
-                        listener?.response(null, it.getString(R.string.no_storage_permission_msg))
+
+                    fun prepareFile(): String?{
+                        val file: File? = File(SavedImageMeta.createRelPath(name))
+                        file?.apply {
+                            file.parentFile?.mkdirs()
+                            if(!file.exists())
+                                file.createNewFile()
+                        }
+                        return file?.absolutePath
+                    }
+
+                    if(!ctx.isStoragePermissionGranted()) {
+                        listener?.response(null, ctx.getString(R.string.no_storage_permission_msg))
                         return
                     }
-                    listener?.onDownloadStarted()
-                    Glide.with(context)
-                            .asBitmap()
-                            .load(url)
-                            .apply(RequestOptions().format(DecodeFormat.PREFER_ARGB_8888))
-                            .into(object: CustomTarget<Bitmap>(){
-                                override fun onResourceReady(resource: Bitmap, transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?) {
-                                    val path = insertImage(context.contentResolver,
-                                            resource,
-                                            Constants.Image.DOWNLOAD_RELATIVE_PATH,
-                                            nameWithExtension,
-                                            desc)
 
-                                    path?.apply {
-                                        /*val msg = if (isAddToFav) it.getString(R.string.saved_to_fav) else it.getString(R.string.saved_to_downloads)
-                                        listener?.response(path, msg)*/
-                                        val imageMeta = SavedImageMeta(name, name, SavedImageMeta.createRelPath(name), ".jpg", isAddToFav)
-                                        imageMeta.setUri(path)
-                                        listener?.response(imageMeta, it.getString(R.string.saved_to_downloads))
-                                        GlobalScope.launch { KeyValuesRepository.insert(context, dBKey, imageMeta.getJSON()) }
-                                    }?: listener?.response(null, it.getString(R.string.failed_to_download_no_space))
+                    prepareFile()?.let { localImagePath ->
+                        val fetchConfiguration = FetchConfiguration.Builder(ctx)
+                                .setDownloadConcurrentLimit(3)
+                                .build()
+
+                        val fetch = Fetch.Impl.getInstance(fetchConfiguration)
+
+                        fetch.addListener(object : AbstractFetchListener() {
+
+                            override fun onCompleted(download: Download) {
+                                val extras = download.extras
+                                val imgName = extras.map[Constants.IntentConstants.NAME] ?: ""
+                                val imgAddFav = extras.map[Constants.IntentConstants.IS_ADD_FAV]?.toBoolean()
+                                        ?: false
+                                val imageMeta = SavedImageMeta(imgName, imgName, SavedImageMeta.createRelPath(imgName), Constants.Image.Extensions.JPG, imgAddFav)
+                                imageMeta.setUri(imageMeta.getUri())
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    listener?.response(imageMeta, ctx.getString(R.string.saved_to_downloads))
+                                    withContext(Dispatchers.IO) {
+                                        KeyValuesRepository.insert(ctx, dBKey, imageMeta.getJSON())
+                                    }
                                 }
+                            }
 
-                                override fun onLoadFailed(errorDrawable: Drawable?) {
-                                    listener?.onDownloadFailed()
-                                    super.onLoadFailed(errorDrawable)
-                                }
+                            override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
+                                Log.e("ImageHelper", "onProgress: " + download.progress)
+                                //TODO: add a listener to update progress
+                            }
 
-                                override fun onLoadCleared(placeholder: Drawable?) {
-                                    //Use when required
-                                }
+                            override fun onError(download: Download, error: Error, throwable: Throwable?) {
+                                //TODO: Handle download error
+                            }
+                        })
 
+                        val request = Request(url, localImagePath).also { req ->
+                            req.priority = Priority.HIGH
+                            req.extras = Extras(HashMap<String, String>().also {
+                                it[Constants.IntentConstants.NAME] = name
+                                it[Constants.IntentConstants.IS_ADD_FAV] = isAddToFav.toString()
                             })
+                        }
+
+                        fetch.enqueue(request, Func {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                listener?.onDownloadStarted()
+                            }
+                        }, Func {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                listener?.onDownloadFailed()
+                            }
+                        })
+
+                    } ?: CoroutineScope(Dispatchers.Main).launch {
+                        listener?.onDownloadFailed()
+                    }
+
                 }
 
-                GlobalScope.launch {
+                CoroutineScope(Dispatchers.IO).launch {
                     //check if data available in DB
-                    val response = KeyValuesRepository.getValue(it, dBKey)
+                    val response = KeyValuesRepository.getValue(ctx, dBKey)
 
-                    response?.apply {
+                    response?.takeIf { it.isNotEmpty() }?.apply {
 
                         val imageMeta: SavedImageMeta? = SavedImageMeta.getModelFromJSON(this)
 
@@ -516,66 +552,48 @@ class ImageActionHelper {
                             Uri.parse(imageMeta.relativePath)
                         }
 
-                        fun checkIfFileExistsInStorage(): Boolean {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                val retCol = arrayOf(MediaStore.MediaColumns.TITLE, MediaStore.MediaColumns.RELATIVE_PATH)
-                                var cId: String?
-                                imageMeta?.getUri().toString().split("/").apply {
-                                    cId = this?.get(lastIndex)
-                                }
-                                context.contentResolver.query(
-                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                        retCol,
-                                        MediaStore.MediaColumns._ID + "='" + cId + "'", null, null
-                                )?.use { cur ->
-                                    if (cur.count == 0) {
-                                        return false
-                                    }
-                                    cur.moveToFirst()
-                                    val id = cur.getString(cur.getColumnIndex(MediaStore.MediaColumns.TITLE))
-                                    id?.takeIf { isNotEmpty() }?.apply {
-                                        return true
-                                    }
-                                }
-                            }else{
-                                val file: File? = File(imageMeta?.relativePath ?: "")
-                                file?.apply {
-                                    if(this.exists())
-                                        return true
-                                }
-                            }
-                            return false
-                        }
 
-                        fun reDownload(){
-                            GlobalScope.launch {
-                                KeyValuesRepository.delete(context, dBKey)
-                            }
+                        suspend fun reDownload() = with(Dispatchers.IO) {
+                            KeyValuesRepository.delete(context, dBKey)
                             download()
                         }
 
                         //check if data available in Storage
-                        if(checkIfFileExistsInStorage()){
+                        if(checkIfFileExistsInStorage(imageMeta?.relativePath)){
                             uri?.apply {
                                 if(!imageMeta.isFavorite && isAddToFav){
+
                                     val value = imageMeta.also {image ->
                                         image.isFavorite = true
                                     }
-                                    GlobalScope.launch { KeyValuesRepository.update(it, dBKey, value.getJSON()) }
-                                    listener?.response(value, it.getString(R.string.added_to_fav))
+                                    KeyValuesRepository.update(ctx, dBKey, value.getJSON())
+                                    withContext(Dispatchers.Main) {
+                                        listener?.response(value, ctx.getString(R.string.added_to_fav))
+                                    }
+
                                 }else if(imageMeta.isFavorite && isAddToFav){
+
                                     val value = imageMeta.also {image ->
                                         image.isFavorite = false
                                     }
-                                    GlobalScope.launch { KeyValuesRepository.update(it, dBKey, value.getJSON()) }
-                                    listener?.response(value, it.getString(R.string.removed_from_fav))
-                                }else
-                                    listener?.response(imageMeta, it.getString(R.string.already_downloaded))
-                            }?: reDownload()
+
+                                    KeyValuesRepository.update(ctx, dBKey, value.getJSON())
+                                    withContext(Dispatchers.Main) {
+                                        listener?.response(value, ctx.getString(R.string.removed_from_fav))
+                                    }
+
+                                }else withContext(Dispatchers.Main) {
+
+                                    listener?.response(imageMeta, ctx.getString(R.string.already_downloaded))
+
+                                }
+                            }?:
+                            reDownload()
                         }else{
                             reDownload()
                         }
-                    }?: download()
+                    }?:
+                    download()
                 }
             }
         }
