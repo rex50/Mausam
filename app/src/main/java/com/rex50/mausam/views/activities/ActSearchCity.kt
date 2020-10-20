@@ -54,4 +54,8 @@ class ActSearchCity : BaseActivity(), FragSearch.OnFragmentInteractionListener {
     override fun startMorePhotosActivity(data: MoreListData) {
         //Nothing
     }
+
+    override fun startMoreFeaturedCollections(moreListData: MoreListData) {
+        //Nothing
+    }
 }

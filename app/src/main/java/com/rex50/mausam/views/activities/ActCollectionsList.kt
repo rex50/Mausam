@@ -59,6 +59,7 @@ class ActCollectionsList() : BaseActivity() {
 
         tvPageDesc?.text = listData?.getDesc()
 
+        fabCollectionBack?.setOnClickListener{onBackPressed()}
         fabSearchedCollectionBack?.setOnClickListener{ if(scrollToTopActive) scrollToTop() else onBackPressed() }
 
         initRecycler()
