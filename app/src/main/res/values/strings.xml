@@ -130,6 +130,7 @@
     <string name="download_feature_not_possible_error_msg">Photos download feature will not work without this permission. So please allow Mausam this permission.</string>
     <string name="left_swipe">left swipe</string>
     <string name="right_swipe">right swipe</string>
+    <string name="loading">Loading</string>
 
 
     <!--Colors for gradient array-->

@@ -61,6 +61,8 @@ class FragHome : BaseFragment() {
         unsplashHelper = UnsplashHelper(context)
         initDataModel()
         initRecycler()
+        lvCenter?.showView()
+        getPopularPhotosOf(INITIAL_PAGE)
         initClicks()
     }
 
@@ -81,6 +83,7 @@ class FragHome : BaseFragment() {
 
         val endlessScrollListener =  object: EndlessRecyclerOnScrollListener(layoutManager){
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                lvBottom?.showView()
                 getPopularPhotosOf(page)
             }
         }
@@ -117,8 +120,6 @@ class FragHome : BaseFragment() {
             addOnScrollListener(endlessScrollListener)
             //addOnScrollListener(scrollListener)
         }
-
-        getPopularPhotosOf(INITIAL_PAGE)
 
     }
 
@@ -218,12 +219,14 @@ class FragHome : BaseFragment() {
     private fun getPopularPhotosOf(page: Int){
         unsplashHelper?.getPhotosAndUsers(UnsplashHelper.ORDER_BY_POPULAR, page, 20, object : GetUnsplashPhotosAndUsersListener {
             override fun onSuccess(photos: List<UnsplashPhotos>, userList: List<User>) {
-                ivLoader?.hideView()
+                lvCenter?.hideView()
+                lvBottom?.hideView()
                 updateList(page, photos)
             }
 
             override fun onFailed(errors: JSONArray) {
-                ivLoader?.hideView()
+                lvCenter?.hideView()
+                lvBottom?.hideView()
                 //TODO: showErrorMsg()
             }
         })
@@ -253,10 +256,9 @@ class FragHome : BaseFragment() {
             }
 
             else -> {
-                val lastSize = photosList.size
                 results.takeIf { it.isNotEmpty() }?.apply {
                     photosList.addAll(results)
-                    adapter?.notifyItemRangeInserted(lastSize, results.size)
+                    adapter?.notifyItemRangeInserted(photosList.size - results.size, results.size)
                 }
             }
         }

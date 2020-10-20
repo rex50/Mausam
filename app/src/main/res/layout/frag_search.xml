@@ -146,6 +146,15 @@
                 android:scrollbars="none"
                 android:descendantFocusability="blocksDescendants"/>
 
+            <include layout="@layout/loading_view"
+                android:id="@+id/lvCenter"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:visibility="visible"
+                android:layout_below="@+id/etvSearch"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_50dp" />
+
         </RelativeLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
