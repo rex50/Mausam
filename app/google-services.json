@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "1044316151319",
-    "firebase_url": "https://mausam-90951.firebaseio.com",
-    "project_id": "mausam-90951",
-    "storage_bucket": "mausam-90951.appspot.com"
+    "project_number": "573855174000",
+    "firebase_url": "https://mausam-of-photos.firebaseio.com",
+    "project_id": "mausam-of-photos",
+    "storage_bucket": "mausam-of-photos.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1044316151319:android:3647ab19ed4de23e4cc652",
+        "mobilesdk_app_id": "1:573855174000:android:222dd9e8eeec1bde5dd3b5",
         "android_client_info": {
           "package_name": "com.rex50.mausam"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1044316151319-1ns8oa4t9q6iv9k1t2td038mprobe33i.apps.googleusercontent.com",
+          "client_id": "573855174000-rckitsj84di30ppn2l4hpeu9gc8b3r3l.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDFKTKYa7Pm7PVghpHxuFpGa2p6ovFfMjM"
+          "current_key": "AIzaSyCTcFLPpmnJmz52bCFCIdbkfyfvmZP-o7g"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1044316151319-1ns8oa4t9q6iv9k1t2td038mprobe33i.apps.googleusercontent.com",
+              "client_id": "573855174000-rckitsj84di30ppn2l4hpeu9gc8b3r3l.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

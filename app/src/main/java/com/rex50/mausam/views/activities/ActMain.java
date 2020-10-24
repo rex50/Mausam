@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.rex50.mausam.R;
 import com.rex50.mausam.base_classes.BaseActivity;
 import com.rex50.mausam.interfaces.LocationResultListener;
@@ -91,11 +92,8 @@ public class ActMain extends BaseActivity implements
 
     @Override
     protected void loadAct(@Nullable Bundle savedInstanceState) {
-        //Firebase init
-        /*FirebaseInstanceId instanceId = FirebaseInstanceId.getInstance();
-        instanceId.getInstanceId();*/
-        /*FirebaseAnalytics analytis = FirebaseAnalytics.getInstance(this);
-        analytis.logEvent("on_main_activity", new Bundle());*/
+        FirebaseAnalytics analytis = FirebaseAnalytics.getInstance(this);
+        analytis.logEvent("on_main_activity", new Bundle());
 
         init();
         /*if(ContextCompat.checkSelfPermission(this,
