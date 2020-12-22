@@ -28,6 +28,7 @@ import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.views.bottomsheets.BSUserMore
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.android.synthetic.main.act_photos_list.*
 import org.json.JSONArray
 
@@ -71,10 +72,9 @@ class ActPhotosList : BaseActivity() {
         initRecycler()
 
         initClicks()
-
         ivLoader?.showView()
 
-        getPhotosOf(1)
+        getPhotosOf(INITIAL_PAGE)
 
     }
 
@@ -163,7 +163,9 @@ class ActPhotosList : BaseActivity() {
         recSearchedPhotos?.layoutManager = layoutManager
         if (recSearchedPhotos?.itemDecorationCount ?: 0 > 0)
             recSearchedPhotos?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
-        recSearchedPhotos?.adapter = adapter
+        recSearchedPhotos?.adapter = ScaleInAnimationAdapter(adapter!!).apply {
+            setFirstOnly(false)
+        }
 
         val endlessScrollListener =  object: EndlessRecyclerOnScrollListener(layoutManager){
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
@@ -299,6 +301,8 @@ class ActPhotosList : BaseActivity() {
 
     private fun getPhotosOf(page: Int){
         Constants.ListModes.apply {
+            if (page != INITIAL_PAGE)
+                lvCenters.showView()
             when(listData?.listMode){
                 LIST_MODE_POPULAR_PHOTOS -> {
                     getPopularPhotosOf(page)
@@ -323,11 +327,13 @@ class ActPhotosList : BaseActivity() {
         unsplashHelper?.getPhotosAndUsers(UnsplashHelper.ORDER_BY_POPULAR, page, 20, object : GetUnsplashPhotosAndUsersListener {
             override fun onSuccess(photos: List<UnsplashPhotos>, userList: List<User>) {
                 ivLoader?.hideView()
+                lvCenters?.hideView()
                 updateList(page, photos)
             }
 
             override fun onFailed(errors: JSONArray) {
                 ivLoader?.hideView()
+                lvCenters?.hideView()
                 showErrorMsg()
             }
         })
@@ -337,6 +343,7 @@ class ActPhotosList : BaseActivity() {
         unsplashHelper?.getUserPhotos(listData?.photographerInfo?.username, page, 20, object : GetUnsplashPhotosListener {
             override fun onSuccess(photos: MutableList<UnsplashPhotos>?) {
                 ivLoader?.hideView()
+                lvCenters?.hideView()
                 photos?.apply {
                     updateList(page, this)
                 }
@@ -344,6 +351,7 @@ class ActPhotosList : BaseActivity() {
 
             override fun onFailed(errors: JSONArray) {
                 ivLoader?.hideView()
+                lvCenters?.hideView()
                 //TODO: implement proper error handling i.e. use errors
                 showToast("No public photos found of " + listData?.photographerInfo?.name)
                 finish()
@@ -355,6 +363,7 @@ class ActPhotosList : BaseActivity() {
         unsplashHelper?.getSearchedPhotos(listData?.generalInfo?.term, page, 20, object: GetUnsplashSearchedPhotosListener {
             override fun onSuccess(photos: SearchedPhotos?) {
                 ivLoader?.hideView()
+                lvCenters?.hideView()
                 photos?.apply {
                     updateList(page, results)
                 }
@@ -362,6 +371,7 @@ class ActPhotosList : BaseActivity() {
 
             override fun onFailed(errors: JSONArray?) {
                 ivLoader?.hideView()
+                lvCenters?.hideView()
                 showErrorMsg()
             }
         })
@@ -372,6 +382,7 @@ class ActPhotosList : BaseActivity() {
 
             override fun onSuccess(photos: MutableList<UnsplashPhotos>?) {
                 ivLoader?.hideView()
+                lvCenters?.hideView()
                 photos?.apply {
                     updateList(page, this)
                 }
@@ -379,6 +390,7 @@ class ActPhotosList : BaseActivity() {
 
             override fun onFailed(errors: JSONArray?) {
                 ivLoader?.hideView()
+                lvCenters?.hideView()
                 showErrorMsg()
             }
         })

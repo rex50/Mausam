@@ -7,8 +7,8 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
-        android:layout_width="270dp"
-        android:layout_height="200dp"
+        android:layout_width="250dp"
+        android:layout_height="170dp"
         app:cardCornerRadius="6dp"
         android:layout_margin="8dp"
         android:focusable="true"
@@ -16,14 +16,6 @@
         android:foreground="?android:selectableItemBackground"
         android:requiresFadingEdge="vertical"
         app:cardElevation="4dp">
-
-        <ImageView
-            android:id="@+id/ivCategory"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/more_button"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/preview_image" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -44,20 +36,40 @@
                 android:layout_height="match_parent"
                 android:background="@color/black"
                 android:rotation="180"
-                android:alpha="0.3"
+                android:alpha="0.2"
                 android:visibility="visible"/>
 
             <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
                 android:id="@+id/tvCategoryName"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/category_name"
-                android:textSize="24sp"
-                android:textColor="@color/white"
-                android:layout_gravity="center"
-                android:gravity="center"/>
+                android:layout_marginEnd="80dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginStart="14dp"
+                android:textSize="20sp"
+                android:textColor="@color/white" />
 
         </FrameLayout>
+
+       <androidx.cardview.widget.CardView
+           android:layout_width="130dp"
+           android:layout_height="130dp"
+           android:elevation="15dp"
+           app:cardElevation="15dp"
+           android:rotation="18"
+           android:layout_marginEnd="-20dp"
+           android:layout_gravity="bottom|end">
+
+           <ImageView
+               android:id="@+id/ivCategory"
+               android:layout_width="130dp"
+               android:layout_height="130dp"
+               android:background="@color/more_button"
+               android:scaleType="centerCrop"
+               android:contentDescription="@string/preview_image" />
+
+       </androidx.cardview.widget.CardView>
 
     </com.google.android.material.card.MaterialCardView>
 

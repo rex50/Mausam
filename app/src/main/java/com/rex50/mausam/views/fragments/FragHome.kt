@@ -25,6 +25,7 @@ import com.rex50.mausam.views.activities.ActPhotosList
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.thekhaeng.pushdownanim.PushDownAnim
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.android.synthetic.main.act_photos_list.*
 import kotlinx.android.synthetic.main.frag_home.*
 import kotlinx.android.synthetic.main.header_custom_home.*
@@ -79,7 +80,9 @@ class FragHome : BaseFragment() {
         recHomeContent?.layoutManager = layoutManager
         if (recHomeContent?.itemDecorationCount ?: 0 > 0)
             recHomeContent?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
-        recHomeContent?.adapter = adapter
+        recHomeContent?.adapter = ScaleInAnimationAdapter(adapter!!).apply {
+            setFirstOnly(false)
+        }
 
         val endlessScrollListener =  object: EndlessRecyclerOnScrollListener(layoutManager){
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {

@@ -20,9 +20,8 @@ import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.LIST_DATA
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.adapters.AdaptContent
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.android.synthetic.main.act_collections_list.*
-import kotlinx.android.synthetic.main.act_photos_list.*
-import kotlinx.android.synthetic.main.act_photos_list.ivLoader
 import kotlinx.android.synthetic.main.header_custom_general.*
 import org.json.JSONArray
 
@@ -97,8 +96,10 @@ class ActCollectionsList() : BaseActivity() {
         })
 
         recSearchedCollection?.layoutManager = layoutManager
-        recSearchedPhotos?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
-        recSearchedCollection?.adapter = adapter
+        recSearchedCollection?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
+        recSearchedCollection?.adapter = ScaleInAnimationAdapter(adapter!!).apply {
+            setFirstOnly(false)
+        }
 
         val endlessScrollListener =  object: EndlessRecyclerOnScrollListener(layoutManager){
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
@@ -138,7 +139,8 @@ class ActCollectionsList() : BaseActivity() {
     }
 
     private fun getCollectionsOf(page: Int) {
-
+        if (page != INITIAL_PAGE)
+            lvCenterss.showView()
         when(listData?.listMode){
             Constants.ListModes.LIST_MODE_COLLECTIONS -> {
                 getFeaturedCollectionsOf(page)
@@ -155,11 +157,13 @@ class ActCollectionsList() : BaseActivity() {
         UnsplashHelper(this).getUserCollections(listData?.photographerInfo?.username, page, 20, object : GetUnsplashCollectionsAndTagsListener {
             override fun onSuccess(collection: MutableList<Collections>?, tagsList: MutableList<Tag>?) {
                 ivLoader?.hideView()
+                lvCenterss.hideView()
                 editList(page, collection)
             }
 
             override fun onFailed(errors: JSONArray?) {
                 ivLoader?.hideView()
+                lvCenterss.hideView()
                 showErrorMsg()
             }
         })
@@ -169,11 +173,13 @@ class ActCollectionsList() : BaseActivity() {
         UnsplashHelper(this).getCollectionsAndTags(page, 20, object: GetUnsplashCollectionsAndTagsListener {
             override fun onSuccess(collection: MutableList<Collections>?, tagsList: MutableList<Tag>?) {
                 ivLoader?.hideView()
+                lvCenterss.hideView()
                 editList(page, collection)
             }
 
             override fun onFailed(errors: JSONArray?) {
                 ivLoader?.hideView()
+                lvCenterss.hideView()
                 showErrorMsg()
             }
         })

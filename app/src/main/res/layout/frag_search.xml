@@ -136,15 +136,21 @@
                 android:backgroundTint="@color/colorAccent"
                 android:visibility="gone"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recHomeContent"
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/etvSearch"
                 android:layout_marginTop="10dp"
-                android:clipToPadding="false"
-                android:scrollbars="none"
-                android:descendantFocusability="blocksDescendants"/>
+                android:layout_below="@+id/etvSearch">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recHomeContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:descendantFocusability="blocksDescendants"
+                    android:scrollbars="none" />
+
+            </androidx.core.widget.NestedScrollView>
 
             <include layout="@layout/loading_view"
                 android:id="@+id/lvCenter"

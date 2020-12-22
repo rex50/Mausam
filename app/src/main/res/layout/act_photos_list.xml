@@ -58,13 +58,13 @@
                 android:id="@+id/recSearchedPhotos"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="100dp"
-                android:paddingTop="@dimen/recycler_item_offset_grid"
-                android:paddingStart="@dimen/recycler_item_offset_grid"
-                android:paddingEnd="@dimen/recycler_item_offset_grid"
+                android:layout_below="@+id/header"
                 android:clipToPadding="false"
-                android:layout_below="@+id/header" />
-
+                android:paddingStart="@dimen/recycler_item_offset_grid"
+                android:paddingTop="@dimen/recycler_item_offset_grid"
+                android:paddingEnd="@dimen/recycler_item_offset_grid"
+                android:paddingBottom="100dp" />
+<!--
             <ImageView
                 android:id="@+id/ivLoader"
                 android:layout_width="match_parent"
@@ -73,7 +73,15 @@
                 android:layout_gravity="top"
                 android:layout_marginTop="50dp"
                 android:visibility="gone"
-                android:contentDescription="@string/loading_data" />
+                android:contentDescription="@string/loading_data" />-->
+
+            <include layout="@layout/loading_view"
+                android:id="@+id/ivLoader"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="50dp"
+                android:visibility="gone"/>
 
         </androidx.cardview.widget.CardView>
 
@@ -98,6 +106,15 @@
         android:tint= "@color/colorAccent"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"/>
+
+    <include layout="@layout/loading_view"
+        android:id="@+id/lvCenters"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="23dp"/>
 
 
 

@@ -25,7 +25,16 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             android:background="@drawable/accent_to_transparent_overlay"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:rotation="180"
+            android:alpha="0.2"
+            android:visibility="visible"/>
 
         <com.rex50.mausam.utils.custom_text_views.BoldTextView
             android:id="@+id/tvColorName"

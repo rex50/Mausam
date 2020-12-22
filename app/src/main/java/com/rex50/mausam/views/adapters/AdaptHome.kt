@@ -18,6 +18,7 @@ import com.rex50.mausam.utils.ItemOffsetDecoration
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showView
+import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter
 import kotlinx.android.synthetic.main.header_custom_category.view.*
 import kotlinx.android.synthetic.main.item_category.view.*
 
@@ -55,7 +56,10 @@ class AdaptHome(private var context: Context?, private var allContentModel: AllC
                 if(recCategoryItems?.itemDecorationCount == 0){
                     recCategoryItems?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
                 }
-                recCategoryItems?.adapter = adapter
+
+                recCategoryItems?.adapter =  SlideInBottomAnimationAdapter(adapter!!).apply {
+                    setFirstOnly(false)
+                }
             }
         }
     }

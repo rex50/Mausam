@@ -54,7 +54,15 @@
                 android:clipToPadding="false"
                 android:layout_below="@+id/header" />
 
-            <ImageView
+            <include layout="@layout/loading_view"
+                android:id="@+id/ivLoader"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="50dp"
+                android:visibility="gone"/>
+
+ <!--           <ImageView
                 android:id="@+id/ivLoader"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
@@ -62,7 +70,7 @@
                 android:layout_gravity="top"
                 android:layout_marginTop="50dp"
                 android:visibility="gone"
-                android:contentDescription="@string/loading_data" />
+                android:contentDescription="@string/loading_data" />-->
 
         </androidx.cardview.widget.CardView>
 
@@ -87,5 +95,14 @@
         android:tint="@color/colorAccent"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"/>
+
+    <include layout="@layout/loading_view"
+        android:id="@+id/lvCenterss"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="23dp"/>
 
 </RelativeLayout>
