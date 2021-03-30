@@ -8,6 +8,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.ColorFilter
 import android.net.Uri
 import android.util.TypedValue
 import android.view.View
@@ -20,8 +21,10 @@ import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.*
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -124,8 +127,18 @@ fun String.addAfter(text: String?): String = text?.takeIf { it.isNotEmpty() }?.l
 }?: this
 
 fun ImageView.loadImage(url: String?){
+
+    val progressBar = CircularProgressDrawable(context)
+    progressBar.apply {
+        strokeWidth = 6f
+        centerRadius = 30f
+        setColorSchemeColors(ContextCompat.getColor(context, R.color.black_to_white))
+        start()
+    }
+
     Glide.with(context)
             .load(url) //.load("https://images.unsplash.com/photo-1586126928376-eaf2b1278093?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80")
+            .placeholder(progressBar)
             .transition(DrawableTransitionOptions.withCrossFade())
             .diskCacheStrategy(DiskCacheStrategy.DATA)
             .into(this)
