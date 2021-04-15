@@ -136,10 +136,10 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
         //Use below format when implemented in search screen
         add(Constants.AvailableLayouts.POPULAR_TAGS)
+        add(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES)
         add(Constants.AvailableLayouts.FEATURED_COLLECTIONS)
         add(Constants.AvailableLayouts.POPULAR_PHOTOS)
         add(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)
-        add(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES)
         add(Constants.AvailableLayouts.BROWSE_BY_COLORS)
         add(Constants.AvailableLayouts.LOCATION_BASED_PHOTOS)
         add(Constants.AvailableLayouts.WEATHER_BASED_PHOTOS)
@@ -631,7 +631,6 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
         fun onFragmentInteraction(uri: Uri?)
         fun onWeatherSearchSuccess(weatherDetails: WeatherModelClass?)
         fun nextBtnClicked()
-        //TODO: fun getMaterialSnackBar(): MaterialSnackBar?
         //fun startMorePhotosActivity(listMode: String?, searchTerm: String?, desc: String?)
         fun startMorePhotosActivity(data: MoreListData)
         fun startMoreFeaturedCollections(moreListData: MoreListData)
@@ -644,7 +643,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
         private const val TAG = "HomeFragment"
 
         @JvmStatic
-        fun newInstance(searchOnlyCity: Boolean): FragSearch {
+        fun newInstance(searchOnlyCity: Boolean = false): FragSearch {
             val fragment = FragSearch()
             val args = Bundle()
             args.putBoolean(ARG_PARAM1, searchOnlyCity)
