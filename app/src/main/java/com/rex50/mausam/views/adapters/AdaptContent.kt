@@ -39,7 +39,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         private val cardView: CardView? = itemView.findViewById(R.id.cardView)
 
         fun bind(photo: UnsplashPhotos?) {
-            imageView?.loadImage(photo?.urls?.getSmall(isDataSaverMode))
+            imageView?.loadImage(photo?.urls?.getRegular(isDataSaverMode))
             //imageViewUser?.loadImage(photo?.user?.profileImage?.medium)
         }
 
@@ -56,7 +56,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         val imageView: ImageView? = itemView.findViewById(R.id.ivPhoto)
         private val cardView: CardView? = itemView.findViewById(R.id.cardView)
         fun bind(photo: UnsplashPhotos?) {
-            imageView?.loadImage(photo?.urls?.getSmall(isDataSaverMode))
+            imageView?.loadImage(photo?.urls?.getRegular(isDataSaverMode))
         }
 
         fun setClickListener(listener: View.OnClickListener?) {
@@ -123,7 +123,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
 
                 txtDesc?.text = it.description?.trim()
 
-                imgMain?.takeIf { collection.coverPhoto.isNotNull() }?.loadImage(collection.coverPhoto?.urls?.getSmall(isDataSaverMode))
+                imgMain?.takeIf { collection.coverPhoto.isNotNull() }?.loadImage(collection.coverPhoto?.urls?.getRegular(isDataSaverMode))
 
                 imgPreview1?.takeIf { collection.previewPhotos?.size ?: 0 > 0 }?.loadImage(collection.previewPhotos[0]?.urls?.getSmall(isDataSaverMode))
                         ?: (imgPreview1?.parent as View?)?.hideView()
