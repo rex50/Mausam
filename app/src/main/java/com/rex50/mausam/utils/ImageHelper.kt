@@ -463,20 +463,36 @@ class ImageViewerHelper (){
 
 class ImageActionHelper {
     companion object{
-        fun setWallpaper(context: Context?, uri: Uri?){
-            context?.takeIf { uri != null }?.apply {
-                val finalUri: Uri? = Uri.parse(uri.toString().replace("file://", ""))
-                File(finalUri?.path!!)?.let {
-                    val intent = Intent(ACTION_ATTACH_DATA)
-                            .apply {
-                                addCategory(CATEGORY_DEFAULT)
-                                setDataAndType(finalUri, "image/*")
-                                putExtra("mimeType", "image/*")
-                                addFlags(FLAG_GRANT_READ_URI_PERMISSION)
-                                addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
-                            }
-                    startActivity(createChooser(intent, "Set as:"))
+        private fun setWallpaper(context: Context?, path: String?){
+            //TODO: work in progress
+            context?.takeIf { path != null }?.apply {
+                CoroutineScope(Dispatchers.IO).launch {
+                    path?.toUri()?.asCompressedBitmap(context)?.let{
+                        WallpaperManager.getInstance(context).setBitmap(it)
+                        withContext(Dispatchers.Main){
+                            context.showToast("Wallpaper set successfully")
+                        }
+                    }
                 }
+                //val finalUri: Uri? = Uri.parse(uri.toString().replace("file://", ""))
+//                File(path!!).let {
+//                    val options = BitmapFactory.Options()
+//                    options.inPreferredConfig = Bitmap.Config.ARGB_8888
+//                    val bitmap = BitmapFactory.decodeFile(path, options)
+//                    //TODO: compress bitmap before using
+//                    bitmap?.let {
+//                        WallpaperManager.getInstance(context).setBitmap(bitmap)
+//                    }
+////                    val intent = Intent(ACTION_ATTACH_DATA)
+////                            .apply {
+////                                addCategory(CATEGORY_DEFAULT)
+////                                setDataAndType(finalUri, "image/*")
+////                                putExtra("mimeType", "image/*")
+////                                addFlags(FLAG_GRANT_READ_URI_PERMISSION)
+////                                addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
+////                            }
+////                    startActivity(createChooser(intent, "Set as:"))
+//                }
             }
         }
 
@@ -492,12 +508,16 @@ class ImageActionHelper {
             }
         }
 
-        fun saveImage(context: Context?, url: String, name: String, desc: String, isAddToFav: Boolean, listener: ImageSaveListener?){
+        fun saveImage(context: Context?, url: String, name: String, desc: String, isAddToFav: Boolean, listener: ImageSaveListener?, postUrl: String? = null){
             context?.let { ctx ->
+
+                var downloadTries = 0
 
                 val dBKey = Constants.Image.DOWNLOAD_RELATIVE_PATH+name
 
                 fun download(){
+
+                    downloadTries++
 
                     fun prepareFile(): String?{
                         val file: File? = File(SavedImageMeta.createRelPath(name))
@@ -521,7 +541,15 @@ class ImageActionHelper {
 
                         val fetch = Fetch.Impl.getInstance(fetchConfiguration)
 
-                        fetch.addListener(object : AbstractFetchListener() {
+                        var fetchListener: FetchListener? = null
+
+                        fun removeListener() {
+                            fetchListener?.let {
+                                fetch.removeListener(it)
+                            }
+                        }
+
+                        fetchListener = object : AbstractFetchListener() {
 
                             override fun onCompleted(download: Download) {
                                 val extras = download.extras
@@ -539,14 +567,23 @@ class ImageActionHelper {
                             }
 
                             override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
-                                Log.e("ImageHelper", "onProgress: " + download.progress)
-                                //TODO: add a listener to update progress
+                                Log.v("ImageHelper", "onProgress: " + download.progress)
+                                listener?.onDownloadProgress(download.progress)
                             }
 
                             override fun onError(download: Download, error: Error, throwable: Throwable?) {
-                                //TODO: Handle download error
+                                //Handle download error
+                                removeListener()
+                                if(downloadTries <= 3)
+                                    download()
+                                else {
+                                    Log.e("ImageHelper", "onError: ", throwable)
+                                    listener?.onDownloadFailed()
+                                }
                             }
-                        })
+                        }
+
+                        fetch.addListener(fetchListener)
 
                         val request = Request(url, localImagePath).also { req ->
                             req.priority = Priority.HIGH
@@ -556,11 +593,13 @@ class ImageActionHelper {
                             })
                         }
 
-                        fetch.enqueue(request, Func {
+                        fetch.enqueue(request, {
                             CoroutineScope(Dispatchers.Main).launch {
                                 listener?.onDownloadStarted()
                             }
-                        }, Func {
+                        }, {
+                            Log.e("ImageHelper", "download: ", it.throwable)
+                            removeListener()
                             CoroutineScope(Dispatchers.Main).launch {
                                 listener?.onDownloadFailed()
                             }
@@ -594,6 +633,7 @@ class ImageActionHelper {
                         //check if data available in Storage
                         if(checkIfFileExistsInStorage(imageMeta?.relativePath)){
                             uri?.apply {
+                                imageMeta.setUri(this)
                                 if(!imageMeta.isFavorite && isAddToFav){
 
                                     val value = imageMeta.also {image ->
@@ -765,6 +805,7 @@ class ImageActionHelper {
 
     interface ImageSaveListener{
         fun onDownloadStarted()
+        fun onDownloadProgress(progress: Int) {}
         fun onDownloadFailed()
         fun response(imageMeta: SavedImageMeta?, msg: String)
     }

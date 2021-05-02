@@ -316,9 +316,17 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                             bsDownload?.downloadError()
                                         }
 
+                                        override fun onDownloadProgress(progress: Int) {
+                                            bsDownload?.onProgress(progress)
+                                        }
+
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            bsDownload?.downloaded()
-                                            ImageActionHelper.setWallpaper(mContext, imageMeta?.getUri())
+                                            Handler(Looper.getMainLooper()).postDelayed({
+                                                bsDownload?.downloaded()
+                                                startActivity(Intent(context, ActImageEditor::class.java).also {
+                                                    it.putExtra(Constants.IntentConstants.PHOTO_DATA, imageMeta)
+                                                })
+                                            }, 300)
                                         }
                                     })
                                 }
@@ -331,6 +339,10 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                                         override fun onDownloadFailed() {
                                             bsDownload?.downloadError()
+                                        }
+
+                                        override fun onDownloadProgress(progress: Int) {
+                                            bsDownload?.onProgress(progress)
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
@@ -350,6 +362,10 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                                         override fun onDownloadFailed() {
                                             bsDownload?.downloadError()
+                                        }
+
+                                        override fun onDownloadProgress(progress: Int) {
+                                            bsDownload?.onProgress(progress)
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
@@ -393,9 +409,17 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                             showToast(getString(R.string.failed_to_download_no_internet))
                                         }
 
+                                        override fun onDownloadProgress(progress: Int) {
+                                            bsDownload?.onProgress(progress)
+                                        }
+
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            bsDownload?.downloaded()
-                                            ImageActionHelper.setWallpaper(mContext, Uri.parse(imageMeta?.relativePath))
+                                            Handler(Looper.getMainLooper()).postDelayed({
+                                                bsDownload?.downloaded()
+                                                startActivity(Intent(context, ActImageEditor::class.java).also {
+                                                    it.putExtra(Constants.IntentConstants.PHOTO_DATA, imageMeta)
+                                                })
+                                            }, 300)
                                         }
                                     })
                                 }
@@ -409,6 +433,10 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                                         override fun onDownloadFailed() {
                                             bsDownload?.downloadError()
+                                        }
+
+                                        override fun onDownloadProgress(progress: Int) {
+                                            bsDownload?.onProgress(progress)
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
@@ -429,6 +457,10 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                                         override fun onDownloadFailed() {
                                             bsDownload?.downloadError()
+                                        }
+
+                                        override fun onDownloadProgress(progress: Int) {
+                                            bsDownload?.onProgress(progress)
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {

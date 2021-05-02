@@ -70,4 +70,8 @@ class BSDownload : MaterialBottomSheet() {
         }
     }
 
+    fun onProgress(progress: Int) {
+        tvBottomSheet?.text = "$progress%\n${getString(R.string.downloading)}"
+    }
+
 }

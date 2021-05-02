@@ -8,8 +8,11 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ColorFilter
 import android.net.Uri
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.View.GONE
@@ -19,6 +22,9 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.*
 import androidx.core.widget.ContentLoadingProgressBar
@@ -32,6 +38,10 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rex50.mausam.R
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.calculateInSampleSize
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 import java.io.File
 import java.text.SimpleDateFormat
@@ -100,6 +110,10 @@ fun View.showView(){
 
 fun View.hideView(){
     visibility = GONE
+}
+
+fun View.visibility(show: Boolean) {
+    if(show) showView() else hideView()
 }
 
 fun View.setEnabled(){
@@ -274,4 +288,79 @@ fun checkIfFileExistsInStorage(relativePath: String?): Boolean {
     }
     //}
     return false
+}
+
+suspend fun Uri.getBitmap(): Bitmap? {
+    val file = File(path ?: "")
+    return try {
+        withContext(Dispatchers.IO) {
+            BitmapFactory.decodeFile(file.path)
+        }
+    } catch (e: Exception) {
+        Log.e("Uri Extension", "getBitmap: ", e)
+        null
+    }
+}
+
+suspend fun Uri.asCompressedBitmap(context: Context?) : Bitmap? {
+    context?.let { con ->
+
+        //below block will return a compressed and scaled down version of the image
+
+        //Currently returning only compressed image. For scaling uncomment below code
+        val file = File(path ?: "")
+
+        try {
+
+            //First try just compressing the image to reduce the image size
+            val compressed = Compressor.compress(con, file)
+            return BitmapFactory.decodeFile(compressed.path)
+
+        } catch (e: Exception) {
+
+            //If some exception occurs then try rescaling the image
+            return BitmapFactory.Options().run {
+                //If required scale down the image. For that first we will get image details
+                inJustDecodeBounds = true
+                BitmapFactory.decodeFile(file.path)
+                inSampleSize = calculateInSampleSize(this, 720, 1280)
+                inJustDecodeBounds = false
+
+                //finally return the image
+                BitmapFactory.decodeFile(file.path)
+            }
+        }
+
+        /*return BitmapFactory.Options().run {
+
+            //First compress the image to reduce the image
+            val compressedFile = Compressor.compress(con, File(path ?: ""))
+
+            //If required scale down the image. For that first we will get image details
+            *//*inJustDecodeBounds = true
+            BitmapFactory.decodeFile(compressedFile.path)
+            inSampleSize = calculateInSampleSize(this, 720, 1280)
+            inJustDecodeBounds = false*//*
+
+            //finally return the image
+            BitmapFactory.decodeFile(compressedFile.path)
+        }*/
+    }
+
+    //if context is null the result will be compressed
+    return null
+}
+
+fun ConstraintLayout.setRatioOfChild(@IdRes id: Int, ratio: String) {
+    val constraintSet = ConstraintSet()
+    constraintSet.clone(this)
+    constraintSet.setDimensionRatio(id, ratio.toRatio().addBefore("h, "))
+    constraintSet.applyTo(this)
+}
+
+fun String.toRatio() = when {
+    this.contains("*") -> this.replace("*", ":")
+    this.contains("x") -> this.replace("x", ":")
+    this.contains("X") -> this.replace("X", ":")
+    else -> this
 }

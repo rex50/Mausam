@@ -148,9 +148,17 @@ class FragHome : BaseFragment() {
                                             bsDownload?.downloadError()
                                         }
 
+                                        override fun onDownloadProgress(progress: Int) {
+                                            bsDownload?.onProgress(progress)
+                                        }
+
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            bsDownload?.downloaded()
-                                            ImageActionHelper.setWallpaper(context, imageMeta?.getUri())
+                                            Handler(Looper.getMainLooper()).postDelayed({
+                                                bsDownload?.downloaded()
+                                                startActivity(Intent(context, ActImageEditor::class.java).also {
+                                                    it.putExtra(PHOTO_DATA, imageMeta)
+                                                })
+                                            }, 300)
                                         }
                                     })
                                 }
@@ -163,6 +171,10 @@ class FragHome : BaseFragment() {
 
                                         override fun onDownloadFailed() {
                                             bsDownload?.downloadError()
+                                        }
+
+                                        override fun onDownloadProgress(progress: Int) {
+                                            bsDownload?.onProgress(progress)
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {
@@ -183,6 +195,10 @@ class FragHome : BaseFragment() {
 
                                         override fun onDownloadFailed() {
                                             bsDownload?.downloadError()
+                                        }
+
+                                        override fun onDownloadProgress(progress: Int) {
+                                            bsDownload?.onProgress(progress)
                                         }
 
                                         override fun response(imageMeta: SavedImageMeta?, msg: String) {

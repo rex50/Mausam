@@ -78,6 +78,7 @@ class Constants {
         const val SEARCH_FEAT_COLLECTION = "searchFeaturedCollection"
         const val NAME = "name"
         const val IS_ADD_FAV = "isAddFav"
+        const val PHOTO_DATA = "photoData"
     }
 
     object ListModes {
