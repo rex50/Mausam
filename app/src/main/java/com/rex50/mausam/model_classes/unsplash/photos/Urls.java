@@ -101,6 +101,10 @@ public class Urls implements Parcelable {
         this.thumb = thumb;
     }
 
+    public String getDownloadingUrl() {
+        return full;
+    }
+
     @Override
     public int describeContents() {
         return 0;

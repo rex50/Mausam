@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.Volley;
 
 public class VolleySingleton {
@@ -22,6 +23,7 @@ public class VolleySingleton {
     public static synchronized VolleySingleton getInstance(Context ctx) {
         if (instance == null) {
             instance = new VolleySingleton(ctx);
+            VolleyLog.DEBUG = false;
             Log.d(TAG, "Instance initiated");
         }
         return instance;

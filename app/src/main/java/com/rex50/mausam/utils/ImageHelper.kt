@@ -1,5 +1,6 @@
 package com.rex50.mausam.utils
 
+import android.app.WallpaperManager
 import android.content.*
 import android.content.Intent.*
 import android.graphics.Bitmap
@@ -14,6 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.transition.ChangeBounds
 import androidx.transition.Fade
@@ -34,13 +37,13 @@ import com.google.gson.annotations.SerializedName
 import com.rex50.mausam.R
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
+import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.stfalcon.imageviewer.StfalconImageViewer
 import com.stfalcon.imageviewer.loader.ImageLoader
 import com.thekhaeng.pushdownanim.PushDownAnim
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.Extras
-import com.tonyodev.fetch2core.Func
 import kotlinx.coroutines.*
 import org.apache.commons.lang3.StringUtils
 import java.io.*
@@ -216,7 +219,7 @@ class ImageViewerHelper (){
                                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                                 .apply(RequestOptions().format(DecodeFormat.PREFER_ARGB_8888))
                                 .transition(DrawableTransitionOptions.withCrossFade())
-                                .addListener(object: RequestListener<Drawable>{
+                                .addListener(object : RequestListener<Drawable> {
                                     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                                         preLoader?.hideView()
                                         lnlError?.showView()
@@ -233,7 +236,7 @@ class ImageViewerHelper (){
                                 .into(this)
                     }
                 })
-                .withHiddenStatusBar(false)
+                .withHiddenStatusBar(true)
                 .withStartPosition(childPos)
                 .withBackgroundColorResource(R.color.white_to_black)
                 .withOverlayView(dialogLayout)
@@ -320,14 +323,14 @@ class ImageViewerHelper (){
                                         hideView()
                                         //lnlOtherButtons?.showView()
                                         startSimpleTransition()
-                                        btnMore?.setImageDrawable(getDrawable(R.drawable.ic_more_vertical))
+                                        btnMore?.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_more_vertical))
                                     }else {
                                         animatePhotographer = false
                                         rlUserInfo?.hideView()
                                         showView()
                                         //lnlOtherButtons?.hideView()
                                         startSimpleTransition()
-                                        btnMore?.setImageDrawable(getDrawable(R.drawable.ic_close))
+                                        btnMore?.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_close))
                                     }
                                 }
                             }
@@ -362,7 +365,7 @@ class ImageViewerHelper (){
                             }
 
                             R.id.btnUserVisitThisPage -> {
-                                openUrl(photosList[selectedPhotoPos].links.html)
+                                openUrl(photosList[selectedPhotoPos].links.html + "?utm_source=${getString(R.string.app_name)}&utm_medium=referral")
                                 rlUserInfo?.performClick()
                             }
                         }
@@ -552,6 +555,13 @@ class ImageActionHelper {
                         fetchListener = object : AbstractFetchListener() {
 
                             override fun onCompleted(download: Download) {
+                                removeListener()
+
+                                //Inform server that image is downloaded
+                                postUrl?.takeIf { it.trim().isNotEmpty() }?.let {
+                                    UnsplashHelper(ctx).trackDownload(it)
+                                }
+
                                 val extras = download.extras
                                 val imgName = extras.map[Constants.IntentConstants.NAME] ?: ""
                                 val imgAddFav = extras.map[Constants.IntentConstants.IS_ADD_FAV]?.toBoolean()
@@ -646,7 +656,7 @@ class ImageActionHelper {
 
                                 }else if(imageMeta.isFavorite && isAddToFav){
 
-                                    val value = imageMeta.also {image ->
+                                    val value = imageMeta.also { image ->
                                         image.isFavorite = false
                                     }
 

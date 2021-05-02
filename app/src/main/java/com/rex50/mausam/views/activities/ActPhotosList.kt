@@ -3,6 +3,8 @@ package com.rex50.mausam.views.activities
 import android.animation.LayoutTransition
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
@@ -220,7 +222,7 @@ class ActPhotosList : BaseActivity() {
                                     childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
 
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(supportFragmentManager)
                                         }
@@ -241,11 +243,11 @@ class ActPhotosList : BaseActivity() {
                                                 })
                                             }, 300)
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(supportFragmentManager)
                                         }
@@ -264,11 +266,11 @@ class ActPhotosList : BaseActivity() {
                                                 showToast(msg)
                                             }
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.urls.downloadingUrl, name, name, true, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(supportFragmentManager)
                                             showToast(getString(R.string.adding_to_fav))
@@ -288,7 +290,7 @@ class ActPhotosList : BaseActivity() {
                                                 showToast(msg)
                                             }
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {

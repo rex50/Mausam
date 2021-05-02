@@ -2,8 +2,11 @@ package com.rex50.mausam.views.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -36,6 +39,7 @@ import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Utils.TextValidationInterface
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.MausamApplication
+import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import kotlinx.android.synthetic.main.frag_search.*
@@ -307,7 +311,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                     childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
 
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -328,11 +332,11 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                                 })
                                             }, 300)
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -351,11 +355,11 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                                 showToast(msg)
                                             }
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, true, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -374,7 +378,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                                 showToast(msg)
                                             }
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
@@ -398,7 +402,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                             ImageViewerHelper(mContext).with(photosList,
                                     childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.download_started))
@@ -421,11 +425,11 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                                 })
                                             }, 300)
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.download_started))
@@ -445,11 +449,11 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                                 showToast(msg)
                                             }
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, true, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.adding_to_fav))
@@ -469,7 +473,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                                 showToast(msg)
                                             }
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {

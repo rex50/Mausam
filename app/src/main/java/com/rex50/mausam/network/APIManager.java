@@ -2,6 +2,7 @@ package com.rex50.mausam.network;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.IntDef;
 
@@ -9,6 +10,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.rex50.mausam.BuildConfig;
 import com.rex50.mausam.R;
 import com.rex50.mausam.utils.VolleySingleton;
 
@@ -24,6 +26,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 import static com.rex50.mausam.utils.Constants.ApiConstants.COLLECTION_ID;
+import static com.rex50.mausam.utils.Constants.ApiConstants.DOWNLOADING_PHOTO_URL;
 import static com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME;
 import static com.rex50.mausam.utils.Utils.CITY_NOT_FOUND;
 import static com.rex50.mausam.utils.Utils.PAGE_NOT_FOUND;
@@ -52,6 +55,7 @@ public final class APIManager {
     public static final int SERVICE_GET_PHOTOS_BY_USER = 10; //JSONArray response
     public static final int SERVICE_GET_SEARCHED_PHOTOS = 11; //JSONArray response
     public static final int SERVICE_GET_COLLECTIONS_BY_USER = 12; //JSONObject response
+    public static final int SERVICE_POST_DOWNLOADING_PHOTO = 13; //JSONObject response
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SERVICE_CURRENT_WEATHER, SERVICE_SEARCH_WEATHER_BY_PLACE})
@@ -61,7 +65,8 @@ public final class APIManager {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({SERVICE_GET_PHOTOS, SERVICE_GET_PHOTOS_BY_ID, SERVICE_GET_RANDOM_PHOTO, SERVICE_GET_COLLECTION_PHOTOS,
             SERVICE_GET_COLLECTIONS, SERVICE_GET_FEATURED_COLLECTIONS, SERVICE_GET_USER_PUBLIC_PROFILE,
-            SERVICE_GET_PHOTOS_BY_USER, SERVICE_GET_SEARCHED_PHOTOS, SERVICE_GET_COLLECTIONS_BY_USER})
+            SERVICE_GET_PHOTOS_BY_USER, SERVICE_GET_SEARCHED_PHOTOS, SERVICE_GET_COLLECTIONS_BY_USER,
+            SERVICE_POST_DOWNLOADING_PHOTO})
     private @interface UnsplashApiService {
     }
 
@@ -161,6 +166,7 @@ public final class APIManager {
         mgr.serviceTable.put(SERVICE_GET_PHOTOS_BY_USER, URL_GET_PHOTOS_BY_USER);
         mgr.serviceTable.put(SERVICE_GET_SEARCHED_PHOTOS, URL_GET_SEARCHED_PHOTOS);
         mgr.serviceTable.put(SERVICE_GET_COLLECTIONS_BY_USER, URL_GET_COLLECTIONS_BY_USER);
+        mgr.serviceTable.put(SERVICE_POST_DOWNLOADING_PHOTO, "");
     }
 
     private String generateUrl(String baseUrl,int service, HashMap<String, String> urlExtras) {
@@ -178,6 +184,12 @@ public final class APIManager {
                     throw new IllegalArgumentException("For " + service + ", " + COLLECTION_ID + " is required");
                 uri.path(String.format(Objects.requireNonNull(serviceTable.get(service)), urlExtras.get(COLLECTION_ID)));
                 urlExtras.remove(COLLECTION_ID);
+                break;
+            case SERVICE_POST_DOWNLOADING_PHOTO:
+                if(!urlExtras.containsKey(DOWNLOADING_PHOTO_URL))
+                    throw new IllegalArgumentException("For " + service + ", " + DOWNLOADING_PHOTO_URL + " is required");
+                uri = Uri.parse(urlExtras.get(DOWNLOADING_PHOTO_URL)).buildUpon();
+                urlExtras.remove(DOWNLOADING_PHOTO_URL);
                 break;
             default:
                 uri.path(serviceTable.get(service));
@@ -217,22 +229,34 @@ public final class APIManager {
         volleySingleton.addToRequestQueue(jsonObjectRequest);
     }
 
+
     protected void makeUnsplashRequest(@UnsplashApiService int service, HashMap<String, String> urlExtras, UnsplashAPICallResponse listener){
+        makeUnsplashRequest(service, urlExtras, Request.Method.GET, listener);
+    }
+    protected void makeUnsplashRequest(@UnsplashApiService int service, HashMap<String, String> urlExtras, int method, UnsplashAPICallResponse listener){
         urlExtras.put("client_id", ctx.getString(R.string.unsplashAccessKey));
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, generateUrl(baseUrlUnsplash, service, urlExtras),
+        StringRequest stringRequest = new StringRequest(method, generateUrl(baseUrlUnsplash, service, urlExtras),
                 response -> {
+                    if(BuildConfig.DEBUG)
+                        Log.d("Volley", "makeUnsplashRequest: " + response);
                     if(!response.contains("\"errors\":")){
-                        listener.onSuccess(response);
+                        if(listener != null)
+                            listener.onSuccess(response);
                     }else {
                         try {
                             JSONObject object = new JSONObject(response);
-                            listener.onFailed(object.optJSONArray("errors"));
+                            if(listener != null)
+                                listener.onFailed(object.optJSONArray("errors"));
                         } catch (JSONException e) {
-                            listener.onFailed(new JSONArray());
+                            if(listener != null)
+                                listener.onFailed(new JSONArray());
                         }
                     }
                 }, error -> {
-                    listener.onFailed(new JSONArray());
+                    if(BuildConfig.DEBUG)
+                        Log.e("Volley", "makeUnsplashRequest: " + error);
+                    if(listener != null)
+                        listener.onFailed(new JSONArray());
                 }){
             @Override
             public Map<String, String> getHeaders(){

@@ -126,6 +126,12 @@ dependencies {
     //For animations
     implementation 'jp.wasabeef:recyclerview-animators:4.0.1'
 
+    //For compressing image
+    // implementation 'id.zelory:compressor:3.0.1'
+
+    //For Cropping image
+    implementation 'com.github.CanHub:Android-Image-Cropper:3.0.1'
+
     //For testing
     /*implementation "com.google.firebase:firebase-inappmessaging-display:19.0.3"
     implementation "com.google.firebase:firebase-analytics:17.2.2"*/

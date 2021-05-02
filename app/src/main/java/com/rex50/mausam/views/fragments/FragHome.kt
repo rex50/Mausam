@@ -2,8 +2,11 @@ package com.rex50.mausam.views.fragments
 
 import android.animation.LayoutTransition
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -21,6 +24,8 @@ import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.model_classes.weather.WeatherModelClass
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
+import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
+import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.activities.ActPhotosList
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
@@ -139,7 +144,7 @@ class FragHome : BaseFragment() {
                                     childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
 
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(context, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(context, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -160,11 +165,11 @@ class FragHome : BaseFragment() {
                                                 })
                                             }, 300)
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(context, photoInfo.links.download, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(context, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -183,11 +188,11 @@ class FragHome : BaseFragment() {
                                                 showToast(msg)
                                             }
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(context, photoInfo.links.download, name, name, true, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(context, photoInfo.urls.downloadingUrl, name, name, true, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.adding_to_fav))
@@ -207,7 +212,7 @@ class FragHome : BaseFragment() {
                                                 showToast(msg)
                                             }
                                         }
-                                    })
+                                    }, photoInfo.links.downloadLocation)
                                 }
 
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
@@ -312,7 +317,7 @@ class FragHome : BaseFragment() {
 
     companion object {
 
-        const val INITIAL_PAGE: Int = 0
+        const val INITIAL_PAGE: Int = 1
 
         private const val ARG_PARAM1 = "param1"
         private const val ARG_PARAM2 = "param2"

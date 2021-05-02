@@ -3,6 +3,7 @@ package com.rex50.mausam.network
 import android.content.Context
 import androidx.annotation.IntRange
 import androidx.annotation.StringDef
+import com.android.volley.Request
 import com.rex50.mausam.interfaces.GetUnsplashCollectionsAndTagsListener
 import com.rex50.mausam.interfaces.GetUnsplashPhotosAndUsersListener
 import com.rex50.mausam.interfaces.GetUnsplashPhotosListener
@@ -10,6 +11,7 @@ import com.rex50.mausam.interfaces.GetUnsplashSearchedPhotosListener
 import com.rex50.mausam.network.APIManager.UnsplashAPICallResponse
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.rex50.mausam.utils.Constants.ApiConstants.COLLECTION_ID
+import com.rex50.mausam.utils.Constants.ApiConstants.DOWNLOADING_PHOTO_URL
 import com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME
 import com.rex50.mausam.utils.DataParser
 import kotlinx.coroutines.*
@@ -269,6 +271,12 @@ class UnsplashHelper {
                 }
             }
         }?: listener.onFailed(JSONArray())
+    }
+
+    fun trackDownload(url: String) {
+        val extras = HashMap<String, String>()
+        extras[DOWNLOADING_PHOTO_URL] = url
+        apiManager?.makeUnsplashRequest(APIManager.SERVICE_POST_DOWNLOADING_PHOTO, extras, Request.Method.GET, null)
     }
 
     companion object {

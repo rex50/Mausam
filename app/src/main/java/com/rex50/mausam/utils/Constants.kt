@@ -71,6 +71,7 @@ class Constants {
     object ApiConstants {
         const val UNSPLASH_USERNAME = "unsplash_username"
         const val COLLECTION_ID = "collection_id"
+        const val DOWNLOADING_PHOTO_URL = "downloadingPhotoUrl"
     }
 
     object IntentConstants {
