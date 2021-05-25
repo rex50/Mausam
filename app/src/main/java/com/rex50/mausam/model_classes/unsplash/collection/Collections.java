@@ -14,7 +14,7 @@ public class Collections implements Parcelable {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private String id;
     @SerializedName("title")
     @Expose
     private String title;
@@ -59,11 +59,7 @@ public class Collections implements Parcelable {
     private List<PreviewPhoto> previewPhotos = null;
 
     protected Collections(Parcel in) {
-        if (in.readByte() == 0) {
-            id = null;
-        } else {
-            id = in.readInt();
-        }
+        id = in.readString();
         title = in.readString();
         description = in.readString();
         publishedAt = in.readString();
@@ -89,12 +85,7 @@ public class Collections implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if (id == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeInt(id);
-        }
+        dest.writeString(id);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(publishedAt);
@@ -133,11 +124,11 @@ public class Collections implements Parcelable {
         }
     };
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

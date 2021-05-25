@@ -1,6 +1,8 @@
 package com.rex50.mausam.utils
 
+import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.rex50.mausam.model_classes.unsplash.collection.Collections
 import com.rex50.mausam.model_classes.unsplash.collection.Tag
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
@@ -15,6 +17,9 @@ import org.json.JSONObject
 import java.util.*
 
 object DataParser {
+
+    const val TAG = "DataParser"
+
     @JvmStatic
     fun parseWeatherData(response: JSONObject): WeatherModelClass {
         val gson = Gson()
@@ -57,9 +62,13 @@ object DataParser {
             val responseArray = JSONArray(response)
             if (parseTagsList) {
                 for (i in 0 until responseArray.length()) {
-                    val obj = gson.fromJson(responseArray.getJSONObject(i).toString(), Collections::class.java)
-                    collections.add(obj)
-                    tags.addAll(obj.tags)
+                    try {
+                        val obj = gson.fromJson(responseArray.getJSONObject(i).toString(), Collections::class.java)
+                        collections.add(obj)
+                        tags.addAll(obj.tags)
+                    } catch (e: JsonSyntaxException) {
+                        Log.e(TAG, "parseCollections: response: ${responseArray.getJSONObject(i)}", e)
+                    }
                 }
             } else {
                 for (i in 0 until responseArray.length()) {
