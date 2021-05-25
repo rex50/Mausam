@@ -10,7 +10,6 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ColorFilter
 import android.net.Uri
 import android.util.Log
 import android.util.TypedValue
@@ -23,12 +22,13 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.*
-import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.LifecycleOwner
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
@@ -363,4 +363,16 @@ fun String.toRatio() = when {
     this.contains("x") -> this.replace("x", ":")
     this.contains("X") -> this.replace("X", ":")
     else -> this
+}
+
+fun AppCompatActivity.getSimpleFragmentAdapter(mFragmentList: List<Fragment>): FragmentStatePagerAdapter? {
+    return object : FragmentStatePagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+        override fun getItem(position: Int): Fragment {
+            return mFragmentList[position]
+        }
+
+        override fun getCount(): Int {
+            return mFragmentList.size
+        }
+    }
 }

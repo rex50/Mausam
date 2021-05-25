@@ -7,12 +7,12 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.rex50.mausam"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "beta02"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -127,10 +127,16 @@ dependencies {
     implementation 'jp.wasabeef:recyclerview-animators:4.0.1'
 
     //For compressing image
-    // implementation 'id.zelory:compressor:3.0.1'
+    implementation 'id.zelory:compressor:3.0.1'
 
     //For Cropping image
     implementation 'com.github.CanHub:Android-Image-Cropper:3.0.1'
+
+    //For applying filter
+    implementation 'jp.co.cyberagent.android:gpuimage:2.1.0'
+
+    //Page indicator for view pagers
+    implementation 'com.tbuonomo:dotsindicator:4.2'
 
     //For testing
     /*implementation "com.google.firebase:firebase-inappmessaging-display:19.0.3"

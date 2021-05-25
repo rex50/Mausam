@@ -1,61 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/clParent"
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/clParent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.activities.ActImageEditor">
+    tools:context=".views.activities.ActImageEditor"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.canhub.cropper.CropImageView
-        android:id="@+id/pvPreview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+        android:id="@+id/pageIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_16dp"
+        app:dotsColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/ivLoader"
-        android:layout_width="@dimen/_40dp"
-        android:layout_height="@dimen/_40dp"
-        app:layout_constraintBottom_toTopOf="@+id/sBlur"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
-        android:id="@+id/tvBlur"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_50dp"
-        android:text="Blur level"
-        android:textColor="@color/black_to_white"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/btnSetWallpaper"
-        app:layout_constraintEnd_toEndOf="@+id/sBlur"
-        app:layout_constraintStart_toStartOf="@+id/sBlur" />
-
-    <SeekBar
-        android:id="@+id/sBlur"
+    <com.rex50.mausam.utils.CustomViewPager
+        android:id="@+id/vpEditor"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_30dp"
-        android:layout_marginStart="@dimen/_40dp"
-        android:layout_marginEnd="@dimen/_40dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvBlur"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btnSetWallpaper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_50dp"
-        android:text="Set Wallpaper"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/_16dp"
+        app:layout_constraintTop_toBottomOf="@+id/wormDotsIndicator" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

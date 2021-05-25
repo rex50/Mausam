@@ -25,7 +25,7 @@
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="dark">#121212</color>
-    <color name="transparentMagicMint">#80A5E4DA</color>
+    <color name="transparentMagicMint">#90A5E4DA</color>
 
 <!--    UI colors-->
 
@@ -42,6 +42,7 @@
     <color name="white_to_black">@color/white</color>
     <color name="white_to_accent">@color/white</color>
     <color name="accent_to_white">@color/colorAccent</color>
+    <color name="accent_to_black">@color/colorAccent</color>
     <color name="white_to_dark">@color/white</color>
     <color name="accent_to_oliveBlack">@color/colorAccent</color>
     <color name="magicMint_to_dark">@color/magicMint</color>

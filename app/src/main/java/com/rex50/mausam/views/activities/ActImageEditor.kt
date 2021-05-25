@@ -2,25 +2,19 @@ package com.rex50.mausam.views.activities
 
 import android.app.WallpaperManager
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.util.Pair
-import android.widget.ImageView
-import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.canhub.cropper.CropImageView
+import androidx.fragment.app.Fragment
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
-import id.zelory.compressor.loadBitmap
+import com.rex50.mausam.views.fragments.FragCropImage
 import kotlinx.android.synthetic.main.act_image_editor.*
 import kotlinx.coroutines.*
 import java.io.IOException
 
-class ActImageEditor : BaseActivity() {
+class ActImageEditor : BaseActivity(), FragCropImage.OnCropFragmentInteractionListener {
 
     companion object {
         const val TAG = "ActImageEditor"
@@ -28,45 +22,19 @@ class ActImageEditor : BaseActivity() {
 
     private var photoData: SavedImageMeta? = null
 
-    private var progressBar: CircularProgressDrawable? = null
+    private var fragCropImage: FragCropImage? = null
 
     override val layoutResource: Int
         get() = R.layout.act_image_editor
 
     override fun loadAct(savedInstanceState: Bundle?) {
-        getIntentData()
 
-        sBlur?.hideView()
-        tvBlur?.hideView()
+        getIntentData()
 
         photoData?.let {
 
-            showLoader(true)
-
-            CoroutineScope(Dispatchers.Main).launch {
-                Log.d(TAG, "loadAct: ${photoData?.relativePath?.toUri()}")
-                photoData?.relativePath?.toUri()?.getBitmap()?.let {
-                    pvPreview?.apply {
-                        resources?.displayMetrics?.let { metrics ->
-                            //TODO: clParent?.setRatioOfChild(id, "${metrics.widthPixels}x${metrics.heightPixels}")
-                            setAspectRatio(metrics.widthPixels, metrics.heightPixels)
-                        }
-                        setImageBitmap(it)
-                        scaleType = CropImageView.ScaleType.FIT_CENTER
-                        cropRect = wholeImageRect
-                    }
-                    showLoader(false)
-                }
-            }
-
-            btnSetWallpaper?.setOnClickListener {
-                showLoader(true)
-                CoroutineScope(Dispatchers.IO).launch {
-                    pvPreview?.croppedImage?.let {
-                        setBitmapAsWallpaper(it)
-                    }
-                }
-            }
+            //load Fragments
+            prepareFragments(it)
 
         } ?: let {
             showToast(getString(R.string.something_wrong_msg))
@@ -75,18 +43,60 @@ class ActImageEditor : BaseActivity() {
 
     }
 
-    private fun setBitmapAsWallpaper(bitmap: Bitmap) = runBlocking {
+    /**
+     * Use this method to prepare the list of Fragments for Image manipulations
+     * and show them in the Viewpager
+     *
+     * @param photoData - Data of image which will be used for manipulation
+     */
+    private fun prepareFragments(photoData: SavedImageMeta) {
+        val listOfFragments = arrayListOf<Fragment>().apply {
+            add(FragCropImage.newInstance(photoData).also { fragCropImage = it })
+        }
+        vpEditor?.apply {
+            setPagingEnabled(false)
+            adapter = getSimpleFragmentAdapter(listOfFragments)
+            offscreenPageLimit = listOfFragments.size
+            if(listOfFragments.size > 1)
+                pageIndicator?.setViewPager(this)
+            else
+                pageIndicator?.hideView()
+        }
+    }
+
+    /**
+     *  Call this method to set Wallpaper
+     *
+     *  @param bitmap - Bitmap which will be used to set wallpaper
+     *  @return true if wallpaper is set successful else false
+     */
+    private suspend fun setBitmapAsWallpaper(bitmap: Bitmap): Boolean {
         val msg = try {
-            WallpaperManager.getInstance(this@ActImageEditor).setBitmap(bitmap)
+            withContext(Dispatchers.IO) {
+                Log.d(TAG, "setBitmapAsWallpaper: Setting Wallpaper...")
+                WallpaperManager.getInstance(this@ActImageEditor).setBitmap(bitmap)
+            }
             finish()
-            "Wallpaper set successfully"
+            true
         }catch (e: IOException) {
-            "Error while setting Wallpaper"
+            false
         }
 
-        withContext(Dispatchers.Main) {
-            showToast(msg)
-            showLoader(false)
+        Log.d(TAG, "setBitmapAsWallpaper: Status: $msg")
+
+        return msg
+    }
+
+    /**
+     * For setting wallpaper asynchronously and
+     *
+     * @param bitmap - Bitmap which will be used to set wallpaper
+     */
+    private fun setWallpaperAsync(bitmap: Bitmap) {
+        CoroutineScope(Dispatchers.Main).launch {
+            //TODO: show loader if possible as this can take more than 300ms
+            val isSuccess = setBitmapAsWallpaper(bitmap)
+            showToast(if(isSuccess) getString(R.string.wallpaper_set_success) else getString(R.string.wallpaper_set_failed))
         }
     }
 
@@ -94,20 +104,9 @@ class ActImageEditor : BaseActivity() {
         photoData = intent?.getSerializableExtra(PHOTO_DATA) as SavedImageMeta?
     }
 
-    private fun showLoader(show: Boolean) {
-        if(progressBar == null) {
-            progressBar = CircularProgressDrawable(this).apply {
-                strokeWidth = 6f
-                centerRadius = 30f
-                setColorSchemeColors(ContextCompat.getColor(this@ActImageEditor, R.color.black_to_white))
-                start()
-            }
-            ivLoader?.setImageDrawable(progressBar)
-        }
-        ivLoader?.visibility(show)
+    override fun onCropSuccess(bitmap: Bitmap) {
+        //TODO: start editor with cropped bitmap as preview
     }
 
-    override fun internetStatus(internetType: Int) {
-        //TODO("Not yet implemented")
-    }
+
 }

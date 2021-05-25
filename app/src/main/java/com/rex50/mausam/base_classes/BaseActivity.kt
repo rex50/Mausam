@@ -51,7 +51,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected abstract val layoutResource: Int
 
-    protected abstract fun internetStatus(internetType: Int)
+    protected open fun internetStatus(internetType: Int) {}
 
     override fun onResume() {
         val intentFilter = IntentFilter()
