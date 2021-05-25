@@ -35,7 +35,7 @@ class BSDownload : MaterialBottomSheet() {
             setAnimation(R.raw.l_anim_photo_saving)
         }
 
-        tvBottomSheet?.text = getString(R.string.downloading)
+        tvBottomSheet?.text = "\n${getString(R.string.downloading)}"
 
         btnDismiss?.setOnClickListener{
             animBottomSheet?.apply {
@@ -47,6 +47,9 @@ class BSDownload : MaterialBottomSheet() {
     }
 
     fun downloadStarted(childFragmentManager: FragmentManager) {
+        if(isAdded) {
+            dismissAllowingStateLoss()
+        }
         isCancelable = false
         show(childFragmentManager, TAG)
     }

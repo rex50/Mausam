@@ -39,6 +39,7 @@ import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
+import com.rex50.mausam.views.MausamApplication
 import com.stfalcon.imageviewer.StfalconImageViewer
 import com.stfalcon.imageviewer.loader.ImageLoader
 import com.thekhaeng.pushdownanim.PushDownAnim
@@ -256,19 +257,18 @@ class ImageViewerHelper (){
     }
 
     private fun handleNavBtnVisibility(currPos: Int, lastPos: Int) {
-        if (0 == currPos){
-            btnLeftSwipe?.hideView()
+        when (currPos) {
+            0 -> {
+                btnLeftSwipe?.hideView()
+            }
+            in 1 until lastPos -> {
+                btnRightSwipe?.showView()
+                btnLeftSwipe?.showView()
+            }
+            lastPos -> {
+                btnRightSwipe?.hideView()
+            }
         }
-        else if (currPos in 1 until lastPos){
-            btnRightSwipe?.showView()
-            btnLeftSwipe?.showView()
-        }
-        else if (currPos == lastPos) {
-            btnRightSwipe?.hideView()
-        }
-
-
-
     }
 
     private fun initClicks(actionListener: ImageActionListener? = null) {
@@ -552,6 +552,28 @@ class ImageActionHelper {
                             }
                         }
 
+                        fun requestImage(imgRequest: Request){
+                            fetch.enqueue(imgRequest, {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    listener?.onDownloadStarted()
+                                }
+                            }, {
+                                Log.e("ImageHelper", "download: ", it.throwable)
+                                removeListener()
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    listener?.onDownloadFailed()
+                                }
+                            })
+                        }
+
+                        val request = Request(url, localImagePath).also { req ->
+                            req.priority = Priority.HIGH
+                            req.extras = Extras(HashMap<String, String>().also {
+                                it[Constants.IntentConstants.NAME] = name
+                                it[Constants.IntentConstants.IS_ADD_FAV] = isAddToFav.toString()
+                            })
+                        }
+
                         fetchListener = object : AbstractFetchListener() {
 
                             override fun onCompleted(download: Download) {
@@ -567,7 +589,7 @@ class ImageActionHelper {
                                 val imgAddFav = extras.map[Constants.IntentConstants.IS_ADD_FAV]?.toBoolean()
                                         ?: false
                                 val imageMeta = SavedImageMeta(imgName, imgName, SavedImageMeta.createRelPath(imgName), Constants.Image.Extensions.JPG, imgAddFav)
-                                imageMeta.setUri(imageMeta.getUri())
+                                imageMeta.setUri(imageMeta.getUri() ?: Uri.parse(""))
                                 CoroutineScope(Dispatchers.Main).launch {
                                     listener?.response(imageMeta, ctx.getString(R.string.saved_to_downloads))
                                     withContext(Dispatchers.IO) {
@@ -583,11 +605,13 @@ class ImageActionHelper {
 
                             override fun onError(download: Download, error: Error, throwable: Throwable?) {
                                 //Handle download error
-                                removeListener()
-                                if(downloadTries <= 3)
-                                    download()
-                                else {
+                                if(downloadTries <= 3) {
+                                    //TODO: show some message that user can relate
+                                    // like "Retrying", "Taking time" or similar messages as download is failing
+                                    requestImage(request)
+                                } else {
                                     Log.e("ImageHelper", "onError: ", throwable)
+                                    removeListener()
                                     listener?.onDownloadFailed()
                                 }
                             }
@@ -595,25 +619,7 @@ class ImageActionHelper {
 
                         fetch.addListener(fetchListener)
 
-                        val request = Request(url, localImagePath).also { req ->
-                            req.priority = Priority.HIGH
-                            req.extras = Extras(HashMap<String, String>().also {
-                                it[Constants.IntentConstants.NAME] = name
-                                it[Constants.IntentConstants.IS_ADD_FAV] = isAddToFav.toString()
-                            })
-                        }
-
-                        fetch.enqueue(request, {
-                            CoroutineScope(Dispatchers.Main).launch {
-                                listener?.onDownloadStarted()
-                            }
-                        }, {
-                            Log.e("ImageHelper", "download: ", it.throwable)
-                            removeListener()
-                            CoroutineScope(Dispatchers.Main).launch {
-                                listener?.onDownloadFailed()
-                            }
-                        })
+                        requestImage(request)
 
                     } ?: CoroutineScope(Dispatchers.Main).launch {
                         listener?.onDownloadFailed()
@@ -687,8 +693,7 @@ class ImageActionHelper {
                                 title: String,
                                 description: String?): Uri? {
             var url: Uri? = null
-            val fos: OutputStream?
-            fos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val fos: OutputStream? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val values = ContentValues()
                 values.apply {
                     put(MediaStore.Images.Media.TITLE, title)
@@ -845,10 +850,21 @@ data class SavedImageMeta(
             return Gson().fromJson(jsonObject, SavedImageMeta::class.java)
         }
 
-        fun createRelPath(filename: String): String = "/storage/emulated/0/Pictures/Mausam/Downloads/%s.jpg".format(filename)
+        fun createRelPath(filename: String): String {
+
+            //TODO: using App folder for storing downloaded images, migrate it
+            // to store in External storage(i.e. Internal SD card)
+            // Need to use SAF of Scoped Storage method for storing image in
+            // External storage.
+
+            //"/storage/emulated/0/Pictures/Mausam/Downloads/%s.jpg".format(filename)
+            //return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + filename
+
+            return MausamApplication.appFolder + filename
+        }
     }
 
-    fun getUri() = Uri.parse(uri)
+    fun getUri(): Uri? = Uri.parse(uri)
 
     fun setUri(uri: Uri){
         this.uri = uri.toString()

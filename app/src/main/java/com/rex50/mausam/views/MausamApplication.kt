@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import com.rex50.mausam.storage.MausamSharedPrefs
+import java.io.File
 
 class MausamApplication : Application(){
 
@@ -14,6 +15,8 @@ class MausamApplication : Application(){
         private var app: MausamApplication? = null
 
         private var mausamSharedPrefs: MausamSharedPrefs? = null
+
+        var appFolder: String = ""
 
         fun getInstance() : MausamApplication? = let {
             if(app == null){
@@ -30,6 +33,8 @@ class MausamApplication : Application(){
     override fun onCreate() {
         super.onCreate()
 
+        appFolder = applicationContext.getExternalFilesDir("Downloads")?.path + File.separator
+
         checkIfThemeChangeRequired()
 
     }
@@ -38,6 +43,7 @@ class MausamApplication : Application(){
     // Overriding this method is totally optional!
     override fun onConfigurationChanged ( newConfig : Configuration) {
         super.onConfigurationChanged(newConfig)
+        appFolder = applicationContext.getExternalFilesDir("Downloads")?.path + File.separator
     }
 
     // This is called when the overall system is running low on memory,
@@ -45,6 +51,7 @@ class MausamApplication : Application(){
     // Overriding this method is totally optional!
     override fun onLowMemory() {
         super.onLowMemory()
+
     }
 
     fun setAppContext(app: Context){
