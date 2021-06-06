@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context=".views.activities.ActImageEditor">
 
     <com.canhub.cropper.CropImageView
@@ -27,8 +28,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
-        android:background="@drawable/bg_extra_buttons"
-        android:drawableEnd="@drawable/ic_arrow_right"
+        android:background="@drawable/bg_weather_details"
+        android:drawableEnd="@drawable/ic_arrow_right_white"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
         android:id="@+id/btnCropImage"
@@ -37,7 +38,7 @@
         android:layout_width="match_parent"
         android:padding="15dp"
         android:text="@string/crop_image"
-        android:textColor="@color/black_to_white"
+        android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

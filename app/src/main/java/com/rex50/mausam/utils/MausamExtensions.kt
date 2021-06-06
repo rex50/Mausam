@@ -38,6 +38,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.rex50.mausam.R
+import com.rex50.mausam.utils.Constants.Configs.MAX_BITMAP_SIZE
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.calculateInSampleSize
 import kotlinx.coroutines.Dispatchers
@@ -351,10 +352,32 @@ suspend fun Uri.asCompressedBitmap(context: Context?) : Bitmap? {
     return null
 }
 
+
+/**
+ * Use this function to get a compressed version of Bitmap
+ *
+ * @param context of the current Activity or fragment
+ * @return Compressed bitmap which can be drawn
+ */
+suspend fun Uri.getOptimizedBitmap(context: Context?): Bitmap? {
+    var bitmap: Bitmap? = getBitmap()
+    var file = File(path ?: "")
+    withContext(Dispatchers.IO) {
+        context?.let {
+            while ((bitmap?.byteCount?:0) > MAX_BITMAP_SIZE) {
+                Log.d("Bitmap", "getOptimizedBitmap: Compressing bitmap of size ${bitmap?.byteCount}")
+                file = Compressor.compress(context, file)
+                bitmap = BitmapFactory.decodeFile(file.path)
+            }
+        }
+    }
+    return bitmap
+}
+
 fun ConstraintLayout.setRatioOfChild(@IdRes id: Int, ratio: String) {
     val constraintSet = ConstraintSet()
     constraintSet.clone(this)
-    constraintSet.setDimensionRatio(id, ratio.toRatio().addBefore("h, "))
+    constraintSet.setDimensionRatio(id, ratio.toRatio().addBefore("w, "))
     constraintSet.applyTo(this)
 }
 

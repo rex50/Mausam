@@ -10,11 +10,8 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.canhub.cropper.CropImageView
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
+import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
-import com.rex50.mausam.utils.SavedImageMeta
-import com.rex50.mausam.utils.getBitmap
-import com.rex50.mausam.utils.showToast
-import com.rex50.mausam.utils.visibility
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.frag_crop_image.*
@@ -48,24 +45,36 @@ class FragCropImage : BaseFragment() {
     }
 
     override fun load() {
+        btnCropImage?.hideView()
         photoData?.let {
 
             showLoader(true)
 
             CoroutineScope(Dispatchers.Main).launch {
                 Log.d(ActImageEditor.TAG, "loadAct: ${photoData?.relativePath?.toUri()}")
-                photoData?.relativePath?.toUri()?.getBitmap()?.let { image ->
-                    pvPreview?.apply {
-                        resources?.displayMetrics?.let { metrics ->
-                            displayMetrics = Pair(metrics.widthPixels, metrics.heightPixels)
+                photoData?.relativePath?.toUri()?.let { uri ->
+
+                    uri.getOptimizedBitmap(requireContext())?.let { image ->
+                        pvPreview?.apply {
+                            resources?.displayMetrics?.let { metrics ->
+                                displayMetrics = Pair(metrics.widthPixels, metrics.heightPixels)
+                            }
+                            setAspectRatio(displayMetrics.first, displayMetrics.second)
+                            try {
+                                setImageBitmap(image)
+                            } catch (e: Exception) {
+                                Log.e(TAG, "load: ", e)
+                            }
+                            scaleType = CropImageView.ScaleType.FIT_CENTER
+                            cropRect = wholeImageRect
                         }
-                        setAspectRatio(displayMetrics.first, displayMetrics.second)
-                        setImageBitmap(image)
-                        scaleType = CropImageView.ScaleType.FIT_CENTER
-                        cropRect = wholeImageRect
+
                     }
-                    showLoader(false)
+
                 }
+
+                showLoader(false)
+                btnCropImage?.showView()
             }
 
             PushDownAnim.setPushDownAnimTo(btnCropImage).setOnClickListener {
@@ -75,8 +84,10 @@ class FragCropImage : BaseFragment() {
                     pvPreview?.getCroppedImage(displayMetrics.first, displayMetrics.second)?.let {
                         withContext(Dispatchers.Main) {
                             listener?.onCropSuccess(it)
-                            showLoader(false)
                         }
+                    }
+                    withContext(Dispatchers.Main) {
+                        showLoader(false)
                     }
                 }
             }

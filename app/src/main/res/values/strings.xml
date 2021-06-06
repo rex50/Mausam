@@ -185,6 +185,7 @@
         <item>Music~~https://images.unsplash.com/photo-1484755560615-a4c64e778a6c?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
         <item>Abstract~~https://images.unsplash.com/photo-1537237858032-3ad1b513cbcc?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
     </string-array>
+    <string name="crop">Crop</string>
     <string name="crop_image">Crop Image and Continue</string>
     <string name="wallpaper_set_success">Wallpaper set successfully</string>
     <string name="wallpaper_set_failed">Error while setting Wallpaper</string>

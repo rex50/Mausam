@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/clBlurRoot"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardPreview"
+        android:layout_width="@dimen/_0dp"
+        android:layout_height="@dimen/_0dp"
+        app:cardCornerRadius="@dimen/_6dp"
+        android:layout_margin="@dimen/_40dp"
+        app:layout_constraintBottom_toTopOf="@+id/sBlur"
+        app:layout_constraintDimensionRatio="9:16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </androidx.cardview.widget.CardView>
+
+
+    <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+        android:id="@+id/tvBlur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Blur level"
+        android:textColor="@color/black_to_white"
+        android:textSize="18sp"
+        android:layout_marginBottom="@dimen/_32dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnSetWallpaper"
+        app:layout_constraintEnd_toEndOf="@+id/sBlur"
+        app:layout_constraintStart_toStartOf="@+id/sBlur" />
+
+    <SeekBar
+        android:id="@+id/sBlur"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30dp"
+        android:max="25"
+        android:layout_marginStart="@dimen/_40dp"
+        android:layout_marginEnd="@dimen/_40dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvBlur"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+        android:background="@drawable/bg_extra_buttons"
+        android:drawableStart="@drawable/ic_arrow_left"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:id="@+id/btnCropAgain"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_16dp"
+        android:layout_width="wrap_content"
+        android:padding="15dp"
+        android:text="@string/crop"
+        android:textColor="@color/black_to_white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+        android:background="@drawable/bg_weather_details"
+        android:drawableEnd="@drawable/ic_arrow_right_white"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:id="@+id/btnSetWallpaper"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_16dp"
+        android:layout_width="0dp"
+        android:padding="15dp"
+        android:text="@string/set_as_wallpaper"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnCropAgain"/>
+
+    <ImageView
+        android:id="@+id/ivLoader"
+        android:layout_width="@dimen/_40dp"
+        android:layout_height="@dimen/_40dp"
+        app:layout_constraintBottom_toBottomOf="@+id/cardPreview"
+        app:layout_constraintEnd_toEndOf="@+id/cardPreview"
+        app:layout_constraintStart_toStartOf="@+id/cardPreview"
+        app:layout_constraintTop_toTopOf="@+id/cardPreview" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

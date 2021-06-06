@@ -10,6 +10,10 @@ class Constants {
         const val COLLECTIONS_PHOTOS = "Collections Photos"
     }
 
+    object Configs {
+        const val MAX_BITMAP_SIZE = 100 * 1024 * 1024
+    }
+
     object AvailableLayouts {
         const val WEATHER_BASED_PHOTOS = "Random weather photos"
         const val LOCATION_BASED_PHOTOS = "Random location photos"

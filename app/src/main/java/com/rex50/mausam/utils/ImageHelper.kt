@@ -860,7 +860,7 @@ data class SavedImageMeta(
             //"/storage/emulated/0/Pictures/Mausam/Downloads/%s.jpg".format(filename)
             //return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + filename
 
-            return MausamApplication.appFolder + filename
+            return MausamApplication.appFolder + filename + ".jpg"
         }
     }
 
