@@ -67,7 +67,7 @@ class UnsplashHelper {
         if (!orientation.equals(ORIENTATION_UNSPECIFIED, ignoreCase = true)) extras["orientation"] = orientation
         context?.apply {
             scope.launch {
-                val response = KeyValuesRepository.getValue(context, PHOTOS_KEY + orderBy + page + perPage)
+                val response = KeyValuesRepository.checkValidityAndGetValue(context, PHOTOS_KEY + orderBy + page + perPage, RESPONSE_VALIDITY_HOURS)
                 response?.takeIf { it.isNotEmpty() }?.apply {
                     val photosAndUsers = DataParser.parseUnsplashData(response, true)
                     listener.onSuccess(photosAndUsers.photosList, photosAndUsers.userList)
@@ -129,7 +129,7 @@ class UnsplashHelper {
         if (photosOrientation != ORIENTATION_UNSPECIFIED) extras["orientation"] = photosOrientation
         context?.apply {
             scope.launch {
-                val response = KeyValuesRepository.getValue(context, SEARCHED_PHOTOS_KEY + searchTerm + page + perPage)
+                val response = KeyValuesRepository.checkValidityAndGetValue(context, SEARCHED_PHOTOS_KEY + searchTerm + page + perPage, RESPONSE_VALIDITY_HOURS)
                 response?.takeIf { it.isNotEmpty() }?.let {res ->
                     listener.onSuccess(DataParser.parseSearchedPhotos(res))
                 } ?: apply {
@@ -162,7 +162,7 @@ class UnsplashHelper {
         extras["per_page"] = perPage.toString()
         context?.apply {
             scope.launch {
-                val response = KeyValuesRepository.getValue(context, COLLECTION_PHOTOS_KEY + collectionId + page + perPage)
+                val response = KeyValuesRepository.checkValidityAndGetValue(context, COLLECTION_PHOTOS_KEY + collectionId + page + perPage, RESPONSE_VALIDITY_HOURS)
                 response?.takeIf { it.isNotEmpty() }?.apply {
                     listener.onSuccess(DataParser.parseUnsplashData(response, false).photosList)
                 } ?: apply {
@@ -190,7 +190,7 @@ class UnsplashHelper {
         extras["per_page"] = perPage.toString()
         context?.apply {
             scope.launch {
-                val response = KeyValuesRepository.getValue(context, COLLECTION_KEY + page + perPage)
+                val response = KeyValuesRepository.checkValidityAndGetValue(context, COLLECTION_KEY + page + perPage, RESPONSE_VALIDITY_HOURS)
                 response?.takeIf { it.isNotEmpty() }?.apply {
                     val obj = DataParser.parseCollections(response, true)
                     listener.onSuccess(obj.collectionsList, obj.tagsList)
@@ -220,7 +220,7 @@ class UnsplashHelper {
         extras["per_page"] = perPage.toString()
         context?.apply {
             scope.launch {
-                val response = KeyValuesRepository.getValue(context, PHOTOGRAPHER_KEY + unsplashUserName + page + perPage)
+                val response = KeyValuesRepository.checkValidityAndGetValue(context, PHOTOGRAPHER_KEY + unsplashUserName + page + perPage, RESPONSE_VALIDITY_HOURS)
                 response?.takeIf{ it.isNotEmpty() }?.apply{
                     val photosAndUsers = DataParser.parseUnsplashData(response, true)
                     listener.onSuccess(photosAndUsers.photosList)
@@ -250,7 +250,7 @@ class UnsplashHelper {
         extras["per_page"] = perPage.toString()
         context?.apply {
             scope.launch {
-                val response = KeyValuesRepository.getValue(context!!, COLLECTION_KEY + unsplashUserName + page + perPage)
+                val response = KeyValuesRepository.checkValidityAndGetValue(context!!, COLLECTION_KEY + unsplashUserName + page + perPage, RESPONSE_VALIDITY_HOURS)
                 response?.takeIf { it.isNotEmpty() }?.apply {
                     val obj = DataParser.parseCollections(response, true)
                     listener.onSuccess(obj.collectionsList, obj.tagsList)
@@ -300,5 +300,7 @@ class UnsplashHelper {
         const val ORIENTATION_LANDSCAPE = "landscape"
         const val ORIENTATION_PORTRAIT = "portrait"
         const val ORIENTATION_SQUARISH = "squarish"
+
+        const val RESPONSE_VALIDITY_HOURS = 4
     }
 }

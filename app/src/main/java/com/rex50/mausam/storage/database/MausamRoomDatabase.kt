@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.rex50.mausam.storage.database.key_values.KeyValues
 import com.rex50.mausam.storage.database.key_values.KeyValuesDao
+import com.rex50.mausam.utils.Converters
 
 @Database(entities = [KeyValues::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class MausamRoomDatabase : RoomDatabase() {
     abstract fun keyValuesDao(): KeyValuesDao?
 

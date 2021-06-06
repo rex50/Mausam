@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Dao
 interface KeyValuesDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(keyValues: KeyValues?)
 
     @Update
@@ -16,6 +16,6 @@ interface KeyValuesDao {
     @Query("DELETE FROM KeyValues")
     suspend fun deleteAll()
 
-    @Query("SELECT value from KeyValues where `key` = :key")
-    fun getValue(key: String?): String?
+    @Query("SELECT * from KeyValues where `key` = :key")
+    fun getValue(key: String?): KeyValues?
 }
