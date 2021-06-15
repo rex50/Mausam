@@ -26,6 +26,8 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="dark">#121212</color>
     <color name="transparentMagicMint">#90A5E4DA</color>
+    <color name="semi_transparent">#70000000</color>
+
 
 <!--    UI colors-->
 

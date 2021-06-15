@@ -171,7 +171,11 @@ fun ImageView.loadImageWithPreLoader(url: String?, @DrawableRes preLoader: Int? 
 }
 
 fun Context.openUrl(url: String){
-    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    } catch (e: ActivityNotFoundException) {
+        showToast("No supported app found. Failed to open")
+    }
 }
 
 fun Context.openInstagramProfile(userName: String) {

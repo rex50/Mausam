@@ -1,6 +1,7 @@
 package com.rex50.mausam.views.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
@@ -110,7 +111,8 @@ class ActSettings : BaseActivity() {
                         }
 
                         btnResUsed -> {
-                            showToast("Work in progress")
+                            val intent = Intent(this@ActSettings,ActUsedLibrary::class.java)
+                            startActivity(intent)
                         }
 
                         else -> showToast("Something thing is wrong. Please try again.")
