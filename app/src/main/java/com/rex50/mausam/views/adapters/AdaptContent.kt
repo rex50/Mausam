@@ -168,7 +168,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
         fun bind(model: GenericModelFactory.CategoryModel?) {
             categoryName?.text = model?.categoryName?.toString()
 
-            vBgOverlay.background = gradientHelper?.getRandomLeftRightGradient()
+            vBgOverlay?.background = gradientHelper?.getRandomLeftRightGradient()
 
             ivCategory?.loadImage(model?.categoryImg)
         }

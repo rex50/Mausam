@@ -40,6 +40,7 @@
         <activity android:name=".views.activities.ActMain" />
         <activity android:name=".views.activities.ActCollectionsList" />
         <activity android:name=".views.activities.ActSettings" />
+        <activity android:name=".views.activities.ActUsedLibrary"/>
 
         <receiver
             android:name=".receivers.NetworkChangeReceiver"
