@@ -10,6 +10,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.canhub.cropper.CropImageView
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
+import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
 import com.rex50.mausam.views.activities.ActImageEditor
@@ -25,7 +26,7 @@ class FragCropImage : BaseFragment() {
 
     private var listener: OnCropFragmentInteractionListener? = null
 
-    private var photoData: SavedImageMeta? = null
+    private var photoData: UnsplashPhotos? = null
 
     private var progressBar: CircularProgressDrawable? = null
 
@@ -34,7 +35,7 @@ class FragCropImage : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            photoData = it.getSerializable(PHOTO_DATA) as SavedImageMeta?
+            photoData = it.getParcelable(PHOTO_DATA) as UnsplashPhotos?
         }
     }
 
@@ -126,10 +127,10 @@ class FragCropImage : BaseFragment() {
          * @param photoData Information of the image.
          * @return A new instance of fragment FragCropImage.
          */
-        fun newInstance(photoData: SavedImageMeta) =
+        fun newInstance(photoData: UnsplashPhotos) =
                 FragCropImage().apply {
                     arguments = Bundle().apply {
-                        putSerializable(PHOTO_DATA, photoData)
+                        putParcelable(PHOTO_DATA, photoData)
                     }
                 }
     }

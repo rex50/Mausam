@@ -1,13 +1,22 @@
 
 package com.rex50.mausam.model_classes.unsplash.photos;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.Nullable;
+
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.rex50.mausam.model_classes.unsplash.collection.Category;
+import com.rex50.mausam.utils.Constants;
+import com.rex50.mausam.views.MausamApplication;
 
 import java.util.List;
 
-public class UnsplashPhotos {
+public class UnsplashPhotos implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -60,6 +69,103 @@ public class UnsplashPhotos {
     @SerializedName("sponsorship")
     @Expose
     private Sponsorship sponsorship;
+
+    @SerializedName("relativePath")
+    @Expose
+    private String relativePath;
+    
+    @SerializedName("isFavourite")
+    @Expose
+    private boolean isFavorite;
+    
+
+    public UnsplashPhotos() { }
+
+    protected UnsplashPhotos(Parcel in) {
+        id = in.readString();
+        createdAt = in.readString();
+        updatedAt = in.readString();
+        promotedAt = in.readString();
+        if (in.readByte() == 0) {
+            width = null;
+        } else {
+            width = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            height = null;
+        } else {
+            height = in.readInt();
+        }
+        color = in.readString();
+        description = in.readString();
+        altDescription = in.readString();
+        urls = in.readParcelable(Urls.class.getClassLoader());
+        links = in.readParcelable(DownloadLinks.class.getClassLoader());
+        categories = in.createTypedArrayList(Category.CREATOR);
+        if (in.readByte() == 0) {
+            likes = null;
+        } else {
+            likes = in.readInt();
+        }
+        byte tmpLikedByUser = in.readByte();
+        likedByUser = tmpLikedByUser == 0 ? null : tmpLikedByUser == 1;
+        user = in.readParcelable(User.class.getClassLoader());
+        relativePath = in.readString();
+        isFavorite = in.readInt() == 1;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(createdAt);
+        dest.writeString(updatedAt);
+        dest.writeString(promotedAt);
+        if (width == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(width);
+        }
+        if (height == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(height);
+        }
+        dest.writeString(color);
+        dest.writeString(description);
+        dest.writeString(altDescription);
+        dest.writeParcelable(urls, flags);
+        dest.writeParcelable(links, flags);
+        dest.writeTypedList(categories);
+        if (likes == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(likes);
+        }
+        dest.writeByte((byte) (likedByUser == null ? 0 : likedByUser ? 1 : 2));
+        dest.writeParcelable(user, flags);
+        dest.writeString(relativePath);
+        dest.writeInt(isFavorite ? 1 : 0);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<UnsplashPhotos> CREATOR = new Creator<UnsplashPhotos>() {
+        @Override
+        public UnsplashPhotos createFromParcel(Parcel in) {
+            return new UnsplashPhotos(in);
+        }
+
+        @Override
+        public UnsplashPhotos[] newArray(int size) {
+            return new UnsplashPhotos[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -118,6 +224,7 @@ public class UnsplashPhotos {
     }
 
     public String getDescription() {
+        if(description == null) return "";
         return description;
     }
 
@@ -126,6 +233,7 @@ public class UnsplashPhotos {
     }
 
     public String getAltDescription() {
+        if(altDescription == null) return "";
         return altDescription;
     }
 
@@ -195,6 +303,52 @@ public class UnsplashPhotos {
 
     public void setSponsorship(Sponsorship sponsorship) {
         this.sponsorship = sponsorship;
+    }
+
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
+    }
+
+    public String getRelativePath() {
+        return relativePath;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public String getJSON(){
+        try {
+            return new Gson().toJson(this);
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e);
+            return "";
+        }
+    }
+
+    public String getDBId() {
+        return Constants.Image.DOWNLOADED_IMAGE +
+                id + "_" +
+                getDescription().replace(" ", "").trim() + "_" +
+                altDescription.replace(" ", "").trim();
+    }
+
+    @Nullable
+    public static UnsplashPhotos getModelFromJSON(String jsonString){
+        try {
+            return new Gson().fromJson(jsonString, UnsplashPhotos.class);
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e);
+            return null;
+        }
+    }
+
+    public String createRelativePath(String filename) {
+        return MausamApplication.getAppFolder() + filename + "_" + id + ".jpg";
     }
 
 }

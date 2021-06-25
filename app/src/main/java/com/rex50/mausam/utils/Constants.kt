@@ -60,6 +60,8 @@ class Constants {
         const val DOWNLOAD_RELATIVE_PATH = "Pictures/Mausam/Downloads/"
         const val FAV_RELATIVE_PATH = "Pictures/Mausam/Favourites/"
         const val SAVE_MIME_TYPE = "image/jpg"
+
+        const val DOWNLOADED_IMAGE = "Downloaded_image_"
     }
 
     object Util {

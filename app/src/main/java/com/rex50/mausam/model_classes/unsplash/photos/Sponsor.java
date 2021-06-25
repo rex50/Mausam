@@ -1,10 +1,13 @@
 
 package com.rex50.mausam.model_classes.unsplash.photos;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Sponsor {
+public class Sponsor implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -57,6 +60,92 @@ public class Sponsor {
     @SerializedName("accepted_tos")
     @Expose
     private Boolean acceptedTos;
+
+    protected Sponsor(Parcel in) {
+        id = in.readString();
+        updatedAt = in.readString();
+        username = in.readString();
+        name = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        twitterUsername = in.readString();
+        portfolioUrl = in.readString();
+        bio = in.readString();
+        location = in.readString();
+        links = in.readParcelable(UserLinks.class.getClassLoader());
+        profileImage = in.readParcelable(ProfileImage.class.getClassLoader());
+        instagramUsername = in.readString();
+        if (in.readByte() == 0) {
+            totalCollections = null;
+        } else {
+            totalCollections = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            totalLikes = null;
+        } else {
+            totalLikes = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            totalPhotos = null;
+        } else {
+            totalPhotos = in.readInt();
+        }
+        byte tmpAcceptedTos = in.readByte();
+        acceptedTos = tmpAcceptedTos == 0 ? null : tmpAcceptedTos == 1;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(updatedAt);
+        dest.writeString(username);
+        dest.writeString(name);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(twitterUsername);
+        dest.writeString(portfolioUrl);
+        dest.writeString(bio);
+        dest.writeString(location);
+        dest.writeParcelable(links, flags);
+        dest.writeParcelable(profileImage, flags);
+        dest.writeString(instagramUsername);
+        if (totalCollections == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(totalCollections);
+        }
+        if (totalLikes == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(totalLikes);
+        }
+        if (totalPhotos == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(totalPhotos);
+        }
+        dest.writeByte((byte) (acceptedTos == null ? 0 : acceptedTos ? 1 : 2));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Sponsor> CREATOR = new Creator<Sponsor>() {
+        @Override
+        public Sponsor createFromParcel(Parcel in) {
+            return new Sponsor(in);
+        }
+
+        @Override
+        public Sponsor[] newArray(int size) {
+            return new Sponsor[size];
+        }
+    };
 
     public String getId() {
         return id;

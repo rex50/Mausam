@@ -141,7 +141,7 @@ fun String.addAfter(text: String?): String = text?.takeIf { it.isNotEmpty() }?.l
     "$this $text"
 }?: this
 
-fun ImageView.loadImage(url: String?){
+fun ImageView.loadImage(url: Any?){
 
     val progressBar = CircularProgressDrawable(context)
     progressBar.apply {
@@ -288,7 +288,7 @@ fun checkIfFileExistsInStorage(relativePath: String?): Boolean {
     }else{*/
     val file: File? = File(relativePath ?: "")
     file?.apply {
-        if(this.exists())
+        if(this.exists() && this.totalSpace != 0L)
             return true
     }
     //}

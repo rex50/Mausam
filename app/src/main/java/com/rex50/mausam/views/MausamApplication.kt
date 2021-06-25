@@ -16,6 +16,7 @@ class MausamApplication : Application(){
 
         private var mausamSharedPrefs: MausamSharedPrefs? = null
 
+        @JvmStatic
         var appFolder: String = ""
 
         fun getInstance() : MausamApplication? = let {

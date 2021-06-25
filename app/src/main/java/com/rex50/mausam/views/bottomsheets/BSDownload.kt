@@ -8,6 +8,10 @@ import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.MaterialBottomSheet
 import com.rex50.mausam.utils.showView
 import kotlinx.android.synthetic.main.bs_download.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class BSDownload : MaterialBottomSheet() {
@@ -35,7 +39,7 @@ class BSDownload : MaterialBottomSheet() {
             setAnimation(R.raw.l_anim_photo_saving)
         }
 
-        tvBottomSheet?.text = "\n${getString(R.string.downloading)}"
+        "\n${getString(R.string.downloading)}".let { tvBottomSheet?.text = it }
 
         btnDismiss?.setOnClickListener{
             animBottomSheet?.apply {
@@ -67,14 +71,17 @@ class BSDownload : MaterialBottomSheet() {
     }
 
     fun downloaded(){
-        animBottomSheet?.pauseAnimation()
-        fragmentManager?.apply {
-            dismiss()
+        CoroutineScope(Dispatchers.Main).launch {
+            animBottomSheet?.pauseAnimation()
+            delay(300)
+            fragmentManager?.apply {
+                dismissAllowingStateLoss()
+            }
         }
     }
 
     fun onProgress(progress: Int) {
-        tvBottomSheet?.text = "$progress%\n${getString(R.string.downloading)}"
+        "$progress%\n${getString(R.string.downloading)}".let { tvBottomSheet?.text = it }
     }
 
 }
