@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
 import com.rex50.mausam.interfaces.*
+import com.rex50.mausam.model_classes.item_types.*
 import com.rex50.mausam.model_classes.unsplash.collection.Collections
 import com.rex50.mausam.model_classes.unsplash.collection.Tag
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
@@ -34,18 +35,17 @@ import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Utils.TextValidationInterface
-import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.MausamApplication
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import kotlinx.android.synthetic.main.frag_search.*
-import kotlinx.android.synthetic.main.frag_search.recHomeContent
 import kotlinx.android.synthetic.main.header_custom_general.*
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
+
 class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
     var searchOnlyCity = false
 
@@ -124,18 +124,6 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
     private fun getSequenceOfLayout(): List<String> = sequenceOfLayout.apply {
         clear()
-      /*  add(Constants.AvailableLayouts.WEATHER_BASED_PHOTOS)
-        add(Constants.AvailableLayouts.LOCATION_BASED_PHOTOS)
-        add(Constants.AvailableLayouts.TIME_BASED_PHOTOS)
-        add(Constants.AvailableLayouts.FEATURED_COLLECTIONS)
-        add(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)
-        add(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES)
-        add(Constants.AvailableLayouts.POPULAR_PHOTOS)
-        add(Constants.AvailableLayouts.POPULAR_TAGS)
-        add(Constants.AvailableLayouts.BROWSE_BY_COLORS)
-        //add(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)*/
-
-        //Use below format when implemented in search screen
         add(Constants.AvailableLayouts.POPULAR_TAGS)
         add(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES)
         add(Constants.AvailableLayouts.FEATURED_COLLECTIONS)
@@ -151,7 +139,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
         val unsplashHelper = UnsplashHelper(mContext)
         allData = AllContentModel()
         allData?.setContentInsertListener(this)
-        adaptHome = AdaptHome(mContext, allData)
+        adaptHome = AdaptHome(GradientHelper.getInstance(requireContext()), allData)
 
         allData?.apply {
             setSequenceOfLayouts(sequenceOfLayout)
@@ -257,14 +245,14 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
             mContext?.apply {
                 val categories = listOf<String>(*resources.getStringArray(R.array.array_categories_type))
                 allData?.addSequentially(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES, GenericModelFactory.getCategoryTypeObject(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES,
-                        Constants.Providers.POWERED_BY_UNSPLASH, false, GenericModelFactory.CategoryTypeModel.createModelFromStringList(categories), true))
+                        Constants.Providers.POWERED_BY_UNSPLASH, false, CategoryTypeModel.createModelFromStringList(categories), true))
             }?: allData?.increaseResponseCount()
         }
         if (sequenceOfLayout.contains(Constants.AvailableLayouts.BROWSE_BY_COLORS)) {
             mContext?.apply {
                 val colorsList = listOf<String>(*resources.getStringArray(R.array.array_colors_type))
                 allData!!.addSequentially(Constants.AvailableLayouts.BROWSE_BY_COLORS, GenericModelFactory.getColorTypeObject(Constants.AvailableLayouts.BROWSE_BY_COLORS, Constants.Providers.POWERED_BY_UNSPLASH,
-                        false, GenericModelFactory.ColorTypeModel.createModelFromStringList(colorsList), true))
+                        false, ColorTypeModel.createModelFromStringList(colorsList), true))
             }?: allData?.increaseResponseCount()
         }
         if (sequenceOfLayout.contains(Constants.AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)) {
@@ -292,7 +280,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                 object : GenericModelCastHelper(o) {
 
-                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+                    override fun onCollectionType(collectionTypeModel: CollectionTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
@@ -301,7 +289,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
+                    override fun onGeneralType(generalTypeModel: GeneralTypeModel?) {
                         generalTypeModel?.apply {
 
                             ImageViewerHelper(mContext).with(photosList,
@@ -392,7 +380,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         }
                     }
 
-                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                    override fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel?) {
                         favPhotographerTypeModel?.apply {
                             ImageViewerHelper(mContext).with(photosList,
                                     childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
@@ -476,7 +464,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         }
                     }
 
-                    override fun onTagType(tagTypeModel: GenericModelFactory.TagTypeModel?) {
+                    override fun onTagType(tagTypeModel: TagTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -488,7 +476,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onColorType(colorTypeModel: GenericModelFactory.ColorTypeModel?) {
+                    override fun onColorType(colorTypeModel: ColorTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -500,7 +488,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onCategoryType(categoryTypeModel: GenericModelFactory.CategoryTypeModel?) {
+                    override fun onCategoryType(categoryTypeModel: CategoryTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -512,7 +500,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onUserType(userTypeModel: GenericModelFactory.UserTypeModel?) {
+                    override fun onUserType(userTypeModel: UserTypeModel?) {
                         mListener?.startMorePhotosActivity(
                             MoreListData(
                                 Constants.ListModes.LIST_MODE_USER_PHOTOS,
@@ -527,7 +515,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
             override fun onMoreClicked(o: Any?, title: String?, groupPos: Int) {
 
                 object : GenericModelCastHelper(o){
-                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+                    override fun onCollectionType(collectionTypeModel: CollectionTypeModel?) {
                         mListener?.startMoreFeaturedCollections(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_COLLECTIONS,
@@ -538,7 +526,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
+                    override fun onGeneralType(generalTypeModel: GeneralTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_POPULAR_PHOTOS,

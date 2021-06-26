@@ -53,9 +53,5 @@ abstract class BaseFragment : Fragment(){
 
     open fun whenResumed(){}
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-
+    fun isFragmentLoaded() = isFragmentLoaded
 }

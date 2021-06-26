@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
 import com.rex50.mausam.interfaces.*
+import com.rex50.mausam.model_classes.item_types.FavouritePhotographerTypeModel
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
@@ -37,7 +38,6 @@ class FragHome : BaseFragment() {
     private var photosList = ArrayList<UnsplashPhotos>()
     private var photosModel: GenericModelFactory? = null
     private var mWeatherDetails: WeatherModelClass? = null
-    private val mParam2: String? = null
     private var mListener: OnFragmentInteractionListener? = null
     private var unsplashHelper: UnsplashHelper? = null
     private var adapter: AdaptContent? = null
@@ -133,7 +133,7 @@ class FragHome : BaseFragment() {
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
                 object: GenericModelCastHelper(o){
-                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                    override fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel?) {
                         favPhotographerTypeModel?.apply {
                             ImageViewerHelper(context).with(photosList,
                                     childImgView, childPos, object : ImageActionHelper.ImageActionListener() {

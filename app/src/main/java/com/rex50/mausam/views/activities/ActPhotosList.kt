@@ -19,6 +19,7 @@ import com.rex50.mausam.interfaces.GetUnsplashPhotosAndUsersListener
 import com.rex50.mausam.interfaces.GetUnsplashPhotosListener
 import com.rex50.mausam.interfaces.GetUnsplashSearchedPhotosListener
 import com.rex50.mausam.interfaces.OnChildItemClickListener
+import com.rex50.mausam.model_classes.item_types.FavouritePhotographerTypeModel
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.unsplash.searched_photos.SearchedPhotos
@@ -153,7 +154,9 @@ class ActPhotosList : BaseActivity() {
     }
 
     private fun initDataModel(){
-        photosModel = GenericModelFactory.getFavouritePhotographerTypeObject(listData?.getTitle(this), listData?.getDesc(), photosList)
+        listData?.let { data ->
+            photosModel = GenericModelFactory.getFavouritePhotographerTypeObject(data.getTitle(this), data.getDesc(), photosList)
+        }
     }
 
     private fun initRecycler() {
@@ -216,7 +219,7 @@ class ActPhotosList : BaseActivity() {
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
                 object: GenericModelCastHelper(o){
-                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                    override fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel?) {
                         favPhotographerTypeModel?.apply {
                             ImageViewerHelper(this@ActPhotosList).with(photosList,
                                     childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
