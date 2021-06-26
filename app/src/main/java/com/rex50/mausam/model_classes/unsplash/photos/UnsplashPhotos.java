@@ -334,7 +334,7 @@ public class UnsplashPhotos implements Parcelable {
         return Constants.Image.DOWNLOADED_IMAGE +
                 id + "_" +
                 getDescription().replace(" ", "").trim() + "_" +
-                altDescription.replace(" ", "").trim();
+                getAltDescription().replace(" ", "").trim();
     }
 
     @Nullable
