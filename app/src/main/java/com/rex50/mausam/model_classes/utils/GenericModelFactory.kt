@@ -16,6 +16,7 @@ import com.rex50.mausam.utils.Constants.RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.FAV_PHOTOGRAPHER_PHOTOS_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.GENERAL_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.ITEM_CATEGORY_TYPE
+import com.rex50.mausam.utils.Constants.RecyclerItemTypes.ITEM_SECTION_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.TAG_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.USER_TYPE
 
@@ -89,9 +90,6 @@ abstract class GenericModelFactory{
      */
     var scrollDirection = LinearLayoutManager.HORIZONTAL
         protected set
-
-
-
 
 
     abstract fun getTotalItems(): Int
@@ -207,6 +205,40 @@ abstract class GenericModelFactory{
             return textTypeModel
         }
 
+        fun getDownloadedSectionTypeObject(
+            sectionTitle: String,
+            @DrawableRes icon: Int,
+            hasMore: Boolean,
+            photosList: List<UnsplashPhotos>
+        ): GenericModelFactory {
+            return GeneralTypeModel(photosList).apply {
+                title = sectionTitle
+                isHasMore = hasMore
+                this.icon = icon
+                viewType = ITEM_SECTION_TYPE
+                viewLayout = ITEM_SECTION_TYPE
+                itemType = GENERAL_TYPE
+                itemLayout = R.layout.cell_type_general
+            }
+        }
+
+        fun getRecommendedUserSectionTypeObject(
+            sectionTitle: String,
+            @DrawableRes icon: Int,
+            hasMore: Boolean,
+            usersList: List<User>
+        ): GenericModelFactory {
+            return UserTypeModel(usersList).apply {
+                title = sectionTitle
+                isHasMore = hasMore
+                this.icon = icon
+                viewType = ITEM_SECTION_TYPE
+                viewLayout = ITEM_SECTION_TYPE
+                itemType = USER_TYPE
+                itemLayout = R.layout.cell_type_user
+            }
+        }
+
         fun getFavouritePhotographerTypeObject(
             title: String,
             desc: String,
@@ -223,6 +255,5 @@ abstract class GenericModelFactory{
             return favouriteModel
         }
 
-        
     }
 }

@@ -38,7 +38,7 @@ import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.LastLocationProvider;
 import com.rex50.mausam.utils.MaterialSnackBar;
 import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
-import com.rex50.mausam.views.fragments.FragFavourites;
+import com.rex50.mausam.views.fragments.favourites.FragFavourites;
 import com.rex50.mausam.views.fragments.FragHome;
 import com.rex50.mausam.views.fragments.FragSearch;
 import com.rex50.mausam.views.fragments.FragSearchResult;
@@ -78,7 +78,7 @@ public class ActMain extends BaseActivity implements
     private Boolean isGettingWeather = false, isFirstWeatherFetched = false;
     private LastLocationProvider lastLocationProvider;
     private FlashyTabBar tabFlashyAnimator;
-    private FragmentStatePagerAdapter fragmentAdapter;
+    private CustomViewPager viewPager;
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({ Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -209,7 +209,7 @@ public class ActMain extends BaseActivity implements
     }
 
     private void prepareFragments() {
-        CustomViewPager viewPager = findViewById(R.id.homeViewPager);
+        viewPager = findViewById(R.id.homeViewPager);
         viewPager.setPagingEnabled(false);
         List<Fragment> mFragmentList = new ArrayList<>();
         fragHome = new FragHome();
@@ -245,7 +245,7 @@ public class ActMain extends BaseActivity implements
         tabFlashyAnimator = new FlashyTabBar(tabLayout);
         tabFlashyAnimator.addTabItem("Home", R.drawable.ic_logo);
         tabFlashyAnimator.addTabItem("Discover", R.drawable.ic_search);
-        tabFlashyAnimator.addTabItem("Favourites", R.drawable.ic_heart);
+        tabFlashyAnimator.addTabItem("Gallery", R.drawable.ic_heart);
         tabFlashyAnimator.highLightTab(0);
         viewPager.addOnPageChangeListener(tabFlashyAnimator);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -273,6 +273,11 @@ public class ActMain extends BaseActivity implements
 
             }
         });
+    }
+
+    @Override
+    public void navigateToDiscover() {
+        viewPager.setCurrentItem(1);
     }
 
     @Override

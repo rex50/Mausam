@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+
+    <ImageView
+        android:id="@+id/ivSectionIcon"
+        android:layout_width="@dimen/_28dp"
+        android:layout_height="@dimen/_28dp"
+        android:src="@drawable/ic_downloaded"
+        app:layout_constraintBottom_toBottomOf="@+id/tvSectionTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvSectionTitle"
+        tools:ignore="ContentDescription" />
+
+    <com.rex50.mausam.utils.custom_text_views.BoldTextView
+        android:id="@+id/tvSectionTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_16dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/dummy_title"
+        android:textColor="@color/titleColor"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnSeeAll"
+        app:layout_constraintStart_toEndOf="@+id/ivSectionIcon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/btnSeeAll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/more_button"
+        android:text="@string/see_all"
+        android:textColor="@color/more_button_text"
+        android:textSize="12sp"
+        android:visibility="visible"
+        app:cornerRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

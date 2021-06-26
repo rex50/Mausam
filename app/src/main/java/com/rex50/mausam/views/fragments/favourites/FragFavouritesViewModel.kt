@@ -3,31 +3,54 @@ package com.rex50.mausam.views.fragments.favourites
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.rex50.mausam.R
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
+import com.rex50.mausam.model_classes.utils.AllContentModel
+import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
-import kotlinx.coroutines.CoroutineScope
+import com.rex50.mausam.utils.Constants.AvailableLayouts
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class FragFavouritesViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val allSections: AllContentModel? by lazy {
+        AllContentModel().also {
+            it.setSequenceOfLayouts(mutableListOf<String>().also { list ->
+                list.add(AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS)
+                list.add(AvailableLayouts.DOWNLOADED_PHOTOS)
+                list.add(AvailableLayouts.FAVOURITE_PHOTOS)
+            })
+        }
+    }
+
     //List of currently downloaded photos in user's storage
     private var downloadedPhotosList: LiveData<ArrayList<UnsplashPhotos>>? = null
 
-    //List of interested photographers which is
-    // prepared from downloaded photos list.
-    private val interestedPhotographers: MutableLiveData<ArrayList<User>>? by lazy {
-        MutableLiveData<ArrayList<User>>()
-    }
 
     //This observer observes downloaded photos list
     // and prepare a list of photographers from downloaded photos
-    private val photographerObserver: Observer<ArrayList<UnsplashPhotos>> by lazy {
+    private val downloadedPhotosObserver: Observer<ArrayList<UnsplashPhotos>> by lazy {
         Observer { photos ->
             viewModelScope.launch {
-                updatePhotographers(photos)
+
+                if(photos.isNotEmpty()) {
+
+                    photos.reverse()
+
+                    addOrUpdateDownloadedList(photos)
+
+                    addOrUpdatePhotographersList(photos)
+
+                    //TODO:
+                    //  addOrUpdateFavPhotoList()
+
+                } else {
+                    allSections?.clearList()
+                }
+
             }
         }
     }
@@ -40,7 +63,7 @@ class FragFavouritesViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private fun setupObservers() {
-        downloadedPhotosList?.observeForever(photographerObserver)
+        downloadedPhotosList?.observeForever(downloadedPhotosObserver)
     }
 
     private suspend fun initDownloadedPhotoList() {
@@ -48,28 +71,58 @@ class FragFavouritesViewModel(application: Application) : AndroidViewModel(appli
         Log.e("FragFav", "Downloaded photos: ${downloadedPhotosList?.value?.size}")
     }
 
-    private suspend fun updatePhotographers(photos: ArrayList<UnsplashPhotos>) = withContext(Dispatchers.IO) {
-        val photographers = arrayListOf<User>()
-        photos.forEach { photo ->
-            photographers.add(photo.user)
+    private suspend fun addOrUpdateDownloadedList(photos: ArrayList<UnsplashPhotos>) = withContext(Dispatchers.IO) {
+        allSections?.addOrUpdateModel(
+            AvailableLayouts.DOWNLOADED_PHOTOS,
+            GenericModelFactory.getDownloadedSectionTypeObject(
+                AvailableLayouts.DOWNLOADED_PHOTOS,
+                R.drawable.ic_downloaded,
+                false,
+                photos
+            )
+        )
+    }
+
+    private suspend fun addOrUpdatePhotographersList(photos: ArrayList<UnsplashPhotos>) = withContext(Dispatchers.IO) {
+        if(photos.size >= 2) {
+            val photographers = arrayListOf<User>()
+            photos.forEach { photo ->
+                photographers.add(photo.user)
+            }
+
+            allSections?.addOrUpdateModel(
+                AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS,
+                GenericModelFactory.getRecommendedUserSectionTypeObject(
+                    AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS,
+                    R.drawable.ic_star,
+                    false,
+                    photographers
+                )
+            )
+        } else {
+            allSections?.remove(AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS)
         }
-        withContext(Dispatchers.Main) {
-            interestedPhotographers?.value = photographers
-        }
+    }
+
+    private fun addOrUpdateFavPhotoList() {
+        allSections?.addOrUpdateModel(
+            AvailableLayouts.FAVOURITE_PHOTOS,
+            GenericModelFactory.getDownloadedSectionTypeObject(
+                AvailableLayouts.FAVOURITE_PHOTOS,
+                R.drawable.ic_heart,
+                false,
+                arrayListOf()
+            )
+        )
     }
 
     override fun onCleared() {
-        downloadedPhotosList?.removeObserver(photographerObserver)
+        downloadedPhotosList?.removeObserver(downloadedPhotosObserver)
         super.onCleared()
     }
 
-    fun getDownloadedPhotos(): LiveData<ArrayList<UnsplashPhotos>>? {
-        return downloadedPhotosList
+    fun getSectionsLiveData(): LiveData<AllContentModel>? {
+        return allSections?.getModelLiveList()
     }
-
-    fun getInterestedPhotographers(): LiveData<ArrayList<User>>? {
-        return interestedPhotographers
-    }
-
 
 }

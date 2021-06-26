@@ -103,6 +103,9 @@ dependencies {
 
     implementation "com.bitvale:switcher:$switcher_version"
 
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+
     //implementation "com.github.stfalcon:stfalcon-imageviewer:$imageViewer_version"
     implementation "com.github.chrisbanes:PhotoView:$photo_view_version"
 

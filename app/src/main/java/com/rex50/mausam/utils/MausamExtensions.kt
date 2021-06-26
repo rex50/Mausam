@@ -47,6 +47,7 @@ import org.joda.time.DateTime
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 fun String.isInt(): Boolean = when(toIntOrNull()){
     null -> false
@@ -402,4 +403,14 @@ fun AppCompatActivity.getSimpleFragmentAdapter(mFragmentList: List<Fragment>): F
             return mFragmentList.size
         }
     }
+}
+
+fun <E> List<E>?.toArrayList(): ArrayList<E> {
+    return ArrayList<E>().also { newList ->
+        this?.let { currentList -> newList.addAll(currentList) }
+    }
+}
+
+suspend fun <E> MutableList<E>.reverseAsync() = withContext(Dispatchers.IO) {
+    reverse()
 }

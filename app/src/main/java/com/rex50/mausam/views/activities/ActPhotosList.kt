@@ -113,10 +113,14 @@ class ActPhotosList : BaseActivity() {
                             }
                         }
 
-                        findViewById<Button>(R.id.btnAddFavUser)?.setOnClickListener{
-                            showToast("Coming soon...")
-                            //TODO : add user as favourite
+                        findViewById<Button>(R.id.btnAddFavUser)?.apply {
+                            hideView()
+                            setOnClickListener{
+                                showToast("Coming soon...")
+                                //TODO : add user as favourite
+                            }
                         }
+
 
                         findViewById<Button>(R.id.btnMore)?.setOnClickListener {
                             val bsUserMore: BSUserMore? = BSUserMore()

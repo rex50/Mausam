@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="@dimen/_40dp">
+
+    <include layout="@layout/header_custom_section"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recSectionItems"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:padding="@dimen/recycler_item_offset_grid"
+        android:clipToPadding="false"/>
+
+    <include layout="@layout/anim_view" />
+
+</LinearLayout>

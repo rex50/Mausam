@@ -1,5 +1,6 @@
 package com.rex50.mausam.views.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -9,54 +10,34 @@ import com.rex50.mausam.utils.Constants.RecyclerItemTypes
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.adapters.holders.EndImageHolder
 import com.rex50.mausam.views.adapters.holders.ItemCategoryHolder
+import com.rex50.mausam.views.adapters.holders.ItemSectionHolder
 
 class AdaptHome(private var gradientHelper: GradientHelper?, private var allContentModel: AllContentModel?) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var itemClickListener: OnGroupItemClickListener? = null
 
-    class EndImageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var imageView: ImageView = itemView.findViewById(R.id.ivPhoto)
-    }
-
-    class ItemCategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        fun bind(context: Context?, model: GenericModelFactory?, gradient: GradientDrawable?, groupItemClickListener: OnGroupItemClickListener?, spanCount: Int, groupPosition: Int) = with(itemView) {
-            model?.apply {
-                gradient?.apply {
-                    vGradientLineCategory?.background = this
-                }
-                tvCategoryTitle?.text = model.title
-                tvCategoryDesc?.text = model.desc
-                btnCategoryMore?.apply {
-                    if (model.isHasMore) showView() else hideView()
-                    setOnClickListener { groupItemClickListener?.onMoreClicked(model, model.title, groupPosition) }
-                }
-
-                //TODO : Check if any other optimal solution is available
-                val adapter: AdaptContent? = AdaptContent(context, model)
-                recCategoryItems?.layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
-                adapter?.setChildClickListener(object : OnChildItemClickListener {
-                    override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
-                        groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
-                    }
-                })
-                if(recCategoryItems?.itemDecorationCount == 0){
-                    recCategoryItems?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
-                }
-
-                recCategoryItems?.adapter =  SlideInBottomAnimationAdapter(adapter!!).apply {
-                    setFirstOnly(false)
-                }
-            }
-        }
+    fun updateData(data: AllContentModel) {
+        allContentModel = data
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val v = LayoutInflater.from(context).inflate(viewType, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
-            RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE, RecyclerItemTypes.ITEM_CATEGORY_TYPE -> ItemCategoryHolder(v)
-            RecyclerItemTypes.END_IMAGE -> EndImageHolder(v)
+
+            RecyclerItemTypes.ITEM_SECTION_TYPE -> {
+                ItemSectionHolder(v)
+            }
+
+            RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE, RecyclerItemTypes.ITEM_CATEGORY_TYPE -> {
+                ItemCategoryHolder(v)
+            }
+
+            RecyclerItemTypes.END_IMAGE -> {
+                EndImageHolder(v)
+            }
+
             else -> throw IllegalArgumentException("Please add case for viewType:\"$viewType\"")
         }
     }
@@ -67,6 +48,11 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
                 RecyclerItemTypes.ITEM_CATEGORY_TYPE -> {
                     val itemHolder = holder as ItemCategoryHolder
                     itemHolder.bind(this, gradientHelper?.getGradient(), itemClickListener, 1, position)
+                }
+
+                RecyclerItemTypes.ITEM_SECTION_TYPE -> {
+                    val itemHolder = holder as ItemSectionHolder
+                    itemHolder.bind(this, itemClickListener, 1, position)
                 }
 
                 RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE -> {
@@ -82,6 +68,7 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
     }
 
     override fun getItemViewType(position: Int): Int {
+        Log.e("AdaptHome", "getItemViewType: " + allContentModel?.getModel(position)?.title)
         return allContentModel?.getModel(position)?.viewLayout ?: RecyclerItemTypes.ITEM_CATEGORY_TYPE
     }
 
