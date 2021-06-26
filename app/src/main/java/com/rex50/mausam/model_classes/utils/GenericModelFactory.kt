@@ -23,25 +23,70 @@ abstract class GenericModelFactory{
 
     //private int endImage = R.drawable.banner_bg_1;
 
+    /**
+     * Used for Section/Category UI
+     *
+     * This value will decide which holder to use in onBindViewHolder of AdaptHome
+     */
     var viewType: Int = ITEM_CATEGORY_TYPE
         protected set
+
+    /**
+     * Used for Section/Category UI
+     *
+     * This value will decide which layout to inflate for the
+     * parent UI in onCreateViewHolder of AdaptHome
+     */
     var viewLayout = R.layout.item_category
         protected set
+
+    /**
+     * Used for Child UI items inside a Category/Section
+     *
+     * This value will decide which holder to use in onBindViewHolder of AdaptContent
+     */
     var itemType: Int = GENERAL_TYPE
         protected set
+
+    /**
+     * Used for Child UI items inside a Category/Section
+     *
+     * This value will decide which layout to inflate for the
+     * child UI in onCreateViewHolder of AdaptContent
+     */
     var itemLayout = R.layout.cell_type_general
         protected set
+
+    /**
+     * Title for the Category/Section
+     */
     var title = ""
         protected set
+
+    /**
+     * Description for the Category
+     */
     var desc = ""
         protected set
+
+    /**
+     * If Category/Section has more items than what we are showing currently then pass {@code true}
+     *
+     * If true then a button will be shown at the end of Category/Section title
+     */
     var isHasMore = true
         protected set
 
+    /**
+     * Icon for showing before Section title
+     */
     @DrawableRes
     var icon: Int = -1
         protected set
 
+    /**
+     * Scroll direction of the child items
+     */
     var scrollDirection = LinearLayoutManager.HORIZONTAL
         protected set
 

@@ -244,7 +244,7 @@ public class ActMain extends BaseActivity implements
         tabLayout.setupWithViewPager(viewPager);
         tabFlashyAnimator = new FlashyTabBar(tabLayout);
         tabFlashyAnimator.addTabItem("Home", R.drawable.ic_logo);
-        tabFlashyAnimator.addTabItem("Search", R.drawable.ic_search);
+        tabFlashyAnimator.addTabItem("Discover", R.drawable.ic_search);
         tabFlashyAnimator.addTabItem("Favourites", R.drawable.ic_heart);
         tabFlashyAnimator.highLightTab(0);
         viewPager.addOnPageChangeListener(tabFlashyAnimator);

@@ -468,6 +468,10 @@ class ImageViewerHelper (){
         TransitionManager.beginDelayedTransition(rlImageOverlay as ViewGroup, Fade())
     }
 
+    fun dismiss() {
+        imageViewer?.close()
+    }
+
     companion object {
         fun getFormattedDesc(desc: String?, altDesc: String?): String = let {
             desc?.takeIf { it.isEmpty() }?.apply {

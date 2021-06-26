@@ -10,6 +10,7 @@ import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.ItemOffsetDecoration
 import com.rex50.mausam.utils.hideView
+import com.rex50.mausam.utils.showView
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.thekhaeng.pushdownanim.PushDownAnim
 import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter
@@ -26,7 +27,11 @@ class ItemSectionHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
     ) = with(itemView) {
         model?.apply {
 
-            ivSectionIcon?.setImageResource(model.icon)
+            model.icon.takeIf { it != -1 }?.let {
+                ivSectionIcon?.setImageResource(it)
+                ivSectionIcon?.showView()
+            } ?: ivSectionIcon?.hideView()
+
 
             tvSectionTitle?.text = model.title
 
@@ -57,32 +62,6 @@ class ItemSectionHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
                     setFirstOnly(false)
                 }
             }
-
-            /*gradient?.apply {
-                vGradientLineCategory?.background = this
-            }
-            tvCategoryTitle?.text = model.title
-            tvCategoryDesc?.text = model.desc
-            btnCategoryMore?.apply {
-                if (model.isHasMore) showView() else hideView()
-                setOnClickListener { groupItemClickListener?.onMoreClicked(model, model.title, groupPosition) }
-            }
-
-            //TODO : Check if any other optimal solution is available
-            val adapter: AdaptContent? = AdaptContent(context, model)
-            recCategoryItems?.layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
-            adapter?.setChildClickListener(object : OnChildItemClickListener {
-                override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
-                    groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
-                }
-            })
-            if(recCategoryItems?.itemDecorationCount == 0){
-                recCategoryItems?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
-            }
-
-            recCategoryItems?.adapter =  SlideInBottomAnimationAdapter(adapter!!).apply {
-                setFirstOnly(false)
-            }*/
         }
     }
 

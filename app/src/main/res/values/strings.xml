@@ -6,8 +6,8 @@
     <string name="location_perm_title">Location</string>
     <string name="storage_perm_title">Storage</string>
     <string name="search_loc_title">Search location</string>
-    <string name="search_photo_title">Search photos</string>
-    <string name="favourites_title">Your Favourites</string>
+    <string name="search_photo_title">Discover photos</string>
+    <string name="favourites_title">Recommended and Downloads</string>
     <string name="search_results_title">Photos</string>
     <string name="images">Images</string>
     <string name="likes">Likes</string>
@@ -45,8 +45,8 @@
     <string name="curr_loc_desc">Change location.</string>
     <string name="storage_desc">With this permission, Mausam can download photos and store in the phone storage.</string>
     <string name="search_loc_desc">We understand you don’t want to reveal your  location but Mausam needs it show weather and photos based on it. </string>
-    <string name="search_photo_desc">search photos by some of the best photographers spread across the world and available on Unsplash.</string>
-    <string name="favourites_desc">All your favourite photographers and photos will appear here.</string>
+    <string name="search_photo_desc">Browse and search photos by some of the best photographers spread across the world and available on Unsplash.</string>
+    <string name="favourites_desc">Your all downloads and based on that recommendations will appear here.</string>
     <string name="imp_info_desc">All your favourites are stored locally so if you uninstall app or clear data of Mausam then you will lose your favourites.</string>
     <string name="support_desc">Your donation keeps Mausam app advertisement free.</string>
     <string name="share_app_desc">Share this beautiful app with your friends and family.</string>
@@ -97,6 +97,16 @@
     <string name="using_cache"><b>Currently using %s MB approx</b></string>
     <string name="dismiss">Dismiss</string>
     <string name="storage_perm_granted_msg">Storage permission granted 👍</string>
+    <string name="crop">Crop</string>
+    <string name="crop_image">Crop Image and Continue</string>
+    <string name="wallpaper_set_success">Wallpaper set successfully</string>
+    <string name="wallpaper_set_failed">Error while setting Wallpaper</string>
+    <string name="see_all">See all</string>
+    <string name="downloads">Downloads</string>
+    <string name="delete">Delete</string>
+    <string name="interested_photographers">Interested photographers</string>
+    <string name="empty_download_section_msg">It\'s empty here.\nGo to Discover for exploring photos.</string>
+    <string name="go_discover">Take me there</string>
 
     <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>
@@ -185,9 +195,5 @@
         <item>Music~~https://images.unsplash.com/photo-1484755560615-a4c64e778a6c?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
         <item>Abstract~~https://images.unsplash.com/photo-1537237858032-3ad1b513cbcc?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=300&amp;h=300&amp;q=60</item>
     </string-array>
-    <string name="crop">Crop</string>
-    <string name="crop_image">Crop Image and Continue</string>
-    <string name="wallpaper_set_success">Wallpaper set successfully</string>
-    <string name="wallpaper_set_failed">Error while setting Wallpaper</string>
 
 </resources>

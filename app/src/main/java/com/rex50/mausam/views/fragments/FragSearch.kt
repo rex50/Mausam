@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -41,6 +39,10 @@ import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import kotlinx.android.synthetic.main.frag_search.*
 import kotlinx.android.synthetic.main.header_custom_general.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
@@ -670,11 +672,14 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
     }
 
     override fun onAllContentLoaded() {
-        lvCenter?.hideView()
-        recHomeContent?.apply {
-            layoutManager = LinearLayoutManager(mContext)
-            setHasFixedSize(true)
-            adapter = adaptHome
+        CoroutineScope(Dispatchers.Main).launch {
+            recHomeContent?.apply {
+                layoutManager = LinearLayoutManager(mContext)
+                setHasFixedSize(true)
+                delay(300)
+                lvCenter?.hideView()
+                adapter = adaptHome
+            }
         }
     }
 

@@ -50,7 +50,6 @@ class FragHome : BaseFragment() {
             mWeatherDetails = this as WeatherModelClass?
         }
         PushDownAnim.setPushDownAnimTo(btnSettings)
-                .setScale(0.8F)
                 .setOnClickListener { mListener?.startSettings() }
     }
 
