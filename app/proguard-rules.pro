@@ -33,7 +33,6 @@
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 
 -allowaccessmodification
--keepattributes *Annotation*
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 -repackageclasses 'a'
@@ -63,3 +62,9 @@
 -keepclassmembers,allowshrinking,allowobfuscation class com.android.volley.CacheDispatcher {
     void processRequest();
 }
+
+# RenderScript
+-keepclasseswithmembernames class * {
+native <methods>;
+}
+-keep class androidx.renderscript.** { *; }
