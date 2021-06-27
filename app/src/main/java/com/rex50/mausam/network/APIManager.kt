@@ -1,290 +1,312 @@
-package com.rex50.mausam.network;
+package com.rex50.mausam.network
 
-import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import androidx.annotation.IntDef
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.rex50.mausam.BuildConfig
+import com.rex50.mausam.R
+import com.rex50.mausam.utils.Constants.ApiConstants.COLLECTION_ID
+import com.rex50.mausam.utils.Constants.ApiConstants.DOWNLOADING_PHOTO_URL
+import com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME
+import com.rex50.mausam.utils.Utils
+import com.rex50.mausam.utils.VolleySingleton
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import java.util.*
 
-import androidx.annotation.IntDef;
+class APIManager private constructor(private val ctx: Context?) {
+    var properties: Properties? = null
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.rex50.mausam.BuildConfig;
-import com.rex50.mausam.R;
-import com.rex50.mausam.utils.VolleySingleton;
+    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+    @IntDef(SERVICE_CURRENT_WEATHER, SERVICE_SEARCH_WEATHER_BY_PLACE)
+    private annotation class WeatherApiService
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+    @IntDef(
+        SERVICE_GET_PHOTOS,
+        SERVICE_GET_PHOTOS_BY_ID,
+        SERVICE_GET_RANDOM_PHOTO,
+        SERVICE_GET_COLLECTION_PHOTOS,
+        SERVICE_GET_COLLECTIONS,
+        SERVICE_GET_FEATURED_COLLECTIONS,
+        SERVICE_GET_USER_PUBLIC_PROFILE,
+        SERVICE_GET_PHOTOS_BY_USER,
+        SERVICE_GET_SEARCHED_PHOTOS,
+        SERVICE_GET_COLLECTIONS_BY_USER,
+        SERVICE_POST_DOWNLOADING_PHOTO
+    )
+    private annotation class UnsplashApiService
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+    @Volatile
+    private var serviceTable: HashMap<Int, String> = hashMapOf()
+    private fun generateUrl(
+        baseUrl: String,
+        service: Int,
+        urlExtras: HashMap<String, String>
+    ): String {
+        var uri = Uri.parse(baseUrl).buildUpon()
+        when (service) {
+            SERVICE_GET_PHOTOS_BY_USER, SERVICE_GET_COLLECTIONS_BY_USER -> {
+                require(urlExtras.containsKey(UNSPLASH_USERNAME)) {
+                    "For $service, $UNSPLASH_USERNAME is required"
+                }
 
-import static com.rex50.mausam.utils.Constants.ApiConstants.COLLECTION_ID;
-import static com.rex50.mausam.utils.Constants.ApiConstants.DOWNLOADING_PHOTO_URL;
-import static com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME;
-import static com.rex50.mausam.utils.Utils.CITY_NOT_FOUND;
-import static com.rex50.mausam.utils.Utils.PAGE_NOT_FOUND;
-import static com.rex50.mausam.utils.Utils.WEATHER_NOT_FOUND;
+                uri.path(
+                    String.format(serviceTable[service]!!, urlExtras[UNSPLASH_USERNAME]
+                    )
+                )
 
-public final class APIManager {
+                urlExtras.remove(UNSPLASH_USERNAME)
+            }
+            SERVICE_GET_COLLECTION_PHOTOS -> {
+                require(urlExtras.containsKey(COLLECTION_ID)) {
+                    "For $service, $COLLECTION_ID is required"
+                }
 
-    private static String baseUrlWeather = "https://api.openweathermap.org/";
-    private static String baseUrlUnsplash = "https://api.unsplash.com/";
+                uri.path(
+                    String.format(
+                        serviceTable[service]!!, urlExtras[COLLECTION_ID]
+                    )
+                )
 
-    private static String appId;
-    Properties properties;
-
-    private static volatile APIManager apiManager;
-
-    public static final int SERVICE_CURRENT_WEATHER = 1;
-    public static final int SERVICE_SEARCH_WEATHER_BY_PLACE = 2;
-
-    public static final int SERVICE_GET_PHOTOS = 3; //JSONArray response
-    public static final int SERVICE_GET_PHOTOS_BY_ID = 4; //JSONObject response
-    public static final int SERVICE_GET_RANDOM_PHOTO = 5; //JSONObject response
-    public static final int SERVICE_GET_COLLECTIONS = 6; //JSONArray response
-    public static final int SERVICE_GET_COLLECTION_PHOTOS = 7; //JSONArray response
-    public static final int SERVICE_GET_FEATURED_COLLECTIONS = 8; //JSONArray response
-    public static final int SERVICE_GET_USER_PUBLIC_PROFILE = 9; //JSONObject response
-    public static final int SERVICE_GET_PHOTOS_BY_USER = 10; //JSONArray response
-    public static final int SERVICE_GET_SEARCHED_PHOTOS = 11; //JSONArray response
-    public static final int SERVICE_GET_COLLECTIONS_BY_USER = 12; //JSONObject response
-    public static final int SERVICE_POST_DOWNLOADING_PHOTO = 13; //JSONObject response
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({SERVICE_CURRENT_WEATHER, SERVICE_SEARCH_WEATHER_BY_PLACE})
-    private @interface WeatherApiService {
+                urlExtras.remove(COLLECTION_ID)
+            }
+            SERVICE_POST_DOWNLOADING_PHOTO -> {
+                require(urlExtras.containsKey(DOWNLOADING_PHOTO_URL)) {
+                    "For $service, $DOWNLOADING_PHOTO_URL is required"
+                }
+                uri = Uri.parse(urlExtras[DOWNLOADING_PHOTO_URL]).buildUpon()
+                urlExtras.remove(DOWNLOADING_PHOTO_URL)
+            }
+            else -> uri.path(serviceTable[service])
+        }
+        for ((key, value) in urlExtras) {
+            uri.appendQueryParameter(key, value)
+        }
+        return uri.build().toString()
     }
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({SERVICE_GET_PHOTOS, SERVICE_GET_PHOTOS_BY_ID, SERVICE_GET_RANDOM_PHOTO, SERVICE_GET_COLLECTION_PHOTOS,
-            SERVICE_GET_COLLECTIONS, SERVICE_GET_FEATURED_COLLECTIONS, SERVICE_GET_USER_PUBLIC_PROFILE,
-            SERVICE_GET_PHOTOS_BY_USER, SERVICE_GET_SEARCHED_PHOTOS, SERVICE_GET_COLLECTIONS_BY_USER,
-            SERVICE_POST_DOWNLOADING_PHOTO})
-    private @interface UnsplashApiService {
+    fun getWeather(
+        @WeatherApiService service: Int,
+        urlExtras: HashMap<String, String>,
+        listener: WeatherAPICallBackResponse
+    ) {
+        urlExtras["appid"] = appId ?: ""
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET,
+            generateUrl(baseUrlWeather, service, urlExtras),
+            null,
+            { weatherDetails: JSONObject? ->
+                weatherDetails?.let {
+                    listener.onWeatherResponseSuccess(weatherDetails)
+                } ?: listener.onWeatherResponseFailure(
+                    Utils.WEATHER_NOT_FOUND,
+                    "Sorry something went wrong try again later."
+                )
+            },
+            {
+                listener.onWeatherResponseFailure(
+                    Utils.WEATHER_NOT_FOUND,
+                    "Sorry something went wrong try again later."
+                )
+            }
+        )
+        val volleySingleton: VolleySingleton = VolleySingleton.getInstance(ctx)
+        volleySingleton.addToRequestQueue(jsonObjectRequest)
     }
 
-    /*
-     *************************************************  Weather Urls *************************************************
-     */
-    private static final String URL_GET_WEATHER =
-            "data/2.5/weather";
+    fun searchWeather(
+        @WeatherApiService service: Int,
+        urlExtras: HashMap<String, String>,
+        listener: WeatherAPICallBackResponse
+    ) {
+        urlExtras["appid"] = appId ?: ""
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, generateUrl(baseUrlWeather, service, urlExtras), null,
+            { response: JSONObject ->
+                if (response.optString("cod") == "404") {
+                    listener.onWeatherResponseFailure(
+                        Utils.PAGE_NOT_FOUND,
+                        response.optString("message")
+                    )
+                } else {
+                    listener.onWeatherResponseSuccess(response)
+                }
+            },
+            {
+                listener.onWeatherResponseFailure(
+                    Utils.CITY_NOT_FOUND,
+                    "City not found"
+                )
+            })
+        val volleySingleton: VolleySingleton = VolleySingleton.getInstance(ctx)
+        volleySingleton.addToRequestQueue(jsonObjectRequest)
+    }
 
+    fun makeUnsplashRequest(
+        @UnsplashApiService service: Int,
+        urlExtras: HashMap<String, String>,
+        listener: UnsplashAPICallResponse?
+    ) {
+        makeUnsplashRequest(service, urlExtras, Request.Method.GET, listener)
+    }
 
-    /*
-     ************************************************* Unsplash Urls *************************************************
-     */
-
-    /**
-     * Photo Urls
-     */
-    private static final String URL_GET_PHOTOS =
-            "photos";
-
-    private static final String URL_GET_PHOTO_BY_ID =
-            "photos/%s";
-
-    private static final String URL_GET_SEARCHED_PHOTOS =
-            "search/photos";
-
-    private static final String URL_GET_RANDOM_PHOTOS =
-            "photos/random";
-
-
-    /**
-     * Collections Urls
-     */
-    private static final String URL_GET_COLLECTIONS =
-            "collections";
-
-    private static final String URl_GET_COLLECTION_PHOTOS =
-            "collections/%s/photos";
-
-    private static final String URL_GET_FEATURED_COLLECTIONS =
-            "collections/featured";
-
-
-    /**
-     * User related Urls
-     */
-    private static final String URL_GET_USER_PUBLIC_PROFILE =
-            "users/%s";
-
-    private static final String URL_GET_PHOTOS_BY_USER =
-            "users/%s/photos";
-
-    private static final String URL_GET_COLLECTIONS_BY_USER =
-            "users/%s/collections";
-
-
-
-    private volatile HashMap<Integer, String> serviceTable;
-
-    private Context ctx;
-
-    private static final Object mutex = new Object();
-    public static APIManager getInstance(Context ctx){
-        APIManager instance = apiManager;
-        if (instance == null) {
-            synchronized (mutex) {
-                instance = apiManager;
-                if (instance == null) {
-                    apiManager = instance = new APIManager(ctx);
-                    appId = ctx.getString(R.string.openWeatherAppId);
-                    setupServiceTable(apiManager);
+    fun makeUnsplashRequest(
+        @UnsplashApiService service: Int,
+        urlExtras: HashMap<String, String>,
+        method: Int,
+        listener: UnsplashAPICallResponse?
+    ) {
+        urlExtras["client_id"] = ctx?.getString(R.string.unsplashAccessKey) ?: ""
+        val stringRequest: StringRequest = object : StringRequest(
+            method,
+            generateUrl(
+                baseUrlUnsplash,
+                service,
+                urlExtras
+            ),
+            Response.Listener { response: String ->
+                if (BuildConfig.DEBUG) Log.d("Volley", "makeUnsplashRequest: $response")
+                if (!response.contains("\"errors\":")) {
+                    listener?.onSuccess(response)
+                } else {
+                    try {
+                        val `object` = JSONObject(response)
+                        listener?.onFailed(`object`.optJSONArray("errors"))
+                    } catch (e: JSONException) {
+                        listener?.onFailed(JSONArray())
+                    }
+                }
+            },
+            Response.ErrorListener { error: VolleyError ->
+                if (BuildConfig.DEBUG) Log.e("Volley", "makeUnsplashRequest: $error")
+                listener?.onFailed(JSONArray())
+            }
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                return hashMapOf<String, String>().also {
+                    it["client_id"] = ctx?.getString(R.string.unsplashAccessKey) ?: ""
                 }
             }
-        }
-        return instance;
-    }
 
-    private APIManager(Context ctx){
-        this.ctx = ctx;
-    }
-
-    private static void setupServiceTable(APIManager mgr){
-        mgr.serviceTable = new HashMap<>(0);
-
-        //Weather Urls
-        mgr.serviceTable.put(SERVICE_CURRENT_WEATHER, URL_GET_WEATHER);
-        mgr.serviceTable.put(SERVICE_SEARCH_WEATHER_BY_PLACE, URL_GET_WEATHER);
-
-        //Unsplash Urls
-        mgr.serviceTable.put(SERVICE_GET_PHOTOS, URL_GET_PHOTOS);
-        mgr.serviceTable.put(SERVICE_GET_PHOTOS_BY_ID, URL_GET_PHOTO_BY_ID);
-        mgr.serviceTable.put(SERVICE_GET_RANDOM_PHOTO, URL_GET_RANDOM_PHOTOS);
-        mgr.serviceTable.put(SERVICE_GET_COLLECTIONS, URL_GET_COLLECTIONS);
-        mgr.serviceTable.put(SERVICE_GET_COLLECTION_PHOTOS, URl_GET_COLLECTION_PHOTOS);
-        mgr.serviceTable.put(SERVICE_GET_FEATURED_COLLECTIONS, URL_GET_FEATURED_COLLECTIONS);
-        mgr.serviceTable.put(SERVICE_GET_USER_PUBLIC_PROFILE, URL_GET_USER_PUBLIC_PROFILE);
-        mgr.serviceTable.put(SERVICE_GET_PHOTOS_BY_USER, URL_GET_PHOTOS_BY_USER);
-        mgr.serviceTable.put(SERVICE_GET_SEARCHED_PHOTOS, URL_GET_SEARCHED_PHOTOS);
-        mgr.serviceTable.put(SERVICE_GET_COLLECTIONS_BY_USER, URL_GET_COLLECTIONS_BY_USER);
-        mgr.serviceTable.put(SERVICE_POST_DOWNLOADING_PHOTO, "");
-    }
-
-    private String generateUrl(String baseUrl,int service, HashMap<String, String> urlExtras) {
-        Uri.Builder uri = Uri.parse(baseUrl).buildUpon();
-        switch (service){
-            case SERVICE_GET_PHOTOS_BY_USER:
-            case SERVICE_GET_COLLECTIONS_BY_USER:
-                if(!urlExtras.containsKey(UNSPLASH_USERNAME))
-                    throw new IllegalArgumentException("For " + service + ", " + UNSPLASH_USERNAME + " is required");
-                uri.path(String.format(Objects.requireNonNull(serviceTable.get(service)), urlExtras.get(UNSPLASH_USERNAME)));
-                urlExtras.remove(UNSPLASH_USERNAME);
-                break;
-            case SERVICE_GET_COLLECTION_PHOTOS:
-                if(!urlExtras.containsKey(COLLECTION_ID))
-                    throw new IllegalArgumentException("For " + service + ", " + COLLECTION_ID + " is required");
-                uri.path(String.format(Objects.requireNonNull(serviceTable.get(service)), urlExtras.get(COLLECTION_ID)));
-                urlExtras.remove(COLLECTION_ID);
-                break;
-            case SERVICE_POST_DOWNLOADING_PHOTO:
-                if(!urlExtras.containsKey(DOWNLOADING_PHOTO_URL))
-                    throw new IllegalArgumentException("For " + service + ", " + DOWNLOADING_PHOTO_URL + " is required");
-                uri = Uri.parse(urlExtras.get(DOWNLOADING_PHOTO_URL)).buildUpon();
-                urlExtras.remove(DOWNLOADING_PHOTO_URL);
-                break;
-            default:
-                uri.path(serviceTable.get(service));
-
-        }
-        if (urlExtras != null) {
-            for (Map.Entry parameter : urlExtras.entrySet()) {
-                uri.appendQueryParameter(parameter.getKey().toString(), parameter.getValue().toString());
+            override fun getBody(): ByteArray? {
+                //return "Your JSON body".toString().getBytes();
+                return null
             }
         }
-        return uri.build().toString();
+        val volleySingleton: VolleySingleton = VolleySingleton.getInstance(ctx)
+        volleySingleton.addToRequestQueue(stringRequest)
     }
 
-    public void getWeather(@WeatherApiService int service, HashMap<String, String> urlExtras, final WeatherAPICallBackResponse listener){
-        urlExtras.put("appid", appId);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, generateUrl(baseUrlWeather, service, urlExtras), null,
-                listener::onWeatherResponseSuccess,
-                error -> listener.onWeatherResponseFailure(WEATHER_NOT_FOUND, "Sorry something went wrong try again later.")
-        );
-
-        VolleySingleton volleySingleton = VolleySingleton.getInstance(ctx);
-        volleySingleton.addToRequestQueue(jsonObjectRequest);
+    interface WeatherAPICallBackResponse {
+        fun onWeatherResponseSuccess(weatherDetails: JSONObject)
+        fun onWeatherResponseFailure(errorCode: Int, msg: String)
     }
 
-    public void searchWeather(@WeatherApiService int service, HashMap<String, String> urlExtras, final WeatherAPICallBackResponse listener){
-        urlExtras.put("appid", appId);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, generateUrl(baseUrlWeather, service, urlExtras), null,
-                response -> {
-                    if(response.optString("cod").equals("404")){
-                        listener.onWeatherResponseFailure(PAGE_NOT_FOUND, response.optString("message"));
-                    }else {
-                        listener.onWeatherResponseSuccess(response);
+    interface UnsplashAPICallResponse {
+        fun onSuccess(response: String)
+        fun onFailed(errors: JSONArray)
+    }
+
+    companion object {
+        private const val baseUrlWeather = "https://api.openweathermap.org/"
+        private const val baseUrlUnsplash = "https://api.unsplash.com/"
+        private var appId: String? = null
+
+        @Volatile
+        private var apiManager: APIManager? = null
+        const val SERVICE_CURRENT_WEATHER = 1
+        const val SERVICE_SEARCH_WEATHER_BY_PLACE = 2
+        const val SERVICE_GET_PHOTOS = 3 //JSONArray response
+        const val SERVICE_GET_PHOTOS_BY_ID = 4 //JSONObject response
+        const val SERVICE_GET_RANDOM_PHOTO = 5 //JSONObject response
+        const val SERVICE_GET_COLLECTIONS = 6 //JSONArray response
+        const val SERVICE_GET_COLLECTION_PHOTOS = 7 //JSONArray response
+        const val SERVICE_GET_FEATURED_COLLECTIONS = 8 //JSONArray response
+        const val SERVICE_GET_USER_PUBLIC_PROFILE = 9 //JSONObject response
+        const val SERVICE_GET_PHOTOS_BY_USER = 10 //JSONArray response
+        const val SERVICE_GET_SEARCHED_PHOTOS = 11 //JSONArray response
+        const val SERVICE_GET_COLLECTIONS_BY_USER = 12 //JSONObject response
+        const val SERVICE_POST_DOWNLOADING_PHOTO = 13 //JSONObject response
+
+        /*
+         *************************************************  Weather Urls *************************************************
+         */
+        private const val URL_GET_WEATHER = "data/2.5/weather"
+
+
+        /*
+         ************************************************* Unsplash Urls *************************************************
+         */
+        /**
+         * Photo Urls
+         */
+        private const val URL_GET_PHOTOS = "photos"
+        private const val URL_GET_PHOTO_BY_ID = "photos/%s"
+        private const val URL_GET_SEARCHED_PHOTOS = "search/photos"
+        private const val URL_GET_RANDOM_PHOTOS = "photos/random"
+
+        /**
+         * Collections Urls
+         */
+        private const val URL_GET_COLLECTIONS = "collections"
+        private const val URl_GET_COLLECTION_PHOTOS = "collections/%s/photos"
+        private const val URL_GET_FEATURED_COLLECTIONS = "collections/featured"
+
+        /**
+         * User related Urls
+         */
+        private const val URL_GET_USER_PUBLIC_PROFILE = "users/%s"
+        private const val URL_GET_PHOTOS_BY_USER = "users/%s/photos"
+        private const val URL_GET_COLLECTIONS_BY_USER = "users/%s/collections"
+
+        private val mutex = Any()
+        @JvmStatic
+        fun getInstance(ctx: Context?): APIManager? {
+            var instance = apiManager
+            if (instance == null) {
+                synchronized(mutex) {
+                    instance = apiManager
+                    if (instance == null) {
+                        instance = APIManager(ctx)
+                        apiManager = instance
+                        appId = ctx?.getString(R.string.openWeatherAppId)
+                        setupServiceTable(apiManager)
                     }
-                },
-                error -> listener.onWeatherResponseFailure(CITY_NOT_FOUND, "City not found"));
-        VolleySingleton volleySingleton = VolleySingleton.getInstance(ctx);
-        volleySingleton.addToRequestQueue(jsonObjectRequest);
-    }
-
-
-    protected void makeUnsplashRequest(@UnsplashApiService int service, HashMap<String, String> urlExtras, UnsplashAPICallResponse listener){
-        makeUnsplashRequest(service, urlExtras, Request.Method.GET, listener);
-    }
-    protected void makeUnsplashRequest(@UnsplashApiService int service, HashMap<String, String> urlExtras, int method, UnsplashAPICallResponse listener){
-        urlExtras.put("client_id", ctx.getString(R.string.unsplashAccessKey));
-        StringRequest stringRequest = new StringRequest(method, generateUrl(baseUrlUnsplash, service, urlExtras),
-                response -> {
-                    if(BuildConfig.DEBUG)
-                        Log.d("Volley", "makeUnsplashRequest: " + response);
-                    if(!response.contains("\"errors\":")){
-                        if(listener != null)
-                            listener.onSuccess(response);
-                    }else {
-                        try {
-                            JSONObject object = new JSONObject(response);
-                            if(listener != null)
-                                listener.onFailed(object.optJSONArray("errors"));
-                        } catch (JSONException e) {
-                            if(listener != null)
-                                listener.onFailed(new JSONArray());
-                        }
-                    }
-                }, error -> {
-                    if(BuildConfig.DEBUG)
-                        Log.e("Volley", "makeUnsplashRequest: " + error);
-                    if(listener != null)
-                        listener.onFailed(new JSONArray());
-                }){
-            @Override
-            public Map<String, String> getHeaders(){
-                /*HashMap<String, String> httpAuthentication = new HashMap<>();
-                httpAuthentication.put("client_id", ctx.getString(R.string.unsplashAccessKey));
-                return httpAuthentication*/;
-                return new HashMap<>();
+                }
             }
+            return instance
+        }
 
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-//                return "Your JSON body".toString().getBytes();
-                return null;
+        private fun setupServiceTable(mgr: APIManager?) {
+            mgr?.apply {
+                serviceTable = HashMap(0)
+
+                //Weather Urls
+                serviceTable[SERVICE_CURRENT_WEATHER] = URL_GET_WEATHER
+                serviceTable[SERVICE_SEARCH_WEATHER_BY_PLACE] =
+                    URL_GET_WEATHER
+
+                //Unsplash Urls
+                serviceTable[SERVICE_GET_PHOTOS] = URL_GET_PHOTOS
+                serviceTable[SERVICE_GET_PHOTOS_BY_ID] = URL_GET_PHOTO_BY_ID
+                serviceTable[SERVICE_GET_RANDOM_PHOTO] = URL_GET_RANDOM_PHOTOS
+                serviceTable[SERVICE_GET_COLLECTIONS] = URL_GET_COLLECTIONS
+                serviceTable[SERVICE_GET_COLLECTION_PHOTOS] = URl_GET_COLLECTION_PHOTOS
+                serviceTable[SERVICE_GET_FEATURED_COLLECTIONS] = URL_GET_FEATURED_COLLECTIONS
+                serviceTable[SERVICE_GET_USER_PUBLIC_PROFILE] = URL_GET_USER_PUBLIC_PROFILE
+                serviceTable[SERVICE_GET_PHOTOS_BY_USER] = URL_GET_PHOTOS_BY_USER
+                serviceTable[SERVICE_GET_SEARCHED_PHOTOS] = URL_GET_SEARCHED_PHOTOS
+                serviceTable[SERVICE_GET_COLLECTIONS_BY_USER] = URL_GET_COLLECTIONS_BY_USER
+                serviceTable[SERVICE_POST_DOWNLOADING_PHOTO] = ""
             }
-        };
-
-        VolleySingleton volleySingleton = VolleySingleton.getInstance(ctx);
-        volleySingleton.addToRequestQueue(stringRequest);
+        }
     }
-
-    public interface WeatherAPICallBackResponse {
-        void onWeatherResponseSuccess(JSONObject weatherDetails);
-        void onWeatherResponseFailure(int errorCode, String msg);
-    }
-
-    public interface UnsplashAPICallResponse{
-        void onSuccess(String response);
-        void onFailed(JSONArray errors);
-    }
-
 }
