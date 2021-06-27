@@ -90,33 +90,6 @@ class UnsplashHelper {
         } ?: listener.onFailed(JSONArray())
     }
 
-    /*public void getPhotos(@OrderPhotosByRestriction String orderBy, GetUnsplashPhotosListener listener){
-        APIManager apiManager = APIManager.getInstance(context);
-        HashMap<String, String> extras = new HashMap<>();
-        extras.put("order_by", orderBy);
-        String response = KeyValuesRepository.getValue(context, orderBy);
-        if(response == null || response.isEmpty()){
-            apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS, extras, new APIManager.UnsplashAPICallResponse() {
-                @Override
-                public void onSuccess(String response) {
-                    //prefs.setPhotosResponseMap(orderBy, response);
-                    List<UnsplashPhotos> photosList = DataParser.parseUnsplashData(response, false).getPhotosList();
-                    KeyValuesRepository.insert(context, orderBy, response);
-
-                    Log.e(TAG, "getPhotos: getting from API");
-                    listener.onSuccess(photosList);
-                }
-
-                @Override
-                public void onFailed(JSONArray errors) {
-                    listener.onFailed(errors);
-                }
-            });
-        }else {
-            Log.e(TAG, "getPhotos: getting from sharedPrefs");
-            listener.onSuccess(DataParser.parseUnsplashData(response, false).getPhotosList());
-        }
-    }*/
     fun getSearchedPhotos(searchTerm: String?, page: Int, @PerPageRestriction perPage: Int, listener: GetUnsplashSearchedPhotosListener) {
         getSearchedPhotos(searchTerm, page, perPage, defaultOrientation, listener)
     }

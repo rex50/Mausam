@@ -1,17 +1,28 @@
 package com.rex50.mausam.model_classes.utils
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.views.adapters.AdaptHome
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AllContentModel {
-    private val models: ArrayList<GenericModelFactory?>?
+    private val models: ArrayList<GenericModelFactory?> by lazy { arrayListOf() }
+
     private var sequenceOfLayout: List<String>
     private var adapter: AdaptHome? = null
-    private val types: MutableList<String>
+    private val types: MutableList<String> by lazy { mutableListOf() }
     private var responsesCount = 0
     private var insertedListener: ContentInsertedListener? = null
     @Volatile private var allContentLoaded = false
+
+    private val modelLiveList: MutableLiveData<AllContentModel> by lazy {
+        MutableLiveData<AllContentModel>()
+    }
 
 
     companion object {
@@ -19,19 +30,34 @@ class AllContentModel {
     }
 
     init {
-        models = ArrayList()
-        types = ArrayList()
         sequenceOfLayout = ArrayList()
     }
 
     fun addModel(type: String, model: GenericModelFactory) {
-        models?.add(model)
+        models.add(model)
         types.add(type)
+        updateLiveList()
+    }
+
+    @Synchronized
+    fun addOrUpdateModel(type: String, model: GenericModelFactory){
+        types.indexOf(type).takeIf { it != -1 }?.let { pos ->
+            models.removeAt(pos)
+            models.add(pos, model)
+        } ?: addSequentially(type, model)
+        updateLiveList()
     }
 
     fun addModel(pos: Int, type: String, model: GenericModelFactory) {
-        models?.add(pos, model)
+        models.add(pos, model)
         types.add(pos, type)
+        updateLiveList()
+    }
+
+    private fun updateLiveList() {
+        CoroutineScope(Dispatchers.Main).launch {
+            modelLiveList.value = this@AllContentModel
+        }
     }
 
     fun setSequenceOfLayouts(sequence: List<String>) {
@@ -45,7 +71,6 @@ class AllContentModel {
     @Synchronized
     fun addSequentially(type: String, model: GenericModelFactory): Int? {
         check(sequenceOfLayout.isNotEmpty()) { "set sequence before using addSequentially()" }
-        increaseResponseCount()
         return try {
             if (size() == 0) {
                 addModel(type, model)
@@ -67,6 +92,8 @@ class AllContentModel {
         } catch (e: Exception) {
             Log.e(TAG, "addSequentially: ", e)
             null
+        } finally {
+            increaseResponseCount()
         }
     }
 
@@ -90,8 +117,14 @@ class AllContentModel {
         }
     }
 
+    fun getModel(type: String): GenericModelFactory? {
+        return types.indexOf(type).takeIf { it != -1 }?.let { pos ->
+            models[pos]
+        }
+    }
+
     fun getModel(pos: Int): GenericModelFactory? {
-        return models?.get(pos)
+        return models[pos]
     }
 
     fun getType(pos: Int): String {
@@ -99,7 +132,25 @@ class AllContentModel {
     }
 
     fun size(): Int {
-        return models?.size ?: 0
+        return models.size
+    }
+
+    fun getModelLiveList(): LiveData<AllContentModel> {
+        return modelLiveList
+    }
+
+    fun remove(type: String) {
+        types.indexOf(type).takeIf { it != -1 }?.let { pos ->
+            models.removeAt(pos)
+            types.removeAt(pos)
+            updateLiveList()
+        }
+    }
+
+    fun clearList() {
+        models.clear()
+        types.clear()
+        updateLiveList()
     }
 
     interface ContentInsertedListener{

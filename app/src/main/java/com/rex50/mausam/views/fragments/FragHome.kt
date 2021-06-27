@@ -7,16 +7,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
 import com.rex50.mausam.interfaces.*
+import com.rex50.mausam.model_classes.item_types.FavouritePhotographerTypeModel
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
@@ -26,7 +24,6 @@ import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
 import com.rex50.mausam.views.activities.ActImageEditor
-import com.rex50.mausam.views.activities.ActPhotosList
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.thekhaeng.pushdownanim.PushDownAnim
@@ -34,7 +31,6 @@ import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.android.synthetic.main.act_photos_list.*
 import kotlinx.android.synthetic.main.frag_home.*
 import kotlinx.android.synthetic.main.header_custom_home.*
-import kotlinx.android.synthetic.main.item_weather_card.*
 import org.json.JSONArray
 
 class FragHome : BaseFragment() {
@@ -42,7 +38,6 @@ class FragHome : BaseFragment() {
     private var photosList = ArrayList<UnsplashPhotos>()
     private var photosModel: GenericModelFactory? = null
     private var mWeatherDetails: WeatherModelClass? = null
-    private val mParam2: String? = null
     private var mListener: OnFragmentInteractionListener? = null
     private var unsplashHelper: UnsplashHelper? = null
     private var adapter: AdaptContent? = null
@@ -55,7 +50,6 @@ class FragHome : BaseFragment() {
             mWeatherDetails = this as WeatherModelClass?
         }
         PushDownAnim.setPushDownAnimTo(btnSettings)
-                .setScale(0.8F)
                 .setOnClickListener { mListener?.startSettings() }
     }
 
@@ -68,7 +62,7 @@ class FragHome : BaseFragment() {
         initDataModel()
         initRecycler()
         lvCenter?.showView()
-        getPopularPhotosOf(INITIAL_PAGE)
+        getLatestPhotosOf(INITIAL_PAGE)
         initClicks()
     }
 
@@ -92,7 +86,7 @@ class FragHome : BaseFragment() {
         val endlessScrollListener =  object: EndlessRecyclerOnScrollListener(layoutManager){
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 lvBottom?.showView()
-                getPopularPhotosOf(page)
+                getLatestPhotosOf(page)
             }
         }
 
@@ -138,13 +132,13 @@ class FragHome : BaseFragment() {
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
                 object: GenericModelCastHelper(o){
-                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                    override fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel?) {
                         favPhotographerTypeModel?.apply {
                             ImageViewerHelper(context).with(photosList,
-                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+                                    childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(context, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(context, photoInfo, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -157,19 +151,17 @@ class FragHome : BaseFragment() {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            Handler(Looper.getMainLooper()).postDelayed({
-                                                bsDownload?.downloaded()
-                                                startActivity(Intent(context, ActImageEditor::class.java).also {
-                                                    it.putExtra(PHOTO_DATA, imageMeta)
-                                                })
-                                            }, 300)
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            startActivity(Intent(context, ActImageEditor::class.java).also {
+                                                it.putExtra(PHOTO_DATA, imageMeta)
+                                            })
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(context, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(context, photoInfo, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -182,17 +174,17 @@ class FragHome : BaseFragment() {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
                                             bsDownload?.downloaded()
                                             if (msg.isNotEmpty()) {
                                                 showToast(msg)
                                             }
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(context, photoInfo.urls.downloadingUrl, name, name, true, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(context, photoInfo, true, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.adding_to_fav))
@@ -206,13 +198,13 @@ class FragHome : BaseFragment() {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
                                             bsDownload?.downloaded()
                                             if (msg.isNotEmpty()) {
                                                 showToast(msg)
                                             }
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
@@ -240,8 +232,8 @@ class FragHome : BaseFragment() {
     }
 
 
-    private fun getPopularPhotosOf(page: Int){
-        unsplashHelper?.getPhotosAndUsers(UnsplashHelper.ORDER_BY_POPULAR, page, 20, object : GetUnsplashPhotosAndUsersListener {
+    private fun getLatestPhotosOf(page: Int){
+        unsplashHelper?.getPhotosAndUsers(UnsplashHelper.ORDER_BY_LATEST, page, 20, object : GetUnsplashPhotosAndUsersListener {
             override fun onSuccess(photos: List<UnsplashPhotos>, userList: List<User>) {
                 lvCenter?.hideView()
                 lvBottom?.hideView()

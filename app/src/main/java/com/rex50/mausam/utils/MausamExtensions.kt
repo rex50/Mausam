@@ -47,6 +47,7 @@ import org.joda.time.DateTime
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 fun String.isInt(): Boolean = when(toIntOrNull()){
     null -> false
@@ -141,7 +142,7 @@ fun String.addAfter(text: String?): String = text?.takeIf { it.isNotEmpty() }?.l
     "$this $text"
 }?: this
 
-fun ImageView.loadImage(url: String?){
+fun ImageView.loadImage(url: Any?){
 
     val progressBar = CircularProgressDrawable(context)
     progressBar.apply {
@@ -288,7 +289,7 @@ fun checkIfFileExistsInStorage(relativePath: String?): Boolean {
     }else{*/
     val file: File? = File(relativePath ?: "")
     file?.apply {
-        if(this.exists())
+        if(this.exists() && this.totalSpace != 0L)
             return true
     }
     //}
@@ -402,4 +403,14 @@ fun AppCompatActivity.getSimpleFragmentAdapter(mFragmentList: List<Fragment>): F
             return mFragmentList.size
         }
     }
+}
+
+fun <E> List<E>?.toArrayList(): ArrayList<E> {
+    return ArrayList<E>().also { newList ->
+        this?.let { currentList -> newList.addAll(currentList) }
+    }
+}
+
+suspend fun <E> MutableList<E>.reverseAsync() = withContext(Dispatchers.IO) {
+    reverse()
 }

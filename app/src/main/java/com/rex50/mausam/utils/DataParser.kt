@@ -15,6 +15,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
+import kotlin.collections.ArrayList
 
 object DataParser {
 
@@ -56,8 +57,9 @@ object DataParser {
 
     fun parseCollections(response: String?, parseTagsList: Boolean): CollectionsAndTags {
         val gson = Gson()
-        val collections: MutableList<Collections> = ArrayList()
-        val tags: MutableSet<Tag> = HashSet()
+        val collections: MutableList<Collections> = arrayListOf()
+        val tags: ArrayList<Tag> = arrayListOf()
+        val setOfTagsTitles = hashSetOf<String >()
         try {
             val responseArray = JSONArray(response)
             if (parseTagsList) {
@@ -65,7 +67,12 @@ object DataParser {
                     try {
                         val obj = gson.fromJson(responseArray.getJSONObject(i).toString(), Collections::class.java)
                         collections.add(obj)
-                        tags.addAll(obj.tags)
+                        obj.tags.forEach {
+                            if(!setOfTagsTitles.contains(it.title.toLowerCase(Locale.ROOT))) {
+                                tags.add(it)
+                                setOfTagsTitles.add(it.title.toLowerCase(Locale.ROOT))
+                            }
+                        }
                     } catch (e: JsonSyntaxException) {
                         Log.e(TAG, "parseCollections: response: ${responseArray.getJSONObject(i)}", e)
                     }
@@ -76,8 +83,8 @@ object DataParser {
                 }
             }
         } catch (e: JSONException) {
-            e.printStackTrace()
+            Log.e(TAG, "parseCollections: ", e)
         }
-        return CollectionsAndTags(collections, ArrayList(tags))
+        return CollectionsAndTags(collections, tags)
     }
 }

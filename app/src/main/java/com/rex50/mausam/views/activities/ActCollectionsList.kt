@@ -23,9 +23,10 @@ import com.rex50.mausam.views.adapters.AdaptContent
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.android.synthetic.main.act_collections_list.*
 import kotlinx.android.synthetic.main.header_custom_general.*
+import com.rex50.mausam.model_classes.item_types.CollectionTypeModel
 import org.json.JSONArray
 
-class ActCollectionsList() : BaseActivity() {
+class ActCollectionsList : BaseActivity() {
 
     companion object{
         const val INITIAL_PAGE = 1
@@ -78,22 +79,24 @@ class ActCollectionsList() : BaseActivity() {
 
         val layoutManager = GridLayoutManager(this, 1, LinearLayoutManager.VERTICAL, false)
 
-        collectionsModel = GenericModelFactory.getCollectionListTypeObject(listData?.getTitle(this), listData?.getDesc(), false, collectionList)
-        adapter = AdaptContent(this, collectionsModel)
-        adapter?.setChildClickListener(object : OnChildItemClickListener {
-            override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
-                object : GenericModelCastHelper(o) {
-                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
-                        startMorePhotosActivity(
-                                MoreListData(
-                                        Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
-                                        collectionInfo = collectionTypeModel?.collections?.get(childPos)
-                                )
-                        )
+        listData?.let { data ->
+            collectionsModel = GenericModelFactory.getCollectionListTypeObject(data.getTitle(this), data.getDesc(), false, collectionList)
+            adapter = AdaptContent(this, collectionsModel)
+            adapter?.setChildClickListener(object : OnChildItemClickListener {
+                override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
+                    object : GenericModelCastHelper(o) {
+                        override fun onCollectionType(collectionTypeModel: CollectionTypeModel?) {
+                            startMorePhotosActivity(
+                                    MoreListData(
+                                            Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
+                                            collectionInfo = collectionTypeModel?.collections?.get(childPos)
+                                    )
+                            )
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
 
         recSearchedCollection?.layoutManager = layoutManager
         recSearchedCollection?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))

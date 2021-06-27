@@ -15,6 +15,7 @@ class Constants {
     }
 
     object AvailableLayouts {
+        //Home
         const val WEATHER_BASED_PHOTOS = "Random weather photos"
         const val LOCATION_BASED_PHOTOS = "Random location photos"
         const val TIME_BASED_PHOTOS = "Random time photos"
@@ -25,11 +26,19 @@ class Constants {
         const val BROWSE_BY_CATEGORIES = "Browse by categories"
         const val BROWSE_BY_COLORS = "Browse by colors"
         const val FAVOURITE_PHOTOGRAPHER_IMAGES = "Favourite photographer’s images"
+
+        //Recommendation
+        const val DOWNLOADED_PHOTOS = "Downloaded photos"
+        const val RECOMMENDED_PHOTOGRAPHERS = "You might me interested in"
+        const val FAVOURITE_PHOTOS = "Your favourite photos"
     }
 
     object RecyclerItemTypes {
         const val AD_TYPE = 10010
+
         const val ITEM_CATEGORY_TYPE = R.layout.item_category
+        const val ITEM_SECTION_TYPE = R.layout.item_section
+
         const val FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE = R.layout.item_category + 1
         const val END_IMAGE = 10012
         const val GENERAL_TYPE = R.layout.cell_type_general
@@ -60,6 +69,8 @@ class Constants {
         const val DOWNLOAD_RELATIVE_PATH = "Pictures/Mausam/Downloads/"
         const val FAV_RELATIVE_PATH = "Pictures/Mausam/Favourites/"
         const val SAVE_MIME_TYPE = "image/jpg"
+
+        const val DOWNLOADED_IMAGE = "Downloaded_image_"
     }
 
     object Util {

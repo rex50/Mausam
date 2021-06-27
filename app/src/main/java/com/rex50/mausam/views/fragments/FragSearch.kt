@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -21,15 +19,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
 import com.rex50.mausam.interfaces.*
+import com.rex50.mausam.model_classes.item_types.*
 import com.rex50.mausam.model_classes.unsplash.collection.Collections
 import com.rex50.mausam.model_classes.unsplash.collection.Tag
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.unsplash.searched_photos.SearchedPhotos
-import com.rex50.mausam.model_classes.utils.AllContentModel
-import com.rex50.mausam.model_classes.utils.GenericModelFactory
-import com.rex50.mausam.model_classes.utils.MoreData
-import com.rex50.mausam.model_classes.utils.MoreListData
+import com.rex50.mausam.model_classes.utils.*
 import com.rex50.mausam.model_classes.weather.WeatherModelClass
 import com.rex50.mausam.network.APIManager
 import com.rex50.mausam.network.APIManager.WeatherAPICallBackResponse
@@ -37,18 +33,21 @@ import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Utils.TextValidationInterface
-import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.MausamApplication
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import kotlinx.android.synthetic.main.frag_search.*
-import kotlinx.android.synthetic.main.frag_search.recHomeContent
 import kotlinx.android.synthetic.main.header_custom_general.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
+
 class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
     var searchOnlyCity = false
 
@@ -127,18 +126,6 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
     private fun getSequenceOfLayout(): List<String> = sequenceOfLayout.apply {
         clear()
-      /*  add(Constants.AvailableLayouts.WEATHER_BASED_PHOTOS)
-        add(Constants.AvailableLayouts.LOCATION_BASED_PHOTOS)
-        add(Constants.AvailableLayouts.TIME_BASED_PHOTOS)
-        add(Constants.AvailableLayouts.FEATURED_COLLECTIONS)
-        add(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)
-        add(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES)
-        add(Constants.AvailableLayouts.POPULAR_PHOTOS)
-        add(Constants.AvailableLayouts.POPULAR_TAGS)
-        add(Constants.AvailableLayouts.BROWSE_BY_COLORS)
-        //add(AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)*/
-
-        //Use below format when implemented in search screen
         add(Constants.AvailableLayouts.POPULAR_TAGS)
         add(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES)
         add(Constants.AvailableLayouts.FEATURED_COLLECTIONS)
@@ -154,7 +141,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
         val unsplashHelper = UnsplashHelper(mContext)
         allData = AllContentModel()
         allData?.setContentInsertListener(this)
-        adaptHome = AdaptHome(mContext, allData)
+        adaptHome = AdaptHome(GradientHelper.getInstance(requireContext()), allData)
 
         allData?.apply {
             setSequenceOfLayouts(sequenceOfLayout)
@@ -260,14 +247,14 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
             mContext?.apply {
                 val categories = listOf<String>(*resources.getStringArray(R.array.array_categories_type))
                 allData?.addSequentially(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES, GenericModelFactory.getCategoryTypeObject(Constants.AvailableLayouts.BROWSE_BY_CATEGORIES,
-                        Constants.Providers.POWERED_BY_UNSPLASH, false, GenericModelFactory.CategoryTypeModel.createModelFromStringList(categories), true))
+                        Constants.Providers.POWERED_BY_UNSPLASH, false, CategoryTypeModel.createModelFromStringList(categories), true))
             }?: allData?.increaseResponseCount()
         }
         if (sequenceOfLayout.contains(Constants.AvailableLayouts.BROWSE_BY_COLORS)) {
             mContext?.apply {
                 val colorsList = listOf<String>(*resources.getStringArray(R.array.array_colors_type))
                 allData!!.addSequentially(Constants.AvailableLayouts.BROWSE_BY_COLORS, GenericModelFactory.getColorTypeObject(Constants.AvailableLayouts.BROWSE_BY_COLORS, Constants.Providers.POWERED_BY_UNSPLASH,
-                        false, GenericModelFactory.ColorTypeModel.createModelFromStringList(colorsList), true))
+                        false, ColorTypeModel.createModelFromStringList(colorsList), true))
             }?: allData?.increaseResponseCount()
         }
         if (sequenceOfLayout.contains(Constants.AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES)) {
@@ -295,7 +282,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
                 object : GenericModelCastHelper(o) {
 
-                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+                    override fun onCollectionType(collectionTypeModel: CollectionTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
@@ -304,14 +291,14 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
+                    override fun onGeneralType(generalTypeModel: GeneralTypeModel?) {
                         generalTypeModel?.apply {
 
                             ImageViewerHelper(mContext).with(photosList,
-                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+                                    childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -324,19 +311,17 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            Handler(Looper.getMainLooper()).postDelayed({
-                                                bsDownload?.downloaded()
-                                                startActivity(Intent(context, ActImageEditor::class.java).also {
-                                                    it.putExtra(Constants.IntentConstants.PHOTO_DATA, imageMeta)
-                                                })
-                                            }, 300)
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            startActivity(Intent(context, ActImageEditor::class.java).also {
+                                                it.putExtra(Constants.IntentConstants.PHOTO_DATA, imageMeta)
+                                            })
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -349,17 +334,17 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
                                             bsDownload?.downloaded()
                                             if(msg.isNotEmpty()){
                                                 showToast(msg)
                                             }
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, true, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo, true, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                         }
@@ -372,13 +357,13 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
                                             bsDownload?.downloaded()
                                             if(msg.isNotEmpty()){
                                                 showToast(msg)
                                             }
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
@@ -397,12 +382,12 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         }
                     }
 
-                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                    override fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel?) {
                         favPhotographerTypeModel?.apply {
                             ImageViewerHelper(mContext).with(photosList,
-                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+                                    childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.download_started))
@@ -417,19 +402,17 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            Handler(Looper.getMainLooper()).postDelayed({
-                                                bsDownload?.downloaded()
-                                                startActivity(Intent(context, ActImageEditor::class.java).also {
-                                                    it.putExtra(Constants.IntentConstants.PHOTO_DATA, imageMeta)
-                                                })
-                                            }, 300)
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            startActivity(Intent(context, ActImageEditor::class.java).also {
+                                                it.putExtra(Constants.IntentConstants.PHOTO_DATA, imageMeta)
+                                            })
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo, false, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.download_started))
@@ -443,17 +426,17 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
                                             bsDownload?.downloaded()
                                             if(msg.isNotEmpty()){
                                                 showToast(msg)
                                             }
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(mContext, photoInfo.urls.downloadingUrl, name, name, true, object : ImageActionHelper.ImageSaveListener{
+                                    ImageActionHelper.saveImage(mContext, photoInfo, true, object : ImageActionHelper.ImageSaveListener{
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(childFragmentManager)
                                             showToast(getString(R.string.adding_to_fav))
@@ -467,13 +450,13 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
                                             bsDownload?.downloaded()
                                             if(msg.isNotEmpty()){
                                                 showToast(msg)
                                             }
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
@@ -483,7 +466,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         }
                     }
 
-                    override fun onTagType(tagTypeModel: GenericModelFactory.TagTypeModel?) {
+                    override fun onTagType(tagTypeModel: TagTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -495,7 +478,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onColorType(colorTypeModel: GenericModelFactory.ColorTypeModel?) {
+                    override fun onColorType(colorTypeModel: ColorTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -507,7 +490,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onCategoryType(categoryTypeModel: GenericModelFactory.CategoryTypeModel?) {
+                    override fun onCategoryType(categoryTypeModel: CategoryTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -519,12 +502,12 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onUserType(userTypeModel: GenericModelFactory.UserTypeModel?) {
+                    override fun onUserType(userTypeModel: UserTypeModel?) {
                         mListener?.startMorePhotosActivity(
-                                MoreListData(
-                                        Constants.ListModes.LIST_MODE_USER_PHOTOS,
-                                        userTypeModel?.usersList?.get(childPos)
-                                )
+                            MoreListData(
+                                Constants.ListModes.LIST_MODE_USER_PHOTOS,
+                                userTypeModel?.usersList?.get(childPos)
+                            )
                         )
                     }
                 }
@@ -534,7 +517,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
             override fun onMoreClicked(o: Any?, title: String?, groupPos: Int) {
 
                 object : GenericModelCastHelper(o){
-                    override fun onCollectionType(collectionTypeModel: GenericModelFactory.CollectionTypeModel?) {
+                    override fun onCollectionType(collectionTypeModel: CollectionTypeModel?) {
                         mListener?.startMoreFeaturedCollections(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_COLLECTIONS,
@@ -545,7 +528,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                         )
                     }
 
-                    override fun onGeneralType(generalTypeModel: GenericModelFactory.GeneralTypeModel?) {
+                    override fun onGeneralType(generalTypeModel: GeneralTypeModel?) {
                         mListener?.startMorePhotosActivity(
                                 MoreListData(
                                         Constants.ListModes.LIST_MODE_POPULAR_PHOTOS,
@@ -689,11 +672,14 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
     }
 
     override fun onAllContentLoaded() {
-        lvCenter?.hideView()
-        recHomeContent?.apply {
-            layoutManager = LinearLayoutManager(mContext)
-            setHasFixedSize(true)
-            adapter = adaptHome
+        CoroutineScope(Dispatchers.Main).launch {
+            recHomeContent?.apply {
+                layoutManager = LinearLayoutManager(mContext)
+                setHasFixedSize(true)
+                delay(300)
+                lvCenter?.hideView()
+                adapter = adaptHome
+            }
         }
     }
 

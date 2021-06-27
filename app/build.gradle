@@ -28,6 +28,14 @@ android {
             useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                def date = new Date()
+                def formattedDate = date.format('ddMMyyyyHHmmss')
+                outputFileName = "Mausam-${variant.name}-${variant.versionName}-${formattedDate}.apk"
+            }
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -94,6 +102,9 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
 
     implementation "com.bitvale:switcher:$switcher_version"
+
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
 
     //implementation "com.github.stfalcon:stfalcon-imageviewer:$imageViewer_version"
     implementation "com.github.chrisbanes:PhotoView:$photo_view_version"

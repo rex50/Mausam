@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
+import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
 import com.rex50.mausam.views.fragments.FragBlurImage
@@ -24,7 +25,7 @@ class  ActImageEditor : BaseActivity(), FragCropImage.OnCropFragmentInteractionL
         const val INITIAL_PAGE = 0
     }
 
-    private var photoData: SavedImageMeta? = null
+    private var photoData: UnsplashPhotos? = null
 
     private var fragCropImage: FragCropImage? = null
 
@@ -57,7 +58,7 @@ class  ActImageEditor : BaseActivity(), FragCropImage.OnCropFragmentInteractionL
      *
      * @param photoData - Data of image which will be used for manipulation
      */
-    private fun prepareFragments(photoData: SavedImageMeta) {
+    private fun prepareFragments(photoData: UnsplashPhotos) {
         val listOfFragments = arrayListOf<Fragment>().apply {
             add(FragCropImage.newInstance(photoData).also { fragCropImage = it })
             add(FragBlurImage.newInstance())
@@ -98,7 +99,7 @@ class  ActImageEditor : BaseActivity(), FragCropImage.OnCropFragmentInteractionL
     }
 
     private fun getIntentData() {
-        photoData = intent?.getSerializableExtra(PHOTO_DATA) as SavedImageMeta?
+        photoData = intent?.getParcelableExtra(PHOTO_DATA) as UnsplashPhotos?
     }
 
     override fun onCropSuccess(bitmap: Bitmap) {

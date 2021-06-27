@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.rex50.mausam.utils.custom_text_views.RegularTextView android:id="@+id/tvSponsored"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Sponsored"
+    android:paddingStart="@dimen/_8dp"
+    android:paddingEnd="@dimen/_8dp"
+    android:textSize="12sp"
+    android:background="@drawable/bg_general"
+    android:textColor="@color/black_to_white"
+    android:visibility="gone"
+    android:alpha="0.5"
+    tools:visibility="visible"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" />

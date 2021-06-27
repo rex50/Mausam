@@ -1,5 +1,6 @@
 package com.rex50.mausam.storage.database.key_values
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
@@ -18,4 +19,7 @@ interface KeyValuesDao {
 
     @Query("SELECT * from KeyValues where `key` = :key")
     fun getValue(key: String?): KeyValues?
+
+    @Query("SELECT * from KeyValues where `key` LIKE :searchTerm")
+    fun searchSimilarTo(searchTerm: String?): LiveData<List<KeyValues>>
 }

@@ -38,19 +38,27 @@
             android:text="@string/app_name"
             android:layout_marginTop="6dp"
             android:textColor="@color/blueJeans"
+            android:layout_centerVertical="true"
             android:textSize="26sp"
             android:textStyle="bold" />
 
-        <ImageView
+        <com.rex50.mausam.utils.custom_text_views.RegularTextView
             android:id="@+id/btnSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:text="@string/settings"
+            app:drawableEndCompat="@drawable/ic_settings"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_settings"
-            android:contentDescription="@string/settings_button" />
+            android:textSize="14sp"
+            android:background="@drawable/track_selector"
+            android:textColor="@color/white"
+            app:drawableTint="@color/white"
+            android:paddingStart="@dimen/_12dp"
+            android:paddingEnd="@dimen/_12dp"
+            android:paddingTop="@dimen/_4dp"
+            android:paddingBottom="@dimen/_4dp"
+            android:drawablePadding="@dimen/_6dp"
+            android:layout_centerVertical="true"/>
 
     </RelativeLayout>
 </com.google.android.material.appbar.AppBarLayout>

@@ -19,6 +19,7 @@ import com.rex50.mausam.interfaces.GetUnsplashPhotosAndUsersListener
 import com.rex50.mausam.interfaces.GetUnsplashPhotosListener
 import com.rex50.mausam.interfaces.GetUnsplashSearchedPhotosListener
 import com.rex50.mausam.interfaces.OnChildItemClickListener
+import com.rex50.mausam.model_classes.item_types.FavouritePhotographerTypeModel
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.unsplash.searched_photos.SearchedPhotos
@@ -64,7 +65,7 @@ class ActPhotosList : BaseActivity() {
 
         initHeader()
 
-        fabBack?.setOnClickListener{onBackPressed()}
+        fabBack?.setOnClickListener{ onBackPressed() }
         fabSearchedPhotosBack?.setOnClickListener{ if(scrollToTopActive) scrollToTop() else onBackPressed() }
 
         unsplashHelper = UnsplashHelper(this)
@@ -112,10 +113,14 @@ class ActPhotosList : BaseActivity() {
                             }
                         }
 
-                        findViewById<Button>(R.id.btnAddFavUser)?.setOnClickListener{
-                            showToast("Coming soon...")
-                            //TODO : add user as favourite
+                        findViewById<Button>(R.id.btnAddFavUser)?.apply {
+                            hideView()
+                            setOnClickListener{
+                                showToast("Coming soon...")
+                                //TODO : add user as favourite
+                            }
                         }
+
 
                         findViewById<Button>(R.id.btnMore)?.setOnClickListener {
                             val bsUserMore: BSUserMore? = BSUserMore()
@@ -153,7 +158,9 @@ class ActPhotosList : BaseActivity() {
     }
 
     private fun initDataModel(){
-        photosModel = GenericModelFactory.getFavouritePhotographerTypeObject(listData?.getTitle(this), listData?.getDesc(), photosList)
+        listData?.let { data ->
+            photosModel = GenericModelFactory.getFavouritePhotographerTypeObject(data.getTitle(this), data.getDesc(), photosList)
+        }
     }
 
     private fun initRecycler() {
@@ -216,13 +223,13 @@ class ActPhotosList : BaseActivity() {
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
                 object: GenericModelCastHelper(o){
-                    override fun onFavPhotographerType(favPhotographerTypeModel: GenericModelFactory.FavouritePhotographerTypeModel?) {
+                    override fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel?) {
                         favPhotographerTypeModel?.apply {
                             ImageViewerHelper(this@ActPhotosList).with(photosList,
-                                    childImgView, childPos, object : ImageViewerHelper.ImageActionListener() {
+                                    childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(supportFragmentManager)
                                         }
@@ -235,19 +242,17 @@ class ActPhotosList : BaseActivity() {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
-                                            Handler(Looper.getMainLooper()).postDelayed({
-                                                bsDownload?.downloaded()
-                                                startActivity(Intent(this@ActPhotosList, ActImageEditor::class.java).also {
-                                                    it.putExtra(Constants.IntentConstants.PHOTO_DATA, imageMeta)
-                                                })
-                                            }, 300)
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
+                                            bsDownload?.downloaded()
+                                            startActivity(Intent(this@ActPhotosList, ActImageEditor::class.java).also {
+                                                it.putExtra(Constants.IntentConstants.PHOTO_DATA, imageMeta)
+                                            })
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.urls.downloadingUrl, name, name, false, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo, false, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(supportFragmentManager)
                                         }
@@ -260,17 +265,17 @@ class ActPhotosList : BaseActivity() {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
                                             bsDownload?.downloaded()
                                             if (msg.isNotEmpty()) {
                                                 showToast(msg)
                                             }
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onFavourite(photoInfo: UnsplashPhotos, name: String) {
-                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo.urls.downloadingUrl, name, name, true, object : ImageActionHelper.ImageSaveListener {
+                                    ImageActionHelper.saveImage(this@ActPhotosList, photoInfo, true, object : ImageActionHelper.ImageSaveListener {
                                         override fun onDownloadStarted() {
                                             bsDownload?.downloadStarted(supportFragmentManager)
                                             showToast(getString(R.string.adding_to_fav))
@@ -284,13 +289,13 @@ class ActPhotosList : BaseActivity() {
                                             bsDownload?.onProgress(progress)
                                         }
 
-                                        override fun response(imageMeta: SavedImageMeta?, msg: String) {
+                                        override fun response(imageMeta: UnsplashPhotos?, msg: String) {
                                             bsDownload?.downloaded()
                                             if (msg.isNotEmpty()) {
                                                 showToast(msg)
                                             }
                                         }
-                                    }, photoInfo.links.downloadLocation)
+                                    })
                                 }
 
                                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
