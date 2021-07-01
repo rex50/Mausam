@@ -40,20 +40,25 @@ class ItemCategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 }
             }
 
-            //TODO : Check if any other optimal solution is available
-            val adapter: AdaptContent? = AdaptContent(context, model)
-            recCategoryItems?.layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
-            adapter?.setChildClickListener(object : OnChildItemClickListener {
-                override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
-                    groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
-                }
-            })
-            if(recCategoryItems?.itemDecorationCount == 0){
-                recCategoryItems?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
-            }
+            recCategoryItems?.apply {
 
-            recCategoryItems?.adapter =  SlideInBottomAnimationAdapter(adapter!!).apply {
-                setFirstOnly(false)
+                layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
+                isNestedScrollingEnabled = false
+
+                val adaptContent = AdaptContent(context, model)
+                adaptContent.setChildClickListener(object : OnChildItemClickListener {
+                    override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
+                        groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
+                    }
+                })
+
+                if(itemDecorationCount == 0){
+                    recCategoryItems?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
+                }
+
+                adapter =  SlideInBottomAnimationAdapter(adaptContent).apply {
+                    setFirstOnly(false)
+                }
             }
         }
     }

@@ -47,6 +47,7 @@ class ItemSectionHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
             recSectionItems?.apply {
 
                 layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
+                isNestedScrollingEnabled = false
 
                 if(itemDecorationCount == 0){
                     addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
