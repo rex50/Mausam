@@ -53,5 +53,7 @@ abstract class BaseFragment : Fragment(){
 
     open fun whenResumed(){}
 
+    open fun onScrollToTop() {}
+
     fun isFragmentLoaded() = isFragmentLoaded
 }

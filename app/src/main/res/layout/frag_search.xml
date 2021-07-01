@@ -13,6 +13,7 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/ablDiscover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white_to_dark">
@@ -137,13 +138,14 @@
                 android:visibility="gone"/>
 
             <androidx.core.widget.NestedScrollView
+                android:id="@+id/nsDiscover"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="4dp"
                 android:layout_below="@+id/etvSearch">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recHomeContent"
+                    android:id="@+id/recDiscoverContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"

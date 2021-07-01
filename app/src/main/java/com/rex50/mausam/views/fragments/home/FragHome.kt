@@ -1,12 +1,9 @@
-package com.rex50.mausam.views.fragments
+package com.rex50.mausam.views.fragments.home
 
-import android.animation.LayoutTransition
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,7 +25,6 @@ import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.thekhaeng.pushdownanim.PushDownAnim
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
-import kotlinx.android.synthetic.main.act_photos_list.*
 import kotlinx.android.synthetic.main.frag_home.*
 import kotlinx.android.synthetic.main.header_custom_home.*
 import org.json.JSONArray
@@ -93,28 +89,6 @@ class FragHome : BaseFragment() {
         endlessScrollListener.apply {
             setInitialPage(INITIAL_PAGE)
             setVisibleThreshold(4)
-        }
-
-
-        val layoutTrans = rlPhotos?.layoutTransition
-        layoutTrans?.setDuration(700)
-        layoutTrans?.enableTransitionType(LayoutTransition.CHANGING)
-
-        val scrollListener = object : RecyclerView.OnScrollListener(){
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-
-                fabSearchedPhotosBack?.apply {
-                    if(layoutManager.findFirstVisibleItemPosition() > 0){
-                        var scrollToTopActive = true
-                        toRightAndRotate()
-                    }else{
-                        var scrollToTopActive = false
-                        toNormal()
-                    }
-                }
-            }
-
         }
 
         recHomeContent?.apply {
@@ -278,6 +252,11 @@ class FragHome : BaseFragment() {
                 }
             }
         }
+    }
+
+    override fun onScrollToTop() {
+        recHomeContent?.smoothScrollToPosition(0)
+        ablHomeList?.setExpanded(true, true)
     }
 
     override fun onAttach(context: Context) {

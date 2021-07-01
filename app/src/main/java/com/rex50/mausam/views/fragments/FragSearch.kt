@@ -619,7 +619,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
         val apiManager = APIManager.getInstance(mContext)
         val urlExtras = HashMap<String, String>()
         urlExtras["q"] = place
-        apiManager.searchWeather(APIManager.SERVICE_CURRENT_WEATHER, urlExtras, object : WeatherAPICallBackResponse {
+        apiManager?.searchWeather(APIManager.SERVICE_CURRENT_WEATHER, urlExtras, object : WeatherAPICallBackResponse {
             override fun onWeatherResponseSuccess(jsonObject: JSONObject) {
                 if (searchOnlyCity) {
                     mListener?.apply {
@@ -673,7 +673,7 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
 
     override fun onAllContentLoaded() {
         CoroutineScope(Dispatchers.Main).launch {
-            recHomeContent?.apply {
+            recDiscoverContent?.apply {
                 layoutManager = LinearLayoutManager(mContext)
                 setHasFixedSize(true)
                 delay(300)
@@ -681,6 +681,11 @@ class FragSearch : BaseFragment(), AllContentModel.ContentInsertedListener {
                 adapter = adaptHome
             }
         }
+    }
+
+    override fun onScrollToTop() {
+        nsDiscover?.smoothScrollTo(0, 0)
+        ablDiscover?.setExpanded(true, true)
     }
 
 

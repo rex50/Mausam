@@ -24,6 +24,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.rex50.mausam.R;
 import com.rex50.mausam.base_classes.BaseActivity;
+import com.rex50.mausam.base_classes.BaseFragment;
+import com.rex50.mausam.enums.MainTabs;
 import com.rex50.mausam.interfaces.LocationResultListener;
 import com.rex50.mausam.interfaces.WeatherResultListener;
 import com.rex50.mausam.model_classes.utils.MoreListData;
@@ -38,10 +40,10 @@ import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.LastLocationProvider;
 import com.rex50.mausam.utils.MaterialSnackBar;
 import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
-import com.rex50.mausam.views.fragments.favourites.FragFavourites;
-import com.rex50.mausam.views.fragments.FragHome;
 import com.rex50.mausam.views.fragments.FragSearch;
 import com.rex50.mausam.views.fragments.FragSearchResult;
+import com.rex50.mausam.views.fragments.favourites.FragFavourites;
+import com.rex50.mausam.views.fragments.home.FragHome;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -79,6 +81,8 @@ public class ActMain extends BaseActivity implements
     private LastLocationProvider lastLocationProvider;
     private FlashyTabBar tabFlashyAnimator;
     private CustomViewPager viewPager;
+    private FragmentStatePagerAdapter viewPagerAdapter;
+    private List<BaseFragment> mFragmentList = new ArrayList<>();
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({ Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -211,7 +215,6 @@ public class ActMain extends BaseActivity implements
     private void prepareFragments() {
         viewPager = findViewById(R.id.homeViewPager);
         viewPager.setPagingEnabled(false);
-        List<Fragment> mFragmentList = new ArrayList<>();
         fragHome = new FragHome();
         fragSearch = new FragSearch();
         fragFav = new FragFavourites();
@@ -219,14 +222,17 @@ public class ActMain extends BaseActivity implements
         mFragmentList.add(fragHome);
         mFragmentList.add(fragSearch);
         mFragmentList.add(fragFav);
-        viewPager.setAdapter(getFragmentAdapter(mFragmentList));
+
+        viewPagerAdapter = getFragmentAdapter(mFragmentList);
+        viewPager.setAdapter(viewPagerAdapter);
         viewPager.setOffscreenPageLimit(mFragmentList.size());
 
         setupTabLayout(viewPager);
     }
 
-    private FragmentStatePagerAdapter getFragmentAdapter(List<Fragment> mFragmentList) {
+    private FragmentStatePagerAdapter getFragmentAdapter(List<BaseFragment> mFragmentList) {
          return new FragmentStatePagerAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+            @NotNull
             @Override
             public Fragment getItem(int position) {
                 return mFragmentList.get(position);
@@ -243,9 +249,9 @@ public class ActMain extends BaseActivity implements
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
         tabFlashyAnimator = new FlashyTabBar(tabLayout);
-        tabFlashyAnimator.addTabItem("Home", R.drawable.ic_logo);
-        tabFlashyAnimator.addTabItem("Discover", R.drawable.ic_search);
-        tabFlashyAnimator.addTabItem("Gallery", R.drawable.ic_heart);
+        for (MainTabs value : MainTabs.values()) {
+            tabFlashyAnimator.addTabItem(value.getTitle(), value.getIcon());
+        }
         tabFlashyAnimator.highLightTab(0);
         viewPager.addOnPageChangeListener(tabFlashyAnimator);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -270,7 +276,12 @@ public class ActMain extends BaseActivity implements
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                if(tab != null && tab.getPosition() < mFragmentList.size()) {
+                    BaseFragment frag = mFragmentList.get(tab.getPosition());
+                    if(frag != null) {
+                        frag.onScrollToTop();
+                    }
+                }
             }
         });
     }

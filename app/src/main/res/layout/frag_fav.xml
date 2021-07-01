@@ -42,8 +42,10 @@
             app:layout_collapseMode="pin">
 
             <androidx.core.widget.NestedScrollView
+                android:id="@+id/nsRecommendations"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:layout_marginTop="4dp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvRecommendations"

@@ -206,6 +206,11 @@ class FragFavourites : BaseFragment() {
         rvRecommendations?.adapter = adaptFav
     }
 
+    override fun onScrollToTop() {
+        nsRecommendations?.smoothScrollTo(0, 0)
+        ablRecommendations?.setExpanded(true, true)
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnFragmentInteractionListener) {
