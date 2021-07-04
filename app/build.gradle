@@ -148,9 +148,6 @@ dependencies {
     //For applying filter
     implementation 'jp.co.cyberagent.android:gpuimage:2.1.0'
 
-    //For Blur of image
-    implementation 'com.jackandphantom.android:blurimage:1.2.0'
-
     //Page indicator for view pagers
     implementation 'com.tbuonomo:dotsindicator:4.2'
 

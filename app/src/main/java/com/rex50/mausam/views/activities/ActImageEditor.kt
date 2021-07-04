@@ -105,7 +105,7 @@ class  ActImageEditor : BaseActivity(), FragCropImage.OnCropFragmentInteractionL
     override fun onCropSuccess(bitmap: Bitmap) {
         //start editor with cropped bitmap as preview
         croppedImage = bitmap
-        if((vpEditor?.childCount ?: 0) > 1)
+        if((vpEditor?.adapter?.count ?: 0) > 1)
             vpEditor?.currentItem = 1
     }
 
@@ -118,7 +118,7 @@ class  ActImageEditor : BaseActivity(), FragCropImage.OnCropFragmentInteractionL
     }
 
     override fun cropAgain() {
-        if((vpEditor?.childCount ?: 0) >= 1)
+        if((vpEditor?.adapter?.count ?: 0) >= 1)
             vpEditor?.currentItem = 0
     }
 
@@ -135,7 +135,7 @@ class  ActImageEditor : BaseActivity(), FragCropImage.OnCropFragmentInteractionL
         when {
 
             //Check if current page is 1 then change page to initial page
-            (vpEditor?.childCount ?: INITIAL_PAGE) > 1 && vpEditor?.currentItem == 1 -> {
+            (vpEditor?.adapter?.count ?: INITIAL_PAGE) > 1 && vpEditor?.currentItem == 1 -> {
                 vpEditor?.currentItem = INITIAL_PAGE
             }
 

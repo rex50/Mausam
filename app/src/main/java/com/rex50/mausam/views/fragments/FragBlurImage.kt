@@ -4,9 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import android.widget.SeekBar
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.jackandphantom.blurimage.BlurImage
 import com.rex50.mausam.BuildConfig
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
@@ -24,6 +24,19 @@ class FragBlurImage: BaseFragment() {
     private var listener: OnBlurFragmentInteractions? = null
 
     private var blurLevel: Float = 0F
+        set(value) {
+            field = when {
+                value > 25 -> 25F
+                value < 0 -> 0F
+                else -> value
+            }
+        }
+
+    private val blurHelper: BlurImage by lazy {
+        BlurImage.with(requireContext()).also {
+            it.load(listener?.getBitmap())
+        }
+    }
 
     override fun getResourceLayout(): Int = R.layout.frag_blur_image
 
@@ -31,10 +44,12 @@ class FragBlurImage: BaseFragment() {
 
         val displayMetrics = resources.displayMetrics
 
+        sBlur?.max = 100
+
         //Set click listener to listen to the blur seekbar
         sBlur?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                blurLevel = progress.toFloat()
+                blurLevel = (progress.toFloat() / 4) //Divide to make it no more than 25
                 updatePreview()
             }
 
@@ -57,11 +72,14 @@ class FragBlurImage: BaseFragment() {
                         try {
                             finalBitmap =
                                 if(blurLevel > 0 && listener?.getBitmap() != null)
-                                    BlurImage.with(requireContext())
-                                        .load(listener?.getBitmap())
-                                        .intensity(blurLevel)
-                                        .Async(true)
-                                        .imageBlur
+                                    blurHelper.radius(blurLevel)
+                                        .onOutOfMemory {
+                                            showToast(
+                                            "Error while blurring image. Please try clearing memory before trying again.",
+                                            Toast.LENGTH_LONG
+                                            )
+                                        }
+                                        .getBlurredImageAsync()
                                 else
                                     listener?.getBitmap()
 
@@ -96,6 +114,7 @@ class FragBlurImage: BaseFragment() {
         ivLoader?.hideView()
         sBlur?.progress = 0
         listener?.getBitmap()?.let {
+            blurHelper.load(it)
             Glide.with(requireContext())
                 .load(it)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -110,8 +129,7 @@ class FragBlurImage: BaseFragment() {
         listener?.getBitmap()?.takeIf { blurLevel > 0 }?.let {
             BlurImage.with(requireContext())
                 .load(it)
-                .Async(true)
-                .intensity(blurLevel)
+                .radius(blurLevel)
                 .into(ivPreview)
         } ?: initPreview()
     }
