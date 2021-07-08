@@ -1,6 +1,5 @@
 package com.rex50.mausam.views.activities
 
-import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -12,7 +11,7 @@ import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.utils.isStoragePermissionGranted
-import com.rex50.mausam.views.MausamApplication
+import com.rex50.mausam.MausamApplication
 
 class ActSplash : BaseActivity() {
 

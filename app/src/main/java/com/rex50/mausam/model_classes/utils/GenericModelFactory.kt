@@ -161,7 +161,7 @@ abstract class GenericModelFactory{
             title: String,
             desc: String,
             hasMore: Boolean,
-            tagsList: List<Tag?>,
+            tagsList: List<Tag>,
             shuffleList: Boolean
         ): GenericModelFactory {
             val textTypeModel = TagTypeModel(tagsList, shuffleList)
@@ -193,7 +193,7 @@ abstract class GenericModelFactory{
             title: String,
             desc: String,
             hasMore: Boolean,
-            categories: List<CategoryModel?>,
+            categories: List<CategoryModel>,
             shuffleList: Boolean
         ): GenericModelFactory {
             val textTypeModel = CategoryTypeModel(categories, shuffleList)

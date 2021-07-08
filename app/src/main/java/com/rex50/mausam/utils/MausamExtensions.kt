@@ -86,20 +86,20 @@ fun Context.showKeyBoard(view: View?) {
     }
 }
 
-fun Fragment.showToast(msg: String){
-    context?.showToast(msg)
+fun Fragment.showToast(msg: String, length: Int = Toast.LENGTH_SHORT){
+    context?.showToast(msg, length)
 }
 
-fun Activity.showToast(msg: String){
-    toast(this, msg)
+fun Activity.showToast(msg: String, length: Int = Toast.LENGTH_SHORT){
+    toast(this, msg, length)
 }
 
-fun Context.showToast(msg: String){
-    toast(this, msg)
+fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT){
+    toast(this, msg, length)
 }
 
-private fun toast(context: Context?, msg: String){
-    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+private fun toast(context: Context?, msg: String, length: Int = Toast.LENGTH_SHORT){
+    Toast.makeText(context, msg, length).show()
 }
 
 fun View.toggleViewVisibility(){

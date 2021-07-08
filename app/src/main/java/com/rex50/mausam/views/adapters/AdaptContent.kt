@@ -10,7 +10,7 @@ import com.rex50.mausam.model_classes.unsplash.collection.Tag
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
-import com.rex50.mausam.views.MausamApplication
+import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.views.adapters.holders.*
 
 class AdaptContent(private var context: Context?, private var model: GenericModelFactory?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

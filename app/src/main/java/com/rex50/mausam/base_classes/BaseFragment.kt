@@ -7,10 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 abstract class BaseFragment : Fragment(){
 
     private var isFragmentLoaded = false
+
+    val fragScope: CoroutineScope by lazy {
+        CoroutineScope(Dispatchers.Main + SupervisorJob())
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(getResourceLayout(), container, false)

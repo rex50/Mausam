@@ -108,9 +108,9 @@ class UnsplashHelper {
                 } ?: apply {
                     apiManager?.makeUnsplashRequest(APIManager.SERVICE_GET_SEARCHED_PHOTOS, extras, object : UnsplashAPICallResponse {
                         override fun onSuccess(response: String) {
-                            val photos = DataParser.parseSearchedPhotos(response)
-                            listener.onSuccess(photos)
                             scope.launch {
+                                val photos = DataParser.parseSearchedPhotos(response)
+                                listener.onSuccess(photos)
                                 KeyValuesRepository.insert(context, SEARCHED_PHOTOS_KEY + searchTerm + page + perPage, response)
                             }
                         }

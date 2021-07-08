@@ -12,7 +12,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
-class KeyValuesRepository {
+class KeyValuesRepository() {
+
+    private lateinit var context: Context
+
+    constructor(context: Context) : this() {
+        this.context = context
+    }
+
+    suspend fun getDownloadedPhotos(): LiveData<ArrayList<UnsplashPhotos>>? = withContext(Dispatchers.IO) {
+        return@withContext searchStartingWith(context, Constants.Image.DOWNLOADED_IMAGE)?.map { list ->
+            parseDownloadedPhotos(list.toArrayList())
+        }
+    }
+
+
 
     companion object{
 
@@ -67,13 +81,6 @@ class KeyValuesRepository {
                 MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.searchSimilarTo("$searchTerm%")
             } else
                 null
-        }
-
-        @JvmStatic
-        suspend fun getDownloadedPhotos(context: Context?): LiveData<ArrayList<UnsplashPhotos>>? = withContext(Dispatchers.IO) {
-            return@withContext searchStartingWith(context, Constants.Image.DOWNLOADED_IMAGE)?.map { list ->
-                parseDownloadedPhotos(list.toArrayList())
-            }
         }
 
         @JvmStatic

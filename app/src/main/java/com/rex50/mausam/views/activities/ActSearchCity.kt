@@ -8,22 +8,20 @@ import androidx.fragment.app.FragmentManager
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
 import com.rex50.mausam.model_classes.utils.MoreListData
-import com.rex50.mausam.model_classes.weather.WeatherModelClass
-import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.MaterialSnackBar
-import com.rex50.mausam.views.fragments.FragSearch
-import com.rex50.mausam.views.fragments.FragSearch.Companion.newInstance
+import com.rex50.mausam.views.fragments.discover.FragDiscover
 
-class ActSearchCity : BaseActivity(), FragSearch.OnFragmentInteractionListener {
+class ActSearchCity : BaseActivity(), FragDiscover.OnFragmentInteractionListener {
     private var fragmentManager: FragmentManager? = supportFragmentManager
-    private var fragSearch: FragSearch? = null
+    private var fragDiscover: FragDiscover? = null
 
     override val layoutResource: Int
         get() = R.layout.act_search_city
 
     override fun loadAct(savedInstanceState: Bundle?) {
-        fragSearch = newInstance(true)
-        loadFragment(fragSearch)
+        //TODO: create a new fragment for searching place (city) for weather
+        /*fragDiscover = newInstance(true)
+        loadFragment(fragDiscover)*/
     }
 
     override fun internetStatus(internetType: Int) { //TODO : handle according to internet Status
@@ -40,14 +38,14 @@ class ActSearchCity : BaseActivity(), FragSearch.OnFragmentInteractionListener {
     }
 
     override fun onFragmentInteraction(uri: Uri?) {}
-    override fun onWeatherSearchSuccess(weatherDetails: WeatherModelClass?) {}
+    //override fun onWeatherSearchSuccess(weatherDetails: WeatherModelClass?) {}
     override fun nextBtnClicked() {
         val intent = Intent(this, ActMain::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
 
-    override val sharedPrefs: MausamSharedPrefs? = mausamSharedPrefs
+    //override val sharedPrefs: MausamSharedPrefs? = mausamSharedPrefs
 
     override val snackBar: MaterialSnackBar? = materialSnackBar
 

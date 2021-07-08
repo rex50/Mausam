@@ -106,7 +106,10 @@
     <string name="delete">Delete</string>
     <string name="interested_photographers">Interested photographers</string>
     <string name="empty_download_section_msg">It\'s empty here.\nGo to Discover for exploring photos.</string>
+    <string name="error_no_internet">It seems you are offline. Please connect to internet and try again.</string>
     <string name="go_discover">Take me there</string>
+    <string name="retry">Retry</string>
+    <string name="action_start_search">Start search</string>
 
     <!--Dummy text/Placeholders-->
     <string name="dummy_title">Title goes here</string>
@@ -141,6 +144,7 @@
     <string name="left_swipe">left swipe</string>
     <string name="right_swipe">right swipe</string>
     <string name="loading">Loading</string>
+    <string name="msg_empty_discover">Oops! no new photos found.\nTry searching your favourite %s.</string>
 
 
     <!--Colors for gradient array-->

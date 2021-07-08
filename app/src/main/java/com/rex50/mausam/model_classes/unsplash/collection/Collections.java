@@ -7,6 +7,10 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.rex50.mausam.model_classes.unsplash.photos.User;
+import com.rex50.mausam.model_classes.utils.MoreListData;
+import com.rex50.mausam.utils.Constants;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -244,4 +248,9 @@ public class Collections implements Parcelable {
         this.previewPhotos = previewPhotos;
     }
 
+    @NotNull
+    public MoreListData getMoreListData() {
+        return new MoreListData(Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
+                null, this, null);
+    }
 }

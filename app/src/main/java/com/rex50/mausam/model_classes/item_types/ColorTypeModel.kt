@@ -1,13 +1,16 @@
 package com.rex50.mausam.model_classes.item_types
 
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
+import com.rex50.mausam.model_classes.utils.MoreData
+import com.rex50.mausam.model_classes.utils.MoreListData
+import com.rex50.mausam.utils.Constants
 import java.util.ArrayList
 
 class ColorTypeModel(
-    colorsList: List<ColorModel?>,
+    colorsList: List<ColorModel>,
     shuffle: Boolean
 ): GenericModelFactory() {
-    var colorsList: List<ColorModel?> = if(shuffle) colorsList.shuffled() else colorsList
+    var colorsList: List<ColorModel> = if(shuffle) colorsList.shuffled() else colorsList
         private set
 
     override fun getTotalItems() = colorsList.size
@@ -46,4 +49,12 @@ class ColorModel(
 ) {
     var colorName: String? = colorName
     var colorCode: String? = colorCode
+
+    fun getMoreListData() = MoreListData(
+        Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
+        generalInfo = MoreData(
+            colorName,
+            Constants.Providers.POWERED_BY_UNSPLASH
+        )
+    )
 }

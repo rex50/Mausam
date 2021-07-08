@@ -25,12 +25,13 @@ import com.rex50.mausam.views.adapters.AdaptHome
 import kotlinx.android.synthetic.main.header_custom_general.*
 import kotlinx.android.synthetic.main.anim_view.*
 import kotlinx.android.synthetic.main.frag_fav.*
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class FragFavourites : BaseFragment() {
 
     private var mListener: OnFragmentInteractionListener? = null
 
-    private var viewModel: FragFavouritesViewModel? = null
+    private val viewModel by viewModel<FragFavouritesViewModel>()
 
     private var imageViewer: ImageViewerHelper? = null
 
@@ -39,11 +40,6 @@ class FragFavourites : BaseFragment() {
     override fun getResourceLayout(): Int = R.layout.frag_fav
 
     override fun initView() {
-
-        activity?.application?.let { app ->
-            viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(app))
-                .get(FragFavouritesViewModel::class.java)
-        }
 
         mContext?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
@@ -92,7 +88,7 @@ class FragFavourites : BaseFragment() {
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        viewModel?.getSectionsLiveData()?.observe(this, { data ->
+        viewModel.getSectionsLiveData()?.observe(this, { data ->
             if(data.size() > 0) {
                 rvRecommendations?.showView()
                 initEmptyMessage(false)
@@ -130,7 +126,7 @@ class FragFavourites : BaseFragment() {
 
                 object: GenericModelCastHelper(o) {
 
-                    override fun onGeneralType(generalTypeModel: GeneralTypeModel?) {
+                    override fun onGeneralType(generalTypeModel: GeneralTypeModel) {
                         imageViewer = ImageViewerHelper(requireContext())
                             .showPhotographer(true)
                             .setTools(
@@ -138,7 +134,7 @@ class FragFavourites : BaseFragment() {
                                     ImageViewerHelper.Tools.DELETE, ImageViewerHelper.Tools.MORE)
                             )
                             .with(
-                                generalTypeModel?.photosList ?: listOf(),
+                                generalTypeModel.photosList,
                                 childImgView,
                                 childPos,
                                 object : ImageActionHelper.ImageActionListener() {
@@ -180,18 +176,18 @@ class FragFavourites : BaseFragment() {
                         imageViewer?.show()
                     }
 
-                    override fun onUserType(userTypeModel: UserTypeModel?) {
+                    override fun onUserType(userTypeModel: UserTypeModel) {
 
                         val errMsg = "Error while getting user's photos"
 
-                        userTypeModel?.usersList?.get(childPos)?.let { user ->
+                        userTypeModel.usersList[childPos].let { user ->
                             mListener?.startMorePhotosActivity(
                                 MoreListData(
                                     Constants.ListModes.LIST_MODE_USER_PHOTOS,
                                     user
                                 )
                             ) ?: showToast(errMsg)
-                        }?: showToast(errMsg)
+                        }
                     }
                 }
 

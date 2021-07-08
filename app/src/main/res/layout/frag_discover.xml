@@ -24,6 +24,7 @@
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <include layout="@layout/header_custom_general"
+                    android:id="@+id/headerLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_collapseMode="parallax"
@@ -162,6 +163,13 @@
                 android:layout_below="@+id/etvSearch"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_50dp" />
+
+            <include layout="@layout/anim_view"
+                android:id="@+id/animLayout"
+                android:layout_marginTop="@dimen/_80dp"
+                android:layout_below="@+id/etvSearch"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
 
         </RelativeLayout>
 

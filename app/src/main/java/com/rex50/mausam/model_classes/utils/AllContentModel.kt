@@ -3,8 +3,7 @@ package com.rex50.mausam.model_classes.utils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.rex50.mausam.interfaces.OnGroupItemClickListener
-import com.rex50.mausam.views.adapters.AdaptHome
+import com.rex50.mausam.enums.ContentLoadingState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,14 +13,20 @@ class AllContentModel {
     private val models: ArrayList<GenericModelFactory?> by lazy { arrayListOf() }
 
     private var sequenceOfLayout: List<String>
-    private var adapter: AdaptHome? = null
     private val types: MutableList<String> by lazy { mutableListOf() }
     private var responsesCount = 0
     private var insertedListener: ContentInsertedListener? = null
-    @Volatile private var allContentLoaded = false
+    @Volatile var allContentLoaded = false
+        private set
 
     private val modelLiveList: MutableLiveData<AllContentModel> by lazy {
         MutableLiveData<AllContentModel>()
+    }
+
+    private val loadingState: MutableLiveData<ContentLoadingState> by lazy {
+        MutableLiveData<ContentLoadingState>().also {
+            it.postValue(ContentLoadingState.Preparing)
+        }
     }
 
 
@@ -40,7 +45,7 @@ class AllContentModel {
     }
 
     @Synchronized
-    fun addOrUpdateModel(type: String, model: GenericModelFactory){
+    suspend fun addOrUpdateModel(type: String, model: GenericModelFactory){
         types.indexOf(type).takeIf { it != -1 }?.let { pos ->
             models.removeAt(pos)
             models.add(pos, model)
@@ -69,13 +74,13 @@ class AllContentModel {
     }
 
     @Synchronized
-    fun addSequentially(type: String, model: GenericModelFactory): Int? {
+    suspend fun addSequentially(type: String, model: GenericModelFactory): Int? = withContext(Dispatchers.IO) {
         check(sequenceOfLayout.isNotEmpty()) { "set sequence before using addSequentially()" }
-        return try {
+        return@withContext try {
             if (size() == 0) {
                 addModel(type, model)
                 insertedListener?.onContentAdded(type, model, 0)
-                return 0
+                return@withContext 0
             }
             val pos = sequenceOfLayout.indexOf(type)
             for (i in 0 until size()) {
@@ -83,7 +88,7 @@ class AllContentModel {
                 if (addedPos > pos) {
                     addModel(i, type, model)
                     insertedListener?.onContentAdded(type, model, i)
-                    return i
+                    return@withContext i
                 }
             }
             addModel(type, model)
@@ -100,22 +105,26 @@ class AllContentModel {
     fun increaseResponseCount(){
         responsesCount++
         insertedListener?.onContentAddedCount(responsesCount, sequenceOfLayout.size)
-        if (sequenceOfLayout.size == responsesCount && !allContentLoaded) {
-            allContentLoaded = true
-            adapter?.notifyDataSetChanged()
-            insertedListener?.onAllContentLoaded()
+
+        when {
+            sequenceOfLayout.size == responsesCount && models.isEmpty() -> {
+                loadingState.postValue(ContentLoadingState.Empty)
+            }
+
+            sequenceOfLayout.size == responsesCount && !allContentLoaded -> {
+                allContentLoaded = true
+                insertedListener?.onAllContentLoaded()
+                loadingState.postValue(ContentLoadingState.Ready(getThis()))
+            }
+
+            else -> {
+                allContentLoaded = false
+                loadingState.postValue(ContentLoadingState.Preparing)
+            }
         }
     }
 
-    fun setAdapter(adapter: AdaptHome?) {
-        this.adapter = adapter
-    }
-
-    fun setOnClickListener(listener: OnGroupItemClickListener) {
-        if (adapter != null) {
-            adapter?.itemClickListener = listener
-        }
-    }
+    private fun getThis() = this
 
     fun getModel(type: String): GenericModelFactory? {
         return types.indexOf(type).takeIf { it != -1 }?.let { pos ->
@@ -135,9 +144,12 @@ class AllContentModel {
         return models.size
     }
 
-    fun getModelLiveList(): LiveData<AllContentModel> {
-        return modelLiveList
-    }
+    fun getModelLiveList(): LiveData<AllContentModel> = modelLiveList
+
+    val contentLoadingState: LiveData<ContentLoadingState>
+        get() {
+            return loadingState
+        }
 
     fun remove(type: String) {
         types.indexOf(type).takeIf { it != -1 }?.let { pos ->
@@ -150,7 +162,14 @@ class AllContentModel {
     fun clearList() {
         models.clear()
         types.clear()
+        responsesCount = 0
+        allContentLoaded = false
+        loadingState.postValue(ContentLoadingState.Preparing)
         updateLiveList()
+    }
+
+    fun setOnNoInternet() {
+        loadingState.postValue(ContentLoadingState.NoInternet)
     }
 
     interface ContentInsertedListener{

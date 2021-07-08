@@ -10,7 +10,7 @@ import com.rex50.mausam.BuildConfig
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
 import com.rex50.mausam.utils.*
-import com.rex50.mausam.views.MausamApplication
+import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.views.activities.ActSettings.CalculateCacheSizeTask.*
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.act_settings.*

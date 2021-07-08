@@ -1,9 +1,11 @@
 package com.rex50.mausam.views.bottomsheets
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.MaterialBottomSheet
 import com.rex50.mausam.utils.showView
@@ -81,7 +83,12 @@ class BSDownload : MaterialBottomSheet() {
     }
 
     fun onProgress(progress: Int) {
-        "$progress%\n${getString(R.string.downloading)}".let { tvBottomSheet?.text = it }
+        try {
+            "$progress%\n${getString(R.string.downloading)}".let { tvBottomSheet?.text = it }
+        } catch (e: Exception) {
+            Log.e(TAG, "onProgress: $e")
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
 }

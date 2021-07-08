@@ -6,6 +6,8 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.rex50.mausam.model_classes.utils.MoreListData;
+import com.rex50.mausam.utils.Constants;
 
 public class User implements Parcelable {
 
@@ -283,4 +285,7 @@ public class User implements Parcelable {
         this.acceptedTos = acceptedTos;
     }
 
+    public MoreListData getMoreListData() {
+        return new MoreListData(Constants.ListModes.LIST_MODE_USER_PHOTOS, this, null, null);
+    }
 }

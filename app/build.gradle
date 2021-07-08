@@ -46,6 +46,10 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 
 }
@@ -150,6 +154,13 @@ dependencies {
 
     //Page indicator for view pagers
     implementation 'com.tbuonomo:dotsindicator:4.2'
+
+    // Koin for Android
+    implementation 'org.koin:koin-android:2.0.1'
+    // or Koin for Lifecycle scoping
+    implementation 'org.koin:koin-android-scope:2.0.1'
+    // or Koin for Android Architecture ViewModel
+    implementation 'org.koin:koin-android-viewmodel:2.0.1'
 
     //For testing
     /*implementation "com.google.firebase:firebase-inappmessaging-display:19.0.3"

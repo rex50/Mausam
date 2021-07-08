@@ -111,9 +111,6 @@ class ImageActionHelper {
         }
 
 
-        //TODO: Below are Points are important
-        // -> Instead of multiple params use object of Unsplash photos
-        // -> Use unique id (of photo + name) as {@code dbKey}
         fun saveImage(context: Context?, unsplashPhotos: UnsplashPhotos, isAddToFav: Boolean, listener: ImageSaveListener?){
             context?.let { ctx ->
 
@@ -142,7 +139,7 @@ class ImageActionHelper {
                     }
 
                     if(!ctx.isStoragePermissionGranted()) {
-                        listener?.response(null, ctx.getString(R.string.no_storage_permission_msg))
+                        listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                         return
                     }
 
@@ -171,7 +168,7 @@ class ImageActionHelper {
                                 Log.e("ImageHelper", "download: ", it.throwable)
                                 removeListener()
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    listener?.onDownloadFailed()
+                                    listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                                 }
                             })
                         }
@@ -206,10 +203,10 @@ class ImageActionHelper {
                                     it.isFavorite = imgAddFav
                                     it.relativePath = it.createRelativePath(imgName)
                                     CoroutineScope(Dispatchers.Main).launch {
-                                        listener?.response(it, ctx.getString(R.string.saved_to_downloads))
+                                        listener?.response(it, if(imgAddFav) ctx.getString(R.string.added_to_fav) else ctx.getString(R.string.saved_to_downloads))
                                         KeyValuesRepository.insert(ctx, dBKey, it.json)
                                     }
-                                } ?: listener?.onDownloadFailed()
+                                } ?: listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                             }
 
                             override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
@@ -229,7 +226,7 @@ class ImageActionHelper {
                                         FirebaseCrashlytics.getInstance().recordException(throwable)
                                     }
                                     removeListener()
-                                    listener?.onDownloadFailed()
+                                    listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                                 }
                             }
                         }
@@ -239,7 +236,7 @@ class ImageActionHelper {
                         requestImage(request)
 
                     } ?: CoroutineScope(Dispatchers.Main).launch {
-                        listener?.onDownloadFailed()
+                        listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                     }
 
                 }
@@ -435,8 +432,15 @@ class ImageActionHelper {
     interface ImageSaveListener{
         fun onDownloadStarted()
         fun onDownloadProgress(progress: Int) {}
-        fun onDownloadFailed()
+        fun onDownloadFailed(msg: String)
         fun response(imageMeta: UnsplashPhotos?, msg: String)
+    }
+
+    sealed class DownloadStatus {
+        data class Started(val progress: Int): DownloadStatus()
+        data class Downloading(val progress: Int): DownloadStatus()
+        data class Success(val downloadedData: UnsplashPhotos?, val msg: String = ""): DownloadStatus()
+        data class Error(val msg: String): DownloadStatus()
     }
 
     abstract class ImageActionListener {

@@ -9,7 +9,7 @@ import com.rex50.mausam.base_classes.BaseFragment
 import com.rex50.mausam.utils.MaterialSnackBar
 import com.rex50.mausam.utils.isStoragePermissionGranted
 import com.rex50.mausam.utils.showToast
-import com.rex50.mausam.views.MausamApplication
+import com.rex50.mausam.MausamApplication
 import kotlinx.android.synthetic.main.frag_storage_perm.*
 
 class FragStoragePerm : BaseFragment() {

@@ -6,6 +6,11 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.rex50.mausam.model_classes.utils.MoreData;
+import com.rex50.mausam.model_classes.utils.MoreListData;
+import com.rex50.mausam.utils.Constants;
+
+import org.jetbrains.annotations.NotNull;
 
 public class Tag implements Parcelable {
 
@@ -73,4 +78,9 @@ public class Tag implements Parcelable {
         this.source = source;
     }
 
+    @NotNull
+    public MoreListData getMoreListData() {
+        return new MoreListData(Constants.ListModes.LIST_MODE_GENERAL_PHOTOS, null, null,
+                new MoreData(title, Constants.Providers.POWERED_BY_UNSPLASH));
+    }
 }

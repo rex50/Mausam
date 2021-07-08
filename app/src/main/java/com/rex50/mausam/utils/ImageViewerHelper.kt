@@ -272,7 +272,8 @@ class ImageViewerHelper (){
         }
 
         childImgView?.apply{
-            imageViewerBuilder?.withTransitionFrom(this)
+            //Disabled animation
+            //imageViewerBuilder?.withTransitionFrom(this)
         }
         return imageViewerBuilder?.build()
     }

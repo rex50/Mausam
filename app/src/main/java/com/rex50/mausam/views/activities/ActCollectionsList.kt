@@ -85,13 +85,8 @@ class ActCollectionsList : BaseActivity() {
             adapter?.setChildClickListener(object : OnChildItemClickListener {
                 override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
                     object : GenericModelCastHelper(o) {
-                        override fun onCollectionType(collectionTypeModel: CollectionTypeModel?) {
-                            startMorePhotosActivity(
-                                    MoreListData(
-                                            Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
-                                            collectionInfo = collectionTypeModel?.collections?.get(childPos)
-                                    )
-                            )
+                        override fun onCollectionType(collectionTypeModel: CollectionTypeModel) {
+                            startMorePhotosActivity(collectionTypeModel.collections[childPos].moreListData)
                         }
                     }
                 }

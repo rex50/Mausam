@@ -1,9 +1,10 @@
-package com.rex50.mausam.views
+package com.rex50.mausam
 
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.rex50.mausam.di.UIDependencySetup
 import com.rex50.mausam.storage.MausamSharedPrefs
 import java.io.File
 
@@ -38,6 +39,12 @@ class MausamApplication : Application(){
 
         checkIfThemeChangeRequired()
 
+        injectDependency()
+
+    }
+
+    private fun injectDependency() {
+        UIDependencySetup.inject(applicationContext)
     }
 
     // Called by the system when the device configuration changes while your component is running.

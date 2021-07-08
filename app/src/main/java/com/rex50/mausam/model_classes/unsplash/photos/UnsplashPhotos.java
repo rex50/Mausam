@@ -12,7 +12,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.rex50.mausam.model_classes.unsplash.collection.Category;
 import com.rex50.mausam.utils.Constants;
-import com.rex50.mausam.views.MausamApplication;
+import com.rex50.mausam.MausamApplication;
 
 import java.util.List;
 

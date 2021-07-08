@@ -1,14 +1,17 @@
 package com.rex50.mausam.model_classes.item_types
 
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
+import com.rex50.mausam.model_classes.utils.MoreData
+import com.rex50.mausam.model_classes.utils.MoreListData
+import com.rex50.mausam.utils.Constants
 import java.util.ArrayList
 
 class CategoryTypeModel(
-    categories: List<CategoryModel?>,
+    categories: List<CategoryModel>,
     shuffle: Boolean
 ): GenericModelFactory() {
 
-    var categories: List<CategoryModel?> = if(shuffle) categories.shuffled() else categories
+    var categories: List<CategoryModel> = if(shuffle) categories.shuffled() else categories
         private set
 
     override fun getTotalItems() = categories.size
@@ -37,6 +40,14 @@ class CategoryModel(
     categoryName: String,
     categoryImg: String
 ) {
+    fun getMoreListData() = MoreListData(
+        Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
+        generalInfo = MoreData(
+            categoryName,
+            Constants.Providers.POWERED_BY_UNSPLASH
+        )
+    )
+
     var categoryName: String? = categoryName
         private set
     var categoryImg: String? = categoryImg

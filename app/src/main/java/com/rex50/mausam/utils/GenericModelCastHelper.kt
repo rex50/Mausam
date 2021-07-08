@@ -23,13 +23,13 @@ abstract class GenericModelCastHelper(o: Any?) {
         }
     }
 
-    open fun onGeneralType(generalTypeModel: GeneralTypeModel?){}
-    open fun onCollectionType(collectionTypeModel: CollectionTypeModel?){}
-    open fun onUserType(userTypeModel: UserTypeModel?){}
-    open fun onColorType(colorTypeModel: ColorTypeModel?){}
-    open fun onTagType(tagTypeModel: TagTypeModel?){}
-    open fun onCategoryType(categoryTypeModel: CategoryTypeModel?){}
-    open fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel?){}
+    open fun onGeneralType(generalTypeModel: GeneralTypeModel){}
+    open fun onCollectionType(collectionTypeModel: CollectionTypeModel){}
+    open fun onUserType(userTypeModel: UserTypeModel){}
+    open fun onColorType(colorTypeModel: ColorTypeModel){}
+    open fun onTagType(tagTypeModel: TagTypeModel){}
+    open fun onCategoryType(categoryTypeModel: CategoryTypeModel){}
+    open fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel){}
 
     open fun onError(o: Any?){
         throw IllegalArgumentException("Cannot determine given object type.\nHint: Add code for " + o?.javaClass?.name + " class type")

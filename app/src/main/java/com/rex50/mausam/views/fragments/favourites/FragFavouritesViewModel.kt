@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragFavouritesViewModel(application: Application) : AndroidViewModel(application) {
+class FragFavouritesViewModel(application: Application, var repository: KeyValuesRepository) : AndroidViewModel(application) {
 
     private val allSections: AllContentModel? by lazy {
         AllContentModel().also {
@@ -67,7 +67,7 @@ class FragFavouritesViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private suspend fun initDownloadedPhotoList() {
-        downloadedPhotosList = KeyValuesRepository.getDownloadedPhotos(getApplication())
+        downloadedPhotosList = repository.getDownloadedPhotos()
         Log.e("FragFav", "Downloaded photos: ${downloadedPhotosList?.value?.size}")
     }
 
@@ -104,7 +104,7 @@ class FragFavouritesViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    private fun addOrUpdateFavPhotoList() {
+    private suspend fun addOrUpdateFavPhotoList() {
         allSections?.addOrUpdateModel(
             AvailableLayouts.FAVOURITE_PHOTOS,
             GenericModelFactory.getDownloadedSectionTypeObject(

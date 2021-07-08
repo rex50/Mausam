@@ -40,7 +40,7 @@ import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.LastLocationProvider;
 import com.rex50.mausam.utils.MaterialSnackBar;
 import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
-import com.rex50.mausam.views.fragments.FragSearch;
+import com.rex50.mausam.views.fragments.discover.FragDiscover;
 import com.rex50.mausam.views.fragments.FragSearchResult;
 import com.rex50.mausam.views.fragments.favourites.FragFavourites;
 import com.rex50.mausam.views.fragments.home.FragHome;
@@ -60,12 +60,8 @@ import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ON
 import static com.rex50.mausam.utils.Utils.TYPE_NOT_CONNECTED;
 import static com.rex50.mausam.utils.Utils.getConnectivityStatus;
 
-//import com.google.firebase.analytics.FirebaseAnalytics;
-
-//import com.cuberto.flashytabbarandroid.TabFlashyAnimator;
-
 public class ActMain extends BaseActivity implements
-        FragSearch.OnFragmentInteractionListener,
+        FragDiscover.OnFragmentInteractionListener,
         FragFavourites.OnFragmentInteractionListener,
         FragHome.OnFragmentInteractionListener,
         FragSearchResult.OnFragmentInteractionListener {
@@ -75,7 +71,7 @@ public class ActMain extends BaseActivity implements
     private LinearLayout locationLoader;
     private CustomErrorPage noInternetErrorPage, noGpsErrorPage, noPermissionErrorPage;
     private FragHome fragHome;
-    private FragSearch fragSearch;
+    private FragDiscover fragDiscover;
     private FragFavourites fragFav;
     private Boolean isGettingWeather = false, isFirstWeatherFetched = false;
     private LastLocationProvider lastLocationProvider;
@@ -216,11 +212,11 @@ public class ActMain extends BaseActivity implements
         viewPager = findViewById(R.id.homeViewPager);
         viewPager.setPagingEnabled(false);
         fragHome = new FragHome();
-        fragSearch = new FragSearch();
+        fragDiscover = new FragDiscover();
         fragFav = new FragFavourites();
 
         mFragmentList.add(fragHome);
-        mFragmentList.add(fragSearch);
+        mFragmentList.add(fragDiscover);
         mFragmentList.add(fragFav);
 
         viewPagerAdapter = getFragmentAdapter(mFragmentList);
@@ -262,16 +258,16 @@ public class ActMain extends BaseActivity implements
                 }else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }*/
-                if(tab.getPosition() == 1 && fragSearch != null){
-                    fragSearch.setFocusToSearchBox(false);
+                if(tab.getPosition() == 1 && fragDiscover != null){
+                    fragDiscover.setFocusToSearchBox(false);
                 }
 
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                if(fragSearch != null)
-                    fragSearch.setFocusToSearchBox(false);
+                if(fragDiscover != null)
+                    fragDiscover.setFocusToSearchBox(false);
             }
 
             @Override
@@ -434,14 +430,14 @@ public class ActMain extends BaseActivity implements
         onBackPressed();
     }
 
-    @Override
+    /*@Override
     public void onWeatherSearchSuccess(WeatherModelClass weatherDetails) {
         fragmentManager.popBackStack();
         toggleLocationLoader(false);
         FragSearchResult fragment = new FragSearchResult();
         fragment.setWeatherDetails(weatherDetails);
         loadFragment(fragment, true);
-    }
+    }*/
 
     @Override
     public void nextBtnClicked() {
@@ -460,7 +456,7 @@ public class ActMain extends BaseActivity implements
 
     @Override
     public void startSearchScreen() {
-        loadFragment(new FragSearch(), true);
+        loadFragment(new FragDiscover(), true);
     }
 
     @Override

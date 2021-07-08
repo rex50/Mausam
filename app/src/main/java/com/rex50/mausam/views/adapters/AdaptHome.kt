@@ -43,25 +43,44 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        allContentModel?.getModel(position)?.apply {
-            when(viewType){
-                RecyclerItemTypes.ITEM_CATEGORY_TYPE -> {
-                    val itemHolder = holder as ItemCategoryHolder
-                    itemHolder.bind(this, gradientHelper?.getGradient(), itemClickListener, 1, position)
-                }
+        if(position < allContentModel?.size() ?: 0) {
+            allContentModel?.getModel(position)?.apply {
+                when (viewType) {
+                    RecyclerItemTypes.ITEM_CATEGORY_TYPE -> {
+                        val itemHolder = holder as ItemCategoryHolder
+                        itemHolder.bind(
+                            this,
+                            gradientHelper?.getGradient(),
+                            itemClickListener,
+                            1,
+                            position
+                        )
+                    }
 
-                RecyclerItemTypes.ITEM_SECTION_TYPE -> {
-                    val itemHolder = holder as ItemSectionHolder
-                    itemHolder.bind(this, itemClickListener, 1, position)
-                }
+                    RecyclerItemTypes.ITEM_SECTION_TYPE -> {
+                        val itemHolder = holder as ItemSectionHolder
+                        itemHolder.bind(
+                            this,
+                            itemClickListener,
+                            1,
+                            position
+                        )
+                    }
 
-                RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE -> {
-                    val itemHolder = holder as ItemCategoryHolder
-                    itemHolder.bind(this, gradientHelper?.getGradient(), itemClickListener, 2, position)
-                }
+                    RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE -> {
+                        val itemHolder = holder as ItemCategoryHolder
+                        itemHolder.bind(
+                            this,
+                            gradientHelper?.getGradient(),
+                            itemClickListener,
+                            2,
+                            position
+                        )
+                    }
 
-                RecyclerItemTypes.END_IMAGE -> {
-                    val itemHolder = holder as EndImageHolder
+                    RecyclerItemTypes.END_IMAGE -> {
+                        val itemHolder = holder as EndImageHolder
+                    }
                 }
             }
         }
