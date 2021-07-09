@@ -150,6 +150,8 @@ class ImageActionHelper {
 
                         val fetch = Fetch.Impl.getInstance(fetchConfiguration)
 
+                        fetch.deleteAll()
+
                         var fetchListener: FetchListener? = null
 
                         fun removeListener() {
