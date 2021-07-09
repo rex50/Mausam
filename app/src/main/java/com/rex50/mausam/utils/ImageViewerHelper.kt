@@ -195,7 +195,9 @@ class ImageViewerHelper (){
     }
 
     fun updateImages(photos: ArrayList<UnsplashPhotos>) {
-        imageViewer?.updateImages(photos)
+        photosList = photos
+        imageViewer?.updateImages(photosList)
+        handleNavBtnVisibility(imageViewer?.currentPosition() ?: childPos, photosList.lastIndex)
     }
 
     fun show(){
