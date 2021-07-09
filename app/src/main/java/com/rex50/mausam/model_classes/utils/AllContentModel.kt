@@ -23,8 +23,8 @@ class AllContentModel {
         MutableLiveData<AllContentModel>()
     }
 
-    private val loadingState: MutableLiveData<ContentLoadingState> by lazy {
-        MutableLiveData<ContentLoadingState>().also {
+    private val loadingState: MutableLiveData<ContentLoadingState<AllContentModel>> by lazy {
+        MutableLiveData<ContentLoadingState<AllContentModel>>().also {
             it.postValue(ContentLoadingState.Preparing)
         }
     }
@@ -146,7 +146,7 @@ class AllContentModel {
 
     fun getModelLiveList(): LiveData<AllContentModel> = modelLiveList
 
-    val contentLoadingState: LiveData<ContentLoadingState>
+    val contentLoadingState: LiveData<ContentLoadingState<AllContentModel>>
         get() {
             return loadingState
         }

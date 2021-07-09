@@ -29,7 +29,6 @@ import com.rex50.mausam.enums.MainTabs;
 import com.rex50.mausam.interfaces.LocationResultListener;
 import com.rex50.mausam.interfaces.WeatherResultListener;
 import com.rex50.mausam.model_classes.utils.MoreListData;
-import com.rex50.mausam.model_classes.weather.WeatherModelClass;
 import com.rex50.mausam.network.APIManager;
 import com.rex50.mausam.network.MausamLocationManager;
 import com.rex50.mausam.storage.MausamSharedPrefs;
@@ -40,8 +39,8 @@ import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.LastLocationProvider;
 import com.rex50.mausam.utils.MaterialSnackBar;
 import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
-import com.rex50.mausam.views.fragments.discover.FragDiscover;
 import com.rex50.mausam.views.fragments.FragSearchResult;
+import com.rex50.mausam.views.fragments.discover.FragDiscover;
 import com.rex50.mausam.views.fragments.favourites.FragFavourites;
 import com.rex50.mausam.views.fragments.home.FragHome;
 
@@ -92,8 +91,8 @@ public class ActMain extends BaseActivity implements
 
     @Override
     protected void loadAct(@Nullable Bundle savedInstanceState) {
-        FirebaseAnalytics analytis = FirebaseAnalytics.getInstance(this);
-        analytis.logEvent("on_main_activity", new Bundle());
+        FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(this);
+        analytics.logEvent("on_main_activity", new Bundle());
 
         init();
         /*if(ContextCompat.checkSelfPermission(this,
@@ -454,89 +453,6 @@ public class ActMain extends BaseActivity implements
         return null;
     }
 
-    @Override
-    public void startSearchScreen() {
-        loadFragment(new FragDiscover(), true);
-    }
-
-    @Override
-    public Bundle getLastLocationDetails() {
-        return lastLocationProvider.getLastLocation().getExtras();
-    }
-
-    @Override
-    public void requestWeather(WeatherResultListener listener) {
-        /*requestLocationAndWeather(new WeatherResultListener() {
-            @Override
-            public void onSuccess(WeatherModelClass weatherDetails) {
-                isGettingWeather = false;
-                isFirstWeatherFetched = true;
-                toggleLocationLoader(false);
-//                toggleLocationPermissionError(false);
-                noPermissionErrorPage.hide();
-                listener.onSuccess(weatherDetails);
-                *//*homeFragment = HomeFragment.newInstance(weatherDetails);
-                loadFragment(homeFragment);*//*
-            }
-
-            @Override
-            public void onFailed(int errorCode) {
-                isGettingWeather = false;
-                toggleLocationLoader(false);
-                materialSnackBar.dismiss();
-                switch (errorCode){
-                    case NO_PERMISSION :
-//                        toggleLocationPermissionError(true);
-                        noPermissionErrorPage.show();
-                        break;
-
-                    case GPS_NOT_ENABLED :
-//                        materialSnackBar.show("GPS is turned off, trying to get last known location", MaterialSnackBar.LENGTH_INDEFINITE);
-//                        toggleLocationGPSError(true);
-                        noGpsErrorPage.show();
-                        materialSnackBar.showActionSnackBar("GPS is off", "Enable", MaterialSnackBar.LENGTH_INDEFINITE,
-                                () -> {
-//                                    toggleLocationGPSError(false);
-                                    noGpsErrorPage.hide();
-                                    toggleLocationLoader(true);
-                                    materialSnackBar.dismiss();
-
-                                    //TODO : Prompt to start GPS and on success get weather details
-                                    gpsRequestHelper.requestGPS(new GPSRequestHelper.GPSListener() {
-                                        @Override
-                                        public void enabled() {
-                                            getWeatherDetails();
-                                            materialSnackBar.dismiss();
-                                        }
-
-                                        @Override
-                                        public void disabled() {
-                                            //TODO : do something without location.
-                                            materialSnackBar.dismiss();
-                                        }
-                                    });
-                                });
-                        break;
-
-                    case CITY_NOT_FOUND : //TODO : city data is not available in database
-                        break;
-
-                    case PAGE_NOT_FOUND :
-                        if(getConnectivityStatus(ActMain.this) != TYPE_NOT_CONNECTED){
-                            materialSnackBar.show("No internet connection", MaterialSnackBar.LENGTH_INDEFINITE);
-                        }
-                        break;
-                }
-            }
-        });*/
-        if(mausamSharedPrefs.getLastWeatherData() != null){
-            WeatherModelClass weatherModelClass = DataParser.parseWeatherData(mausamSharedPrefs.getLastWeatherData());
-            requestWeather(weatherModelClass.getCoord().getLat(), weatherModelClass.getCoord().getLon(), listener);
-        }else {
-            //TODO : listener.onFailed();
-        }
-    }
-
     private void toggleLocationLoader(boolean state){
         Animation locationAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_scale_alpha);
         runOnUiThread(() -> {
@@ -627,15 +543,6 @@ public class ActMain extends BaseActivity implements
         private boolean isShowing(){
             return isShowing;
         }
-    }
-
-    @Nullable
-    @Override
-    public Boolean isDataSaverMode() {
-        if (mausamSharedPrefs != null)
-            return mausamSharedPrefs.isDataSaverMode();
-        else
-            return null;
     }
 
     @Override

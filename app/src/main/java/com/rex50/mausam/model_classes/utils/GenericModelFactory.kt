@@ -243,8 +243,8 @@ abstract class GenericModelFactory{
             title: String,
             desc: String,
             photosList: List<UnsplashPhotos>
-        ): GenericModelFactory {
-            val favouriteModel = FavouritePhotographerTypeModel(photosList)
+        ): HorizontalSquarePhotosTypeModel {
+            val favouriteModel = HorizontalSquarePhotosTypeModel(photosList)
             favouriteModel.title = title
             favouriteModel.desc = desc
             favouriteModel.isHasMore = false

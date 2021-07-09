@@ -13,7 +13,8 @@ import com.rex50.mausam.utils.Constants.RecyclerItemTypes
 import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.views.adapters.holders.*
 
-class AdaptContent(private var context: Context?, private var model: GenericModelFactory?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+//TODO: remove context from here and send required objects only instead.
+class AdaptContent(context: Context?, private var model: GenericModelFactory?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var childClickListener: OnChildItemClickListener? = null
     private var gradientHelper = GradientHelper.getInstance(context)
@@ -25,7 +26,7 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
 
 
     override fun onCreateViewHolder(parent: ViewGroup, layout: Int): RecyclerView.ViewHolder {
-        val v = LayoutInflater.from(context).inflate(layout, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(layout, parent, false)
         return when (layout) {
             RecyclerItemTypes.USER_TYPE -> UserTypeHolder(v)
             RecyclerItemTypes.COLOR_TYPE -> ColorTypeHolder(v)
@@ -139,6 +140,11 @@ class AdaptContent(private var context: Context?, private var model: GenericMode
 
     override fun getItemCount(): Int {
         return model?.getTotalItems() ?: 0
+    }
+
+    fun update(data: GenericModelFactory) {
+        model = data
+        notifyDataSetChanged()
     }
 
 }

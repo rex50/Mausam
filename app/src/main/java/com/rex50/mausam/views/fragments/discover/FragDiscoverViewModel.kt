@@ -23,6 +23,7 @@ import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.AnimatedMessage.AnimationByState
 import com.rex50.mausam.utils.ConnectionChecker
 import com.rex50.mausam.utils.Constants
+import com.rex50.mausam.utils.Constants.Util.userFavConstants
 import com.rex50.mausam.utils.ImageActionHelper
 import com.rex50.mausam.utils.ImageActionHelper.DownloadStatus
 import com.rex50.mausam.views.fragments.home.FragHome
@@ -59,22 +60,6 @@ class FragDiscoverViewModel(
         }
     }
 
-    private val imageDownloadStatus: MutableLiveData<DownloadStatus> by lazy {
-        MutableLiveData<DownloadStatus>()
-    }
-
-    var userFavConstants = arrayListOf(
-        "Cat",
-        "Dog",
-        "Car",
-        "Cartoon",
-        "Anime",
-        "Motorcycle",
-        "Animal",
-        "Bird",
-        "Gadget",
-    )
-
     val animations: ArrayList<AnimationByState<ContentAnimationState>> by lazy {
         val app = getApplication<Application>()
         arrayListOf(
@@ -103,7 +88,7 @@ class FragDiscoverViewModel(
 
     fun isAllContentLoaded() = allData.allContentLoaded
 
-    fun getLiveDownloadStatus() = imageDownloadStatus
+    fun getLiveDownloadStatus(): LiveData<DownloadStatus> = imageDownloadStatus
 
     fun getContentLoadingState() = allData.contentLoadingState
 
@@ -445,47 +430,6 @@ class FragDiscoverViewModel(
             }
         })
     }*/
-
-    fun favouriteImage(photoInfo: UnsplashPhotos, onSuccess: ((UnsplashPhotos?, String) -> Unit)? = null) {
-        saveImage(photoInfo, true, onSuccess)
-    }
-
-    fun downloadImage(photoInfo: UnsplashPhotos, onDownloadSuccess: ((UnsplashPhotos?, String) -> Unit)? = null) {
-        saveImage(photoInfo, false, onDownloadSuccess)
-    }
-
-    private fun saveImage(
-        photoInfo: UnsplashPhotos,
-        forFav: Boolean,
-        onSuccess: ((UnsplashPhotos?, String) -> Unit)?
-    ) {
-        ImageActionHelper.saveImage(getApplication(), photoInfo, forFav, object : ImageActionHelper.ImageSaveListener{
-            override fun onDownloadStarted() {
-                imageDownloadStatus.postValue (
-                    DownloadStatus.Started(0)
-                )
-            }
-
-            override fun onDownloadFailed(msg: String) {
-                imageDownloadStatus.postValue(
-                    DownloadStatus.Error(msg)
-                )
-            }
-
-            override fun onDownloadProgress(progress: Int) {
-                imageDownloadStatus.postValue(
-                    DownloadStatus.Downloading(progress)
-                )
-            }
-
-            override fun response(imageMeta: UnsplashPhotos?, msg: String) {
-                imageDownloadStatus.postValue(
-                    DownloadStatus.Success(imageMeta)
-                )
-                onSuccess?.invoke(imageMeta, msg)
-            }
-        })
-    }
 
     fun reloadData() {
         viewModelScope.launch {

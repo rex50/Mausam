@@ -17,7 +17,7 @@ import com.rex50.mausam.interfaces.GetUnsplashPhotosAndUsersListener
 import com.rex50.mausam.interfaces.GetUnsplashPhotosListener
 import com.rex50.mausam.interfaces.GetUnsplashSearchedPhotosListener
 import com.rex50.mausam.interfaces.OnChildItemClickListener
-import com.rex50.mausam.model_classes.item_types.FavouritePhotographerTypeModel
+import com.rex50.mausam.model_classes.item_types.HorizontalSquarePhotosTypeModel
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.unsplash.searched_photos.SearchedPhotos
@@ -221,8 +221,8 @@ class ActPhotosList : BaseActivity() {
         adapter?.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
                 object: GenericModelCastHelper(o){
-                    override fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel) {
-                        favPhotographerTypeModel.apply {
+                    override fun onHorizontalSquarePhotosTypeModel(horizontalSquarePhotosTypeModel: HorizontalSquarePhotosTypeModel) {
+                        horizontalSquarePhotosTypeModel.apply {
                             ImageViewerHelper(this@ActPhotosList).with(photosList,
                                 childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 

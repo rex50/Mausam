@@ -13,7 +13,7 @@ object UIDependencySetup {
 
     private val uiModule = module {
         single { FragFavouritesViewModel(get(), get()) }
-        single { FragHomeViewModel() }
+        single { FragHomeViewModel(get(), get(), get()) }
         single { FragDiscoverViewModel(get(), get(), get()) }
     }
 

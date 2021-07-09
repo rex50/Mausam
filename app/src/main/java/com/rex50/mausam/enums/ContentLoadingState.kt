@@ -1,17 +1,16 @@
 package com.rex50.mausam.enums
 
-import com.rex50.mausam.model_classes.utils.AllContentModel
-
 enum class ContentAnimationState {
-    PREPARING,
+    LOADING,
+    SUCCESS,
+    ERROR,
     EMPTY,
     NO_INTERNET;
 }
 
-sealed class ContentLoadingState {
-    object Preparing : ContentLoadingState()
-    data class Ready(val allContentModel: AllContentModel): ContentLoadingState()
-    object Empty : ContentLoadingState()
-    object NoInternet : ContentLoadingState()
-
+sealed class ContentLoadingState<out T: Any> {
+    object Preparing : ContentLoadingState<Nothing>()
+    data class Ready<out T: Any>(val data: T): ContentLoadingState<T>()
+    object Empty : ContentLoadingState<Nothing>()
+    object NoInternet : ContentLoadingState<Nothing>()
 }

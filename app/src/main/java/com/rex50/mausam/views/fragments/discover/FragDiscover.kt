@@ -71,12 +71,22 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
         initItemClicks()
 
+
+    }
+
+    override fun load() {
+
         initAnimation()
+
+        setupContentLoadingObserver()
+
+        setupDownloadObserver()
 
     }
 
     private fun initAnimation() {
         animatedMessage.cacheAnimations()
+
         animatedMessage.onActionBtnClicked = { _, state ->
             when(state) {
 
@@ -128,7 +138,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
         binding?.etvSearch?.apply {
 
-            //Handle click even of search icon (inside edittext)
+            //Handle click event of search icon (inside edittext)
             setOnTouchListener(OnTouchListener { _: View?, event: MotionEvent ->
                 /*DRAWABLE_LEFT = 0
                 DRAWABLE_TOP = 1
@@ -165,19 +175,6 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
         }
     }
 
-    override fun load() {
-
-        binding?.lvCenter?.root?.showView()
-
-        fragScope.launch {
-
-            setupContentLoadingObserver()
-
-            setupDownloadObserver()
-
-        }
-    }
-
     private fun setupContentLoadingObserver() {
         viewModel.getContentLoadingState().observe(requireActivity(), { state ->
             isNotInternetAvailable = false
@@ -188,12 +185,12 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
                     binding?.recDiscoverContent?.hideView()
                 }
 
-                is ContentLoadingState.Ready -> {
+                is ContentLoadingState.Ready<AllContentModel> -> {
                     fragScope.launch {
                         animatedMessage.hide()
                         delay(300)
                         binding?.recDiscoverContent?.showView()
-                        adaptHome?.updateData(state.allContentModel)
+                        adaptHome?.updateData(state.data)
                         binding?.lvCenter?.root?.hideView()
                     }
                 }
@@ -214,7 +211,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
         })
     }
 
-    private suspend fun setupDownloadObserver() = withContext(Dispatchers.Main){
+    private fun setupDownloadObserver() {
         viewModel.getLiveDownloadStatus().observe(requireActivity(), { state ->
             when(state) {
                 is DownloadStatus.Started -> {
@@ -262,8 +259,8 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
                         showImageViewer(generalTypeModel.photosList, childImgView, childPos)
                     }
 
-                    override fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel) {
-                        showImageViewer(favPhotographerTypeModel.photosList, childImgView, childPos)
+                    override fun onHorizontalSquarePhotosTypeModel(horizontalSquarePhotosTypeModel: HorizontalSquarePhotosTypeModel) {
+                        showImageViewer(horizontalSquarePhotosTypeModel.photosList, childImgView, childPos)
                     }
 
                     override fun onTagType(tagTypeModel: TagTypeModel) {

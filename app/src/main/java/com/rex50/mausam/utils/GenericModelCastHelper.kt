@@ -18,7 +18,7 @@ abstract class GenericModelCastHelper(o: Any?) {
             is CollectionTypeModel -> this.onCollectionType(o)
             is TagTypeModel -> this.onTagType(o)
             is CategoryTypeModel -> this.onCategoryType(o)
-            is FavouritePhotographerTypeModel -> this.onFavPhotographerType(o)
+            is HorizontalSquarePhotosTypeModel -> this.onHorizontalSquarePhotosTypeModel(o)
             else -> this.onError(o)
         }
     }
@@ -29,7 +29,7 @@ abstract class GenericModelCastHelper(o: Any?) {
     open fun onColorType(colorTypeModel: ColorTypeModel){}
     open fun onTagType(tagTypeModel: TagTypeModel){}
     open fun onCategoryType(categoryTypeModel: CategoryTypeModel){}
-    open fun onFavPhotographerType(favPhotographerTypeModel: FavouritePhotographerTypeModel){}
+    open fun onHorizontalSquarePhotosTypeModel(horizontalSquarePhotosTypeModel: HorizontalSquarePhotosTypeModel){}
 
     open fun onError(o: Any?){
         throw IllegalArgumentException("Cannot determine given object type.\nHint: Add code for " + o?.javaClass?.name + " class type")

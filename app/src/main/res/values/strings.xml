@@ -126,7 +126,7 @@
     <string name="no_permission_error_msg">Location permission is needed to show latest weather details. Please go to settings and allow Location Permission.</string>
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
     <string name="search_city_error">%s place weather information not found, you can skip this by the way.</string>
-    <string name="failed_getting_photos_error_msg">Sorry, failed while getting beautiful photos. Please try again.</string>
+    <string name="failed_getting_photos_error_msg">Oops! failed while getting new photos. Please try again later.</string>
     <string name="failed_getting_collection_error_msg">Sorry, failed while getting collections. Please try again.</string>
     <string name="failed_to_download_no_internet">Error while saving image. Please check your internet.</string>
     <string name="failed_to_download_no_space">Error while saving image. Please check available storage.</string>

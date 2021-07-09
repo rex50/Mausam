@@ -84,6 +84,10 @@ class ImageViewerHelper (){
 
     private var toolsToShow = defaultTools
 
+    var onDismissListener: (() -> Unit)? = null
+
+    var onPageChangeListener: ((Int) -> Unit)? = null
+
     constructor(context: Context?) : this() {
         this.context = context
         initLayout(context)
@@ -262,8 +266,12 @@ class ImageViewerHelper (){
         .withBackgroundColorResource(R.color.white_to_black)
         .withOverlayView(dialogLayout)
         .withBackgroundView(preLoaderAnimLayout)
+        .withDismissListener {
+            onDismissListener?.invoke()
+        }
         .withImageChangeListener {
             selectedPhotoPos = it
+            onPageChangeListener?.invoke(selectedPhotoPos)
             handleNavBtnVisibility(selectedPhotoPos, photosList.lastIndex)
             photosList[selectedPhotoPos].apply {
                 bindPhotographerInfo(this)

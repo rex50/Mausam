@@ -75,6 +75,18 @@ class Constants {
 
     object Util {
         const val VALUE_DIVIDER = "~Mausam~"
+
+        var userFavConstants = arrayListOf(
+            "Cat",
+            "Dog",
+            "Car",
+            "Cartoon",
+            "Anime",
+            "Motorcycle",
+            "Animal",
+            "Bird",
+            "Gadget",
+        )
     }
 
     object File {

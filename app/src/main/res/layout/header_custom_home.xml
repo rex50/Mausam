@@ -13,8 +13,8 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?android:attr/windowBackground"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="8dp"
+        android:paddingStart="@dimen/_16dp"
+        android:paddingEnd="@dimen/_16dp"
         app:layout_scrollFlags="scroll|enterAlways|snap|snapMargins">
 
         <ImageView
