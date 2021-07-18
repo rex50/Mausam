@@ -5,16 +5,15 @@ import androidx.lifecycle.*
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseAndroidViewModel
 import com.rex50.mausam.enums.ContentAnimationState
-import com.rex50.mausam.interfaces.GetUnsplashPhotosAndUsersListener
 import com.rex50.mausam.model_classes.item_types.HorizontalSquarePhotosTypeModel
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
-import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
+import com.rex50.mausam.network.Result
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.AnimatedMessage.AnimationByState
 import com.rex50.mausam.utils.Constants.Util.userFavConstants
-import org.json.JSONArray
+import kotlinx.coroutines.launch
 
 class FragHomeViewModel(
     application: Application,
@@ -62,54 +61,35 @@ class FragHomeViewModel(
 
     fun getLiveDownloadStatus(): LiveData<ImageActionHelper.DownloadStatus> = imageDownloadStatus
 
-    fun getLatestPhotosOf(page: Int){
+    fun getLatestPhotosOf(page: Int) = viewModelScope.launch {
         lastPageRequested = page
-        if(connectionChecker.isNetworkConnected() || page == INITIAL_PAGE) {
-            mutableContentLoadingState.postValue(ContentAnimationState.LOADING)
-            unsplashHelper.getPhotosAndUsers(
-                UnsplashHelper.ORDER_BY_LATEST,
-                page,
-                20,
-                object : GetUnsplashPhotosAndUsersListener {
-                    override fun onSuccess(photos: List<UnsplashPhotos>, userList: List<User>) {
-                        updateList(page, photos, connectionChecker.isNetworkConnected())
-                    }
-
-                    override fun onFailed(errors: JSONArray) {
-                        updateList(page, null, connectionChecker.isNetworkConnected())
-                    }
-                }
-            )
-        } else {
-            updateList(page, null, true)
-        }
+        mutableContentLoadingState.postValue(ContentAnimationState.LOADING)
+        updateList(
+            page,
+            when(val result = unsplashHelper.getPhotosAndUsers(UnsplashHelper.ORDER_BY_LATEST, page, 20)) {
+                is Result.Success -> Result.Success(result.data.photosList)
+                is Result.Failure -> result
+            }
+        )
     }
 
-    private fun updateList(page: Int, photos: List<UnsplashPhotos>?, isOffline: Boolean = false) {
+    private fun updateList(page: Int, result: Result<List<UnsplashPhotos>>) {
         val model = mutableLiveHomeContent.value
         val list = model?.photosList?.toArrayList() ?: arrayListOf()
-        when {
 
-            isOffline && list.isEmpty() && photos.isNullOrEmpty() -> {
-                mutableContentLoadingState.postValue(ContentAnimationState.NO_INTERNET)
-            }
-
-            photos.isNull() -> {
-                mutableContentLoadingState.postValue(ContentAnimationState.ERROR)
-            }
-
-            photos!!.isEmpty() && list.isEmpty() -> {
-                mutableContentLoadingState.postValue(ContentAnimationState.EMPTY)
-            }
-
-            else -> {
+        when (result) {
+            is Result.Success -> {
                 if(page == INITIAL_PAGE) {
                     list.clear()
                 }
-                list.addAll(photos)
+                list.addAll(result.data)
                 model?.photosList = list
                 mutableLiveHomeContent.postValue(model)
                 mutableContentLoadingState.postValue(ContentAnimationState.SUCCESS)
+            }
+
+            is Result.Failure -> {
+                mutableContentLoadingState.postValue(getStateFromFailureResult(result, list.isEmpty()))
             }
         }
     }
@@ -121,7 +101,7 @@ class FragHomeViewModel(
     companion object {
         const val INITIAL_PAGE: Int = 1
 
-        fun getEmptyData() = GenericModelFactory.getFavouritePhotographerTypeObject(
+        fun getEmptyData() = GenericModelFactory.getHorizontalSquarePhotosTypeObject(
             Constants.AvailableLayouts.POPULAR_PHOTOS,
             Constants.Providers.POWERED_BY_UNSPLASH,
             arrayListOf()

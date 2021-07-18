@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.model_classes.utils.AllContentModel
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.adapters.holders.EndImageHolder
@@ -22,15 +23,16 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
-        return when (viewType) {
+    override fun onCreateViewHolder(parent: ViewGroup, groupLayout: Int): RecyclerView.ViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(groupLayout, parent, false)
+        return when (groupLayout) {
 
-            RecyclerItemTypes.ITEM_SECTION_TYPE -> {
+            RecyclerItemLayouts.GROUP_SECTION_LAYOUT -> {
                 ItemSectionHolder(v)
             }
 
-            RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE, RecyclerItemTypes.ITEM_CATEGORY_TYPE -> {
+            //also when RecyclerItemLayouts.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_LAYOUT
+            RecyclerItemLayouts.GROUP_CATEGORY_LAYOUT -> {
                 ItemCategoryHolder(v)
             }
 
@@ -38,15 +40,15 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
                 EndImageHolder(v)
             }
 
-            else -> throw IllegalArgumentException("Please add case for viewType:\"$viewType\"")
+            else -> throw IllegalArgumentException("Please add case for viewType:\"$groupLayout\"")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(position < allContentModel?.size() ?: 0) {
             allContentModel?.getModel(position)?.apply {
-                when (viewType) {
-                    RecyclerItemTypes.ITEM_CATEGORY_TYPE -> {
+                when (groupType) {
+                    RecyclerItemTypes.GROUP_CATEGORY_TYPE -> {
                         val itemHolder = holder as ItemCategoryHolder
                         itemHolder.bind(
                             this,
@@ -57,7 +59,7 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
                         )
                     }
 
-                    RecyclerItemTypes.ITEM_SECTION_TYPE -> {
+                    RecyclerItemTypes.GROUP_SECTION_TYPE -> {
                         val itemHolder = holder as ItemSectionHolder
                         itemHolder.bind(
                             this,
@@ -87,8 +89,7 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
     }
 
     override fun getItemViewType(position: Int): Int {
-        Log.e("AdaptHome", "getItemViewType: " + allContentModel?.getModel(position)?.title)
-        return allContentModel?.getModel(position)?.viewLayout ?: RecyclerItemTypes.ITEM_CATEGORY_TYPE
+        return allContentModel?.getModel(position)?.groupLayout ?: RecyclerItemTypes.GROUP_CATEGORY_TYPE
     }
 
     override fun getItemCount(): Int {

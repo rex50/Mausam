@@ -51,6 +51,7 @@
             android:layout_margin="20dp"
             android:textAllCaps="false"
             android:visibility="gone"
+            android:textColor="@color/white"
             android:backgroundTint="@color/colorAccent"/>
 
     </LinearLayout>

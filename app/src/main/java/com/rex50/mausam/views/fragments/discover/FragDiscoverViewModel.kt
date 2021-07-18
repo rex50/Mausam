@@ -6,33 +6,22 @@ import androidx.lifecycle.*
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseAndroidViewModel
 import com.rex50.mausam.enums.ContentAnimationState
-import com.rex50.mausam.interfaces.GetUnsplashCollectionsAndTagsListener
-import com.rex50.mausam.interfaces.GetUnsplashPhotosAndUsersListener
-import com.rex50.mausam.interfaces.GetUnsplashPhotosListener
-import com.rex50.mausam.interfaces.GetUnsplashSearchedPhotosListener
 import com.rex50.mausam.model_classes.item_types.CategoryTypeModel
 import com.rex50.mausam.model_classes.item_types.ColorTypeModel
-import com.rex50.mausam.model_classes.unsplash.collection.Collections
-import com.rex50.mausam.model_classes.unsplash.collection.Tag
-import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
-import com.rex50.mausam.model_classes.unsplash.photos.User
-import com.rex50.mausam.model_classes.unsplash.searched_photos.SearchedPhotos
 import com.rex50.mausam.model_classes.utils.AllContentModel
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
+import com.rex50.mausam.network.Result
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.AnimatedMessage.AnimationByState
 import com.rex50.mausam.utils.ConnectionChecker
 import com.rex50.mausam.utils.Constants
 import com.rex50.mausam.utils.Constants.Util.userFavConstants
-import com.rex50.mausam.utils.ImageActionHelper
 import com.rex50.mausam.utils.ImageActionHelper.DownloadStatus
-import com.rex50.mausam.views.fragments.home.FragHome
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.StringUtils
-import org.json.JSONArray
 
 class FragDiscoverViewModel(
     application: Application,
@@ -133,33 +122,26 @@ class FragDiscoverViewModel(
 
     }
 
-    private fun addFavouritePhotographerPhotos() {
+    private suspend fun addFavouritePhotographerPhotos() {
         //TODO: create a array of photographer's list and pick randomly one photographer
         val user = "rpnickson"
-        unsplashHelper.getUserPhotos(
-            user,
-            1,
-            20,
-            object : GetUnsplashPhotosListener {
-                override fun onSuccess(photos: List<UnsplashPhotos>) {
-                    viewModelScope.launch {
-                        allData.addSequentially(
-                            Constants.AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES,
-                            GenericModelFactory.getFavouritePhotographerTypeObject(
-                                Constants.AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES,
-                                Constants.Providers.POWERED_BY_UNSPLASH,
-                                photos
-                            )
-                        )
-                    }
-                }
 
-                override fun onFailed(errors: JSONArray) {
-                    Log.e(FragHome.TAG, "onFailed: $errors")
-                    allData.increaseResponseCount()
-                }
+        when (val result = unsplashHelper.getUserPhotos(user, 1, 20)) {
+            is Result.Success -> {
+                allData.addSequentially(
+                    Constants.AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES,
+                    GenericModelFactory.getHorizontalSquarePhotosTypeObject(
+                        Constants.AvailableLayouts.FAVOURITE_PHOTOGRAPHER_IMAGES,
+                        Constants.Providers.POWERED_BY_UNSPLASH,
+                        result.data
+                    )
+                )
             }
-        )
+
+            is Result.Failure -> {
+                allData.increaseResponseCount()
+            }
+        }
     }
 
     private fun addColors() {
@@ -196,245 +178,172 @@ class FragDiscoverViewModel(
         }
     }
 
-    private fun addFeaturedCollectionsAndTags() {
-        unsplashHelper.getCollectionsAndTags(
-            1,
-            10,
-            object :
-                GetUnsplashCollectionsAndTagsListener {
-                override fun onSuccess(collection: List<Collections>, tagsList: List<Tag>) {
-                    viewModelScope.launch {
-                        allData.addSequentially(
-                            Constants.AvailableLayouts.FEATURED_COLLECTIONS,
-                            GenericModelFactory.getCollectionTypeObject(
-                                Constants.AvailableLayouts.FEATURED_COLLECTIONS,
-                                Constants.Providers.POWERED_BY_UNSPLASH,
-                                true,
-                                collection
-                            )
-                        )
-                        if (sequenceOfLayouts.contains(Constants.AvailableLayouts.POPULAR_TAGS)) {
-                            allData.addSequentially(
-                                Constants.AvailableLayouts.POPULAR_TAGS,
-                                GenericModelFactory.getTagTypeObject(
-                                    Constants.AvailableLayouts.POPULAR_TAGS,
-                                    Constants.Providers.POWERED_BY_UNSPLASH,
-                                    false,
-                                    tagsList,
-                                    true
-                                )
-                            )
-                        }
-                    }
-                }
+    private suspend fun addFeaturedCollectionsAndTags() {
 
-                override fun onFailed(errors: JSONArray) {
-                    Log.e(FragHome.TAG, "onFailed: $errors")
-                    allData.apply {
+        when(val result = unsplashHelper.getCollectionsAndTags(1, 10)) {
+            is Result.Success -> {
+                allData.addSequentially(
+                    Constants.AvailableLayouts.FEATURED_COLLECTIONS,
+                    GenericModelFactory.getCollectionTypeObject(
+                        Constants.AvailableLayouts.FEATURED_COLLECTIONS,
+                        Constants.Providers.POWERED_BY_UNSPLASH,
+                        true,
+                        result.data.collectionsList
+                    )
+                )
+                if (sequenceOfLayouts.contains(Constants.AvailableLayouts.POPULAR_TAGS)) {
+                    allData.addSequentially(
+                        Constants.AvailableLayouts.POPULAR_TAGS,
+                        GenericModelFactory.getTagTypeObject(
+                            Constants.AvailableLayouts.POPULAR_TAGS,
+                            Constants.Providers.POWERED_BY_UNSPLASH,
+                            false,
+                            result.data.tagsList,
+                            true
+                        )
+                    )
+                }
+            }
+
+            is Result.Failure -> {
+                Log.e(TAG, "onFailed: ", result.exception)
+                allData.apply {
+                    increaseResponseCount()
+                    if (sequenceOfLayouts.contains(Constants.AvailableLayouts.POPULAR_TAGS)) {
                         increaseResponseCount()
-                        if (sequenceOfLayouts.contains(Constants.AvailableLayouts.POPULAR_TAGS)) {
-                            increaseResponseCount()
-                        }
                     }
                 }
             }
-        )
+        }
     }
 
-    private fun addPopularPhotosAndPhotographers() {
-        unsplashHelper.getPhotosAndUsers(
-            UnsplashHelper.ORDER_BY_POPULAR,
-            object : GetUnsplashPhotosAndUsersListener {
-                override fun onSuccess(photos: List<UnsplashPhotos>, userList: List<User>) {
-                    viewModelScope.launch {
-                        allData.addSequentially(
-                            Constants.AvailableLayouts.POPULAR_PHOTOS,
-                            GenericModelFactory.getGeneralTypeObject(
-                                Constants.AvailableLayouts.POPULAR_PHOTOS,
-                                Constants.Providers.POWERED_BY_UNSPLASH,
-                                true,
-                                photos
-                            )
+    private suspend fun addPopularPhotosAndPhotographers() {
+        when(val result = unsplashHelper.getPhotosAndUsers(UnsplashHelper.ORDER_BY_POPULAR)) {
+            is Result.Success -> {
+                allData.addSequentially(
+                    Constants.AvailableLayouts.POPULAR_PHOTOS,
+                    GenericModelFactory.getGeneralTypeObject(
+                        Constants.AvailableLayouts.POPULAR_PHOTOS,
+                        Constants.Providers.POWERED_BY_UNSPLASH,
+                        true,
+                        result.data.photosList
+                    )
+                )
+
+                if (sequenceOfLayouts.contains(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)) {
+                    allData.addSequentially(
+                        Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS,
+                        GenericModelFactory.getUserTypeObject(
+                            Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS,
+                            Constants.Providers.POWERED_BY_UNSPLASH,
+                            false,
+                            result.data.userList
                         )
-
-                        if (sequenceOfLayouts.contains(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)) {
-                            allData.addSequentially(
-                                Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS,
-                                GenericModelFactory.getUserTypeObject(
-                                    Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS,
-                                    Constants.Providers.POWERED_BY_UNSPLASH,
-                                    false,
-                                    userList
-                                )
-                            )
-                        }
-                    }
+                    )
                 }
+            }
 
-                override fun onFailed(errors: JSONArray) {
-                    Log.e(FragHome.TAG, "onFailed: $errors")
-                    allData.apply {
+            is Result.Failure -> {
+                Log.e(TAG, "addPopularPhotosAndPhotographers: ", result.exception)
+                allData.apply {
+                    increaseResponseCount()
+                    if (sequenceOfLayouts.contains(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)) {
                         increaseResponseCount()
-                        if (sequenceOfLayouts.contains(Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS)) {
-                            increaseResponseCount()
-                        }
                     }
                 }
             }
-        )
+        }
     }
 
-    private fun addTimeBasedPhotos() {
+    private suspend fun addTimeBasedPhotos() {
         //TODO: based on current time use appropriate word
         val time = "Night"
-        unsplashHelper.getSearchedPhotos(
-            time,
-            1,
-            20,
-            object : GetUnsplashSearchedPhotosListener {
-                override fun onSuccess(photos: SearchedPhotos) {
-                    viewModelScope.launch {
-                        allData.addSequentially(
-                            Constants.AvailableLayouts.TIME_BASED_PHOTOS,
-                            GenericModelFactory.getGeneralTypeObject(
-                                Constants.AvailableLayouts.TIME_BASED_PHOTOS,
-                                Constants.Providers.POWERED_BY_UNSPLASH,
-                                false,
-                                photos.results
-                            )
-                        )
-                    }
-                }
-
-                override fun onFailed(errors: JSONArray) {
-                    Log.e(FragHome.TAG, "onFailed: $errors")
-                    allData.increaseResponseCount()
-                }
+        when(val result = unsplashHelper.getSearchedPhotos(time, 1, 20)) {
+            is Result.Success -> {
+                allData.addSequentially(
+                    Constants.AvailableLayouts.TIME_BASED_PHOTOS,
+                    GenericModelFactory.getGeneralTypeObject(
+                        Constants.AvailableLayouts.TIME_BASED_PHOTOS,
+                        Constants.Providers.POWERED_BY_UNSPLASH,
+                        false,
+                        result.data.results
+                    )
+                )
             }
-        )
+
+            is Result.Failure -> {
+                Log.e(TAG, "addTimeBasedPhotos: ", result.exception)
+                allData.increaseResponseCount()
+            }
+        }
     }
 
-    private fun addLocationBasedPhotos() {
+    private suspend fun addLocationBasedPhotos() {
         //TODO: Ask user to enter a location and based on that show images.
         val places = arrayListOf("Gujarat", "Orissa", "Bengaluru", "Hyderabad", "Kolkata",
             "Hong Kong", "London", "Malaysia", "Punjab", "Mumbai", "Chennai", "Paris", "USA", "Sri Lanka",
             "Russia", "Pakistan", "Bangladesh", "Tibet", "Berlin", "Bhutan", "Africa", "Australia", "England")
-        val place = StringUtils.capitalize(places.random())
-        unsplashHelper.getSearchedPhotos(
-            place,
-            1,
-            20,
-            object : GetUnsplashSearchedPhotosListener {
-                override fun onSuccess(photos: SearchedPhotos) {
-                    if (!photos.results.isNullOrEmpty()) {
-                        viewModelScope.launch {
-                            allData.addSequentially(
-                                Constants.AvailableLayouts.LOCATION_BASED_PHOTOS,
-                                GenericModelFactory.getGeneralTypeObject(
-                                    Constants.AvailableLayouts.LOCATION_BASED_PHOTOS, /*Constants.Providers.POWERED_BY_UNSPLASH*/
-                                    place,
-                                    false,
-                                    photos.results
-                                )
-                            )
-                        }
-                    } else
-                        allData.increaseResponseCount()
-                }
 
-                override fun onFailed(errors: JSONArray) {
-                    Log.e(FragHome.TAG, "onFailed: $errors")
+        val place = StringUtils.capitalize(places.random())
+
+        when(val result = unsplashHelper.getSearchedPhotos(place, 1, 20)) {
+            is Result.Success -> {
+                val photos = result.data
+                if (!photos.results.isNullOrEmpty()) {
+                    allData.addSequentially(
+                        Constants.AvailableLayouts.LOCATION_BASED_PHOTOS,
+                        GenericModelFactory.getGeneralTypeObject(
+                            Constants.AvailableLayouts.LOCATION_BASED_PHOTOS,
+                            place,
+                            false,
+                            photos.results
+                        )
+                    )
+                } else
                     allData.increaseResponseCount()
-                }
             }
-        )
+
+            is Result.Failure -> {
+                Log.e(TAG, "addLocationBasedPhotos: ", result.exception)
+                allData.increaseResponseCount()
+            }
+        }
     }
 
-    private fun addWeatherBasedPhotos() {
+    private suspend fun addWeatherBasedPhotos() {
         //TODO: based on current month pick one weather and use it.
         val seasons = arrayListOf("late winter", "spring", "monsoon", "autumn", "summer", "early winter")
+
         val season = StringUtils.capitalize(seasons.random())
-        unsplashHelper.getSearchedPhotos(
-            season,
-            1,
-            20,
-            object :
-                GetUnsplashSearchedPhotosListener {
-                override fun onSuccess(photos: SearchedPhotos) {
-                    viewModelScope.launch {
-                        allData.addSequentially(
-                            Constants.AvailableLayouts.WEATHER_BASED_PHOTOS,
-                            GenericModelFactory.getGeneralTypeObject(
-                                Constants.AvailableLayouts.WEATHER_BASED_PHOTOS, /*Constants.Providers.POWERED_BY_UNSPLASH*/
-                                season,
-                                false,
-                                photos.results
-                            )
-                        )
-                    }
-                }
 
-                override fun onFailed(errors: JSONArray) {
-                    Log.e(FragHome.TAG, "onFailed: $errors")
-                    allData.increaseResponseCount()
-                }
+        when(val result = unsplashHelper.getSearchedPhotos(season, 1, 20)) {
+            is Result.Success -> {
+                allData.addSequentially(
+                    Constants.AvailableLayouts.WEATHER_BASED_PHOTOS,
+                    GenericModelFactory.getGeneralTypeObject(
+                        Constants.AvailableLayouts.WEATHER_BASED_PHOTOS,
+                        season,
+                        false,
+                        result.data.results
+                    )
+                )
             }
-        )
+
+            is Result.Failure -> {
+                Log.e(TAG, "addWeatherBasedPhotos: ", result.exception)
+                allData.increaseResponseCount()
+            }
+        }
     }
-
-    /*fun setImageAsWallpaper(photoInfo: UnsplashPhotos, onDownloadSuccess: (UnsplashPhotos?) -> Unit) {
-
-        var downloadObserver: Observer<ImageDownloadStatus>? = null
-
-        fun removeObserver() {
-            downloadObserver?.let { imageDownloadStatus.removeObserver(it) }
-        }
-
-        downloadObserver = Observer<ImageDownloadStatus> { status ->
-            when (status) {
-                ImageDownloadStatus.SUCCESS -> {
-                    onDownloadSuccess(status.downloadedData)
-                    removeObserver()
-                }
-                ImageDownloadStatus.ERROR -> {
-                    removeObserver()
-                }
-                else -> {
-                    //Do nothing
-                }
-            }
-        }
-
-        imageDownloadStatus.observeForever(downloadObserver)
-
-        //downloadImage(photoInfo)
-
-        ImageActionHelper.saveImage(this, photoInfo, false, object : ImageActionHelper.ImageSaveListener{
-            override fun onDownloadStarted() {
-                //bsDownload?.downloadStarted(childFragmentManager)
-            }
-
-            override fun onDownloadFailed() {
-                //bsDownload?.downloadError()
-            }
-
-            override fun onDownloadProgress(progress: Int) {
-                //bsDownload?.onProgress(progress)
-            }
-
-            override fun response(imageMeta: UnsplashPhotos?, msg: String) {
-                //bsDownload?.downloaded()
-                startActivity(Intent(context, ActImageEditor::class.java).also {
-                    it.putExtra(Constants.IntentConstants.PHOTO_DATA, imageMeta)
-                }
-            }
-        })
-    }*/
 
     fun reloadData() {
         viewModelScope.launch {
             prepareContents()
         }
+    }
+
+    companion object {
+        const val TAG = "FragDiscoverViewModel"
     }
 
 }

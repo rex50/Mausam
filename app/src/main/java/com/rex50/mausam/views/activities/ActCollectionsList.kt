@@ -9,10 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivity
-import com.rex50.mausam.interfaces.GetUnsplashCollectionsAndTagsListener
 import com.rex50.mausam.interfaces.OnChildItemClickListener
 import com.rex50.mausam.model_classes.unsplash.collection.Collections
-import com.rex50.mausam.model_classes.unsplash.collection.Tag
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.network.UnsplashHelper
@@ -24,7 +22,11 @@ import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.android.synthetic.main.act_collections_list.*
 import kotlinx.android.synthetic.main.header_custom_general.*
 import com.rex50.mausam.model_classes.item_types.CollectionTypeModel
-import org.json.JSONArray
+import com.rex50.mausam.network.Result
+import com.rex50.mausam.views.activities.photoslist.ActPhotosList
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class ActCollectionsList : BaseActivity() {
 
@@ -40,6 +42,8 @@ class ActCollectionsList : BaseActivity() {
     private var adapter: AdaptContent? = null
     private var scrollToTopActive = false
     private var listData: MoreListData? = null
+
+    private val unsplashHelper: UnsplashHelper by inject()
 
     override fun loadAct(savedInstanceState: Bundle?) {
         getArgs()
@@ -151,36 +155,36 @@ class ActCollectionsList : BaseActivity() {
 
     }
 
-    private fun getUserCollectionsOf(page: Int) {
-        UnsplashHelper(this).getUserCollections(listData?.photographerInfo?.username, page, 20, object : GetUnsplashCollectionsAndTagsListener {
-            override fun onSuccess(collection: MutableList<Collections>?, tagsList: MutableList<Tag>?) {
+    private fun getUserCollectionsOf(page: Int) = MainScope().launch {
+        when (val result = unsplashHelper.getUserCollections(listData?.photographerInfo?.username ?: "", page, 20)) {
+            is Result.Success -> {
                 ivLoader?.hideView()
                 lvCenterss.hideView()
-                editList(page, collection)
+                editList(page, result.data.collectionsList)
             }
 
-            override fun onFailed(errors: JSONArray?) {
+            is Result.Failure -> {
                 ivLoader?.hideView()
                 lvCenterss.hideView()
                 showErrorMsg()
             }
-        })
+        }
     }
 
-    private fun getFeaturedCollectionsOf(page: Int){
-        UnsplashHelper(this).getCollectionsAndTags(page, 20, object: GetUnsplashCollectionsAndTagsListener {
-            override fun onSuccess(collection: MutableList<Collections>?, tagsList: MutableList<Tag>?) {
+    private fun getFeaturedCollectionsOf(page: Int) = MainScope().launch {
+        when(val result = unsplashHelper.getCollectionsAndTags(page, 20)) {
+            is Result.Success -> {
                 ivLoader?.hideView()
                 lvCenterss.hideView()
-                editList(page, collection)
+                editList(page, result.data.collectionsList)
             }
 
-            override fun onFailed(errors: JSONArray?) {
+            is Result.Failure -> {
                 ivLoader?.hideView()
                 lvCenterss.hideView()
                 showErrorMsg()
             }
-        })
+        }
     }
 
     private fun showErrorMsg() {

@@ -126,7 +126,7 @@
     <string name="no_permission_error_msg">Location permission is needed to show latest weather details. Please go to settings and allow Location Permission.</string>
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
     <string name="search_city_error">%s place weather information not found, you can skip this by the way.</string>
-    <string name="failed_getting_photos_error_msg">Oops! failed while getting new photos. Please try again later.</string>
+    <string name="error_failed_getting_photos">Oops! failed while getting new photos. Please try again later.</string>
     <string name="failed_getting_collection_error_msg">Sorry, failed while getting collections. Please try again.</string>
     <string name="failed_to_download_no_internet">Error while saving image. Please check your internet.</string>
     <string name="failed_to_download_no_space">Error while saving image. Please check available storage.</string>
@@ -145,6 +145,8 @@
     <string name="right_swipe">right swipe</string>
     <string name="loading">Loading</string>
     <string name="msg_empty_discover">Oops! no new photos found.\nTry searching your favourite %s.</string>
+    <string name="msg_empty_photos">Oops! no photos found.\nGo back to Discover and try searching your favourite %s.</string>
+    <string name="action_go_back">Go back</string>
 
 
     <!--Colors for gradient array-->

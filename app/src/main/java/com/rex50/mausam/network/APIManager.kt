@@ -16,10 +16,14 @@ import com.rex50.mausam.utils.Constants.ApiConstants.DOWNLOADING_PHOTO_URL
 import com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME
 import com.rex50.mausam.utils.Utils
 import com.rex50.mausam.utils.VolleySingleton
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.Exception
 import java.util.*
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resumeWithException
 
 class APIManager private constructor(private val ctx: Context?) {
     var properties: Properties? = null
@@ -158,6 +162,64 @@ class APIManager private constructor(private val ctx: Context?) {
         makeUnsplashRequest(service, urlExtras, Request.Method.GET, listener)
     }
 
+    suspend fun makeUnsplashRequest(
+        @UnsplashApiService service: Int,
+        urlExtras: HashMap<String, String>
+    ): Result<String> {
+        return suspendCancellableCoroutine { continuation ->
+            makeUnsplashRequest(service, continuation, urlExtras)
+        }
+    }
+
+    fun makeUnsplashRequest(
+        @UnsplashApiService service: Int,
+        continuation: Continuation<Result<String>>,
+        urlExtras: HashMap<String, String>
+    ) {
+        urlExtras["client_id"] = ctx?.getString(R.string.unsplashAccessKey) ?: ""
+
+        val url = generateUrl(
+            baseUrlUnsplash,
+            service,
+            urlExtras
+        )
+
+        val stringRequest: StringRequest = object : StringRequest(
+            Method.GET,
+            url,
+            Response.Listener { response: String ->
+                if (BuildConfig.DEBUG) Log.d("Volley", "makeUnsplashRequest: $response")
+                if (!response.contains("\"errors\":")) {
+                    continuation.resumeWith(kotlin.Result.success(Result.Success(response)))
+                } else {
+                    try {
+                        val obj = JSONObject(response)
+                        continuation.resumeWithException(Exception(obj.optJSONArray("errors")?.toString() ?: "[]"))
+                    } catch (e: JSONException) {
+                        continuation.resumeWithException(e)
+                    }
+                }
+            },
+            Response.ErrorListener { error: VolleyError ->
+                if (BuildConfig.DEBUG) Log.e("Volley", "makeUnsplashRequest: $error")
+                continuation.resumeWithException(error)
+            }
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                return hashMapOf<String, String>().also {
+                    it["client_id"] = ctx?.getString(R.string.unsplashAccessKey) ?: ""
+                }
+            }
+
+            override fun getBody(): ByteArray? {
+                //return "Your JSON body".toString().getBytes();
+                return null
+            }
+        }
+        val volleySingleton: VolleySingleton = VolleySingleton.getInstance(ctx)
+        volleySingleton.addToRequestQueue(stringRequest)
+    }
+
     fun makeUnsplashRequest(
         @UnsplashApiService service: Int,
         urlExtras: HashMap<String, String>,
@@ -216,6 +278,9 @@ class APIManager private constructor(private val ctx: Context?) {
     }
 
     companion object {
+
+        const val TAG = "APIManager"
+
         private const val baseUrlWeather = "https://api.openweathermap.org/"
         private const val baseUrlUnsplash = "https://api.unsplash.com/"
         private var appId: String? = null

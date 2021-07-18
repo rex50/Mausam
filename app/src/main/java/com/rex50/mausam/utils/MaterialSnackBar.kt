@@ -64,8 +64,16 @@ class MaterialSnackBar(private val context: Context, private val layout: View) {
         }
     }
 
+    fun showActionSnackBar(@StringRes msg: Int, @StringRes action: Int, listener: SnackBarListener) {
+        showActionSnackBar(context.getString(msg), context.getString(action), null, LENGTH_INDEFINITE, listener)
+    }
+
     fun showActionSnackBar(@StringRes msg: Int, @StringRes action: Int, @MaterialSnackBarDuration duration: Int, listener: SnackBarListener) {
         showActionSnackBar(context.getString(msg), context.getString(action), null, duration, listener)
+    }
+
+    fun showActionSnackBar(msg: String, action: String?, listener: SnackBarListener) {
+        showActionSnackBar(msg, action, null, LENGTH_INDEFINITE, listener)
     }
 
     fun showActionSnackBar(msg: String, action: String?, @MaterialSnackBarDuration duration: Int, listener: SnackBarListener) {

@@ -1,5 +1,6 @@
 package com.rex50.mausam.di
 
+import com.rex50.mausam.network.APIManager
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import org.koin.core.context.loadKoinModules
@@ -9,16 +10,19 @@ object RepositoryDependencySetup {
 
     private val repositoryModule = module {
         single { KeyValuesRepository(get()) }
-        single { UnsplashHelper(get()) }
+        single { UnsplashHelper(get(), get(), get()) }
+    }
+
+    private val networkModule = module {
+        single { APIManager.getInstance(get()) }
     }
 
     @JvmStatic
     fun inject() {
-        loadKoinModules(
-            repositoryModule
-        )
-
-        UtilsDependencySetup.inject()
+        loadKoinModules(listOf(
+            repositoryModule,
+            networkModule
+        ))
     }
 
 }

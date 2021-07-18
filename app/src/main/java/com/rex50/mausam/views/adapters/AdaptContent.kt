@@ -11,6 +11,7 @@ import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
 import com.rex50.mausam.MausamApplication
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts
 import com.rex50.mausam.views.adapters.holders.*
 
 //TODO: remove context from here and send required objects only instead.
@@ -28,20 +29,20 @@ class AdaptContent(context: Context?, private var model: GenericModelFactory?) :
     override fun onCreateViewHolder(parent: ViewGroup, layout: Int): RecyclerView.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(layout, parent, false)
         return when (layout) {
-            RecyclerItemTypes.USER_TYPE -> UserTypeHolder(v)
-            RecyclerItemTypes.COLOR_TYPE -> ColorTypeHolder(v)
-            RecyclerItemTypes.GENERAL_TYPE -> GeneralTypeHolder(v)
-            RecyclerItemTypes.COLLECTION_TYPE, RecyclerItemTypes.COLLECTION_LIST_TYPE -> CollectionTypeHolder(v)
-            RecyclerItemTypes.TAG_TYPE -> TextTypeHolder(v)
-            RecyclerItemTypes.CATEGORY_TYPE -> CategoryTypeHolder(v)
-            RecyclerItemTypes.FAV_PHOTOGRAPHER_PHOTOS_TYPE -> FavPhotographerPhotosTypeHolder(v)
+            RecyclerItemLayouts.USER_LAYOUT -> UserTypeHolder(v)
+            RecyclerItemLayouts.COLOR_LAYOUT -> ColorTypeHolder(v)
+            RecyclerItemLayouts.GENERAL_LAYOUT -> GeneralTypeHolder(v)
+            RecyclerItemLayouts.COLLECTION_LAYOUT, RecyclerItemLayouts.COLLECTION_LIST_LAYOUT -> CollectionTypeHolder(v)
+            RecyclerItemLayouts.TAG_LAYOUT -> TextTypeHolder(v)
+            RecyclerItemLayouts.CATEGORY_LAYOUT -> CategoryTypeHolder(v)
+            RecyclerItemLayouts.FAV_PHOTOGRAPHER_PHOTOS_LAYOUT -> FavPhotographerPhotosTypeHolder(v)
             else -> throw IllegalArgumentException("Inflate code for viewType:\"$layout\" is not found")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         model?.apply {
-            when (itemType) {
+            when (childType) {
 
                 RecyclerItemTypes.GENERAL_TYPE -> {
                     val generalHolder = holder as GeneralTypeHolder
@@ -128,14 +129,14 @@ class AdaptContent(context: Context?, private var model: GenericModelFactory?) :
                     }
                 }
 
-                else -> throw IllegalArgumentException("Code missing for $itemType")
+                else -> throw IllegalArgumentException("Code missing for $childType")
 
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return model?.itemLayout ?: R.layout.cell_type_general
+        return model?.childLayout ?: R.layout.cell_type_general
     }
 
     override fun getItemCount(): Int {

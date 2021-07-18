@@ -1,24 +1,26 @@
 package com.rex50.mausam.network
 
-import android.content.Context
 import androidx.annotation.IntRange
 import androidx.annotation.StringDef
-import com.android.volley.Request
-import com.rex50.mausam.interfaces.GetUnsplashCollectionsAndTagsListener
-import com.rex50.mausam.interfaces.GetUnsplashPhotosAndUsersListener
-import com.rex50.mausam.interfaces.GetUnsplashPhotosListener
-import com.rex50.mausam.interfaces.GetUnsplashSearchedPhotosListener
-import com.rex50.mausam.network.APIManager.UnsplashAPICallResponse
+import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
+import com.rex50.mausam.model_classes.unsplash.searched_photos.SearchedPhotos
+import com.rex50.mausam.model_classes.utils.CollectionsAndTags
+import com.rex50.mausam.model_classes.utils.PhotosAndUsers
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
-import com.rex50.mausam.utils.Constants.ApiConstants.COLLECTION_ID
+import com.rex50.mausam.utils.ConnectionChecker
 import com.rex50.mausam.utils.Constants.ApiConstants.DOWNLOADING_PHOTO_URL
-import com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME
+import com.rex50.mausam.utils.Constants.Network.NO_INTERNET
 import com.rex50.mausam.utils.DataParser
+import com.rex50.mausam.utils.isNotNullOrEmpty
 import kotlinx.coroutines.*
-import org.json.JSONArray
+import java.lang.IllegalStateException
 import java.util.*
 
-class UnsplashHelper {
+class UnsplashHelper(
+    private val keyValuesRepository: KeyValuesRepository,
+    private val apiManager: APIManager,
+    val connectionChecker: ConnectionChecker,
+) {
 
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(ORDER_BY_DEFAULT, ORDER_BY_LATEST, ORDER_BY_OLDEST, ORDER_BY_POPULAR)
@@ -32,224 +34,264 @@ class UnsplashHelper {
     @IntRange(from = 1, to = 20)
     private annotation class PerPageRestriction
 
-    private var apiManager: APIManager? = null
-    private var context: Context? = null
-    private var defaultOrientation = ORIENTATION_PORTRAIT
+    @PhotosOrientationRestriction
+    var defaultOrientation = ORIENTATION_PORTRAIT
 
     private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-    private constructor()
-
-    constructor(context: Context?) {
-        this.context = context
-        apiManager = APIManager.getInstance(context)
+    suspend fun getPhotosAndUsers(@OrderPhotosByRestriction orderBy: String): Result<PhotosAndUsers> {
+        return getPhotosAndUsers(orderBy, 1, 10, defaultOrientation)
     }
 
-    constructor(context: Context?, @PhotosOrientationRestriction defaultOrientation: String) {
-        this.context = context
-        apiManager = APIManager.getInstance(context)
-        this.defaultOrientation = defaultOrientation
+    suspend fun getPhotosAndUsers(@OrderPhotosByRestriction orderBy: String, page: Int, @PerPageRestriction perPage: Int): Result<PhotosAndUsers> {
+        return getPhotosAndUsers(orderBy, page, perPage, defaultOrientation)
     }
 
-    fun getPhotosAndUsers(@OrderPhotosByRestriction orderBy: String, listener: GetUnsplashPhotosAndUsersListener) {
-        getPhotosAndUsers(orderBy, 1, 10, defaultOrientation, listener)
-    }
+    suspend fun getPhotosAndUsers(
+        @OrderPhotosByRestriction orderBy: String,
+        page: Int,
+        @PerPageRestriction perPage: Int,
+        @PhotosOrientationRestriction orientation: String,
+    ): Result<PhotosAndUsers> = withContext(Dispatchers.IO)  {
 
-    fun getPhotosAndUsers(@OrderPhotosByRestriction orderBy: String, page: Int, @PerPageRestriction perPage: Int, listener: GetUnsplashPhotosAndUsersListener) {
-        getPhotosAndUsers(orderBy, page, perPage, defaultOrientation, listener)
-    }
+        val dbKey = PHOTOS_KEY + orderBy + page + perPage
 
-    fun getPhotosAndUsers(@OrderPhotosByRestriction orderBy: String, page: Int, @PerPageRestriction perPage: Int, @PhotosOrientationRestriction orientation: String, listener: GetUnsplashPhotosAndUsersListener) {
-        val extras = HashMap<String, String>()
-        extras["order_by"] = orderBy
-        extras["page"] = if (page < 1) "1" else page.toString()
-        extras["per_page"] = perPage.toString()
-        if (!orientation.equals(ORIENTATION_UNSPECIFIED, ignoreCase = true)) extras["orientation"] = orientation
-        context?.apply {
-            scope.launch {
-                val response = KeyValuesRepository.checkValidityAndGetValue(context, PHOTOS_KEY + orderBy + page + perPage, RESPONSE_VALIDITY_HOURS)
-                response?.takeIf { it.isNotEmpty() }?.apply {
-                    val photosAndUsers = DataParser.parseUnsplashData(response, true)
-                    listener.onSuccess(photosAndUsers.photosList, photosAndUsers.userList)
-                } ?: apply {
-                    apiManager?.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS, extras, object : UnsplashAPICallResponse {
-                        override fun onSuccess(response: String) {
-                            val photosAndUsers = DataParser.parseUnsplashData(response, true)
-                            listener.onSuccess(photosAndUsers.photosList, photosAndUsers.userList)
-                            scope.launch {
-                                KeyValuesRepository.insert(context, PHOTOS_KEY + orderBy + page + perPage, response)
-                            }
+        //Check if data available locally and not expired
+        val data = keyValuesRepository.checkValidityAndGetValue(dbKey, RESPONSE_VALIDITY_HOURS)
+
+        when {
+            //Local data is not expired
+            data.isNotNullOrEmpty() -> {
+                Result.Success(DataParser.parseUnsplashData(data, true))
+            }
+
+            else -> {
+                //Local Data is not available or expired
+                if(connectionChecker.isNetworkConnected()) {
+                    val params = ApiRequestDataMapper.mapPhotosAndUsersRequest(orderBy, page, perPage, orientation)
+                    when(val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS, params)) {
+                        is Result.Success -> {
+                            //Insert into DB
+                            keyValuesRepository.insert(dbKey, result.data)
+                            Result.Success(DataParser.parseUnsplashData(result.data, true))
                         }
 
-                        override fun onFailed(errors: JSONArray) {
-                            listener.onFailed(errors)
+                        is Result.Failure -> result
+                    }
+                } else
+                    Result.Failure(IllegalStateException(NO_INTERNET))
+            }
+        }
+    }
+
+    suspend fun getSearchedPhotos(searchTerm: String, page: Int, @PerPageRestriction perPage: Int): Result<SearchedPhotos> {
+        return getSearchedPhotos(searchTerm, page, perPage, defaultOrientation)
+    }
+
+    suspend fun getSearchedPhotos(
+        searchTerm: String,
+        page: Int,
+        @PerPageRestriction perPage: Int,
+        @PhotosOrientationRestriction photosOrientation: String
+    ): Result<SearchedPhotos> = withContext(Dispatchers.IO) {
+
+        val dbKey = SEARCHED_PHOTOS_KEY + searchTerm + page + perPage
+
+        //Check if data available locally and not expired
+        val data = keyValuesRepository.checkValidityAndGetValue(dbKey, RESPONSE_VALIDITY_HOURS)
+
+        return@withContext when {
+            //Local data is not expired
+            data.isNotNullOrEmpty() -> {
+                Result.Success(DataParser.parseSearchedPhotos(data))
+            }
+
+            else -> {
+                //Local Data is not available or expired
+                if(connectionChecker.isNetworkConnected()) {
+                    val params = ApiRequestDataMapper.mapSearchedPhotosRequest(searchTerm, page, perPage, photosOrientation)
+                    when(val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_SEARCHED_PHOTOS, params)) {
+                        is Result.Success -> {
+                            //Insert into DB
+                            keyValuesRepository.insert(dbKey, result.data)
+                            Result.Success(DataParser.parseSearchedPhotos(result.data))
                         }
-                    }) ?: listener.onFailed(JSONArray())
+
+                        is Result.Failure -> {
+                            result
+                        }
+                    }
+                } else
+                    Result.Failure(IllegalStateException(NO_INTERNET))
+            }
+        }
+    }
+
+    suspend fun getCollectionPhotos(collectionId: String): Result<PhotosAndUsers> {
+        return getCollectionPhotos(collectionId, 1, 20)
+    }
+
+    suspend fun getCollectionPhotos(
+        collectionId: String,
+        page: Int,
+        @PerPageRestriction perPage: Int
+    ): Result<PhotosAndUsers> = withContext(Dispatchers.IO) {
+
+        val dbKey = COLLECTION_PHOTOS_KEY + collectionId + page + perPage
+
+        //Check if data available locally and not expired
+        val data = keyValuesRepository.checkValidityAndGetValue(dbKey, RESPONSE_VALIDITY_HOURS)
+
+        return@withContext when {
+            data.isNotNullOrEmpty() -> {
+                //Local data is not expired
+                Result.Success(DataParser.parseUnsplashData(data, true))
+            }
+
+            else -> {
+                //Local Data is not available or expired
+                if(connectionChecker.isNetworkConnected()) {
+                    val params = ApiRequestDataMapper.mapCollectionPhotosRequest(collectionId, page, perPage)
+                    when (val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTION_PHOTOS, params)) {
+                        is Result.Success -> {
+                            //Insert into DB
+                            keyValuesRepository.insert(dbKey, result.data)
+                            Result.Success(DataParser.parseUnsplashData(result.data, true))
+                        }
+
+                        is Result.Failure -> {
+                            result
+                        }
+                    }
+                } else
+                    Result.Failure(IllegalStateException(NO_INTERNET))
+            }
+        }
+    }
+
+    suspend fun getCollectionsAndTags(
+        page: Int,
+        @PerPageRestriction perPage: Int,
+    ): Result<CollectionsAndTags> = withContext(Dispatchers.IO) {
+
+        val dbKey = COLLECTION_KEY + page + perPage
+
+        //Check if data available locally and not expired
+        val data = keyValuesRepository.checkValidityAndGetValue(dbKey, RESPONSE_VALIDITY_HOURS)
+
+        return@withContext when {
+
+            data.isNotNullOrEmpty() -> {
+                //Local data is not expired
+                Result.Success(DataParser.parseCollections(data, true))
+            }
+
+            else -> {
+                //Local Data is not available or expired
+                if(connectionChecker.isNetworkConnected()) {
+                    val params = ApiRequestDataMapper.mapCollectionsAndTagsRequest(page, perPage)
+                    when(val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTIONS, params)) {
+                        is Result.Success -> {
+                            //Insert into DB
+                            keyValuesRepository.insert(dbKey, result.data)
+                            Result.Success(DataParser.parseCollections(result.data, true))
+                        }
+
+                        is Result.Failure -> {
+                            result
+                        }
+                    }
+                } else
+                    Result.Failure(IllegalStateException(NO_INTERNET))
+            }
+        }
+    }
+
+    suspend fun getUserPhotos(
+        unsplashUserName: String,
+        page: Int,
+        @PerPageRestriction perPage: Int
+    ): Result<List<UnsplashPhotos>> = withContext(Dispatchers.IO) {
+
+        val dbKey = PHOTOGRAPHER_KEY + unsplashUserName + page + perPage
+
+        //Check if data available locally and not expired
+        val data = keyValuesRepository.checkValidityAndGetValue(dbKey, RESPONSE_VALIDITY_HOURS)
+
+        return@withContext when {
+            data.isNotNullOrEmpty() -> {
+                //Local data is not expired
+                Result.Success(DataParser.parseUnsplashData(data, true).photosList)
+            }
+
+            else -> {
+                //Local Data is not available or expired
+                if (connectionChecker.isNetworkConnected()) {
+                    val params = ApiRequestDataMapper.mapUserPhotosRequest(unsplashUserName, page, perPage)
+                    when (val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS_BY_USER, params)) {
+                        is Result.Success -> {
+                            //Insert into DB
+                            keyValuesRepository.insert(dbKey, result.data)
+                            Result.Success(DataParser.parseUnsplashData(result.data, true).photosList)
+                        }
+
+                        is Result.Failure -> {
+                            result
+                        }
+                    }
+                } else {
+                    Result.Failure(IllegalStateException(NO_INTERNET))
                 }
             }
-        } ?: listener.onFailed(JSONArray())
+        }
     }
 
-    fun getSearchedPhotos(searchTerm: String?, page: Int, @PerPageRestriction perPage: Int, listener: GetUnsplashSearchedPhotosListener) {
-        getSearchedPhotos(searchTerm, page, perPage, defaultOrientation, listener)
-    }
+    suspend fun getUserCollections(
+        unsplashUserName: String,
+        page: Int,
+        @PerPageRestriction perPage: Int
+    ): Result<CollectionsAndTags> = withContext(Dispatchers.IO) {
 
-    fun getSearchedPhotos(searchTerm: String?, page: Int, @PerPageRestriction perPage: Int, @PhotosOrientationRestriction photosOrientation: String, listener: GetUnsplashSearchedPhotosListener) {
-        val extras = HashMap<String, String>()
-        extras["query"] = searchTerm ?: ""
-        extras["page"] = if (page < 1) "1" else page.toString()
-        extras["per_page"] = perPage.toString()
-        if (photosOrientation != ORIENTATION_UNSPECIFIED) extras["orientation"] = photosOrientation
-        context?.apply {
-            scope.launch {
-                val response = KeyValuesRepository.checkValidityAndGetValue(context, SEARCHED_PHOTOS_KEY + searchTerm + page + perPage, RESPONSE_VALIDITY_HOURS)
-                response?.takeIf { it.isNotEmpty() }?.let {res ->
-                    listener.onSuccess(DataParser.parseSearchedPhotos(res))
-                } ?: apply {
-                    apiManager?.makeUnsplashRequest(APIManager.SERVICE_GET_SEARCHED_PHOTOS, extras, object : UnsplashAPICallResponse {
-                        override fun onSuccess(response: String) {
-                            scope.launch {
-                                val photos = DataParser.parseSearchedPhotos(response)
-                                listener.onSuccess(photos)
-                                KeyValuesRepository.insert(context, SEARCHED_PHOTOS_KEY + searchTerm + page + perPage, response)
-                            }
+        val dbKey = COLLECTION_KEY + unsplashUserName + page + perPage
+
+        //Check if data available locally and not expired
+        val data = keyValuesRepository.checkValidityAndGetValue(dbKey, RESPONSE_VALIDITY_HOURS)
+
+        return@withContext when {
+            data.isNotNullOrEmpty() -> {
+                //Local data is not expired
+                Result.Success(DataParser.parseCollections(data, true))
+            }
+
+            else -> {
+                //Local Data is not available or expired
+                if(connectionChecker.isNetworkConnected()) {
+
+                    val params = ApiRequestDataMapper.mapUserCollectionsRequest(unsplashUserName, page, perPage)
+
+                    when(val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTIONS_BY_USER, params)) {
+                        is Result.Success -> {
+                            //Insert into DB
+                            keyValuesRepository.insert(dbKey, result.data)
+                            Result.Success( DataParser.parseCollections(result.data, true))
                         }
 
-                        override fun onFailed(errors: JSONArray) {
-                            listener.onFailed(errors)
+                        is Result.Failure -> {
+                            result
                         }
-                    }) ?: listener.onFailed(JSONArray())
+                    }
+                } else {
+                    Result.Failure(IllegalStateException(NO_INTERNET))
                 }
             }
-        } ?: listener.onFailed(JSONArray())
+        }
     }
 
-    fun getCollectionPhotos(collectionId: String, listener: GetUnsplashSearchedPhotosListener) {
-        getSearchedPhotos(collectionId, 1, 20, defaultOrientation, listener)
-    }
-
-    fun getCollectionPhotos(collectionId: String?, page: Int, @PerPageRestriction perPage: Int, listener: GetUnsplashPhotosListener) {
-        val extras = HashMap<String, String>()
-        extras[COLLECTION_ID] = collectionId ?: ""
-        extras["page"] = if (page < 1) "1" else page.toString()
-        extras["per_page"] = perPage.toString()
-        context?.apply {
-            scope.launch {
-                val response = KeyValuesRepository.checkValidityAndGetValue(context, COLLECTION_PHOTOS_KEY + collectionId + page + perPage, RESPONSE_VALIDITY_HOURS)
-                response?.takeIf { it.isNotEmpty() }?.apply {
-                    listener.onSuccess(DataParser.parseUnsplashData(response, false).photosList)
-                } ?: apply {
-                    apiManager?.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTION_PHOTOS, extras, object : UnsplashAPICallResponse {
-                        override fun onSuccess(response: String) {
-                            val photosAndUsers = DataParser.parseUnsplashData(response, false)
-                            listener.onSuccess(photosAndUsers.photosList)
-                            scope.launch {
-                                KeyValuesRepository.insert(context, COLLECTION_PHOTOS_KEY + collectionId + page + perPage, response)
-                            }
-                        }
-
-                        override fun onFailed(errors: JSONArray) {
-                            listener.onFailed(errors)
-                        }
-                    }) ?: listener.onFailed(JSONArray())
-                }
-            }
-        } ?: listener.onFailed(JSONArray())
-    }
-
-    fun getCollectionsAndTags(page: Int, @PerPageRestriction perPage: Int, listener: GetUnsplashCollectionsAndTagsListener) {
-        val extras = HashMap<String, String>()
-        extras["page"] = if (page < 1) "1" else page.toString()
-        extras["per_page"] = perPage.toString()
-        context?.apply {
-            scope.launch {
-                val response = KeyValuesRepository.checkValidityAndGetValue(context, COLLECTION_KEY + page + perPage, RESPONSE_VALIDITY_HOURS)
-                response?.takeIf { it.isNotEmpty() }?.apply {
-                    val obj = DataParser.parseCollections(response, true)
-                    listener.onSuccess(obj.collectionsList, obj.tagsList)
-                }?: apply {
-                    apiManager?.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTIONS, extras, object : UnsplashAPICallResponse {
-                        override fun onSuccess(response: String) {
-                            val obj = DataParser.parseCollections(response, true)
-                            listener.onSuccess(obj.collectionsList, obj.tagsList)
-                            scope.launch {
-                                KeyValuesRepository.insert(context, COLLECTION_KEY + page + perPage, response)
-                            }
-                        }
-
-                        override fun onFailed(errors: JSONArray) {
-                            listener.onFailed(errors)
-                        }
-                    }) ?: listener.onFailed(JSONArray())
-                }
-            }
-        } ?: listener.onFailed(JSONArray())
-    }
-
-    fun getUserPhotos(unsplashUserName: String?, page: Int, @PerPageRestriction perPage: Int, listener: GetUnsplashPhotosListener) {
-        val extras = HashMap<String, String>()
-        extras[UNSPLASH_USERNAME] = unsplashUserName ?: ""
-        extras["page"] = if (page < 1) "1" else page.toString()
-        extras["per_page"] = perPage.toString()
-        context?.apply {
-            scope.launch {
-                val response = KeyValuesRepository.checkValidityAndGetValue(context, PHOTOGRAPHER_KEY + unsplashUserName + page + perPage, RESPONSE_VALIDITY_HOURS)
-                response?.takeIf{ it.isNotEmpty() }?.apply{
-                    val photosAndUsers = DataParser.parseUnsplashData(response, true)
-                    listener.onSuccess(photosAndUsers.photosList)
-                }?: apply {
-                    apiManager?.makeUnsplashRequest(APIManager.SERVICE_GET_PHOTOS_BY_USER, extras, object : UnsplashAPICallResponse {
-                        override fun onSuccess(response: String) {
-                            val photosAndUsers = DataParser.parseUnsplashData(response, true)
-                            listener.onSuccess(photosAndUsers.photosList)
-                            scope.launch {
-                                KeyValuesRepository.insert(context, PHOTOGRAPHER_KEY + unsplashUserName + page + perPage, response)
-                            }
-                        }
-
-                        override fun onFailed(errors: JSONArray) {
-                            listener.onFailed(errors)
-                        }
-                    })?: listener.onFailed(JSONArray())
-                }
-            }
-        } ?: listener.onFailed(JSONArray())
-    }
-
-    fun getUserCollections(unsplashUserName: String?, page: Int, @PerPageRestriction perPage: Int, listener: GetUnsplashCollectionsAndTagsListener) {
-        val extras = HashMap<String, String>()
-        extras[UNSPLASH_USERNAME] = unsplashUserName ?: ""
-        extras["page"] = if (page < 1) "1" else page.toString()
-        extras["per_page"] = perPage.toString()
-        context?.apply {
-            scope.launch {
-                val response = KeyValuesRepository.checkValidityAndGetValue(context!!, COLLECTION_KEY + unsplashUserName + page + perPage, RESPONSE_VALIDITY_HOURS)
-                response?.takeIf { it.isNotEmpty() }?.apply {
-                    val obj = DataParser.parseCollections(response, true)
-                    listener.onSuccess(obj.collectionsList, obj.tagsList)
-                }?: apply {
-                    apiManager?.makeUnsplashRequest(APIManager.SERVICE_GET_COLLECTIONS_BY_USER, extras, object : UnsplashAPICallResponse {
-                        override fun onSuccess(response: String) {
-                            val obj = DataParser.parseCollections(response, true)
-                            listener.onSuccess(obj.collectionsList, obj.tagsList)
-                            scope.launch {
-                                KeyValuesRepository.insert(context, COLLECTION_KEY + unsplashUserName + page + perPage, response)
-                            }
-                        }
-
-                        override fun onFailed(errors: JSONArray) {
-                            listener.onFailed(errors)
-                        }
-                    })?: listener.onFailed(JSONArray())
-                }
-            }
-        }?: listener.onFailed(JSONArray())
-    }
-
-    fun trackDownload(url: String) {
+    fun trackDownload(url: String) = scope.launch {
         val extras = HashMap<String, String>()
         extras[DOWNLOADING_PHOTO_URL] = url
-        apiManager?.makeUnsplashRequest(APIManager.SERVICE_POST_DOWNLOADING_PHOTO, extras, Request.Method.GET, null)
+        if(connectionChecker.isNetworkConnected())
+            apiManager.makeUnsplashRequest(APIManager.SERVICE_POST_DOWNLOADING_PHOTO, extras)
     }
 
     companion object {

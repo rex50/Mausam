@@ -37,9 +37,11 @@ import java.util.*
 
 class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.OnFragmentInteractionListener>() {
 
-    private var adaptHome: AdaptHome? = null
-
     private val viewModel by viewModel<FragDiscoverViewModel>()
+
+    private val adaptHome: AdaptHome by lazy {
+        AdaptHome(GradientHelper.getInstance(requireContext()), AllContentModel())
+    }
 
     private val bsDownload: BSDownload? by lazy {
         BSDownload().also { it.isCancelable = false }
@@ -61,16 +63,15 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
     override fun initView() {
 
-        mContext?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        requireActivity().window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         initHeader()
 
         initSearchBox()
 
-        initAdapter()
+        initRecycler()
 
         initItemClicks()
-
 
     }
 
@@ -108,12 +109,10 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
         animatedMessage.onLottieAnimationConfig = { lottieAnimationView, state ->
             when(state) {
                 ContentAnimationState.EMPTY -> {
-                    lottieAnimationView.scale = 0.2f
-                    lottieAnimationView.repeatCount = LottieDrawable.INFINITE
+                    AnimConfigs.configureAstronautAnim(lottieAnimationView)
                 }
                 else -> {
-                    lottieAnimationView.scale = 1f
-                    lottieAnimationView.repeatCount = 0
+                    AnimConfigs.defaultConfig(lottieAnimationView)
                 }
             }
         }
@@ -121,7 +120,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
     private fun initHeader() {
         binding?.headerLayout?.apply {
-            gradientLine.background = GradientHelper.getInstance(mContext)?.getRandomLeftRightGradient()
+            gradientLine.background = GradientHelper.getInstance(requireContext())?.getRandomLeftRightGradient()
 
             tvPageTitle.setText(R.string.search_photo_title)
             tvPageDesc.setText(R.string.search_photo_desc)
@@ -233,10 +232,9 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
         })
     }
 
-    private fun initAdapter() {
-        adaptHome = AdaptHome(GradientHelper.getInstance(requireContext()), AllContentModel())
+    private fun initRecycler() {
         binding?.recDiscoverContent?.apply {
-            layoutManager = LinearLayoutManager(mContext)
+            layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
             adapter = adaptHome
         }
@@ -244,7 +242,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
     private fun initItemClicks() {
 
-        adaptHome?.itemClickListener = object : OnGroupItemClickListener {
+        adaptHome.itemClickListener = object : OnGroupItemClickListener {
 
             override fun onItemClick(o: Any?, childImgView: ImageView?, groupPos: Int, childPos: Int) {
 
@@ -302,7 +300,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
     }
 
     private fun showImageViewer(photosList: List<UnsplashPhotos>, childImgView: ImageView?, childPos: Int) {
-        ImageViewerHelper(mContext).with(photosList,
+        ImageViewerHelper(requireContext()).with(photosList,
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
@@ -329,17 +327,14 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
                 }
 
                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
-                    ImageActionHelper.shareImage(mContext, "Share", photoInfo.user.name, photoInfo.links.html)
+                    ImageActionHelper.shareImage(requireContext(), "Share", photoInfo.user.name, photoInfo.links.html)
                 }
 
                 override fun onUserPhotos(user: User) {
                     listener?.startMorePhotosActivity(user.moreListData)
                 }
             })
-            .setDataSaverMode(
-                MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false
-            )
-            .setTools(arrayListOf(Tools.SET_WALLPAPER, Tools.DOWNLOAD_PHOTO, Tools.FAV_PHOTO, Tools.SHARE_PHOTO, Tools.MORE))
+            .setDataSaverMode(MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false)
             .show()
     }
 

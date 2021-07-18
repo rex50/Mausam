@@ -39,6 +39,7 @@ import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.LastLocationProvider;
 import com.rex50.mausam.utils.MaterialSnackBar;
 import com.rex50.mausam.utils.custom_text_views.SemiBoldTextView;
+import com.rex50.mausam.views.activities.photoslist.ActPhotosList;
 import com.rex50.mausam.views.fragments.FragSearchResult;
 import com.rex50.mausam.views.fragments.discover.FragDiscover;
 import com.rex50.mausam.views.fragments.favourites.FragFavourites;

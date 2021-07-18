@@ -2,7 +2,6 @@ package com.rex50.mausam.views.fragments.home
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import androidx.annotation.StringRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.airbnb.lottie.LottieDrawable
 import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragmentWithListener
@@ -30,7 +28,6 @@ import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.thekhaeng.pushdownanim.PushDownAnim
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
-import kotlinx.android.synthetic.main.frag_home.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -111,12 +108,10 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
         animatedMessage.onLottieAnimationConfig = { lottieAnimationView, state ->
             when(state) {
                 ContentAnimationState.EMPTY -> {
-                    lottieAnimationView.scale = 0.2f
-                    lottieAnimationView.repeatCount = LottieDrawable.INFINITE
+                    AnimConfigs.configureAstronautAnim(lottieAnimationView)
                 }
                 else -> {
-                    lottieAnimationView.scale = 1f
-                    lottieAnimationView.repeatCount = 0
+                    AnimConfigs.defaultConfig(lottieAnimationView)
                 }
             }
         }
@@ -126,23 +121,23 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
 
         val layoutManager = GridLayoutManager(context , 1,  LinearLayoutManager.VERTICAL, false)
 
-        recHomeContent?.layoutManager = layoutManager
+        binding?.recHomeContent?.layoutManager = layoutManager
 
         //For proper spacing around the items
-        if (recHomeContent?.itemDecorationCount ?: 0 > 0)
-            recHomeContent?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
+        if (binding?.recHomeContent?.itemDecorationCount ?: 0 > 0)
+            binding?.recHomeContent?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
 
         //For Item animation while scrolling
-        recHomeContent?.adapter = ScaleInAnimationAdapter(adapter).apply {
+        binding?.recHomeContent?.adapter = ScaleInAnimationAdapter(adapter).apply {
             setFirstOnly(false)
         }
 
         //For pagination (loading data when reached at the end of the list)
-        recHomeContent?.apply {
+        binding?.recHomeContent?.apply {
             clearOnScrollListeners()
             addOnScrollListener(object: EndlessRecyclerOnScrollListener(layoutManager){
                 override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                    lvBottom?.showView()
+                    binding?.lvBottom?.root?.showView()
                     viewModel.getLatestPhotosOf(page)
                 }
             }.also {
@@ -196,7 +191,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
                 ContentAnimationState.ERROR -> {
                     showErrorMsg(
                         if(viewModel.connectionChecker.isNetworkConnected())
-                            R.string.failed_getting_photos_error_msg
+                            R.string.error_failed_getting_photos
                         else
                             R.string.error_no_internet
                     )
@@ -213,7 +208,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
     private fun setupContentObserver() {
         viewModel.homeContent.observe(requireActivity(), {
             adapter.update(it)
-            imageViewer?.updateImages(it.photosList.toArrayList())
+            imageViewer?.updateImages(it.photosList)
         })
     }
 
@@ -240,7 +235,8 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
     }
 
     private fun showImageViewer(photosList: List<UnsplashPhotos>, childImgView: ImageView?, childPos: Int) {
-        imageViewer = ImageViewerHelper(mContext).with(photosList,
+        imageViewer?.dismiss()
+        imageViewer = ImageViewerHelper(requireContext()).with(photosList,
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
@@ -267,23 +263,14 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
                 }
 
                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
-                    ImageActionHelper.shareImage(mContext, "Share", photoInfo.user.name, photoInfo.links.html)
+                    ImageActionHelper.shareImage(requireContext(), "Share", photoInfo.user.name, photoInfo.links.html)
                 }
 
                 override fun onUserPhotos(user: User) {
                     listener?.startMorePhotosActivity(user.moreListData)
                 }
             })
-            .setDataSaverMode(
-                MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false
-            )
-            .setTools(arrayListOf(
-                Tools.SET_WALLPAPER,
-                Tools.DOWNLOAD_PHOTO,
-                Tools.FAV_PHOTO,
-                Tools.SHARE_PHOTO,
-                Tools.MORE
-            ))
+            .setDataSaverMode(MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false)
 
         imageViewer?.onDismissListener = {
             imageViewer = null
@@ -292,7 +279,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
         imageViewer?.onPageChangeListener = {
             fragScope.launch {
                 delay(300)
-                recHomeContent?.scrollToPosition(it)
+                binding?.recHomeContent?.scrollToPosition(it)
             }
         }
 
@@ -314,8 +301,8 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
     }
 
     override fun onScrollToTop() {
-        recHomeContent?.smoothScrollToPosition(0)
-        ablHomeList?.setExpanded(true, true)
+        binding?.recHomeContent?.smoothScrollToPosition(0)
+        binding?.ablHomeList?.setExpanded(true, true)
     }
 
     interface OnFragmentInteractionListener {

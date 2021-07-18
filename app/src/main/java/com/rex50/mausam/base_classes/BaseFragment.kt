@@ -23,14 +23,6 @@ abstract class BaseFragment : Fragment(){
         return inflater.inflate(getResourceLayout(), container, false)
     }
 
-    var mContext: Activity? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is BaseActivity)
-            mContext = context
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initView()

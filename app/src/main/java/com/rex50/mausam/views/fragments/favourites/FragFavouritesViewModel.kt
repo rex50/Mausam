@@ -21,7 +21,7 @@ class FragFavouritesViewModel(application: Application, var repository: KeyValue
             it.setSequenceOfLayouts(mutableListOf<String>().also { list ->
                 list.add(AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS)
                 list.add(AvailableLayouts.DOWNLOADED_PHOTOS)
-                list.add(AvailableLayouts.FAVOURITE_PHOTOS)
+                //list.add(AvailableLayouts.FAVOURITE_PHOTOS)
             })
         }
     }
@@ -68,7 +68,7 @@ class FragFavouritesViewModel(application: Application, var repository: KeyValue
 
     private suspend fun initDownloadedPhotoList() {
         downloadedPhotosList = repository.getDownloadedPhotos()
-        Log.e("FragFav", "Downloaded photos: ${downloadedPhotosList?.value?.size}")
+        //Log.e("FragFav", "Downloaded photos: ${downloadedPhotosList?.value?.size}")
     }
 
     private suspend fun addOrUpdateDownloadedList(photos: ArrayList<UnsplashPhotos>) = withContext(Dispatchers.IO) {

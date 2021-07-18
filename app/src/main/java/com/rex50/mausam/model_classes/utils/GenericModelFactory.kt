@@ -8,15 +8,23 @@ import com.rex50.mausam.model_classes.unsplash.collection.Collections
 import com.rex50.mausam.model_classes.unsplash.collection.Tag
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts.CATEGORY_LAYOUT
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts.COLLECTION_LAYOUT
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts.COLLECTION_LIST_LAYOUT
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts.COLOR_LAYOUT
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts.FAV_PHOTOGRAPHER_PHOTOS_LAYOUT
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts.GENERAL_LAYOUT
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts.GROUP_SECTION_LAYOUT
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts.TAG_LAYOUT
+import com.rex50.mausam.utils.Constants.RecyclerItemLayouts.USER_LAYOUT
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.CATEGORY_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.COLLECTION_LIST_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.COLLECTION_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.COLOR_TYPE
-import com.rex50.mausam.utils.Constants.RecyclerItemTypes.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.FAV_PHOTOGRAPHER_PHOTOS_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.GENERAL_TYPE
-import com.rex50.mausam.utils.Constants.RecyclerItemTypes.ITEM_CATEGORY_TYPE
-import com.rex50.mausam.utils.Constants.RecyclerItemTypes.ITEM_SECTION_TYPE
+import com.rex50.mausam.utils.Constants.RecyclerItemTypes.GROUP_CATEGORY_TYPE
+import com.rex50.mausam.utils.Constants.RecyclerItemTypes.GROUP_SECTION_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.TAG_TYPE
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes.USER_TYPE
 
@@ -29,7 +37,7 @@ abstract class GenericModelFactory{
      *
      * This value will decide which holder to use in onBindViewHolder of AdaptHome
      */
-    var viewType: Int = ITEM_CATEGORY_TYPE
+    var groupType: Int = GROUP_CATEGORY_TYPE
         protected set
 
     /**
@@ -38,7 +46,7 @@ abstract class GenericModelFactory{
      * This value will decide which layout to inflate for the
      * parent UI in onCreateViewHolder of AdaptHome
      */
-    var viewLayout = R.layout.item_category
+    var groupLayout = R.layout.item_category
         protected set
 
     /**
@@ -46,7 +54,7 @@ abstract class GenericModelFactory{
      *
      * This value will decide which holder to use in onBindViewHolder of AdaptContent
      */
-    var itemType: Int = GENERAL_TYPE
+    var childType: Int = GENERAL_TYPE
         protected set
 
     /**
@@ -55,7 +63,7 @@ abstract class GenericModelFactory{
      * This value will decide which layout to inflate for the
      * child UI in onCreateViewHolder of AdaptContent
      */
-    var itemLayout = R.layout.cell_type_general
+    var childLayout = R.layout.cell_type_general
         protected set
 
     /**
@@ -107,8 +115,8 @@ abstract class GenericModelFactory{
             generalTypeModel.title = title
             generalTypeModel.desc = desc
             generalTypeModel.isHasMore = hasMore
-            generalTypeModel.itemType = GENERAL_TYPE
-            generalTypeModel.itemLayout = R.layout.cell_type_general
+            generalTypeModel.childType = GENERAL_TYPE
+            generalTypeModel.childLayout = GENERAL_LAYOUT
             return generalTypeModel
         }
 
@@ -122,8 +130,8 @@ abstract class GenericModelFactory{
             generalTypeModel.title = title
             generalTypeModel.desc = desc
             generalTypeModel.isHasMore = hasMore
-            generalTypeModel.itemType = USER_TYPE
-            generalTypeModel.itemLayout = R.layout.cell_type_user
+            generalTypeModel.childType = USER_TYPE
+            generalTypeModel.childLayout = USER_LAYOUT
             return generalTypeModel
         }
 
@@ -137,8 +145,8 @@ abstract class GenericModelFactory{
             generalTypeModel.title = title
             generalTypeModel.desc = desc
             generalTypeModel.isHasMore = hasMore
-            generalTypeModel.itemType = COLLECTION_TYPE
-            generalTypeModel.itemLayout = R.layout.cell_type_collection
+            generalTypeModel.childType = COLLECTION_TYPE
+            generalTypeModel.childLayout = COLLECTION_LAYOUT
             return generalTypeModel
         }
 
@@ -152,8 +160,8 @@ abstract class GenericModelFactory{
             generalTypeModel.title = title
             generalTypeModel.desc = desc
             generalTypeModel.isHasMore = hasMore
-            generalTypeModel.itemType = COLLECTION_LIST_TYPE
-            generalTypeModel.itemLayout = R.layout.cell_type_collection_list
+            generalTypeModel.childType = COLLECTION_LIST_TYPE
+            generalTypeModel.childLayout = COLLECTION_LIST_LAYOUT
             return generalTypeModel
         }
 
@@ -168,8 +176,8 @@ abstract class GenericModelFactory{
             textTypeModel.title = title
             textTypeModel.desc = desc
             textTypeModel.isHasMore = hasMore
-            textTypeModel.itemType = TAG_TYPE
-            textTypeModel.itemLayout = R.layout.cell_type_tag
+            textTypeModel.childType = TAG_TYPE
+            textTypeModel.childLayout = TAG_LAYOUT
             return textTypeModel
         }
 
@@ -184,8 +192,8 @@ abstract class GenericModelFactory{
             textTypeModel.title = title
             textTypeModel.desc = desc
             textTypeModel.isHasMore = hasMore
-            textTypeModel.itemType = COLOR_TYPE
-            textTypeModel.itemLayout = R.layout.cell_type_color
+            textTypeModel.childType = COLOR_TYPE
+            textTypeModel.childLayout = COLOR_LAYOUT
             return textTypeModel
         }
 
@@ -200,8 +208,8 @@ abstract class GenericModelFactory{
             textTypeModel.title = title
             textTypeModel.desc = desc
             textTypeModel.isHasMore = hasMore
-            textTypeModel.itemType = CATEGORY_TYPE
-            textTypeModel.itemLayout = R.layout.cell_type_category
+            textTypeModel.childType = CATEGORY_TYPE
+            textTypeModel.childLayout = CATEGORY_LAYOUT
             return textTypeModel
         }
 
@@ -215,10 +223,10 @@ abstract class GenericModelFactory{
                 title = sectionTitle
                 isHasMore = hasMore
                 this.icon = icon
-                viewType = ITEM_SECTION_TYPE
-                viewLayout = ITEM_SECTION_TYPE
-                itemType = GENERAL_TYPE
-                itemLayout = R.layout.cell_type_general
+                groupType = GROUP_SECTION_TYPE
+                groupLayout = GROUP_SECTION_LAYOUT
+                childType = GENERAL_TYPE
+                childLayout = GENERAL_LAYOUT
             }
         }
 
@@ -232,14 +240,14 @@ abstract class GenericModelFactory{
                 title = sectionTitle
                 isHasMore = hasMore
                 this.icon = icon
-                viewType = ITEM_SECTION_TYPE
-                viewLayout = ITEM_SECTION_TYPE
-                itemType = USER_TYPE
-                itemLayout = R.layout.cell_type_user
+                groupType = GROUP_SECTION_TYPE
+                groupLayout = GROUP_SECTION_LAYOUT
+                childType = USER_TYPE
+                childLayout = USER_LAYOUT
             }
         }
 
-        fun getFavouritePhotographerTypeObject(
+        fun getHorizontalSquarePhotosTypeObject(
             title: String,
             desc: String,
             photosList: List<UnsplashPhotos>
@@ -248,9 +256,9 @@ abstract class GenericModelFactory{
             favouriteModel.title = title
             favouriteModel.desc = desc
             favouriteModel.isHasMore = false
-            favouriteModel.itemType = FAV_PHOTOGRAPHER_PHOTOS_TYPE
-            favouriteModel.viewType = FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE
-            favouriteModel.itemLayout = R.layout.cell_type_fav_photograher_photo
+            favouriteModel.groupType = GROUP_CATEGORY_TYPE
+            favouriteModel.childType = FAV_PHOTOGRAPHER_PHOTOS_TYPE
+            favouriteModel.childLayout = FAV_PHOTOGRAPHER_PHOTOS_LAYOUT
             favouriteModel.scrollDirection = LinearLayoutManager.VERTICAL
             return favouriteModel
         }

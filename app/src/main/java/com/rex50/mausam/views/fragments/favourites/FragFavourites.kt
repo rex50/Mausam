@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.view.WindowManager
 import android.widget.ImageView
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rex50.mausam.BuildConfig
 import com.rex50.mausam.R
@@ -41,7 +40,7 @@ class FragFavourites : BaseFragment() {
 
     override fun initView() {
 
-        mContext?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        requireActivity().window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         initHeader()
 
@@ -73,7 +72,7 @@ class FragFavourites : BaseFragment() {
     }
 
     private fun initHeader() {
-        gradientLine?.background = GradientHelper.getInstance(mContext)?.getRandomLeftRightGradient()
+        gradientLine?.background = GradientHelper.getInstance(requireContext())?.getRandomLeftRightGradient()
         tvPageTitle?.setText(R.string.favourites_title)
         tvPageDesc?.setText(R.string.favourites_desc)
     }
@@ -98,7 +97,7 @@ class FragFavourites : BaseFragment() {
                     adaptFav?.updateData(data)
                     imageViewer?.let {
                         (data.getModel(Constants.AvailableLayouts.DOWNLOADED_PHOTOS)
-                                as GeneralTypeModel?)?.photosList?.toArrayList()?.let { list ->
+                                as GeneralTypeModel?)?.photosList?.let { list ->
                             if(list.isEmpty())
                                 it.dismiss()
                             else

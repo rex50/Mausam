@@ -36,19 +36,36 @@ class Constants {
     object RecyclerItemTypes {
         const val AD_TYPE = 10010
 
-        const val ITEM_CATEGORY_TYPE = R.layout.item_category
-        const val ITEM_SECTION_TYPE = R.layout.item_section
+        const val GROUP_CATEGORY_TYPE = 10001
+        const val GROUP_SECTION_TYPE = 10002
 
-        const val FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE = R.layout.item_category + 1
+        const val FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_TYPE = 10003
+        const val GENERAL_TYPE = 10004
+        const val FAV_PHOTOGRAPHER_PHOTOS_TYPE = 10005
+        const val COLOR_TYPE = 10006
+        const val CATEGORY_TYPE = 10007
+        const val USER_TYPE = 10008
+        const val COLLECTION_TYPE = 10009
+        const val COLLECTION_LIST_TYPE = 10010
+        const val TAG_TYPE = 10011
         const val END_IMAGE = 10012
-        const val GENERAL_TYPE = R.layout.cell_type_general
-        const val FAV_PHOTOGRAPHER_PHOTOS_TYPE = R.layout.cell_type_fav_photograher_photo
-        const val COLOR_TYPE = R.layout.cell_type_color
-        const val CATEGORY_TYPE = R.layout.cell_type_category
-        const val USER_TYPE = R.layout.cell_type_user
-        const val COLLECTION_TYPE = R.layout.cell_type_collection
-        const val COLLECTION_LIST_TYPE = R.layout.cell_type_collection_list
-        const val TAG_TYPE = R.layout.cell_type_tag
+    }
+
+    object RecyclerItemLayouts {
+
+        const val GROUP_CATEGORY_LAYOUT = R.layout.item_category
+        const val GROUP_SECTION_LAYOUT = R.layout.item_section
+
+        const val FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_LAYOUT = R.layout.item_category
+        const val GENERAL_LAYOUT = R.layout.cell_type_general
+        const val FAV_PHOTOGRAPHER_PHOTOS_LAYOUT = R.layout.cell_type_fav_photograher_photo
+        const val COLOR_LAYOUT = R.layout.cell_type_color
+        const val CATEGORY_LAYOUT = R.layout.cell_type_category
+        const val USER_LAYOUT = R.layout.cell_type_user
+        const val COLLECTION_LAYOUT = R.layout.cell_type_collection
+        const val COLLECTION_LIST_LAYOUT = R.layout.cell_type_collection_list
+        const val TAG_LAYOUT = R.layout.cell_type_tag
+
     }
 
     object Providers {
@@ -77,8 +94,7 @@ class Constants {
         const val VALUE_DIVIDER = "~Mausam~"
 
         var userFavConstants = arrayListOf(
-            "Cat",
-            "Dog",
+            "Pet",
             "Car",
             "Cartoon",
             "Anime",
@@ -99,6 +115,10 @@ class Constants {
         const val UNSPLASH_USERNAME = "unsplash_username"
         const val COLLECTION_ID = "collection_id"
         const val DOWNLOADING_PHOTO_URL = "downloadingPhotoUrl"
+    }
+
+    object Network {
+        const val NO_INTERNET = "noInternet"
     }
 
     object IntentConstants {

@@ -8,92 +8,66 @@ import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.storage.database.MausamRoomDatabase
 import com.rex50.mausam.utils.Constants
 import com.rex50.mausam.utils.toArrayList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
+import java.io.File
 
-class KeyValuesRepository() {
-
-    private lateinit var context: Context
-
-    constructor(context: Context) : this() {
-        this.context = context
-    }
+class KeyValuesRepository(private var context: Context) {
 
     suspend fun getDownloadedPhotos(): LiveData<ArrayList<UnsplashPhotos>>? = withContext(Dispatchers.IO) {
-        return@withContext searchStartingWith(context, Constants.Image.DOWNLOADED_IMAGE)?.map { list ->
-            parseDownloadedPhotos(list.toArrayList())
+
+        val scope = CoroutineScope(Dispatchers.IO)
+
+        return@withContext searchStartingWith(Constants.Image.DOWNLOADED_IMAGE)?.map { list ->
+            KeyValueDataMapper.mapJsonListToUnsplashPhotosList(list).filter {
+                File(it.relativePath).exists().also { exists ->
+                    if(!exists) {
+                        scope.launch { delete(it.dbId) }
+                    }
+                }
+            }.toArrayList()
         }
     }
 
+    suspend fun checkValidityAndGetValue(key: String?, validityInHours: Int = 4): String? = withContext(Dispatchers.IO) {
+        return@withContext run {
+            val value = MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.getValue(key)
+            if(value?.dateCreated?.plusHours(validityInHours)?.isAfterNow == true){
+                value.value
+            } else {
+                delete(key)
+                null
+            }
+        }
+    }
+
+    suspend fun insert(key: String, value: String) = withContext(Dispatchers.IO) {
+        MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.insert(KeyValues(key, value, DateTime.now()))
+    }
+
+    suspend fun delete(key: String?) = withContext(Dispatchers.IO) {
+        MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.delete(key)
+    }
+
+    suspend fun searchStartingWith(searchTerm: String?): LiveData<List<KeyValues>>? = withContext(Dispatchers.IO) {
+        return@withContext MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.searchSimilarTo("$searchTerm%")
+    }
+
+    suspend fun getValue(key: String?): String? = withContext(Dispatchers.IO) {
+        return@withContext MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.getValue(key)?.value
+    }
+
+    suspend fun update(key: String, value: String) = withContext(Dispatchers.IO) {
+        MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.update(KeyValues(key, value, DateTime.now()))
+    }
 
 
     companion object{
 
         const val TAG = "KeyValuesRepository"
 
-        @JvmStatic
-        suspend fun insert(context: Context?, key: String, value: String) = withContext(Dispatchers.IO) {
-            context?.apply {
-                MausamRoomDatabase.getDatabase(this)?.keyValuesDao()?.insert(KeyValues(key, value, DateTime.now()))
-            }
-        }
-
-        @JvmStatic
-        suspend fun update(context: Context?, key: String, value: String) = withContext(Dispatchers.IO) {
-            context?.apply {
-                MausamRoomDatabase.getDatabase(this)?.keyValuesDao()?.update(KeyValues(key, value, DateTime.now()))
-            }
-        }
-
-        @JvmStatic
-        suspend fun getValue(context: Context?, key: String?): String? = withContext(Dispatchers.IO) {
-            return@withContext if(context != null) {
-                MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.getValue(key)?.value
-            }else
-                null
-        }
-
-        @JvmStatic
-        suspend fun checkValidityAndGetValue(context: Context?, key: String?, validityInHours: Int = 4): String? = withContext(Dispatchers.IO) {
-            return@withContext if(context != null) {
-                val value = MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.getValue(key)
-                if(value?.dateCreated?.plusHours(validityInHours)?.isAfterNow == true){
-                    value.value
-                } else {
-                    delete(context, key)
-                    null
-                }
-            }else
-                null
-        }
-
-        @JvmStatic
-        suspend fun delete(context: Context?, key: String?) = withContext(Dispatchers.IO) {
-            context?.apply {
-                MausamRoomDatabase.getDatabase(this)?.keyValuesDao()?.delete(key)
-            }
-        }
-
-        @JvmStatic
-        suspend fun searchStartingWith(context: Context?, searchTerm: String?): LiveData<List<KeyValues>>? = withContext(Dispatchers.IO) {
-            return@withContext if(context != null) {
-                MausamRoomDatabase.getDatabase(context)?.keyValuesDao()?.searchSimilarTo("$searchTerm%")
-            } else
-                null
-        }
-
-        @JvmStatic
-        private fun parseDownloadedPhotos(jsonList: ArrayList<KeyValues>): ArrayList<UnsplashPhotos> {
-            val photosList = arrayListOf<UnsplashPhotos>()
-            jsonList.forEach { keyValue ->
-                try {
-                    UnsplashPhotos.getModelFromJSON(keyValue.value)?.let { photosList.add(it) }
-                } catch (e: Exception) {
-                    Log.e(TAG, "parseDownloadedPhotos: ", e)
-                }
-            }
-            return photosList
-        }
     }
 }

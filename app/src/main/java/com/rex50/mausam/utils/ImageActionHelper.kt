@@ -13,8 +13,10 @@ import android.util.Log
 import androidx.core.net.toUri
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rex50.mausam.R
+import com.rex50.mausam.di.UtilsDependencySetup.inject
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
+import com.rex50.mausam.network.APIManager
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.rex50.mausam.utils.ImageViewerHelper.Companion.getFormattedDesc
@@ -77,8 +79,10 @@ class ImageActionHelper {
             context?.let { ctx ->
                 val dBKey = unsplashPhotos.dbId
 
+                val repo = KeyValuesRepository(ctx)
+
                 CoroutineScope(Dispatchers.Main).launch {
-                    val imageMeta = KeyValuesRepository.getValue(ctx, dBKey)
+                    val imageMeta = repo.getValue(dBKey)
                     if(!imageMeta.isNullOrEmpty()) {
                         //Delete from Storage if data is present
                         if(checkIfFileExistsInStorage(unsplashPhotos.relativePath)) {
@@ -89,7 +93,7 @@ class ImageActionHelper {
                                         delete()
 
                                     //Delete from DB
-                                    KeyValuesRepository.delete(ctx, dBKey)
+                                    repo.delete(dBKey)
 
                                     onResult(true)
 
@@ -100,7 +104,7 @@ class ImageActionHelper {
                             }
                         } else {
                             //Delete from DB
-                            KeyValuesRepository.delete(ctx, dBKey)
+                            repo.delete(dBKey)
                             onResult(true)
                         }
                     } else {
@@ -123,6 +127,8 @@ class ImageActionHelper {
                 var downloadTries = 0
 
                 val dBKey = unsplashPhotos.dbId
+
+                val repo = KeyValuesRepository(ctx)
 
                 fun download(){
 
@@ -150,7 +156,12 @@ class ImageActionHelper {
 
                         val fetch = Fetch.Impl.getInstance(fetchConfiguration)
 
-                        fetch.deleteAll()
+                        fetch.apply {
+                            removeAllWithStatus(Status.DOWNLOADING)
+                            removeAllWithStatus(Status.PAUSED)
+                            removeAllWithStatus(Status.QUEUED)
+                        }
+
 
                         var fetchListener: FetchListener? = null
 
@@ -193,7 +204,8 @@ class ImageActionHelper {
 
                                 //Inform server that image is downloaded
                                 postUrl?.takeIf { it.trim().isNotEmpty() }?.let {
-                                    UnsplashHelper(ctx).trackDownload(it)
+                                    //TODO: remove manual object creation instead get as param
+                                    UnsplashHelper(repo, APIManager.getInstance(ctx)!!, ConnectionChecker(ctx)).trackDownload(it)
                                 }
 
                                 val extras = download.extras
@@ -206,7 +218,7 @@ class ImageActionHelper {
                                     it.relativePath = it.createRelativePath(imgName)
                                     CoroutineScope(Dispatchers.Main).launch {
                                         listener?.response(it, if(imgAddFav) ctx.getString(R.string.added_to_fav) else ctx.getString(R.string.saved_to_downloads))
-                                        KeyValuesRepository.insert(ctx, dBKey, it.json)
+                                        repo.insert(dBKey, it.json)
                                     }
                                 } ?: listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                             }
@@ -245,7 +257,7 @@ class ImageActionHelper {
 
                 CoroutineScope(Dispatchers.IO).launch {
                     //check if data available in DB
-                    val response = KeyValuesRepository.getValue(ctx, dBKey)
+                    val response = repo.getValue(dBKey)
 
                     response?.takeIf { it.isNotEmpty() }?.apply {
 
@@ -256,7 +268,7 @@ class ImageActionHelper {
                         }
 
                         suspend fun reDownload() = with(Dispatchers.IO) {
-                            KeyValuesRepository.delete(context, dBKey)
+                            repo.delete(dBKey)
                             download()
                         }
 
@@ -268,7 +280,7 @@ class ImageActionHelper {
                                     val value = photo.also { image ->
                                         image.isFavorite = true
                                     }
-                                    KeyValuesRepository.update(ctx, dBKey, value.json)
+                                    repo.update(dBKey, value.json)
                                     withContext(Dispatchers.Main) {
                                         listener?.response(value, ctx.getString(R.string.added_to_fav))
                                     }
@@ -279,7 +291,7 @@ class ImageActionHelper {
                                         image.isFavorite = false
                                     }
 
-                                    KeyValuesRepository.update(ctx, dBKey, value.getJSON())
+                                    repo.update(dBKey, value.json)
                                     withContext(Dispatchers.Main) {
                                         listener?.response(value, ctx.getString(R.string.removed_from_fav))
                                     }

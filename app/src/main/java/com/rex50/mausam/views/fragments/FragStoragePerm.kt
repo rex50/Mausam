@@ -38,7 +38,7 @@ class FragStoragePerm : BaseFragment() {
         MausamApplication.getInstance()?.getSharedPrefs()?.let {
             if (!it.isStoragePermanentlyDenied) {
                 // request the storage permission
-                mContext?.apply {
+                requireActivity().apply {
                     when {
                         isStoragePermissionGranted() -> {
                             sStoragePerm?.setChecked(true)
@@ -88,7 +88,7 @@ class FragStoragePerm : BaseFragment() {
                 sStoragePerm?.setChecked(true)
                 listener?.storagePermGranted()
             } else {
-                mContext?.apply {
+                requireActivity().apply {
 
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {

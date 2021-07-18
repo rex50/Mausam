@@ -26,8 +26,6 @@ abstract class BaseFragmentWithListener<Binding, Listener> : BaseFragment(){
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is BaseActivity)
-            mContext = context
 
         val exception = RuntimeException(context.toString()
                 + " must implement OnFragmentInteractionListener")

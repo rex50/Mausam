@@ -3,7 +3,10 @@ package com.rex50.mausam.base_classes
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.rex50.mausam.enums.ContentAnimationState
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
+import com.rex50.mausam.network.Result
+import com.rex50.mausam.utils.Constants
 import com.rex50.mausam.utils.ImageActionHelper
 
 abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app) {
@@ -51,6 +54,22 @@ abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app) {
                 onSuccess?.invoke(imageMeta, msg)
             }
         })
+    }
+
+    protected fun getStateFromFailureResult(result: Result.Failure, isListEmpty: Boolean): ContentAnimationState {
+        return when {
+            result.exception.message.equals(Constants.Network.NO_INTERNET)-> {
+                ContentAnimationState.NO_INTERNET
+            }
+
+            isListEmpty -> {
+                ContentAnimationState.EMPTY
+            }
+
+            else -> {
+                ContentAnimationState.ERROR
+            }
+        }
     }
 
 }

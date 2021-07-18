@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.activities.ActPhotosList"
+    tools:context=".views.activities.photoslist.ActPhotosList"
     android:animateLayoutChanges="true">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -76,12 +76,19 @@
                 android:contentDescription="@string/loading_data" />-->
 
             <include layout="@layout/loading_view"
-                android:id="@+id/ivLoader"
+                android:id="@+id/lvTop"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="50dp"
                 android:visibility="gone"/>
+
+            <include layout="@layout/anim_view"
+                android:id="@+id/animLayout"
+                android:layout_marginTop="@dimen/_80dp"
+                android:layout_below="@+id/etvSearch"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
 
         </androidx.cardview.widget.CardView>
 
@@ -108,14 +115,12 @@
         android:layout_margin="16dp"/>
 
     <include layout="@layout/loading_view"
-        android:id="@+id/lvCenters"
+        android:id="@+id/lvBottom"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="23dp"/>
-
-
 
 </RelativeLayout>
