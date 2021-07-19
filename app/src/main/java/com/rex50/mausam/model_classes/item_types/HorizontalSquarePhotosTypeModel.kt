@@ -11,4 +11,8 @@ class HorizontalSquarePhotosTypeModel(
     override fun <Type> get(pos: Int): Type {
         return photosList[pos] as Type
     }
+
+    override fun getList(): List<Any> {
+        return photosList
+    }
 }

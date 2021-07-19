@@ -4,7 +4,7 @@ import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.model_classes.utils.MoreData
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.utils.Constants
-import java.util.ArrayList
+import java.util.*
 
 class CategoryTypeModel(
     categories: List<CategoryModel>,
@@ -18,6 +18,10 @@ class CategoryTypeModel(
 
     override fun <Type> get(pos: Int): Type {
         return categories[pos] as Type
+    }
+
+    override fun getList(): List<Any> {
+        return categories
     }
 
     companion object {
@@ -52,4 +56,18 @@ class CategoryModel(
         private set
     var categoryImg: String? = categoryImg
         private set
+
+    override fun hashCode(): Int {
+        return Objects.hash(categoryName)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val category = other as CategoryModel
+        return Objects.equals(categoryName, category.categoryName) &&
+                Objects.equals(categoryImg, category.categoryImg)
+    }
+
+
 }

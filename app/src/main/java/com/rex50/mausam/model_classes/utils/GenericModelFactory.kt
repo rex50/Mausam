@@ -102,6 +102,8 @@ abstract class GenericModelFactory{
 
     abstract fun getTotalItems(): Int
 
+    abstract fun getList(): List<Any>
+
     abstract fun <Type> get(pos: Int): Type
 
     companion object {
@@ -110,7 +112,7 @@ abstract class GenericModelFactory{
             desc: String,
             hasMore: Boolean,
             photosList: List<UnsplashPhotos>
-        ): GenericModelFactory {
+        ): GeneralTypeModel {
             val generalTypeModel = GeneralTypeModel(photosList)
             generalTypeModel.title = title
             generalTypeModel.desc = desc
@@ -125,7 +127,7 @@ abstract class GenericModelFactory{
             desc: String,
             hasMore: Boolean,
             usersList: List<User>
-        ): GenericModelFactory {
+        ): UserTypeModel {
             val generalTypeModel = UserTypeModel(usersList)
             generalTypeModel.title = title
             generalTypeModel.desc = desc
@@ -140,7 +142,7 @@ abstract class GenericModelFactory{
             desc: String,
             hasMore: Boolean,
             collectionsList: List<Collections>
-        ): GenericModelFactory {
+        ): CollectionTypeModel {
             val generalTypeModel = CollectionTypeModel(collectionsList)
             generalTypeModel.title = title
             generalTypeModel.desc = desc
@@ -155,14 +157,14 @@ abstract class GenericModelFactory{
             desc: String,
             hasMore: Boolean,
             collectionsList: List<Collections>
-        ): GenericModelFactory {
-            val generalTypeModel = CollectionTypeModel(collectionsList)
-            generalTypeModel.title = title
-            generalTypeModel.desc = desc
-            generalTypeModel.isHasMore = hasMore
-            generalTypeModel.childType = COLLECTION_LIST_TYPE
-            generalTypeModel.childLayout = COLLECTION_LIST_LAYOUT
-            return generalTypeModel
+        ): CollectionTypeModel {
+            val collectionTypeModel = CollectionTypeModel(collectionsList)
+            collectionTypeModel.title = title
+            collectionTypeModel.desc = desc
+            collectionTypeModel.isHasMore = hasMore
+            collectionTypeModel.childType = COLLECTION_LIST_TYPE
+            collectionTypeModel.childLayout = COLLECTION_LIST_LAYOUT
+            return collectionTypeModel
         }
 
         fun getTagTypeObject(
@@ -171,7 +173,7 @@ abstract class GenericModelFactory{
             hasMore: Boolean,
             tagsList: List<Tag>,
             shuffleList: Boolean
-        ): GenericModelFactory {
+        ): TagTypeModel {
             val textTypeModel = TagTypeModel(tagsList, shuffleList)
             textTypeModel.title = title
             textTypeModel.desc = desc
@@ -187,7 +189,7 @@ abstract class GenericModelFactory{
             hasMore: Boolean,
             colorsList: List<ColorModel>,
             shuffleList: Boolean
-        ): GenericModelFactory {
+        ): ColorTypeModel {
             val textTypeModel = ColorTypeModel(colorsList, shuffleList)
             textTypeModel.title = title
             textTypeModel.desc = desc
@@ -203,7 +205,7 @@ abstract class GenericModelFactory{
             hasMore: Boolean,
             categories: List<CategoryModel>,
             shuffleList: Boolean
-        ): GenericModelFactory {
+        ): CategoryTypeModel {
             val textTypeModel = CategoryTypeModel(categories, shuffleList)
             textTypeModel.title = title
             textTypeModel.desc = desc
@@ -218,7 +220,7 @@ abstract class GenericModelFactory{
             @DrawableRes icon: Int,
             hasMore: Boolean,
             photosList: List<UnsplashPhotos>
-        ): GenericModelFactory {
+        ): GeneralTypeModel {
             return GeneralTypeModel(photosList).apply {
                 title = sectionTitle
                 isHasMore = hasMore
@@ -235,7 +237,7 @@ abstract class GenericModelFactory{
             @DrawableRes icon: Int,
             hasMore: Boolean,
             usersList: List<User>
-        ): GenericModelFactory {
+        ): UserTypeModel {
             return UserTypeModel(usersList).apply {
                 title = sectionTitle
                 isHasMore = hasMore

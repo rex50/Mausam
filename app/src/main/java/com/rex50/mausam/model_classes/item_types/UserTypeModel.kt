@@ -11,4 +11,8 @@ class UserTypeModel(
     override fun <Type> get(pos: Int): Type {
         return usersList[pos] as Type
     }
+
+    override fun getList(): List<Any> {
+        return usersList
+    }
 }

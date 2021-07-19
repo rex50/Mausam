@@ -9,6 +9,8 @@ import com.google.gson.annotations.SerializedName;
 import com.rex50.mausam.model_classes.utils.MoreListData;
 import com.rex50.mausam.utils.Constants;
 
+import java.util.Objects;
+
 public class User implements Parcelable {
 
     @SerializedName("id")
@@ -287,5 +289,34 @@ public class User implements Parcelable {
 
     public MoreListData getMoreListData() {
         return new MoreListData(Constants.ListModes.LIST_MODE_USER_PHOTOS, this, null, null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id) &&
+                Objects.equals(updatedAt, user.updatedAt) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(firstName, user.firstName) &&
+                Objects.equals(lastName, user.lastName) &&
+                Objects.equals(twitterUsername, user.twitterUsername) &&
+                Objects.equals(portfolioUrl, user.portfolioUrl) &&
+                Objects.equals(bio, user.bio) &&
+                Objects.equals(location, user.location) &&
+                Objects.equals(links, user.links) &&
+                Objects.equals(profileImage, user.profileImage) &&
+                Objects.equals(instagramUsername, user.instagramUsername) &&
+                Objects.equals(totalCollections, user.totalCollections) &&
+                Objects.equals(totalLikes, user.totalLikes) &&
+                Objects.equals(totalPhotos, user.totalPhotos) &&
+                Objects.equals(acceptedTos, user.acceptedTos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

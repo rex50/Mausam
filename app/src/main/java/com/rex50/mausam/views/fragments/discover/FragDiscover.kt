@@ -189,7 +189,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
                         animatedMessage.hide()
                         delay(300)
                         binding?.recDiscoverContent?.showView()
-                        adaptHome?.updateData(state.data)
+                        adaptHome.updateData(state.data)
                         binding?.lvCenter?.root?.hideView()
                     }
                 }

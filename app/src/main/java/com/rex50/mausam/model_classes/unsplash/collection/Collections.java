@@ -13,6 +13,7 @@ import com.rex50.mausam.utils.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Collections implements Parcelable {
 
@@ -252,5 +253,32 @@ public class Collections implements Parcelable {
     public MoreListData getMoreListData() {
         return new MoreListData(Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS,
                 null, this, null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Collections that = (Collections) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(publishedAt, that.publishedAt) &&
+                Objects.equals(updatedAt, that.updatedAt) &&
+                Objects.equals(curated, that.curated) &&
+                Objects.equals(featured, that.featured) &&
+                Objects.equals(totalPhotos, that.totalPhotos) &&
+                Objects.equals(_private, that._private) &&
+                Objects.equals(shareKey, that.shareKey) &&
+                Objects.equals(tags, that.tags) &&
+                Objects.equals(links, that.links) &&
+                Objects.equals(user, that.user) &&
+                Objects.equals(coverPhoto, that.coverPhoto) &&
+                Objects.equals(previewPhotos, that.previewPhotos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

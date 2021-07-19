@@ -15,6 +15,10 @@ class GeneralTypeModel(
         return photosList[pos] as Type
     }
 
+    override fun getList(): List<Any> {
+        return photosList
+    }
+
     fun getMoreListData() = MoreListData(
         Constants.ListModes.LIST_MODE_POPULAR_PHOTOS,
         generalInfo = MoreData(

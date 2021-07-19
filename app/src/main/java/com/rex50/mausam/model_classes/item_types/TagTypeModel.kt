@@ -15,4 +15,8 @@ class TagTypeModel(
     override fun <Type> get(pos: Int): Type {
         return tagsList[pos] as Type
     }
+
+    override fun getList(): List<Any> {
+        return tagsList
+    }
 }

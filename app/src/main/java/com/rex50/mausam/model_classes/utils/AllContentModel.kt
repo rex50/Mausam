@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AllContentModel {
-    private val models: ArrayList<GenericModelFactory?> by lazy { arrayListOf() }
+    private val models: ArrayList<GenericModelFactory> by lazy { arrayListOf() }
 
     private var sequenceOfLayout: List<String>
     private val types: MutableList<String> by lazy { mutableListOf() }
@@ -132,7 +132,7 @@ class AllContentModel {
         }
     }
 
-    fun getModel(pos: Int): GenericModelFactory? {
+    fun getModel(pos: Int): GenericModelFactory {
         return models[pos]
     }
 

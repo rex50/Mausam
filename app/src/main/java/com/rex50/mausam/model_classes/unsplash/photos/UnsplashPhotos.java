@@ -15,6 +15,7 @@ import com.rex50.mausam.utils.Constants;
 import com.rex50.mausam.MausamApplication;
 
 import java.util.List;
+import java.util.Objects;
 
 public class UnsplashPhotos implements Parcelable {
 
@@ -351,4 +352,34 @@ public class UnsplashPhotos implements Parcelable {
         return MausamApplication.getAppFolder() + filename + "_" + id + ".jpg";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnsplashPhotos that = (UnsplashPhotos) o;
+        return isFavorite == that.isFavorite &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(createdAt, that.createdAt) &&
+                Objects.equals(updatedAt, that.updatedAt) &&
+                Objects.equals(promotedAt, that.promotedAt) &&
+                Objects.equals(width, that.width) &&
+                Objects.equals(height, that.height) &&
+                Objects.equals(color, that.color) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(altDescription, that.altDescription) &&
+                Objects.equals(urls, that.urls) &&
+                Objects.equals(links, that.links) &&
+                Objects.equals(categories, that.categories) &&
+                Objects.equals(likes, that.likes) &&
+                Objects.equals(likedByUser, that.likedByUser) &&
+                Objects.equals(currentUserCollections, that.currentUserCollections) &&
+                Objects.equals(user, that.user) &&
+                Objects.equals(sponsorship, that.sponsorship) &&
+                Objects.equals(relativePath, that.relativePath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

@@ -3,6 +3,7 @@ package com.rex50.mausam.views.adapters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.rex50.mausam.R
 import com.rex50.mausam.interfaces.OnChildItemClickListener
@@ -12,6 +13,7 @@ import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.RecyclerItemTypes
 import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.utils.Constants.RecyclerItemLayouts
+import com.rex50.mausam.views.adapters.diffUtils.AdaptContentDiffUtil
 import com.rex50.mausam.views.adapters.holders.*
 
 //TODO: remove context from here and send required objects only instead.
@@ -20,6 +22,9 @@ class AdaptContent(context: Context?, private var model: GenericModelFactory?) :
     private var childClickListener: OnChildItemClickListener? = null
     private var gradientHelper = GradientHelper.getInstance(context)
     private val isDataSaverMode = MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false
+
+    //For comparing with new list while updating
+    private val oldList: ArrayList<Any> = arrayListOf()
 
     fun setChildClickListener(childClickListener: OnChildItemClickListener?) {
         this.childClickListener = childClickListener
@@ -144,8 +149,13 @@ class AdaptContent(context: Context?, private var model: GenericModelFactory?) :
     }
 
     fun update(data: GenericModelFactory) {
+        DiffUtil.calculateDiff(AdaptContentDiffUtil(
+            oldList,
+            data.getList()
+        )).dispatchUpdatesTo(this@AdaptContent)
         model = data
-        notifyDataSetChanged()
+        oldList.clear()
+        oldList.addAll(data.getList())
     }
 
 }

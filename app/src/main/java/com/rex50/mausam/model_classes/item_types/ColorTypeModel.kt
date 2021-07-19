@@ -4,7 +4,7 @@ import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.model_classes.utils.MoreData
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.utils.Constants
-import java.util.ArrayList
+import java.util.*
 
 class ColorTypeModel(
     colorsList: List<ColorModel>,
@@ -17,6 +17,10 @@ class ColorTypeModel(
 
     override fun <Type> get(pos: Int): Type {
         return colorsList[pos] as Type
+    }
+
+    override fun getList(): List<Any> {
+        return colorsList
     }
 
     fun getAtPos(pos: Int): Any? {
@@ -57,4 +61,16 @@ class ColorModel(
             Constants.Providers.POWERED_BY_UNSPLASH
         )
     )
+
+    override fun hashCode(): Int {
+        return Objects.hash(colorName)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val color = other as ColorModel
+        return Objects.equals(colorName, color.colorName) &&
+                Objects.equals(colorCode, color.colorCode)
+    }
 }

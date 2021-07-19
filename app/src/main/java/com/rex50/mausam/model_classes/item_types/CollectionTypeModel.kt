@@ -15,6 +15,10 @@ class CollectionTypeModel(
         return collections[pos] as Type
     }
 
+    override fun getList(): List<Any> {
+        return collections
+    }
+
     fun getMoreListData() = MoreListData(
         Constants.ListModes.LIST_MODE_COLLECTIONS,
         generalInfo = MoreData(

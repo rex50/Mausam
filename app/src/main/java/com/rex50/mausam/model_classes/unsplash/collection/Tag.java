@@ -12,6 +12,8 @@ import com.rex50.mausam.utils.Constants;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class Tag implements Parcelable {
 
     @SerializedName("type")
@@ -82,5 +84,20 @@ public class Tag implements Parcelable {
     public MoreListData getMoreListData() {
         return new MoreListData(Constants.ListModes.LIST_MODE_GENERAL_PHOTOS, null, null,
                 new MoreData(title, Constants.Providers.POWERED_BY_UNSPLASH));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tag tag = (Tag) o;
+        return Objects.equals(type, tag.type) &&
+                Objects.equals(title, tag.title) &&
+                Objects.equals(source, tag.source);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title);
     }
 }
