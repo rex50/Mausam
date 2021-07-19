@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.activities.photoslist.ActPhotosList"
+    tools:context=".views.activities.photos.ActPhotosList"
     android:animateLayoutChanges="true">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -95,14 +95,15 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabSearchedPhotosBack"
+        android:id="@+id/fabScrollToTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_left"
         app:backgroundTint="@color/white"
         android:tint= "@color/colorAccent"
         android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"/>
+        android:layout_margin="16dp"
+        android:contentDescription="@string/action_scroll_to_top_of_the_page" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabBack"
@@ -112,7 +113,8 @@
         app:backgroundTint="@color/white"
         android:tint= "@color/colorAccent"
         android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"/>
+        android:layout_margin="16dp"
+        android:contentDescription="@string/action_go_back"/>
 
     <include layout="@layout/loading_view"
         android:id="@+id/lvBottom"

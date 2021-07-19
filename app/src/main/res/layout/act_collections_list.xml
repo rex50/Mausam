@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.activities.photoslist.ActPhotosList"
+    tools:context=".views.activities.photos.ActPhotosList"
     android:animateLayoutChanges="true">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -55,12 +55,19 @@
                 android:layout_below="@+id/header" />
 
             <include layout="@layout/loading_view"
-                android:id="@+id/ivLoader"
+                android:id="@+id/lvTop"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="50dp"
                 android:visibility="gone"/>
+
+            <include layout="@layout/anim_view"
+                android:id="@+id/animLayout"
+                android:layout_marginTop="@dimen/_80dp"
+                android:layout_below="@+id/etvSearch"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
 
  <!--           <ImageView
                 android:id="@+id/ivLoader"
@@ -77,7 +84,7 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabSearchedCollectionBack"
+        android:id="@+id/fabScrollToTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_left"
@@ -97,7 +104,7 @@
         android:layout_margin="16dp"/>
 
     <include layout="@layout/loading_view"
-        android:id="@+id/lvCenterss"
+        android:id="@+id/lvBottom"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:visibility="gone"

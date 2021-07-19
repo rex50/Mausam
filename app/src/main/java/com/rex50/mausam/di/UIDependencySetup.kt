@@ -1,7 +1,8 @@
 package com.rex50.mausam.di
 
 import android.content.Context
-import com.rex50.mausam.views.activities.photoslist.ActPhotosListViewModel
+import com.rex50.mausam.views.activities.collections.ActCollectionsListViewModel
+import com.rex50.mausam.views.activities.photos.ActPhotosListViewModel
 import com.rex50.mausam.views.fragments.discover.FragDiscoverViewModel
 import com.rex50.mausam.views.fragments.favourites.FragFavouritesViewModel
 import com.rex50.mausam.views.fragments.home.FragHomeViewModel
@@ -18,6 +19,7 @@ object UIDependencySetup {
         viewModel { FragHomeViewModel(get(), get(), get()) }
         viewModel { FragDiscoverViewModel(get(), get(), get()) }
         viewModel { ActPhotosListViewModel(get(), get()) }
+        viewModel { ActCollectionsListViewModel(get(), get()) }
     }
 
     @JvmStatic

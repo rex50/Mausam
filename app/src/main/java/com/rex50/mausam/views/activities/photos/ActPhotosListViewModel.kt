@@ -1,4 +1,4 @@
-package com.rex50.mausam.views.activities.photoslist
+package com.rex50.mausam.views.activities.photos
 
 import android.app.Application
 import androidx.lifecycle.LiveData
@@ -54,7 +54,11 @@ class ActPhotosListViewModel(
             pageDesc = value.getDesc()
 
             val photos = mutableLivePhotosData.value?.photosList ?: arrayListOf()
-            mutableLivePhotosData.postValue(getEmptyData(pageTitle, pageDesc, photos))
+            mutableLivePhotosData.postValue(getEmptyData(
+                pageTitle,
+                pageDesc,
+                photos
+            ))
 
             field = value
         }
@@ -129,7 +133,7 @@ class ActPhotosListViewModel(
 
         when (result) {
             is Result.Success -> {
-                if(page == FragHomeViewModel.INITIAL_PAGE) {
+                if(page == INITIAL_PAGE) {
                     list.clear()
                 }
                 list.addAll(result.data)
@@ -170,11 +174,11 @@ class ActPhotosListViewModel(
 
 
     fun getPageTitle(): String {
-        return listData.getTitle(getApplication())
+        return pageTitle
     }
 
     fun getPageDesc(): String {
-        return listData.getDesc()
+        return pageDesc
     }
 
     fun getPhotographerInfo(): User? {

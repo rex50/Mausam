@@ -127,6 +127,7 @@
     <string name="no_internet_error_msg">Please connect to internet to get latest weather details.</string>
     <string name="search_city_error">%s place weather information not found, you can skip this by the way.</string>
     <string name="error_failed_getting_photos">Oops! failed while getting new photos. Please try again later.</string>
+    <string name="error_failed_getting_collections">Oops! failed while getting new collections. Please try again later.</string>
     <string name="failed_getting_collection_error_msg">Sorry, failed while getting collections. Please try again.</string>
     <string name="failed_to_download_no_internet">Error while saving image. Please check your internet.</string>
     <string name="failed_to_download_no_space">Error while saving image. Please check available storage.</string>
@@ -147,6 +148,7 @@
     <string name="msg_empty_discover">Oops! no new photos found.\nTry searching your favourite %s.</string>
     <string name="msg_empty_photos">Oops! no photos found.\nGo back to Discover and try searching your favourite %s.</string>
     <string name="action_go_back">Go back</string>
+    <string name="action_scroll_to_top_of_the_page">Scroll to top of the page</string>
 
 
     <!--Colors for gradient array-->

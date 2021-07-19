@@ -1,4 +1,4 @@
-package com.rex50.mausam.views.activities.photoslist
+package com.rex50.mausam.views.activities.photos
 
 import android.animation.LayoutTransition
 import android.content.Intent
@@ -19,8 +19,7 @@ import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.utils.*
-import com.rex50.mausam.utils.GradientHelper
-import com.rex50.mausam.views.activities.ActCollectionsList
+import com.rex50.mausam.views.activities.collections.ActCollectionsList
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
@@ -38,7 +37,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
 
     private var scrollToTopActive = false
 
-    private val adapter: AdaptContent by lazy {
+    private val adaptPhotos: AdaptContent by lazy {
         AdaptContent(this, ActPhotosListViewModel.getEmptyData())
     }
 
@@ -112,7 +111,12 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
 
     private fun initFABs() {
         binding?.fabBack?.setOnClickListener{ onBackPressed() }
-        binding?.fabSearchedPhotosBack?.setOnClickListener{ if(scrollToTopActive) scrollToTop() else onBackPressed() }
+        binding?.fabScrollToTop?.setOnClickListener{ if(scrollToTopActive) scrollToTop() else onBackPressed() }
+
+        //For Animating scroll-to-top button movement
+        val layoutTrans = binding?.rlPhotos?.layoutTransition
+        layoutTrans?.setDuration(700)
+        layoutTrans?.enableTransitionType(LayoutTransition.CHANGING)
     }
 
     private fun initHeader() {
@@ -221,21 +225,16 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
 
         binding?.recSearchedPhotos?.layoutManager = layoutManager
 
-        //For proper spacing around the items
-        if (binding?.recSearchedPhotos?.itemDecorationCount ?: 0 > 0)
-            binding?.recSearchedPhotos?.addItemDecoration(ItemOffsetDecoration(this, R.dimen.recycler_item_offset_grid))
-
-        //For Item animation while scrolling
-        binding?.recSearchedPhotos?.adapter = ScaleInAnimationAdapter(adapter).apply {
-            setFirstOnly(false)
-        }
-
-        //For Animating to-top button movement
-        val layoutTrans = binding?.rlPhotos?.layoutTransition
-        layoutTrans?.setDuration(700)
-        layoutTrans?.enableTransitionType(LayoutTransition.CHANGING)
-
         binding?.recSearchedPhotos?.apply {
+
+            //For proper spacing around the items
+            if (itemDecorationCount == 0)
+                binding?.recSearchedPhotos?.addItemDecoration(ItemOffsetDecoration(this@ActPhotosList, R.dimen.recycler_item_offset_grid))
+
+            //For Item animation while scrolling
+            adapter = ScaleInAnimationAdapter(adaptPhotos).apply {
+                setFirstOnly(false)
+            }
 
             clearOnScrollListeners()
 
@@ -249,12 +248,12 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
                 it.setVisibleThreshold(4)
             })
 
-            //For Showing to-top button
+            //For Showing scroll-to-top button
             addOnScrollListener(object : RecyclerView.OnScrollListener(){
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
 
-                    binding?.fabSearchedPhotosBack?.apply {
+                    binding?.fabScrollToTop?.apply {
                         if(layoutManager.findFirstVisibleItemPosition() > 0){
                             scrollToTopActive = true
                             toRightAndRotate()
@@ -271,7 +270,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
     }
 
     private fun initClicks(){
-        adapter.setChildClickListener(object : OnChildItemClickListener {
+        adaptPhotos.setChildClickListener(object : OnChildItemClickListener {
             override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
 
                 object: GenericModelCastHelper(o){
@@ -317,7 +316,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
 
     private fun setupPhotosObserver() {
         viewModel.photosData.observe(this, {
-            adapter.update(it)
+            adaptPhotos.update(it)
             imageViewer?.updateImages(it.photosList)
         })
     }
@@ -469,13 +468,13 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
 
     private fun startMorePhotosActivity(data: MoreListData) {
         startActivity(
-                Intent(
-                        this,
-                        ActPhotosList::class.java
-                ).putExtra(
-                        Constants.IntentConstants.LIST_DATA,
-                        data
-                )
+            Intent(
+                this,
+                ActPhotosList::class.java
+            ).putExtra(
+                Constants.IntentConstants.LIST_DATA,
+                data
+            )
         )
     }
 
