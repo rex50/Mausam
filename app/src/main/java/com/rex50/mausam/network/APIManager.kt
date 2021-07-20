@@ -23,7 +23,6 @@ import org.json.JSONObject
 import java.lang.Exception
 import java.util.*
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.resumeWithException
 
 class APIManager private constructor(private val ctx: Context?) {
     var properties: Properties? = null
@@ -166,8 +165,12 @@ class APIManager private constructor(private val ctx: Context?) {
         @UnsplashApiService service: Int,
         urlExtras: HashMap<String, String>
     ): Result<String> {
-        return suspendCancellableCoroutine { continuation ->
-            makeUnsplashRequest(service, continuation, urlExtras)
+        return try {
+            suspendCancellableCoroutine { continuation ->
+                makeUnsplashRequest(service, continuation, urlExtras)
+            }
+        } catch (e: Exception) {
+            Result.Failure(e)
         }
     }
 
@@ -191,18 +194,21 @@ class APIManager private constructor(private val ctx: Context?) {
                 if (BuildConfig.DEBUG) Log.d("Volley", "makeUnsplashRequest: $response")
                 if (!response.contains("\"errors\":")) {
                     continuation.resumeWith(kotlin.Result.success(Result.Success(response)))
+
+                    //For testing error response
+                    //continuation.resumeWith(kotlin.Result.failure(Exception("[]")))
                 } else {
                     try {
                         val obj = JSONObject(response)
-                        continuation.resumeWithException(Exception(obj.optJSONArray("errors")?.toString() ?: "[]"))
+                        continuation.resumeWith(kotlin.Result.failure(Exception(obj.optJSONArray("errors")?.toString() ?: "[]")))
                     } catch (e: JSONException) {
-                        continuation.resumeWithException(e)
+                        continuation.resumeWith(kotlin.Result.failure(e))
                     }
                 }
             },
             Response.ErrorListener { error: VolleyError ->
                 if (BuildConfig.DEBUG) Log.e("Volley", "makeUnsplashRequest: $error")
-                continuation.resumeWithException(error)
+                continuation.resumeWith(kotlin.Result.failure(error))
             }
         ) {
             override fun getHeaders(): MutableMap<String, String> {
