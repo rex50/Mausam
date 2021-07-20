@@ -44,7 +44,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
     }
 
     private val bsDownload: BSDownload? by lazy {
-        BSDownload().also { it.isCancelable = false }
+        BSDownload(childFragmentManager).also { it.isCancelable = false }
     }
 
     private val animatedMessage: AnimatedMessage<ContentAnimationState> by lazy {
@@ -214,7 +214,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
         viewModel.getLiveDownloadStatus().observe(requireActivity(), { state ->
             when(state) {
                 is DownloadStatus.Started -> {
-                    bsDownload?.downloadStarted(childFragmentManager)
+                    bsDownload?.downloadStarted()
                 }
 
                 is DownloadStatus.Downloading -> {

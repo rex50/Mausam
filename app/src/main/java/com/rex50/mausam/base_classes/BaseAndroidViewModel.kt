@@ -6,10 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import com.rex50.mausam.enums.ContentAnimationState
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.network.Result
+import com.rex50.mausam.utils.ConnectionChecker
 import com.rex50.mausam.utils.Constants
 import com.rex50.mausam.utils.ImageActionHelper
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
-abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app) {
+abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app), KoinComponent {
+
+    protected val connectionChecker by inject<ConnectionChecker>()
 
     protected val imageDownloadStatus: MutableLiveData<ImageActionHelper.DownloadStatus> by lazy {
         MutableLiveData<ImageActionHelper.DownloadStatus>()
@@ -20,10 +25,14 @@ abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app) {
     }
 
     fun downloadImage(photoInfo: UnsplashPhotos, onDownloadSuccess: ((UnsplashPhotos?, String) -> Unit)? = null) {
-        saveImage(photoInfo, false, onDownloadSuccess)
+        if(connectionChecker.isNetworkConnected()) {
+            saveImage(photoInfo, false, onDownloadSuccess)
+        } else {
+            imageDownloadStatus.postValue(ImageActionHelper.DownloadStatus.Error(Constants.Network.NO_INTERNET))
+        }
     }
 
-    private fun saveImage(
+    protected fun saveImage(
         photoInfo: UnsplashPhotos,
         forFav: Boolean,
         onSuccess: ((UnsplashPhotos?, String) -> Unit)?
@@ -41,7 +50,7 @@ abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app) {
                 )
             }
 
-            override fun onDownloadProgress(progress: Int) {
+            override fun onDownloadProgress(progress: String) {
                 imageDownloadStatus.postValue(
                     ImageActionHelper.DownloadStatus.Downloading(progress)
                 )

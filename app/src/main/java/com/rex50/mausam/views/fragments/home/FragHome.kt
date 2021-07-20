@@ -22,7 +22,6 @@ import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
-import com.rex50.mausam.utils.ImageViewerHelper.*
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
@@ -30,6 +29,7 @@ import com.thekhaeng.pushdownanim.PushDownAnim
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.lang.RuntimeException
 
@@ -42,7 +42,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
     }
 
     private val bsDownload: BSDownload? by lazy {
-        BSDownload().also { it.isCancelable = false }
+        BSDownload(childFragmentManager).also { it.isCancelable = false }
     }
 
     private var imageViewer: ImageViewerHelper? = null
@@ -53,6 +53,8 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
             viewModel.animations
         )
     }
+
+    private val connectionChecker: ConnectionChecker by inject()
 
     override fun bindView(inflater: LayoutInflater, container: ViewGroup?): FragHomeBinding {
         return FragHomeBinding.inflate(inflater, container, false)
@@ -190,7 +192,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
 
                 ContentAnimationState.ERROR -> {
                     showErrorMsg(
-                        if(viewModel.connectionChecker.isNetworkConnected())
+                        if(connectionChecker.isNetworkConnected())
                             R.string.error_failed_getting_photos
                         else
                             R.string.error_no_internet
@@ -216,7 +218,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
         viewModel.getLiveDownloadStatus().observe(requireActivity(), { state ->
             when(state) {
                 is ImageActionHelper.DownloadStatus.Started -> {
-                    bsDownload?.downloadStarted(childFragmentManager)
+                    bsDownload?.downloadStarted()
                 }
 
                 is ImageActionHelper.DownloadStatus.Downloading -> {
@@ -228,7 +230,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
                 }
 
                 is ImageActionHelper.DownloadStatus.Error ->  {
-                    bsDownload?.downloadError()
+                    bsDownload?.downloadError(state.msg)
                 }
             }
         })
@@ -289,7 +291,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
     private fun showErrorMsg(@StringRes msgId: Int){
         listener?.getMaterialSnackBar()?.showActionSnackBar(
             msgId,
-            R.string.ok_caps,
+            R.string.retry,
             MaterialSnackBar.LENGTH_INDEFINITE,
             object : MaterialSnackBar.SnackBarListener{
                 override fun onActionPressed() {

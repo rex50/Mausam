@@ -8,6 +8,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.MaterialBottomSheet
+import com.rex50.mausam.utils.Constants.Network.NO_INTERNET
+import com.rex50.mausam.utils.showToast
 import com.rex50.mausam.utils.showView
 import kotlinx.android.synthetic.main.bs_download.*
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class BSDownload : MaterialBottomSheet() {
+class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet() {
 
     companion object{
         const val TAG = "BottomSheetDownload"
@@ -52,24 +54,40 @@ class BSDownload : MaterialBottomSheet() {
         }
     }
 
-    fun downloadStarted(childFragmentManager: FragmentManager) {
-        if(isAdded) {
-            dismissAllowingStateLoss()
+    fun downloadStarted() {
+        if(!isAdded) {
+            isCancelable = false
+            showNow(fragManager, TAG)
         }
-        isCancelable = false
-        show(childFragmentManager, TAG)
     }
 
-    fun downloadError(){
-        isDownloading = false
-        isCancelable = true
-        animBottomSheet?.apply {
-            pauseAnimation()
-            setAnimation(R.raw.l_anim_error_lochness_monster)
-            playAnimation()
+    fun downloadError(msg: String = ""){
+
+        downloadStarted()
+
+        val finalMsg = when {
+            msg == NO_INTERNET -> {
+                getString(R.string.error_no_internet)
+            }
+            msg.isNotEmpty() -> {
+                msg
+            }
+            else -> getString(R.string.something_wrong_msg)
         }
-        tvBottomSheet?.text = getString(R.string.failed_to_download_no_internet)
-        btnDismiss?.showView()
+
+        if(isAdded) {
+            isDownloading = false
+            isCancelable = true
+            animBottomSheet?.apply {
+                pauseAnimation()
+                setAnimation(R.raw.l_anim_error_lochness_monster)
+                playAnimation()
+            }
+            tvBottomSheet?.text = finalMsg
+            btnDismiss?.showView()
+        } else {
+            showToast(finalMsg)
+        }
     }
 
     fun downloaded(){
@@ -82,9 +100,9 @@ class BSDownload : MaterialBottomSheet() {
         }
     }
 
-    fun onProgress(progress: Int) {
+    fun onProgress(progress: String) {
         try {
-            "$progress%\n${getString(R.string.downloading)}".let { tvBottomSheet?.text = it }
+            tvBottomSheet?.text = progress
         } catch (e: Exception) {
             Log.e(TAG, "onProgress: $e")
             FirebaseCrashlytics.getInstance().recordException(e)

@@ -16,8 +16,8 @@ object UIDependencySetup {
 
     private val uiModule = module {
         viewModel { FragFavouritesViewModel(get(), get()) }
-        viewModel { FragHomeViewModel(get(), get(), get()) }
-        viewModel { FragDiscoverViewModel(get(), get(), get()) }
+        viewModel { FragHomeViewModel(get(), get()) }
+        viewModel { FragDiscoverViewModel(get(), get()) }
         viewModel { ActPhotosListViewModel(get(), get()) }
         viewModel { ActCollectionsListViewModel(get(), get()) }
     }

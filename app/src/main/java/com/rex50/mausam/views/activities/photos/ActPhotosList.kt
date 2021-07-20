@@ -42,7 +42,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
     }
 
     private val bsDownload: BSDownload? by lazy {
-        BSDownload().also { it.isCancelable = false }
+        BSDownload(supportFragmentManager).also { it.isCancelable = false }
     }
 
     private var imageViewer: ImageViewerHelper? = null
@@ -395,7 +395,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
         viewModel.getLiveDownloadStatus().observe(this, { state ->
             when(state) {
                 is ImageActionHelper.DownloadStatus.Started -> {
-                    bsDownload?.downloadStarted(supportFragmentManager)
+                    bsDownload?.downloadStarted()
                 }
 
                 is ImageActionHelper.DownloadStatus.Downloading -> {

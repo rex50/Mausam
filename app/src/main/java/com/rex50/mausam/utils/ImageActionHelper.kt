@@ -13,7 +13,6 @@ import android.util.Log
 import androidx.core.net.toUri
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rex50.mausam.R
-import com.rex50.mausam.di.UtilsDependencySetup.inject
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.network.APIManager
@@ -134,19 +133,19 @@ class ImageActionHelper {
 
                     downloadTries++
 
-                    fun prepareFile(): String?{
-                        val file: File? = File(unsplashPhotos.createRelativePath(name))
-                        file?.apply {
-                            file.parentFile?.mkdirs()
-                            if(!file.exists())
-                                file.createNewFile()
-                        }
-                        return file?.absolutePath
-                    }
+                    listener?.onDownloadStarted()
 
-                    if(!ctx.isStoragePermissionGranted()) {
-                        listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
-                        return
+                    fun prepareFile(): String?{
+                        return if(ctx.isStoragePermissionGranted()) {
+                            val file = File(unsplashPhotos.createRelativePath(name)) as File?
+                            file?.apply {
+                                file.parentFile?.mkdirs()
+                                if (!file.exists())
+                                    file.createNewFile()
+                            }
+                            file?.absolutePath
+                        } else
+                            null
                     }
 
                     prepareFile()?.let { localImagePath ->
@@ -155,6 +154,8 @@ class ImageActionHelper {
                                 .build()
 
                         val fetch = Fetch.Impl.getInstance(fetchConfiguration)
+
+                        val connectionChecker = ConnectionChecker(ctx)
 
                         fetch.apply {
                             removeAllWithStatus(Status.DOWNLOADING)
@@ -195,6 +196,8 @@ class ImageActionHelper {
                             })
                         }
 
+                        val downloadingTxt = ctx.getString(R.string.downloading)
+
                         fetchListener = object : AbstractFetchListener() {
 
                             override fun onCompleted(download: Download) {
@@ -205,7 +208,7 @@ class ImageActionHelper {
                                 //Inform server that image is downloaded
                                 postUrl?.takeIf { it.trim().isNotEmpty() }?.let {
                                     //TODO: remove manual object creation instead get as param
-                                    UnsplashHelper(repo, APIManager.getInstance(ctx)!!, ConnectionChecker(ctx)).trackDownload(it)
+                                    UnsplashHelper(repo, APIManager.getInstance(ctx)!!, connectionChecker).trackDownload(it)
                                 }
 
                                 val extras = download.extras
@@ -225,15 +228,14 @@ class ImageActionHelper {
 
                             override fun onProgress(download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long) {
                                 Log.v("ImageHelper", "onProgress: " + download.progress)
-                                listener?.onDownloadProgress(download.progress)
+                                listener?.onDownloadProgress("${download.progress}%\n$downloadingTxt")
                             }
 
                             override fun onError(download: Download, error: Error, throwable: Throwable?) {
                                 //Handle download error
                                 if(downloadTries <= 3) {
-                                    //TODO: show some message that user can relate
-                                    // like "Retrying", "Taking time" or similar messages as download is failing
                                     requestImage(request)
+                                    listener?.onDownloadProgress("${download.progress}%\nProblem while downloading. Please wait retrying...")
                                 } else {
                                     Log.e("ImageHelper", "onError: ", throwable)
                                     if (throwable != null) {
@@ -245,9 +247,13 @@ class ImageActionHelper {
                             }
                         }
 
-                        fetch.addListener(fetchListener)
+                        if(connectionChecker.isNetworkConnected()) {
 
-                        requestImage(request)
+                            fetch.addListener(fetchListener)
+
+                            requestImage(request)
+
+                        }
 
                     } ?: CoroutineScope(Dispatchers.Main).launch {
                         listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
@@ -445,14 +451,14 @@ class ImageActionHelper {
 
     interface ImageSaveListener{
         fun onDownloadStarted()
-        fun onDownloadProgress(progress: Int) {}
+        fun onDownloadProgress(progress: String) {}
         fun onDownloadFailed(msg: String)
         fun response(imageMeta: UnsplashPhotos?, msg: String)
     }
 
     sealed class DownloadStatus {
         data class Started(val progress: Int): DownloadStatus()
-        data class Downloading(val progress: Int): DownloadStatus()
+        data class Downloading(val progress: String): DownloadStatus()
         data class Success(val downloadedData: UnsplashPhotos?, val msg: String = ""): DownloadStatus()
         data class Error(val msg: String): DownloadStatus()
     }

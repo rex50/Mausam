@@ -13,7 +13,6 @@ import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.network.Result
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.AnimatedMessage.AnimationByState
-import com.rex50.mausam.utils.ConnectionChecker
 import com.rex50.mausam.utils.Constants
 import com.rex50.mausam.utils.Constants.Util.userFavConstants
 import com.rex50.mausam.utils.ImageActionHelper.DownloadStatus
@@ -25,8 +24,7 @@ import org.apache.commons.lang3.StringUtils
 
 class FragDiscoverViewModel(
     application: Application,
-    val unsplashHelper: UnsplashHelper,
-    val connectionChecker: ConnectionChecker
+    val unsplashHelper: UnsplashHelper
 ) : BaseAndroidViewModel(application) {
 
     private val sequenceOfLayouts by lazy {
