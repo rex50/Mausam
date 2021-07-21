@@ -384,7 +384,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
         fun nextBtnClicked()
         fun startMorePhotosActivity(data: MoreListData)
         fun startMoreFeaturedCollections(moreListData: MoreListData)
-        val snackBar: MaterialSnackBar?
+        fun getMaterialSnackBar(): MaterialSnackBar?
     }
 
     companion object {

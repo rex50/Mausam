@@ -224,7 +224,7 @@ class FragFavourites : BaseFragment() {
     interface OnFragmentInteractionListener {
         fun onFragmentInteraction(uri: Uri?)
         val sharedPrefs: MausamSharedPrefs?
-        val snackBar: MaterialSnackBar?
+        fun getMaterialSnackBar(): MaterialSnackBar?
         fun startMorePhotosActivity(data: MoreListData)
         fun navigateToDiscover()
     }
