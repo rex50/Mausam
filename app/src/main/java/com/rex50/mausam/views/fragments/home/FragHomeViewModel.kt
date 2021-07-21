@@ -13,12 +13,12 @@ import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.AnimatedMessage.AnimationByState
 import com.rex50.mausam.utils.Constants.Util.userFavConstants
+import com.rex50.mausam.utils.ImageActionHelper.DownloadStatus
 import kotlinx.coroutines.launch
 
 class FragHomeViewModel(
     application: Application,
     private val unsplashHelper: UnsplashHelper,
-    val connectionChecker: ConnectionChecker
 ) : BaseAndroidViewModel(application) {
 
     private val mutableLiveHomeContent: MutableLiveData<HorizontalSquarePhotosTypeModel> by lazy {
@@ -32,6 +32,8 @@ class FragHomeViewModel(
     }
 
     private var lastPageRequested = INITIAL_PAGE
+
+    private var retryCount = 0
 
     val animations: ArrayList<AnimationByState<ContentAnimationState>> by lazy {
         val context = getApplication<Application>().applicationContext
@@ -59,7 +61,7 @@ class FragHomeViewModel(
 
     val loadingState: LiveData<ContentAnimationState> = mutableContentLoadingState
 
-    fun getLiveDownloadStatus(): LiveData<ImageActionHelper.DownloadStatus> = imageDownloadStatus
+    fun getLiveDownloadStatus(): LiveData<DownloadStatus> = imageDownloadStatus
 
     fun getLatestPhotosOf(page: Int) = viewModelScope.launch {
         lastPageRequested = page
@@ -86,6 +88,8 @@ class FragHomeViewModel(
                 model?.photosList = list
                 mutableLiveHomeContent.postValue(model)
                 mutableContentLoadingState.postValue(ContentAnimationState.SUCCESS)
+
+                retryCount = 0
             }
 
             is Result.Failure -> {
@@ -95,7 +99,14 @@ class FragHomeViewModel(
     }
 
     fun reload() {
-        getLatestPhotosOf(lastPageRequested)
+        if(retryCount < 2) {
+            retryCount++
+            getLatestPhotosOf(lastPageRequested)
+        }
+    }
+
+    fun isListEmpty(): Boolean {
+        return homeContent.value?.photosList?.size ?: 0 == 0
     }
 
     companion object {
