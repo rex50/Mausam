@@ -67,7 +67,7 @@ abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app), Ko
 
     protected fun getStateFromFailureResult(result: Result.Failure, isListEmpty: Boolean): ContentAnimationState {
         return when {
-            result.exception.message.equals(Constants.Network.NO_INTERNET)-> {
+            result.exception.message.equals(Constants.Network.NO_INTERNET) || !connectionChecker.isNetworkConnected() -> {
                 ContentAnimationState.NO_INTERNET
             }
 

@@ -191,17 +191,21 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
                 }
 
                 ContentAnimationState.ERROR -> {
-                    showErrorMsg(
-                        if(connectionChecker.isNetworkConnected())
-                            R.string.error_failed_getting_photos
-                        else
-                            R.string.error_no_internet
-                    )
+                    showErrorMsg(R.string.error_failed_getting_photos)
                 }
 
-                ContentAnimationState.EMPTY, ContentAnimationState.NO_INTERNET  -> {
+                ContentAnimationState.EMPTY -> {
                     binding?.recHomeContent?.hideView()
                     animatedMessage.setAnimationAndShow(state)
+                }
+
+                ContentAnimationState.NO_INTERNET  -> {
+                    if(viewModel.isListEmpty()) {
+                        binding?.recHomeContent?.hideView()
+                        animatedMessage.setAnimationAndShow(state)
+                    } else {
+                        showErrorMsg(R.string.error_no_internet)
+                    }
                 }
             }
         })
