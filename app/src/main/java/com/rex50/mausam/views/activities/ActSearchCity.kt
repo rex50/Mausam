@@ -47,13 +47,15 @@ class ActSearchCity : BaseActivity(), FragDiscover.OnFragmentInteractionListener
 
     //override val sharedPrefs: MausamSharedPrefs? = mausamSharedPrefs
 
-    override val snackBar: MaterialSnackBar? = materialSnackBar
-
     override fun startMorePhotosActivity(data: MoreListData) {
         //Nothing
     }
 
     override fun startMoreFeaturedCollections(moreListData: MoreListData) {
         //Nothing
+    }
+
+    override fun snackBar(): MaterialSnackBar? {
+        return materialSnackBar
     }
 }

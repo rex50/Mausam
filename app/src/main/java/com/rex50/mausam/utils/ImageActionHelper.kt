@@ -133,8 +133,6 @@ class ImageActionHelper {
 
                     downloadTries++
 
-                    listener?.onDownloadStarted()
-
                     fun prepareFile(): String?{
                         return if(ctx.isStoragePermissionGranted()) {
                             val file = File(unsplashPhotos.createRelativePath(name)) as File?
@@ -176,7 +174,7 @@ class ImageActionHelper {
                             imgRequest.enqueueAction = EnqueueAction.REPLACE_EXISTING
                             fetch.enqueue(imgRequest, {
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    listener?.onDownloadStarted()
+                                    listener?.onDownloadStarted(it)
                                 }
                             }, {
                                 Log.e("ImageHelper", "download: ", it.throwable)
@@ -450,7 +448,7 @@ class ImageActionHelper {
     }
 
     interface ImageSaveListener{
-        fun onDownloadStarted()
+        fun onDownloadStarted(request: Request)
         fun onDownloadProgress(progress: String) {}
         fun onDownloadFailed(msg: String)
         fun response(imageMeta: UnsplashPhotos?, msg: String)

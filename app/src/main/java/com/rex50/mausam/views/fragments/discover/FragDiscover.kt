@@ -230,6 +230,14 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
                 }
             }
         })
+
+        bsDownload?.onCancel = {
+            viewModel.cancelDownloadImage({
+                bsDownload?.downloadError(getString(R.string.download_cancelled))
+            }, {
+                bsDownload?.downloadError(getString(R.string.error_failed_cancelling_photo_download))
+            })
+        }
     }
 
     private fun initRecycler() {
@@ -384,7 +392,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
         fun nextBtnClicked()
         fun startMorePhotosActivity(data: MoreListData)
         fun startMoreFeaturedCollections(moreListData: MoreListData)
-        fun getMaterialSnackBar(): MaterialSnackBar?
+        fun snackBar(): MaterialSnackBar?
     }
 
     companion object {

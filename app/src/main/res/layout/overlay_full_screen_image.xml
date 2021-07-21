@@ -15,7 +15,7 @@
         android:focusable="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="-40dp"
-        android:background="@drawable/cricle_tranparent">
+        android:background="@drawable/circle_transparent">
 
         <ImageView
             android:layout_width="@dimen/_30dp"
@@ -37,7 +37,7 @@
         android:layout_marginEnd="-40dp"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/cricle_tranparent"
+        android:background="@drawable/circle_transparent"
         android:layout_alignParentEnd="true">
 
         <ImageView

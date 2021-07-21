@@ -149,6 +149,9 @@
     <string name="msg_empty_photos">Oops! no photos found.\nGo back to Discover and try searching your favourite %s.</string>
     <string name="action_go_back">Go back</string>
     <string name="action_scroll_to_top_of_the_page">Scroll to top of the page</string>
+    <string name="download_cancelled">Download cancelled.</string>
+    <string name="cancel_download">Cancel download</string>
+    <string name="error_failed_cancelling_photo_download">Failed while cancelling photo download.</string>
 
 
     <!--Colors for gradient array-->

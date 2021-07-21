@@ -213,7 +213,7 @@ public class ActMain extends BaseActivity implements
 
     @Nullable
     @Override
-    public MaterialSnackBar getMaterialSnackBar() {
+    public MaterialSnackBar snackBar() {
         return materialSnackBar;
     }
 

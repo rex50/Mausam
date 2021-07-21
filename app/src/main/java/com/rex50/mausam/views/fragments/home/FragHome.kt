@@ -238,6 +238,14 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
                 }
             }
         })
+
+        bsDownload?.onCancel = {
+            viewModel.cancelDownloadImage({
+                bsDownload?.downloadError(getString(R.string.download_cancelled))
+            }, {
+                bsDownload?.downloadError(getString(R.string.error_failed_cancelling_photo_download))
+            })
+        }
     }
 
     private fun showImageViewer(photosList: List<UnsplashPhotos>, childImgView: ImageView?, childPos: Int) {
@@ -293,14 +301,14 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
     }
 
     private fun showErrorMsg(@StringRes msgId: Int){
-        listener?.getMaterialSnackBar()?.showActionSnackBar(
+        listener?.snackBar()?.showActionSnackBar(
             msgId,
             R.string.retry,
             MaterialSnackBar.LENGTH_INDEFINITE,
             object : MaterialSnackBar.SnackBarListener{
                 override fun onActionPressed() {
                     viewModel.reload()
-                    listener?.getMaterialSnackBar()?.dismiss()
+                    listener?.snackBar()?.dismiss()
                 }
             }
         )
@@ -314,7 +322,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
     interface OnFragmentInteractionListener {
         fun onFragmentInteraction(uri: Uri?)
         fun startMorePhotosActivity(data: MoreListData)
-        fun getMaterialSnackBar(): MaterialSnackBar?
+        fun snackBar(): MaterialSnackBar?
         fun startSettings()
         fun navigateToDiscover()
     }

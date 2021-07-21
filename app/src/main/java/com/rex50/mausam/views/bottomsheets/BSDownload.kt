@@ -9,8 +9,10 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.MaterialBottomSheet
 import com.rex50.mausam.utils.Constants.Network.NO_INTERNET
+import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showToast
 import com.rex50.mausam.utils.showView
+import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.android.synthetic.main.bs_download.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +27,8 @@ class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet
     }
 
     var isDownloading = false
+
+    var onCancel: (() -> Unit)? = null
 
     override fun layoutId(): Int = R.layout.bs_download
 
@@ -52,9 +56,24 @@ class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet
             }
             dismiss()
         }
+
+        PushDownAnim.setPushDownAnimTo(btnCancel)?.setOnClickListener {
+            onCancel?.invoke()
+        }
     }
 
     fun downloadStarted() {
+
+        btnCancel?.showView()
+
+        animBottomSheet?.apply {
+            pauseAnimation()
+            speed = 0.8F
+            scale = 0.7F
+            setAnimation(R.raw.l_anim_photo_saving)
+            playAnimation()
+        }
+
         if(!isAdded) {
             isCancelable = false
             showNow(fragManager, TAG)
@@ -64,6 +83,8 @@ class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet
     fun downloadError(msg: String = ""){
 
         downloadStarted()
+
+        btnCancel?.hideView()
 
         val finalMsg = when {
             msg == NO_INTERNET -> {
@@ -92,8 +113,13 @@ class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet
 
     fun downloaded(){
         CoroutineScope(Dispatchers.Main).launch {
+            btnCancel?.hideView()
             animBottomSheet?.pauseAnimation()
             delay(300)
+            animBottomSheet?.apply {
+                pauseAnimation()
+                setAnimation(R.raw.l_anim_photo_saving)
+            }
             fragmentManager?.apply {
                 dismissAllowingStateLoss()
             }
@@ -101,6 +127,7 @@ class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet
     }
 
     fun onProgress(progress: String) {
+        btnCancel?.showView()
         try {
             tvBottomSheet?.text = progress
         } catch (e: Exception) {

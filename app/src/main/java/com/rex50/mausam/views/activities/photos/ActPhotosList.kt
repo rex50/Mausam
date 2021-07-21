@@ -411,6 +411,14 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
                 }
             }
         })
+
+        bsDownload?.onCancel = {
+            viewModel.cancelDownloadImage({
+                bsDownload?.downloadError(getString(R.string.download_cancelled))
+            }, {
+                bsDownload?.downloadError(getString(R.string.error_failed_cancelling_photo_download))
+            })
+        }
     }
 
     private fun showImageViewer(photosList: List<UnsplashPhotos>, childImgView: ImageView?, childPos: Int) {

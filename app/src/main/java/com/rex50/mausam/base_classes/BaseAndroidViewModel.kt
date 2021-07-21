@@ -9,6 +9,12 @@ import com.rex50.mausam.network.Result
 import com.rex50.mausam.utils.ConnectionChecker
 import com.rex50.mausam.utils.Constants
 import com.rex50.mausam.utils.ImageActionHelper
+import com.tonyodev.fetch2.Download
+import com.tonyodev.fetch2.Error
+import com.tonyodev.fetch2.Fetch
+import com.tonyodev.fetch2.FetchConfiguration
+import com.tonyodev.fetch2.Request
+import com.tonyodev.fetch2core.Func
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -19,6 +25,8 @@ abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app), Ko
     protected val imageDownloadStatus: MutableLiveData<ImageActionHelper.DownloadStatus> by lazy {
         MutableLiveData<ImageActionHelper.DownloadStatus>()
     }
+
+    private var downloadingReq: Request? = null
 
     fun favouriteImage(photoInfo: UnsplashPhotos, onSuccess: ((UnsplashPhotos?, String) -> Unit)? = null) {
         saveImage(photoInfo, true, onSuccess)
@@ -32,13 +40,29 @@ abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app), Ko
         }
     }
 
+    fun cancelDownloadImage(onSuccess: Func<Download>? = null, onError: Func<Error>? = null) {
+        downloadingReq?.id?.let { id ->
+            val fetchConfiguration = FetchConfiguration.Builder(getApplication())
+                .setDownloadConcurrentLimit(3)
+                .build()
+
+            val fetch = Fetch.Impl.getInstance(fetchConfiguration)
+            fetch.cancel(id, {
+                onSuccess?.call(it)
+            }, {
+                onError?.call(it)
+            })
+        } ?: onError?.call(Error.FAILED_TO_UPDATE_REQUEST)
+    }
+
     protected fun saveImage(
         photoInfo: UnsplashPhotos,
         forFav: Boolean,
         onSuccess: ((UnsplashPhotos?, String) -> Unit)?
     ) {
         ImageActionHelper.saveImage(getApplication(), photoInfo, forFav, object : ImageActionHelper.ImageSaveListener{
-            override fun onDownloadStarted() {
+            override fun onDownloadStarted(request: Request) {
+                downloadingReq = request
                 imageDownloadStatus.postValue (
                     ImageActionHelper.DownloadStatus.Started(0)
                 )
