@@ -21,6 +21,7 @@ import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
+import com.rex50.mausam.views.bottomsheets.BSDeleteConfirmation
 import kotlinx.android.synthetic.main.header_custom_general.*
 import kotlinx.android.synthetic.main.anim_view.*
 import kotlinx.android.synthetic.main.frag_fav.*
@@ -161,11 +162,14 @@ class FragFavourites : BaseFragment() {
                                     }
 
                                     override fun onDelete(photoInfo: UnsplashPhotos) {
-                                        ImageActionHelper.deleteImage(
-                                            requireContext(),
-                                            photoInfo
-                                        ) { success ->
-                                            showToast(if (success) "Photo deleted successfully" else "Error while deleting photo")
+                                        BSDeleteConfirmation().show(childFragmentManager).onDelete = {
+                                            ImageActionHelper.deleteImage(
+                                                requireContext(),
+                                                photoInfo
+                                            ) { success ->
+                                                showToast(if (success) "Photo deleted successfully" else "Error while deleting photo")
+                                            }
+                                            it.dismissAllowingStateLoss()
                                         }
                                     }
 

@@ -152,6 +152,8 @@
     <string name="download_cancelled">Download cancelled.</string>
     <string name="cancel_download">Cancel download</string>
     <string name="error_failed_cancelling_photo_download">Failed while cancelling photo download.</string>
+    <string name="delete_photo">Delete photo</string>
+    <string name="msg_sure_delete_photo">Are you sure?\nThis photo will be deleted from storage.</string>
 
 
     <!--Colors for gradient array-->
