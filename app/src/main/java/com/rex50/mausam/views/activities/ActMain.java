@@ -22,6 +22,7 @@ import com.rex50.mausam.utils.FlashyTabBar;
 import com.rex50.mausam.utils.MaterialSnackBar;
 import com.rex50.mausam.views.activities.collections.ActCollectionsList;
 import com.rex50.mausam.views.activities.photos.ActPhotosList;
+import com.rex50.mausam.views.activities.settings.ActSettings;
 import com.rex50.mausam.views.fragments.FragSearchResult;
 import com.rex50.mausam.views.fragments.discover.FragDiscover;
 import com.rex50.mausam.views.fragments.favourites.FragFavourites;

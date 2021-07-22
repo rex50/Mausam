@@ -39,7 +39,7 @@
         <activity android:name=".views.activities.ActPermission" />
         <activity android:name=".views.activities.ActMain" />
         <activity android:name=".views.activities.collections.ActCollectionsList" />
-        <activity android:name=".views.activities.ActSettings" />
+        <activity android:name=".views.activities.settings.ActSettings" />
         <activity android:name=".views.activities.ActUsedLibrary"/>
 
         <receiver
