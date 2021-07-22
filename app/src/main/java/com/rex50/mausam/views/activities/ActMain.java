@@ -25,7 +25,7 @@ import com.rex50.mausam.views.activities.photos.ActPhotosList;
 import com.rex50.mausam.views.activities.settings.ActSettings;
 import com.rex50.mausam.views.fragments.FragSearchResult;
 import com.rex50.mausam.views.fragments.discover.FragDiscover;
-import com.rex50.mausam.views.fragments.favourites.FragFavourites;
+import com.rex50.mausam.views.fragments.favourites.FragGallery;
 import com.rex50.mausam.views.fragments.home.FragHome;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,14 +40,14 @@ import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ON
 
 public class ActMain extends BaseActivity implements
         FragDiscover.OnFragmentInteractionListener,
-        FragFavourites.OnFragmentInteractionListener,
+        FragGallery.OnFragmentInteractionListener,
         FragHome.OnFragmentInteractionListener,
         FragSearchResult.OnFragmentInteractionListener {
 
     private String TAG = "ActMain";
     private FragHome fragHome;
     private FragDiscover fragDiscover;
-    private FragFavourites fragFav;
+    private FragGallery fragFav;
     private FlashyTabBar tabFlashyAnimator;
     private CustomViewPager viewPager;
     private final List<BaseFragment> mFragmentList = new ArrayList<>();
@@ -86,7 +86,7 @@ public class ActMain extends BaseActivity implements
         viewPager.setPagingEnabled(false);
         fragHome = new FragHome();
         fragDiscover = new FragDiscover();
-        fragFav = new FragFavourites();
+        fragFav = new FragGallery();
 
         mFragmentList.add(fragHome);
         mFragmentList.add(fragDiscover);

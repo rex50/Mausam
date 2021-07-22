@@ -58,6 +58,7 @@
             </androidx.core.widget.NestedScrollView>
 
             <include layout="@layout/anim_view"
+                android:id="@+id/animLayout"
                 android:layout_marginTop="@dimen/_20dp"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"/>

@@ -82,6 +82,7 @@ class FragDiscoverViewModel(
     suspend fun prepareContents() = withContext(Dispatchers.IO) {
 
         allData.clearList()
+        allData.setSequenceOfLayouts(sequenceOfLayouts)
 
         if(connectionChecker.isNetworkConnected()) {
 

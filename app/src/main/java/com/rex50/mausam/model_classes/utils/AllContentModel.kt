@@ -12,7 +12,8 @@ import kotlinx.coroutines.withContext
 class AllContentModel {
     private val models: ArrayList<GenericModelFactory> by lazy { arrayListOf() }
 
-    private var sequenceOfLayout: List<String>
+    var sequenceOfLayout: ArrayList<String> = arrayListOf()
+        private set
     private val types: MutableList<String> by lazy { mutableListOf() }
     private var responsesCount = 0
     private var insertedListener: ContentInsertedListener? = null
@@ -49,11 +50,12 @@ class AllContentModel {
         types.indexOf(type).takeIf { it != -1 }?.let { pos ->
             models.removeAt(pos)
             models.add(pos, model)
+            updateLoadingState()
         } ?: addSequentially(type, model)
         updateLiveList()
     }
 
-    fun addModel(pos: Int, type: String, model: GenericModelFactory) {
+    private fun addModel(pos: Int, type: String, model: GenericModelFactory) {
         models.add(pos, model)
         types.add(pos, type)
         updateLiveList()
@@ -66,7 +68,24 @@ class AllContentModel {
     }
 
     fun setSequenceOfLayouts(sequence: List<String>) {
-        sequenceOfLayout = sequence
+        sequenceOfLayout.clear()
+        sequenceOfLayout.addAll(sequence)
+        updateLoadingState()
+    }
+
+    fun removeSection(section: String) {
+        if(sequenceOfLayout.contains(section)) {
+            sequenceOfLayout.remove(section)
+            responsesCount--
+            allContentLoaded = sequenceOfLayout.size == responsesCount
+        }
+    }
+
+    fun addSection(pos: Int, section: String) {
+        if(!sequenceOfLayout.contains(section)) {
+            sequenceOfLayout.add(pos, section)
+            allContentLoaded = sequenceOfLayout.size == responsesCount
+        }
     }
 
     fun setContentInsertListener(insertedListener: ContentInsertedListener?){
@@ -105,13 +124,16 @@ class AllContentModel {
     fun increaseResponseCount(){
         responsesCount++
         insertedListener?.onContentAddedCount(responsesCount, sequenceOfLayout.size)
+        updateLoadingState()
+    }
 
+    private fun updateLoadingState() {
         when {
             sequenceOfLayout.size == responsesCount && models.isEmpty() -> {
                 loadingState.postValue(ContentLoadingState.Empty)
             }
 
-            sequenceOfLayout.size == responsesCount && !allContentLoaded -> {
+            sequenceOfLayout.size == responsesCount -> {
                 allContentLoaded = true
                 insertedListener?.onAllContentLoaded()
                 loadingState.postValue(ContentLoadingState.Ready(getThis()))
@@ -156,6 +178,7 @@ class AllContentModel {
             models.removeAt(pos)
             types.removeAt(pos)
             updateLiveList()
+            updateLoadingState()
         }
     }
 
@@ -164,8 +187,9 @@ class AllContentModel {
         types.clear()
         responsesCount = 0
         allContentLoaded = false
-        loadingState.postValue(ContentLoadingState.Preparing)
+        sequenceOfLayout = arrayListOf()
         updateLiveList()
+        updateLoadingState()
     }
 
     fun setOnNoInternet() {

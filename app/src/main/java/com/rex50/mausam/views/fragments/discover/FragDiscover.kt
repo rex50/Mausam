@@ -11,7 +11,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.airbnb.lottie.LottieDrawable
 import com.rex50.mausam.R
 import com.rex50.mausam.interfaces.*
 import com.rex50.mausam.model_classes.item_types.*
@@ -25,7 +24,6 @@ import com.rex50.mausam.databinding.FragDiscoverBinding
 import com.rex50.mausam.enums.ContentAnimationState
 import com.rex50.mausam.enums.ContentLoadingState
 import com.rex50.mausam.utils.ImageActionHelper.DownloadStatus
-import com.rex50.mausam.utils.ImageViewerHelper.Tools
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDownload

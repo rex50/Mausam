@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import com.rex50.mausam.R
+import com.rex50.mausam.base_classes.BaseAndroidViewModel
+import com.rex50.mausam.enums.ContentLoadingState
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.AllContentModel
@@ -14,16 +16,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FragFavouritesViewModel(application: Application, var repository: KeyValuesRepository) : AndroidViewModel(application) {
+class FragGalleryViewModel(application: Application, var repository: KeyValuesRepository) : BaseAndroidViewModel(application) {
 
-    private val allSections: AllContentModel? by lazy {
-        AllContentModel().also {
-            it.setSequenceOfLayouts(mutableListOf<String>().also { list ->
-                list.add(AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS)
-                list.add(AvailableLayouts.DOWNLOADED_PHOTOS)
-                //list.add(AvailableLayouts.FAVOURITE_PHOTOS)
-            })
-        }
+    private val allSections: AllContentModel by lazy {
+        AllContentModel()
     }
 
     //List of currently downloaded photos in user's storage
@@ -48,12 +44,14 @@ class FragFavouritesViewModel(application: Application, var repository: KeyValue
                     //  addOrUpdateFavPhotoList()
 
                 } else {
-                    allSections?.clearList()
+                    allSections.clearList()
                 }
 
             }
         }
     }
+
+    val loadingState: LiveData<ContentLoadingState<AllContentModel>> = allSections.contentLoadingState
 
     init {
         viewModelScope.launch {
@@ -72,25 +70,34 @@ class FragFavouritesViewModel(application: Application, var repository: KeyValue
     }
 
     private suspend fun addOrUpdateDownloadedList(photos: ArrayList<UnsplashPhotos>) = withContext(Dispatchers.IO) {
-        allSections?.addOrUpdateModel(
-            AvailableLayouts.DOWNLOADED_PHOTOS,
-            GenericModelFactory.getDownloadedSectionTypeObject(
+        if(photos.size == 0) {
+            allSections.removeSection(AvailableLayouts.DOWNLOADED_PHOTOS)
+            allSections.remove(AvailableLayouts.DOWNLOADED_PHOTOS)
+        } else {
+            allSections.addSection(0, AvailableLayouts.DOWNLOADED_PHOTOS)
+            allSections.addOrUpdateModel(
                 AvailableLayouts.DOWNLOADED_PHOTOS,
-                R.drawable.ic_downloaded,
-                false,
-                photos
+                GenericModelFactory.getDownloadedSectionTypeObject(
+                    AvailableLayouts.DOWNLOADED_PHOTOS,
+                    R.drawable.ic_downloaded,
+                    false,
+                    photos
+                )
             )
-        )
+        }
     }
 
     private suspend fun addOrUpdatePhotographersList(photos: ArrayList<UnsplashPhotos>) = withContext(Dispatchers.IO) {
         if(photos.size >= 2) {
+            //Update sequence
+            allSections.addSection(0, AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS)
+
             val photographers = arrayListOf<User>()
             photos.forEach { photo ->
                 photographers.add(photo.user)
             }
 
-            allSections?.addOrUpdateModel(
+            allSections.addOrUpdateModel(
                 AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS,
                 GenericModelFactory.getRecommendedUserSectionTypeObject(
                     AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS,
@@ -100,12 +107,15 @@ class FragFavouritesViewModel(application: Application, var repository: KeyValue
                 )
             )
         } else {
-            allSections?.remove(AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS)
+            //Update sequence
+            allSections.removeSection(AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS)
+
+            allSections.remove(AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS)
         }
     }
 
     private suspend fun addOrUpdateFavPhotoList() {
-        allSections?.addOrUpdateModel(
+        allSections.addOrUpdateModel(
             AvailableLayouts.FAVOURITE_PHOTOS,
             GenericModelFactory.getDownloadedSectionTypeObject(
                 AvailableLayouts.FAVOURITE_PHOTOS,
@@ -121,8 +131,8 @@ class FragFavouritesViewModel(application: Application, var repository: KeyValue
         super.onCleared()
     }
 
-    fun getSectionsLiveData(): LiveData<AllContentModel>? {
-        return allSections?.getModelLiveList()
+    fun getSectionsLiveData(): LiveData<AllContentModel> {
+        return allSections.getModelLiveList()
     }
 
 }
