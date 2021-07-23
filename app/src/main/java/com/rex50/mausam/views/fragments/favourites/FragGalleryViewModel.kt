@@ -31,24 +31,26 @@ class FragGalleryViewModel(application: Application, var repository: KeyValuesRe
     // and prepare a list of photographers from downloaded photos
     private val downloadedPhotosObserver: Observer<ArrayList<UnsplashPhotos>> by lazy {
         Observer { photos ->
-            viewModelScope.launch {
 
                 if(photos.isNotEmpty()) {
 
-                    photos.reverse()
+                    viewModelScope.launch {
 
-                    addOrUpdateDownloadedList(photos)
+                        photos.reverse()
 
-                    addOrUpdatePhotographersList(photos)
+                        addOrUpdateDownloadedList(photos)
 
-                    //TODO:
-                    //  addOrUpdateFavPhotoList()
+                        addOrUpdatePhotographersList(photos)
+
+                        //TODO:
+                        //  addOrUpdateFavPhotoList()
+
+                    }
 
                 } else {
                     allSections.clearList()
                 }
 
-            }
         }
     }
 

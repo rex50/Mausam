@@ -33,6 +33,7 @@
         android:layout_marginTop="@dimen/_32dp"
         app:lottie_autoPlay="true"
         app:lottie_loop="false"
+        app:lottie_speed="2.0"
         app:lottie_rawRes="@raw/l_delete_icon_animation"
         app:lottie_scale="0.3" />
 

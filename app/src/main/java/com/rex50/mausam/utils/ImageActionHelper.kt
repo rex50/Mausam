@@ -243,6 +243,14 @@ class ImageActionHelper {
                                     listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                                 }
                             }
+
+                            override fun onCancelled(download: Download) {
+                                removeListener()
+                            }
+
+                            override fun onDeleted(download: Download) {
+                                removeListener()
+                            }
                         }
 
                         if(connectionChecker.isNetworkConnected()) {

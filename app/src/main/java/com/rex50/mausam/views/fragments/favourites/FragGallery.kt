@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.airbnb.lottie.LottieDrawable
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragmentWithListener
 import com.rex50.mausam.databinding.FragGalleryBinding
@@ -78,16 +79,18 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
                 ContentAnimationState.EMPTY -> {
                     lottieView.scale = 0.2F
                     lottieView.speed = 0.8F
+                    lottieView.repeatCount = LottieDrawable.INFINITE
                 }
 
                 else -> {
                     lottieView.scale = 1F
                     lottieView.speed = 1F
+                    lottieView.repeatCount = 1
                 }
             }
         }
 
-        animatedMessage.onActionBtnClicked = { lottieView, state ->
+        animatedMessage.onActionBtnClicked = { _, state ->
             when(state) {
                 ContentAnimationState.EMPTY -> {
                     listener?.navigateToDiscover()
