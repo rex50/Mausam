@@ -50,6 +50,26 @@ class AnimatedMessage<StateType>(
         private set
 
     /**
+     * First animation from the list is used as default animation
+     */
+    private var defaultAnimation: AnimationByState<StateType>
+
+    init {
+        check(listOfAnimations.isNotEmpty()) {
+            "List of animations should not be empty."
+        }
+
+        //Init default animation
+        defaultAnimation = listOfAnimations[0]
+
+        //Set default animation as currentAnim
+        if(currentAnim == null) {
+            currentAnim = defaultAnimation
+            Log.w(TAG, "None animation is active. Showing default animation")
+        }
+    }
+
+    /**
      * For changing current animation based on the given state
      *
      * This function will try to find an animation for the given state and store it in for next use.
@@ -89,7 +109,7 @@ class AnimatedMessage<StateType>(
         isShowing = true
         currentAnim?.let { anim ->
 
-            Log.e("AnimatedMessage", "show: Preparing animation")
+            Log.e(TAG, "show: Preparing animation")
 
             //Prepare Animation
             animViewBinding?.lnlError?.showView()
@@ -146,4 +166,8 @@ class AnimatedMessage<StateType>(
         val buttonText: String = "Retry",
         val showActionButton: Boolean = true
     )
+
+    companion object {
+        const val TAG = "AnimatedMessage"
+    }
 }
