@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/lnlUserButtons"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp"
+    android:visibility="visible"
+    tools:visibility="visible"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <View
+        android:layout_width="@dimen/_30dp"
+        android:layout_height="5dp"
+        android:background="@drawable/track_selector"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"/>
+
+
+    <com.rex50.mausam.utils.custom_text_views.RegularTextView
+        android:id="@+id/tvDownloadDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:text="@string/desc_bs_download_quality"
+        android:textSize="14sp"
+        android:textColor="@color/descColor"
+        android:layout_margin="@dimen/_16dp"/>
+
+
+    <Button
+        android:id="@+id/btnSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black_to_white"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:text="@string/small"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/btnRegular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black_to_white"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:text="@string/regular"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/btnFull"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black_to_white"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:text="@string/full"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/btnRaw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black_to_white"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:text="@string/raw"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:textAllCaps="false"/>
+
+
+    <CheckBox
+        android:id="@+id/cbDefault"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical"
+        android:buttonTint="@color/colorAccent"
+        android:text="@string/ui_quality_default" />
+
+</LinearLayout>

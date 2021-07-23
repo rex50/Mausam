@@ -3,6 +3,8 @@ package com.rex50.mausam.storage;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.rex50.mausam.enums.DownloadQuality;
+
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +27,8 @@ public class MausamSharedPrefs {
     private static final String DARK_MODE_ENABLED = "darkModeEnabled";
     private static final String FOLLOWING_SYSTEM_THEME = "followingSystemTheme";
     private static final String DATA_SAVER_MODE = "dataSaverMode";
+    private static final String PHOTO_DOWNLOAD_QUALITY = "photoDownloadQuality";
+    private static final String SHOW_DOWNLOAD_QUALITY = "showDownloadQuality";
 
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
@@ -198,6 +202,24 @@ public class MausamSharedPrefs {
 
     public Boolean isStoragePermissionSkipped(){
         return sharedPrefs.getBoolean(IS_STORAGE_PERMISSION_SKIPPED, false);
+    }
+
+    public void setPhotoDownloadQuality(DownloadQuality quality) {
+        editor.putString(PHOTO_DOWNLOAD_QUALITY, quality.getText());
+        editor.commit();
+    }
+
+    public DownloadQuality getPhotoDownloadQuality() {
+        return DownloadQuality.getQuality(sharedPrefs.getString(PHOTO_DOWNLOAD_QUALITY, "Full"));
+    }
+
+    public void setShowDownloadQuality(boolean show) {
+        editor.putBoolean(SHOW_DOWNLOAD_QUALITY, show);
+        editor.commit();
+    }
+
+    public boolean getShowDownloadQuality() {
+        return sharedPrefs.getBoolean(SHOW_DOWNLOAD_QUALITY, true);
     }
 
 }

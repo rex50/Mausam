@@ -20,6 +20,7 @@ class MausamApplication : Application(){
         @JvmStatic
         var appFolder: String = ""
 
+        @JvmStatic
         fun getInstance() : MausamApplication? = let {
             if(app == null){
                 app = MausamApplication()

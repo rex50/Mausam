@@ -153,6 +153,57 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/lnlDownloadQuality"
+                        android:gravity="top"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15sp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="38dp"
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:gravity="center"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:orientation="vertical">
+
+                            <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:text="@string/download_quality"
+                                android:textColor="@color/titleColor"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:paddingEnd="30dp"
+                                android:paddingStart="0dp"
+                                android:text="@string/download_quality_desc"
+                                android:textColor="@color/taupeGray"
+                                android:textSize="10sp"
+                                tools:ignore="SmallSp" />
+                        </LinearLayout>
+
+                        <Button
+                            android:backgroundTint="@color/more_button"
+                            android:id="@+id/btnDownloadQuality"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:text="@string/change"
+                            android:textColor="@color/more_button_text"
+                            android:textSize="12sp"
+                            app:cornerRadius="20dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:gravity="top"
                         android:id="@+id/lnlClearCache"
                         android:layout_height="wrap_content"

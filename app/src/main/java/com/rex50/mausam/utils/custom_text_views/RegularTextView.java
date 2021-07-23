@@ -34,7 +34,7 @@ public class RegularTextView extends AppCompatTextView {
         this.setTypeface(face);
     }
 
-    private String getFontPath(){
+    public static String getFontPath(){
 //        return "fonts/Asap-Regular.ttf";
         return "fonts/Poppins-Regular.ttf";
 //        return "fonts/Roboto-Regular.ttf";

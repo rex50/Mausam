@@ -87,7 +87,7 @@
     <string name="share_body">Here is a awesome photo %s by %s\n\nGet Mausam app on Playstore and experience a new world of images.\nPowered by Unsplash</string>
     <string name="preparing_home">Preparing home…</string>
     <string name="coming_soon">Coming soon&#8230;</string>
-    <string name="downloading">Downloading&#8230;</string>
+    <string name="downloading">Downloading in %s quality&#8230;</string>
     <string name="more">More</string>
     <string name="see_collections">See Collections</string>
     <string name="clear">Clear</string>
@@ -160,6 +160,16 @@
     <string name="hint_feedback_box">What did you like or dislike about Mausam?</string>
     <string name="submit_feedback">Submit feedback</string>
     <string name="msg_feedback_desc">Go drop your feedback on how was your experience with Mausam. Whether it is good or bad we appreciate your efforts making Mausam a better platform.</string>
+    <string name="download_quality">Download quality</string>
+    <string name="download_quality_desc">Change photo quality for future downloads</string>
+    <string name="change">Change</string>
+    <string name="small">Small</string>
+    <string name="regular">Regular</string>
+    <string name="full">Full</string>
+    <string name="raw">Raw</string>
+    <string name="desc_bs_download_quality">Your selected quality will be used as the preferred quality for photo downloads.</string>
+    <string name="info_download_option">*You can change download quality in settings</string>
+    <string name="ui_quality_default">Set selected quality as default</string>
 
 
     <!--Colors for gradient array-->

@@ -117,7 +117,7 @@ class ImageActionHelper {
         fun saveImage(context: Context?, unsplashPhotos: UnsplashPhotos, isAddToFav: Boolean, listener: ImageSaveListener?){
             context?.let { ctx ->
 
-                val url = unsplashPhotos.urls.downloadingUrl
+                val url = unsplashPhotos.urls.getSelectedQuality()
 
                 val name = getFormattedDesc(unsplashPhotos.description, unsplashPhotos.altDescription)
 
@@ -185,7 +185,7 @@ class ImageActionHelper {
                             })
                         }
 
-                        val request = Request(url, localImagePath).also { req ->
+                        val request = Request(url.second, localImagePath).also { req ->
                             req.priority = Priority.HIGH
                             req.extras = Extras(HashMap<String, String>().also {
                                 it[Constants.IntentConstants.PHOTO_DATA] = unsplashPhotos.json
@@ -194,7 +194,7 @@ class ImageActionHelper {
                             })
                         }
 
-                        val downloadingTxt = ctx.getString(R.string.downloading)
+                        val downloadingTxt = ctx.getString(R.string.downloading, url.first.text)
 
                         fetchListener = object : AbstractFetchListener() {
 

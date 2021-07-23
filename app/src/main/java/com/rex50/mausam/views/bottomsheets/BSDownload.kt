@@ -6,8 +6,10 @@ import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.MaterialBottomSheet
+import com.rex50.mausam.enums.DownloadQuality
 import com.rex50.mausam.utils.Constants.Network.NO_INTERNET
 import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showToast
@@ -47,7 +49,9 @@ class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet
             setAnimation(R.raw.l_anim_photo_saving)
         }
 
-        "\n${getString(R.string.downloading)}".let { tvBottomSheet?.text = it }
+        val quality = MausamApplication.getInstance()?.getSharedPrefs()?.photoDownloadQuality ?: DownloadQuality.FULL
+
+        "\n${getString(R.string.downloading, quality.text)}".let { tvBottomSheet?.text = it }
 
         btnDismiss?.setOnClickListener{
             animBottomSheet?.apply {

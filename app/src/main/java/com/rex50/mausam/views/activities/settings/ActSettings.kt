@@ -9,6 +9,7 @@ import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.base_classes.BaseActivityWithBinding
 import com.rex50.mausam.databinding.ActSettingsBinding
 import com.rex50.mausam.views.activities.ActUsedLibrary
+import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
 import com.rex50.mausam.views.bottomsheets.BSFeedback
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.coroutines.*
@@ -35,6 +36,8 @@ class ActSettings: BaseActivityWithBinding<ActSettingsBinding>() {
         initDarkModeUI()
 
         initDataSaverUI()
+
+        initDownloadQualityUI()
 
         initLocationUI()
 
@@ -75,6 +78,12 @@ class ActSettings: BaseActivityWithBinding<ActSettingsBinding>() {
     private fun initDataSaverUI() {
         val isDataSaverMode = mausamSharedPrefs?.isDataSaverMode ?: false
         binding?.sDataSaver?.setChecked(isDataSaverMode)
+    }
+
+    private fun initDownloadQualityUI() {
+        binding?.btnDownloadQuality?.setOnClickListener {
+            BSDownloadQuality().show(supportFragmentManager)
+        }
     }
 
     private fun setupCacheObserver() {

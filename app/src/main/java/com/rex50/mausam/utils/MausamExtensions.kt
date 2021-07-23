@@ -38,7 +38,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.R
+import com.rex50.mausam.enums.DownloadQuality
+import com.rex50.mausam.model_classes.unsplash.photos.Urls
 import com.rex50.mausam.utils.Constants.Configs.MAX_BITMAP_SIZE
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.calculateInSampleSize
@@ -424,4 +427,13 @@ fun <E> List<E>?.toArrayList(): ArrayList<E> {
 
 suspend fun <E> MutableList<E>.reverseAsync() = withContext(Dispatchers.IO) {
     reverse()
+}
+
+fun Urls.getSelectedQuality(): Pair<DownloadQuality, String> {
+    return when(val quality = MausamApplication.getInstance()?.getSharedPrefs()?.photoDownloadQuality ?: DownloadQuality.FULL) {
+        DownloadQuality.SMALL -> Pair(quality, small)
+        DownloadQuality.REGULAR -> Pair(quality, regular)
+        DownloadQuality.FULL -> Pair(quality, full)
+        DownloadQuality.RAW -> Pair(quality, raw)
+    }
 }

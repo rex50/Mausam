@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
+        android:layout_marginBottom="@dimen/_32dp"
         android:padding="@dimen/_50dp">
 
         <com.airbnb.lottie.LottieAnimationView
@@ -55,5 +56,14 @@
 
     </LinearLayout>
 
+    <com.rex50.mausam.utils.custom_text_views.RegularTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/info_download_option"
+        android:textSize="12sp"
+        android:layout_margin="@dimen/_8dp"
+        android:layout_gravity="bottom"
+        android:textColor="@color/descColor"/>
 
 </FrameLayout>

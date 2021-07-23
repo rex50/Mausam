@@ -27,6 +27,7 @@ import com.rex50.mausam.utils.ImageActionHelper.DownloadStatus
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDownload
+import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
 import kotlinx.android.synthetic.main.anim_view.*
 import kotlinx.coroutines.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -310,17 +311,21 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                    viewModel.downloadImage(photoInfo) { photoData, _ ->
-                        startActivity(Intent(context, ActImageEditor::class.java).also {
-                            it.putExtra(Constants.IntentConstants.PHOTO_DATA, photoData)
-                        })
+                    BSDownloadQuality.showQualitySheet(childFragmentManager) {
+                        viewModel.downloadImage(photoInfo) { photoData, _ ->
+                            startActivity(Intent(context, ActImageEditor::class.java).also {
+                                it.putExtra(Constants.IntentConstants.PHOTO_DATA, photoData)
+                            })
+                        }
                     }
                 }
 
                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                    viewModel.downloadImage(photoInfo) { _, msg ->
-                        if(msg.isNotEmpty()){
-                            showToast(msg)
+                    BSDownloadQuality.showQualitySheet(childFragmentManager) {
+                        viewModel.downloadImage(photoInfo) { _, msg ->
+                            if(msg.isNotEmpty()){
+                                showToast(msg)
+                            }
                         }
                     }
                 }

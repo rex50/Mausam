@@ -23,6 +23,7 @@ import com.rex50.mausam.views.activities.collections.ActCollectionsList
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
+import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
 import com.rex50.mausam.views.bottomsheets.BSUserMore
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.coroutines.delay
@@ -427,17 +428,21 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                    viewModel.downloadImage(photoInfo) { photoData, _ ->
-                        startActivity(Intent(this@ActPhotosList, ActImageEditor::class.java).also {
-                            it.putExtra(Constants.IntentConstants.PHOTO_DATA, photoData)
-                        })
+                    BSDownloadQuality.showQualitySheet(supportFragmentManager) {
+                        viewModel.downloadImage(photoInfo) { photoData, _ ->
+                            startActivity(Intent(this@ActPhotosList, ActImageEditor::class.java).also {
+                                it.putExtra(Constants.IntentConstants.PHOTO_DATA, photoData)
+                            })
+                        }
                     }
                 }
 
                 override fun onDownload(photoInfo: UnsplashPhotos, name: String) {
-                    viewModel.downloadImage(photoInfo) { _, msg ->
-                        if(msg.isNotEmpty()){
-                            showToast(msg)
+                    BSDownloadQuality.showQualitySheet(supportFragmentManager) {
+                        viewModel.downloadImage(photoInfo) { _, msg ->
+                            if(msg.isNotEmpty()){
+                                showToast(msg)
+                            }
                         }
                     }
                 }
