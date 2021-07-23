@@ -13,6 +13,7 @@ import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.rex50.mausam.utils.Constants.AvailableLayouts
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -55,6 +56,7 @@ class FragGalleryViewModel(application: Application, var repository: KeyValuesRe
 
     init {
         viewModelScope.launch {
+            delay(300)
             initDownloadedPhotoList()
             setupObservers()
         }

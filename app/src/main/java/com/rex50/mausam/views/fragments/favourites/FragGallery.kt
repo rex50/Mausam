@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragmentWithListener
 import com.rex50.mausam.databinding.FragGalleryBinding
+import com.rex50.mausam.enums.ContentAnimationState
 import com.rex50.mausam.enums.ContentLoadingState
 import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.model_classes.item_types.GeneralTypeModel
@@ -21,12 +22,12 @@ import com.rex50.mausam.model_classes.utils.AllContentModel
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.*
+import com.rex50.mausam.utils.AnimatedMessage.AnimationByState
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
 import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDeleteConfirmation
-import kotlinx.coroutines.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnFragmentInteractionListener>() {
@@ -36,6 +37,20 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
     private var imageViewer: ImageViewerHelper? = null
 
     private var adaptFav: AdaptHome? = null
+
+    private val animatedMessage: AnimatedMessage<ContentAnimationState> by lazy {
+        AnimatedMessage(
+            binding?.animLayout,
+            arrayListOf(
+                AnimationByState(
+                    ContentAnimationState.EMPTY,
+                    R.raw.l_anim_error_astronaout,
+                    getText(R.string.empty_download_section_msg).toString(),
+                    getText(R.string.go_discover).toString()
+                )
+            )
+        )
+    }
 
     override fun bindView(inflater: LayoutInflater, container: ViewGroup?): FragGalleryBinding {
         return FragGalleryBinding.inflate(inflater, container, false)
@@ -47,36 +62,41 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
 
         initHeader()
 
-        initEmptyMessage(false)
+        initAnimation()
 
         initRecycler()
 
         initClicks()
     }
 
-    private fun initEmptyMessage(show: Boolean) {
-        if(show) {
-            binding?.animLayout?.apply {
+    private fun initAnimation() {
 
-                lnlError.showView()
-                if(!animError.isAnimating) {
-                    animError.apply {
-                        setAnimation(R.raw.l_anim_error_astronaout)
-                        scale = 0.2F
-                        speed = 0.8F
-                    }
+        animatedMessage.cacheAnimations()
+
+        animatedMessage.onLottieAnimationConfig = { lottieView, state ->
+            when(state) {
+                ContentAnimationState.EMPTY -> {
+                    lottieView.scale = 0.2F
+                    lottieView.speed = 0.8F
                 }
-                tvError.text = getText(R.string.empty_download_section_msg)
-                btnAction.apply {
-                    text = getText(R.string.go_discover)
-                    setOnClickListener {
-                        listener?.navigateToDiscover()
-                    }
-                    showView()
+
+                else -> {
+                    lottieView.scale = 1F
+                    lottieView.speed = 1F
                 }
             }
-        } else {
-            binding?.animLayout?.lnlError?.hideView()
+        }
+
+        animatedMessage.onActionBtnClicked = { lottieView, state ->
+            when(state) {
+                ContentAnimationState.EMPTY -> {
+                    listener?.navigateToDiscover()
+                }
+
+                else -> {
+                    Log.e("FragGallery", "initAnimation: click not handled")
+                }
+            }
         }
     }
 
@@ -108,28 +128,26 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
             Log.e("FragFav", "setupContentObserver: $state")
             when(state) {
                 is ContentLoadingState.Preparing -> {
-                    initEmptyMessage(false)
+                    animatedMessage.hide()
                     binding?.ivLoader?.showView()
                 }
 
                 is ContentLoadingState.Ready -> {
-                    MainScope().launch {
-                        delay(300)
-                        binding?.rvRecommendations?.showView()
-                        initEmptyMessage(false)
-                        adaptFav?.updateData(state.data)
-                        imageViewer?.let {
-                            (state.data.getModel(Constants.AvailableLayouts.DOWNLOADED_PHOTOS)
-                                    as GeneralTypeModel?)?.photosList?.let { list ->
-                                if(list.isEmpty()) {
-                                    it.dismiss()
-                                    setEmptyState()
-                                } else
-                                    it.updateImages(list)
-                            }
+                    binding?.rvRecommendations?.showView()
+                    animatedMessage.hide()
+                    adaptFav?.updateData(state.data)
+                    imageViewer?.let {
+                        (state.data.getModel(Constants.AvailableLayouts.DOWNLOADED_PHOTOS)
+                                as GeneralTypeModel?)?.photosList?.let { list ->
+                            if(list.isEmpty()) {
+                                //When all photos are deleted
+                                it.dismiss()
+                                setEmptyState()
+                            } else
+                                it.updateImages(list)
                         }
-                        binding?.ivLoader?.hideView()
                     }
+                    binding?.ivLoader?.hideView()
                 }
 
                 is ContentLoadingState.Empty -> {
@@ -147,7 +165,7 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
         binding?.ivLoader?.hideView()
         binding?.rvRecommendations?.hideView()
         imageViewer?.dismiss()
-        initEmptyMessage(true)
+        animatedMessage.setAnimationAndShow(ContentAnimationState.EMPTY)
     }
 
     private fun initClicks() {
