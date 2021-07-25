@@ -169,7 +169,9 @@
     <string name="raw">Raw</string>
     <string name="desc_bs_download_quality">Your selected quality will be used as the preferred quality for photo downloads.</string>
     <string name="info_download_option">*You can change download quality in settings</string>
-    <string name="ui_quality_default">Set selected quality as default</string>
+    <string name="info_show_quality_options">Show quality options always.</string>
+    <string name="title_quality_options">Quality options</string>
+    <string name="action_start_download">Start download</string>
 
 
     <!--Colors for gradient array-->

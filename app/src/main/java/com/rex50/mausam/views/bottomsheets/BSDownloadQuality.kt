@@ -1,35 +1,24 @@
 package com.rex50.mausam.views.bottomsheets
 
-import android.content.res.ColorStateList
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.MaterialBottomSheet
 import com.rex50.mausam.enums.DownloadQuality
 import com.rex50.mausam.storage.MausamSharedPrefs
-import com.rex50.mausam.utils.custom_text_views.RegularTextView
+import com.rex50.mausam.utils.custom_text_views.MediumTextView
+import com.rex50.mausam.utils.showToast
 import kotlinx.android.synthetic.main.bs_download_quality.*
+import java.lang.RuntimeException
 
-class BSDownloadQuality : MaterialBottomSheet(), View.OnClickListener{
+class BSDownloadQuality : MaterialBottomSheet(){
 
     private val sharedPrefs: MausamSharedPrefs? by lazy {
         MausamApplication.getInstance()?.getSharedPrefs()
     }
-
-    private val activeColorState: ColorStateList by lazy {
-        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorAccent))
-    }
-
-    private val inActiveColorState: ColorStateList by lazy {
-        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black_to_white))
-    }
-
-    private var selectedView: Button? = null
 
     var onSetSuccess: (() -> Unit)? = null
 
@@ -54,67 +43,45 @@ class BSDownloadQuality : MaterialBottomSheet(), View.OnClickListener{
     }
 
     private fun initQualityButtons() {
-        btnSmall?.setOnClickListener(this)
-        btnRegular?.setOnClickListener (this)
-        btnFull?.setOnClickListener(this)
-        btnRaw?.setOnClickListener(this)
 
-        selectedView = when(sharedPrefs?.photoDownloadQuality ?: DownloadQuality.FULL) {
-            DownloadQuality.SMALL -> btnSmall
-            DownloadQuality.REGULAR -> btnRegular
-            DownloadQuality.FULL -> btnFull
-            DownloadQuality.RAW -> btnRaw
+        val qualityMap = hashMapOf<DownloadQuality, Int>().apply {
+            put(DownloadQuality.SMALL, R.id.rbSmall)
+            put(DownloadQuality.REGULAR, R.id.rbRegular)
+            put(DownloadQuality.FULL, R.id.rbFull)
+            put(DownloadQuality.RAW, R.id.rbRaw)
         }
 
-        setActive(selectedView)
+        //Show last selected quality
+        val selectedId = qualityMap[sharedPrefs?.photoDownloadQuality ?: DownloadQuality.FULL]
+        selectedId?.takeIf { it != -1 }?.let { id ->
+            rgPhotoQuality?.check(id)
+        } ?: FirebaseCrashlytics.getInstance().recordException(RuntimeException("Entry not found"))
+
+
+        //Handle click event for download button
+        btnDownloadPhoto?.setOnClickListener { _ ->
+
+            //Find selected quality and store in shared prefs
+            val selected = qualityMap.entries.find { rgPhotoQuality?.checkedRadioButtonId == it.value }
+            selected?.let {
+                sharedPrefs?.photoDownloadQuality = it.key
+                dismiss()
+                onSetSuccess?.invoke()
+            } ?: let {
+                val msg = "We are facing a problem while starting download"
+                showToast(msg)
+                FirebaseCrashlytics.getInstance().recordException(RuntimeException("$msg: Entry not found"))
+            }
+
+        }
+
     }
 
     private fun initDefaultCheckBox() {
-        cbDefault?.typeface = Typeface.createFromAsset(requireContext().assets, RegularTextView.getFontPath())
-        cbDefault?.isChecked = sharedPrefs?.showDownloadQuality == false
+        cbDefault?.typeface = MediumTextView.getTypeFace(requireContext())
+        cbDefault?.isChecked = sharedPrefs?.showDownloadQuality == true
         cbDefault?.setOnCheckedChangeListener { _, isChecked ->
-            sharedPrefs?.showDownloadQuality = !isChecked
-        }
-    }
-
-    override fun onClick(v: View?) {
-        /*setInActive(selectedView)
-        selectedView = v as Button?
-        setActive(selectedView)*/
-        sharedPrefs?.photoDownloadQuality = when(v) {
-            btnSmall -> {
-                DownloadQuality.SMALL
-            }
-
-            btnRegular -> {
-                DownloadQuality.REGULAR
-            }
-
-            btnFull -> {
-                DownloadQuality.FULL
-            }
-
-            btnRaw -> {
-                DownloadQuality.RAW
-            }
-
-            else -> DownloadQuality.FULL
-        }
-        dismiss()
-        onSetSuccess?.invoke()
-    }
-
-    private fun setActive(button: Button?) {
-        button?.apply {
-            backgroundTintList = activeColorState
-            setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        }
-    }
-
-    private fun setInActive(button: Button?) {
-        button?.apply {
-            backgroundTintList = inActiveColorState
-            setTextColor(ContextCompat.getColor(requireContext(), R.color.white_to_black))
+            sharedPrefs?.showDownloadQuality = isChecked
         }
     }
 
