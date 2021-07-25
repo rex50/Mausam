@@ -30,8 +30,12 @@ public class RegularTextView extends AppCompatTextView {
     }
 
     private void setCustomTypeface(Context context){
-        Typeface face=Typeface.createFromAsset(context.getAssets(), getFontPath());
+        Typeface face = getTypeFace(context);
         this.setTypeface(face);
+    }
+
+    public static Typeface getTypeFace(Context context) {
+        return Typeface.createFromAsset(context.getAssets(), getFontPath());
     }
 
     public static String getFontPath(){

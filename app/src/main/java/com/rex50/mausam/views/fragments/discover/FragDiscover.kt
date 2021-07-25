@@ -30,6 +30,7 @@ import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
 import kotlinx.android.synthetic.main.anim_view.*
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.get
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.lang.RuntimeException
 import java.util.*
@@ -52,6 +53,8 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
             viewModel.animations
         )
     }
+
+    private var imageViewer: ImageViewerHelper? = null
 
     private var isNotInternetAvailable = false
 
@@ -222,6 +225,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
                 is DownloadStatus.Success -> {
                     bsDownload?.downloaded()
+                    imageViewer?.updateButtons()
                 }
 
                 is DownloadStatus.Error ->  {
@@ -307,7 +311,8 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
     }
 
     private fun showImageViewer(photosList: List<UnsplashPhotos>, childImgView: ImageView?, childPos: Int) {
-        ImageViewerHelper(requireContext()).with(photosList,
+        imageViewer?.dismiss()
+        imageViewer = ImageViewerHelper(requireContext(), get()).with(photosList,
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
@@ -346,7 +351,8 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
                 }
             })
             .setDataSaverMode(MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false)
-            .show()
+
+        imageViewer?.show()
     }
 
     private fun onSearchClickAction() {

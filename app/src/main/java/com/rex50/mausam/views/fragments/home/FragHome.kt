@@ -30,6 +30,7 @@ import com.thekhaeng.pushdownanim.PushDownAnim
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.lang.RuntimeException
@@ -232,6 +233,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
 
                 is ImageActionHelper.DownloadStatus.Success -> {
                     bsDownload?.downloaded()
+                    imageViewer?.updateButtons()
                 }
 
                 is ImageActionHelper.DownloadStatus.Error ->  {
@@ -251,9 +253,8 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
 
     private fun showImageViewer(photosList: List<UnsplashPhotos>, childImgView: ImageView?, childPos: Int) {
         imageViewer?.dismiss()
-        imageViewer = ImageViewerHelper(requireContext()).with(photosList,
+        imageViewer = ImageViewerHelper(requireContext(), get()).with(photosList,
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
-
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
                     BSDownloadQuality.showQualitySheet(childFragmentManager) {
                         viewModel.downloadImage(photoInfo) { photoData, _ ->

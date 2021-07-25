@@ -29,6 +29,7 @@ import com.rex50.mausam.utils.GradientHelper
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDeleteConfirmation
+import org.koin.android.ext.android.get
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnFragmentInteractionListener>() {
@@ -212,7 +213,8 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
         childImgView: ImageView?,
         childPos: Int
     ) {
-        imageViewer = ImageViewerHelper(requireContext())
+        imageViewer?.dismiss()
+        imageViewer = ImageViewerHelper(requireContext(), get())
             .showPhotographer(true)
             .setTools(
                 arrayListOf(ImageViewerHelper.Tools.SET_WALLPAPER, ImageViewerHelper.Tools.SHARE_PHOTO,

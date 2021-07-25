@@ -267,61 +267,73 @@ class ImageActionHelper {
 
                 }
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    //check if data available in DB
-                    val response = repo.getValue(dBKey)
+                val scope = CoroutineScope(Dispatchers.IO)
 
-                    response?.takeIf { it.isNotEmpty() }?.apply {
+                scope.launch {
+                    checkIfAvailableOffline(repo, dBKey, { photo ->
+                        scope.launch {
+                            if(!photo.isFavorite && isAddToFav){
 
-                        val photo = UnsplashPhotos.getModelFromJSON(this)
-
-                        val uri: Uri? = photo?.let {
-                            Uri.parse(photo.relativePath)
-                        }
-
-                        suspend fun reDownload() = with(Dispatchers.IO) {
-                            repo.delete(dBKey)
-                            download()
-                        }
-
-                        //check if data available in Storage
-                        if(checkIfFileExistsInStorage(photo?.relativePath)){
-                            uri?.apply {
-                                if(!photo.isFavorite && isAddToFav){
-
-                                    val value = photo.also { image ->
-                                        image.isFavorite = true
-                                    }
-                                    repo.update(dBKey, value.json)
-                                    withContext(Dispatchers.Main) {
-                                        listener?.response(value, ctx.getString(R.string.added_to_fav))
-                                    }
-
-                                }else if(photo.isFavorite && isAddToFav){
-
-                                    val value = photo.also { image ->
-                                        image.isFavorite = false
-                                    }
-
-                                    repo.update(dBKey, value.json)
-                                    withContext(Dispatchers.Main) {
-                                        listener?.response(value, ctx.getString(R.string.removed_from_fav))
-                                    }
-
-                                }else withContext(Dispatchers.Main) {
-
-                                    listener?.response(photo, ctx.getString(R.string.already_downloaded))
-
+                                val value = photo.also { image ->
+                                    image.isFavorite = true
                                 }
-                            }?:
-                            reDownload()
-                        }else{
-                            reDownload()
+                                repo.update(dBKey, value.json)
+                                withContext(Dispatchers.Main) {
+                                    listener?.response(value, ctx.getString(R.string.added_to_fav))
+                                }
+
+                            }else if(photo.isFavorite && isAddToFav){
+
+                                val value = photo.also { image ->
+                                    image.isFavorite = false
+                                }
+
+                                repo.update(dBKey, value.json)
+                                withContext(Dispatchers.Main) {
+                                    listener?.response(value, ctx.getString(R.string.removed_from_fav))
+                                }
+
+                            }else withContext(Dispatchers.Main) {
+
+                                listener?.response(photo, ctx.getString(R.string.already_downloaded))
+
+                            }
                         }
-                    }?:
-                    download()
+                    }, {
+                        download()
+                    })
                 }
+
             }
+        }
+
+        suspend fun checkIfAvailableOffline(repo: KeyValuesRepository, dBKey: String, available:(UnsplashPhotos) -> Unit, notAvailable:() -> Unit) = withContext(Dispatchers.IO) {
+            //check if data available in DB
+            val response = repo.getValue(dBKey)
+
+            response?.takeIf { it.isNotEmpty() }?.apply {
+
+                val photo = UnsplashPhotos.getModelFromJSON(this)
+
+                val uri: Uri? = photo?.let {
+                    Uri.parse(photo.relativePath)
+                }
+
+                suspend fun reDownload() = with(Dispatchers.IO) {
+                    repo.delete(dBKey)
+                    notAvailable()
+                }
+
+                //check if data available in Storage
+                if(checkIfFileExistsInStorage(photo?.relativePath)){
+                    uri?.apply {
+                        available(photo)
+                    }?:
+                    reDownload()
+                }else{
+                    reDownload()
+                }
+            }?: notAvailable()
         }
 
         private fun insertImage(cr: ContentResolver,

@@ -28,6 +28,7 @@ import com.rex50.mausam.views.bottomsheets.BSUserMore
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
@@ -405,6 +406,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
 
                 is ImageActionHelper.DownloadStatus.Success -> {
                     bsDownload?.downloaded()
+                    imageViewer?.updateButtons()
                 }
 
                 is ImageActionHelper.DownloadStatus.Error ->  {
@@ -424,7 +426,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
 
     private fun showImageViewer(photosList: List<UnsplashPhotos>, childImgView: ImageView?, childPos: Int) {
         imageViewer?.dismiss()
-        imageViewer = ImageViewerHelper(this).with(photosList,
+        imageViewer = ImageViewerHelper(this, get()).with(photosList,
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {

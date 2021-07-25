@@ -24,14 +24,18 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.rex50.mausam.R
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
+import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.stfalcon.imageviewer.StfalconImageViewer
 import com.thekhaeng.pushdownanim.PushDownAnim
+import kotlinx.coroutines.*
 import org.apache.commons.lang3.StringUtils
 
-class ImageViewerHelper (){
+class ImageViewerHelper(
+    private val context: Context,
+    private val repo: KeyValuesRepository
+) {
 
     private var isDataSaverMode = false
-    private var context: Context? = null
     private var selectedPhotoPos = 0
     private var animatePhotographer = true
     private var showPhotographer = true
@@ -88,13 +92,21 @@ class ImageViewerHelper (){
 
     var onPageChangeListener: ((Int) -> Unit)? = null
 
-    constructor(context: Context?) : this() {
-        this.context = context
-        initLayout(context)
+    private val mainScope: CoroutineScope by lazy {
+        CoroutineScope(Dispatchers.Main + SupervisorJob())
     }
 
-    private fun initLayout(context: Context?) {
-        context?.apply {
+    var isDownloaded = false
+        private set
+
+    private lateinit var currentPhoto: UnsplashPhotos
+
+    init {
+        initLayout()
+    }
+
+    private fun initLayout() {
+        context.apply {
 
             preLoaderAnimLayout = View.inflate(this, R.layout.anim_view, null)
             preLoaderAnimLayout?.apply {
@@ -141,7 +153,7 @@ class ImageViewerHelper (){
     }
 
     fun with(photosList: List<UnsplashPhotos>, childImgView: ImageView? = null, childPos: Int = 0, actionListener: ImageActionHelper.ImageActionListener? = null) : ImageViewerHelper {
-        context?.apply {
+        context.apply {
             selectedPhotoPos = childPos
             animatePhotographer = true
 
@@ -200,10 +212,16 @@ class ImageViewerHelper (){
         handleNavBtnVisibility(imageViewer?.currentPosition() ?: childPos, photosList.lastIndex)
     }
 
+    fun updateButtons() {
+        bindButtons()
+    }
+
     fun show(){
         photosList[childPos].apply {
-            bindPhotographerInfo(this)
-            bindImageInfo(this)
+            currentPhoto = this
+            bindPhotographerInfo()
+            bindImageInfo()
+            bindButtons()
         }
         handleNavBtnVisibility(selectedPhotoPos, photosList.lastIndex)
         updateToolsVisibility()
@@ -276,8 +294,10 @@ class ImageViewerHelper (){
             onPageChangeListener?.invoke(selectedPhotoPos)
             handleNavBtnVisibility(selectedPhotoPos, photosList.lastIndex)
             photosList[selectedPhotoPos].apply {
-                bindPhotographerInfo(this)
-                bindImageInfo(this)
+                currentPhoto = this
+                bindPhotographerInfo()
+                bindImageInfo()
+                bindButtons()
             }
         }
 
@@ -309,7 +329,7 @@ class ImageViewerHelper (){
     }
 
     private fun initClicks(actionListener: ImageActionHelper.ImageActionListener? = null) {
-        context?.apply {
+        context.apply {
             PushDownAnim.setPushDownAnimTo(btnSetWall, btnDownload, btnFav, btnShare, btnDelete, btnMore, rlUserInfo,
                 btnUserPortfolio, btnUserInstagram, btnUserTwitter, btnUserMorePhotos, btnUserVisitThisPage)
                 .setScale(0.9F)
@@ -325,10 +345,14 @@ class ImageViewerHelper (){
                         }
 
                         R.id.btnDownloadImage -> {
-                            photosList[selectedPhotoPos].apply {
-                                val name = getFormattedDesc(description, altDescription)
-                                //if(name.length > 20) name = name.substring(0, 20)
-                                actionListener?.onDownload(this, name)
+                            if(isDownloaded) {
+                                showToast(getString(R.string.already_downloaded))
+                            } else {
+                                photosList[selectedPhotoPos].apply {
+                                    val name = getFormattedDesc(description, altDescription)
+                                    //if(name.length > 20) name = name.substring(0, 20)
+                                    actionListener?.onDownload(this, name)
+                                }
                             }
                         }
 
@@ -417,12 +441,39 @@ class ImageViewerHelper (){
         }
     }
 
-    private fun bindImageInfo(photo: UnsplashPhotos){
-        photo.apply {
-            getFormattedDesc(description?.toString(), altDescription?.toString()).takeIf { it.isNotEmpty() }?.apply {
+    private fun bindButtons() {
+
+        fun updateDownloadButtons() {
+            mainScope.launch {
+                btnDownload?.setImageResource(
+                    if(isDownloaded)
+                        R.drawable.ic_downloaded
+                    else
+                        R.drawable.ic_download
+                )
+            }
+        }
+
+        mainScope.launch {
+            ImageActionHelper.checkIfAvailableOffline(repo, currentPhoto.dbId, {
+                isDownloaded = true
+                updateDownloadButtons()
+            }, {
+                isDownloaded = false
+                updateDownloadButtons()
+            })
+        }
+    }
+
+    private fun bindImageInfo(){
+        currentPhoto.apply {
+            getFormattedDesc(
+                description?.toString(),
+                altDescription?.toString()
+            ).takeIf { it.isNotEmpty() }?.apply {
                 tvDesc?.showView()
                 tvDesc?.text = this
-            }?: tvDesc?.hideView()
+            } ?: tvDesc?.hideView()
             tvCreated?.text = getFormattedDate(createdAt.toDateFormat("dd-MM-YYY"))
             tvColor?.text = getFormattedColor(color.toString())
             tvLikes?.text = getFormattedLikes(likes.toString())
@@ -431,12 +482,12 @@ class ImageViewerHelper (){
         }
     }
 
-    private fun bindPhotographerInfo(photo: UnsplashPhotos){
+    private fun bindPhotographerInfo(){
         rlUserInfo?.hideView()
         if(showPhotographer) {
             if (animatePhotographer)
                 startFadeTransition()
-            photo.user.apply {
+            currentPhoto.user.apply {
                 ivPhotographer?.loadImageWithPreLoader(profileImage.medium)
                 tvPhotographerName?.text = name
                 btnUserPortfolio?.apply {
@@ -449,7 +500,7 @@ class ImageViewerHelper (){
                     if (twitterUsername.isNullOrEmpty()) hideView() else showView()
                 }
                 btnUserVisitThisPage?.apply {
-                    if (photo.links.html.isNullOrEmpty()) hideView() else showView()
+                    if (currentPhoto.links.html.isNullOrEmpty()) hideView() else showView()
                 }
                 if (animatePhotographer)
                     rlUserInfo?.showView()
@@ -457,15 +508,15 @@ class ImageViewerHelper (){
         }
     }
 
-    private fun getFormattedLikes(likes: String) : String = likes.addBefore(context?.getString(R.string.likes))
+    private fun getFormattedLikes(likes: String) : String = likes.addBefore(context.getString(R.string.likes))
 
-    private fun getFormattedHeight(height: String) : String = height.addBefore(context?.getString(R.string.height)) + Constants.Units.PX
+    private fun getFormattedHeight(height: String) : String = height.addBefore(context.getString(R.string.height)) + Constants.Units.PX
 
-    private fun getFormattedWidth(width: String) : String = width.addBefore(context?.getString(R.string.width)) + Constants.Units.PX
+    private fun getFormattedWidth(width: String) : String = width.addBefore(context.getString(R.string.width)) + Constants.Units.PX
 
-    private fun getFormattedDate(date: String): String? = date.addBefore(context?.getString(R.string.created_on))
+    private fun getFormattedDate(date: String): String? = date.addBefore(context.getString(R.string.created_on))
 
-    private fun getFormattedColor(color: String): String? = color.addBefore(context?.getString(R.string.color))
+    private fun getFormattedColor(color: String): String? = color.addBefore(context.getString(R.string.color))
 
     private fun startSimpleTransition(){
         val transition: Transition = ChangeBounds()

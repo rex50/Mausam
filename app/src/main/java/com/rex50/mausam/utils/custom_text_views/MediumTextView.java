@@ -30,11 +30,15 @@ public class MediumTextView extends AppCompatTextView {
     }
 
     private void setCustomTypeface(Context context){
-        Typeface face=Typeface.createFromAsset(context.getAssets(), getFontPath());
+        Typeface face=getTypeFace(context);
         this.setTypeface(face);
     }
 
-    private String getFontPath(){
+    public static Typeface getTypeFace(Context context) {
+        return Typeface.createFromAsset(context.getAssets(), getFontPath());
+    }
+
+    private static String getFontPath(){
 //        return "fonts/Asap-Medium.ttf";
         return "fonts/Poppins-Medium.ttf";
 //        return "fonts/Roboto-Medium.ttf";
