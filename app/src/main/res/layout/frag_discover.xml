@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="?android:attr/windowBackground"
     android:focusableInTouchMode="true">
@@ -35,142 +36,151 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <RelativeLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             app:layout_collapseMode="pin">
 
-            <LinearLayout
-                android:id="@+id/containerSearchProviders"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-                <com.rex50.mausam.utils.custom_text_views.BoldTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/choose_search_provider_title"
-                    android:textSize="12sp"
-                    android:textAlignment="center"
-                    android:textColor="@color/graniteGray"
-                    android:textStyle="bold"/>
+                android:layout_height="match_parent">
 
                 <LinearLayout
+                    android:id="@+id/containerSearchProviders"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    tools:visibility="gone"
+                    android:visibility="visible">
 
-                    <Button
-                        android:id="@+id/provider_unsplash"
-                        android:layout_width="0dp"
+                    <com.rex50.mausam.utils.custom_text_views.BoldTextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/unsplash_txt"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/colorAccent"
-                        android:textAllCaps="false"/>
+                        android:text="@string/choose_search_provider_title"
+                        android:textSize="12sp"
+                        android:textAlignment="center"
+                        android:textColor="@color/graniteGray"
+                        android:textStyle="bold"/>
 
-                    <Button
-                        android:id="@+id/provider_pixabay"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/pixabay_txt"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginEnd="10dp"
-                        android:backgroundTint="@color/blueEyes"
-                        android:textAllCaps="false"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/provider_unsplash"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/unsplash_txt"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:backgroundTint="@color/colorAccent"
+                            android:textAllCaps="false"/>
+
+                        <Button
+                            android:id="@+id/provider_pixabay"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/pixabay_txt"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginEnd="10dp"
+                            android:backgroundTint="@color/blueEyes"
+                            android:textAllCaps="false"/>
+
+                    </LinearLayout>
+
+
 
                 </LinearLayout>
 
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nsDiscover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="@dimen/_80dp"
+                    android:clipToPadding="false"
+                    android:layout_below="@+id/containerSearchProviders">
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recDiscoverContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:descendantFocusability="blocksDescendants"
+                        android:scrollbars="none" />
 
-            </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
 
-            <EditText
-                android:id="@+id/etvSearch"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:fontFamily="sans-serif"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:singleLine="true"
-                android:textSize="14sp"
-                android:hint="@string/search_box_hint"
-                android:background="@drawable/bg_general_edit_text"
-                android:layout_margin="10dp"
-                android:drawableEnd="@drawable/ic_search"
-                android:drawablePadding="5dp"
-                android:textColorHint="@color/taupeGray"
-                android:layout_below="@+id/containerSearchProviders"
-                android:imeOptions="actionSearch" />
+                <EditText
+                    android:id="@+id/etvSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:singleLine="true"
+                    android:textSize="14sp"
+                    android:hint="@string/search_box_hint"
+                    android:background="@drawable/bg_general_edit_text"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="10dp"
+                    android:drawableEnd="@drawable/ic_search"
+                    android:drawablePadding="5dp"
+                    android:textColorHint="@color/taupeGray"
+                    android:layout_below="@+id/containerSearchProviders"
+                    android:imeOptions="actionSearch" />
 
-            <com.rex50.mausam.utils.custom_text_views.RegularTextView
-                android:id="@+id/tvSearchError"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textColor="@color/satinRed"
-                android:layout_margin="10dp"
-                android:textAlignment="center"
-                android:layout_below="@+id/etvSearch"
-                android:textSize="12sp"/>
-
-            <Button
-                android:id="@+id/btnNextSearch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/skip_btn_text"
-                android:textSize="18sp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="20dp"
-                android:textAllCaps="false"
-                android:backgroundTint="@color/colorAccent"
-                android:visibility="gone"/>
-
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/nsDiscover"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="4dp"
-                android:layout_below="@+id/etvSearch">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recDiscoverContent"
+                <com.rex50.mausam.utils.custom_text_views.RegularTextView
+                    android:id="@+id/tvSearchError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:descendantFocusability="blocksDescendants"
-                    android:scrollbars="none" />
+                    android:gravity="center"
+                    android:textColor="@color/satinRed"
+                    android:layout_margin="10dp"
+                    android:textAlignment="center"
+                    android:layout_below="@+id/etvSearch"
+                    android:textSize="12sp"/>
 
-            </androidx.core.widget.NestedScrollView>
+                <Button
+                    android:id="@+id/btnNextSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/skip_btn_text"
+                    android:textSize="18sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="20dp"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/colorAccent"
+                    android:visibility="gone"/>
 
-            <include layout="@layout/loading_view"
-                android:id="@+id/lvCenter"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:visibility="visible"
-                android:layout_below="@+id/etvSearch"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/_50dp" />
+                <include layout="@layout/loading_view"
+                    android:id="@+id/lvCenter"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:visibility="visible"
+                    android:layout_below="@+id/etvSearch"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/_50dp" />
 
-            <include layout="@layout/anim_view"
-                android:id="@+id/animLayout"
-                android:layout_marginTop="@dimen/_80dp"
-                android:layout_below="@+id/etvSearch"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"/>
+                <include layout="@layout/anim_view"
+                    android:id="@+id/animLayout"
+                    android:layout_marginTop="@dimen/_80dp"
+                    android:layout_below="@+id/etvSearch"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+            </RelativeLayout>
 
-        </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
