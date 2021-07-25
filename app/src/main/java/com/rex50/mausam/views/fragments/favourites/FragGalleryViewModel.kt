@@ -92,14 +92,10 @@ class FragGalleryViewModel(application: Application, var repository: KeyValuesRe
     }
 
     private suspend fun addOrUpdatePhotographersList(photos: ArrayList<UnsplashPhotos>) = withContext(Dispatchers.IO) {
-        if(photos.size >= 2) {
+        val photographers = photos.map { it.user }.distinctBy { it.id }
+        if(photographers.size >= 2) {
             //Update sequence
             allSections.addSection(0, AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS)
-
-            val photographers = arrayListOf<User>()
-            photos.forEach { photo ->
-                photographers.add(photo.user)
-            }
 
             allSections.addOrUpdateModel(
                 AvailableLayouts.RECOMMENDED_PHOTOGRAPHERS,
