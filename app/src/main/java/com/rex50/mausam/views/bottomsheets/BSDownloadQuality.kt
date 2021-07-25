@@ -58,21 +58,25 @@ class BSDownloadQuality : MaterialBottomSheet(){
         } ?: FirebaseCrashlytics.getInstance().recordException(RuntimeException("Entry not found"))
 
 
-        //Handle click event for download button
-        btnDownloadPhoto?.setOnClickListener { _ ->
-
+        rgPhotoQuality?.setOnCheckedChangeListener { _, checkedId ->
             //Find selected quality and store in shared prefs
-            val selected = qualityMap.entries.find { rgPhotoQuality?.checkedRadioButtonId == it.value }
+            val selected = qualityMap.entries.find { checkedId == it.value }
             selected?.let {
                 sharedPrefs?.photoDownloadQuality = it.key
-                dismiss()
-                onSetSuccess?.invoke()
             } ?: let {
                 val msg = "We are facing a problem while starting download"
                 showToast(msg)
                 FirebaseCrashlytics.getInstance().recordException(RuntimeException("$msg: Entry not found"))
             }
+        }
 
+        if(fromSettings)
+            btnDownloadPhoto?.text = getString(R.string.apply_changes)
+
+        //Handle click event for download button
+        btnDownloadPhoto?.setOnClickListener { _ ->
+            onSetSuccess?.invoke()
+            dismiss()
         }
 
     }
@@ -89,14 +93,17 @@ class BSDownloadQuality : MaterialBottomSheet(){
 
         const val TAG = "BSDownloadQuality"
 
-        fun showQualitySheet(childFragmentManager: FragmentManager, onSet: () -> Unit) {
-            BSDownloadQuality().let { quality ->
-                quality.onSetSuccess = {
-                    onSet()
+        fun showQualitySheet(childFragmentManager: FragmentManager, isDownloaded: Boolean = false, onSet: () -> Unit) {
+            if(!isDownloaded) {
+                BSDownloadQuality().let { quality ->
+                    quality.onSetSuccess = {
+                        onSet()
+                    }
+                    quality.fromSettings = false
+                    quality.show(childFragmentManager)
                 }
-                quality.fromSettings = false
-                quality.show(childFragmentManager)
-            }
+            } else
+                onSet()
         }
     }
 

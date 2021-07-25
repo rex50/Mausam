@@ -173,6 +173,7 @@
     <string name="title_quality_options">Quality options</string>
     <string name="action_start_download">Start download</string>
     <string name="discovering_new_contents">Discovering new photos.\nPlease wait&#8230;</string>
+    <string name="apply_changes">Done</string>
 
 
     <!--Colors for gradient array-->

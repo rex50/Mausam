@@ -62,6 +62,10 @@ fun String.toBoolean(): Boolean = equals("true")
 
 fun Boolean.getString(): String = if(this) "true" else "false"
 
+fun Boolean?.isTrue(): Boolean {
+    return this == true
+}
+
 fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
 }

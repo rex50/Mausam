@@ -344,7 +344,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                    BSDownloadQuality.showQualitySheet(childFragmentManager) {
+                    BSDownloadQuality.showQualitySheet(childFragmentManager, imageViewer?.isDownloaded.isTrue()) {
                         viewModel.downloadImage(photoInfo) { photoData, _ ->
                             startActivity(Intent(context, ActImageEditor::class.java).also {
                                 it.putExtra(Constants.IntentConstants.PHOTO_DATA, photoData)

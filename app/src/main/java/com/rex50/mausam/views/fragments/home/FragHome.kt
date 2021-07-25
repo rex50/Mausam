@@ -259,7 +259,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
         imageViewer = ImageViewerHelper(requireContext(), get()).with(photosList,
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                    BSDownloadQuality.showQualitySheet(childFragmentManager) {
+                    BSDownloadQuality.showQualitySheet(childFragmentManager, imageViewer?.isDownloaded.isTrue()) {
                         viewModel.downloadImage(photoInfo) { photoData, _ ->
                             startActivity(Intent(context, ActImageEditor::class.java).also {
                                 it.putExtra(PHOTO_DATA, photoData)

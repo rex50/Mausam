@@ -433,7 +433,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
             childImgView, childPos, object : ImageActionHelper.ImageActionListener() {
 
                 override fun onSetWallpaper(photoInfo: UnsplashPhotos, name: String) {
-                    BSDownloadQuality.showQualitySheet(supportFragmentManager) {
+                    BSDownloadQuality.showQualitySheet(supportFragmentManager, imageViewer?.isDownloaded.isTrue()) {
                         viewModel.downloadImage(photoInfo) { photoData, _ ->
                             startActivity(Intent(this@ActPhotosList, ActImageEditor::class.java).also {
                                 it.putExtra(Constants.IntentConstants.PHOTO_DATA, photoData)
