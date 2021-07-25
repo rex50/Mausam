@@ -47,24 +47,6 @@ class FragDiscoverViewModel(
         }
     }
 
-    val animations: ArrayList<AnimationByState<ContentAnimationState>> by lazy {
-        val app = getApplication<Application>()
-        arrayListOf(
-            AnimationByState(
-                ContentAnimationState.NO_INTERNET,
-                R.raw.l_anim_error_no_internet,
-                app.getString(R.string.error_no_internet),
-                app.getString(R.string.retry)
-            ),
-            AnimationByState(
-                ContentAnimationState.EMPTY,
-                R.raw.l_anim_error_astronaout,
-                app.getString(R.string.msg_empty_discover, userFavConstants.random()),
-                app.getString(R.string.action_start_search)
-            )
-        )
-    }
-
     init {
         viewModelScope.launch {
             prepareContents()

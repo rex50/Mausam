@@ -10,6 +10,11 @@ object AnimConfigs {
         lottieAnimationView.repeatCount = LottieDrawable.INFINITE
     }
 
+    fun configureDiscoverAnim(lottieAnimationView: LottieAnimationView) {
+        lottieAnimationView.scale = 0.2f
+        lottieAnimationView.repeatCount = LottieDrawable.INFINITE
+    }
+
     fun defaultConfig(lottieAnimationView: LottieAnimationView) {
         lottieAnimationView.scale = 1f
         lottieAnimationView.repeatCount = 0

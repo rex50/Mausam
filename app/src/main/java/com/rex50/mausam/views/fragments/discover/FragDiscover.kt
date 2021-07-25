@@ -50,7 +50,30 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
     private val animatedMessage: AnimatedMessage<ContentAnimationState> by lazy {
         AnimatedMessage(
             binding?.animLayout,
-            viewModel.animations
+            arrayListOf(
+                AnimatedMessage.AnimationByState(
+                    ContentAnimationState.NO_INTERNET,
+                    R.raw.l_anim_error_no_internet,
+                    getString(R.string.error_no_internet),
+                    getString(R.string.retry)
+                ),
+                AnimatedMessage.AnimationByState(
+                    ContentAnimationState.EMPTY,
+                    R.raw.l_anim_error_astronaout,
+                    getString(
+                        R.string.msg_empty_discover,
+                        Constants.Util.userFavConstants.random()
+                    ),
+                    getString(R.string.action_start_search)
+                ),
+                AnimatedMessage.AnimationByState(
+                    ContentAnimationState.LOADING,
+                    R.raw.l_searching,
+                    getString(R.string.discovering_new_contents),
+                    "",
+                    false
+                )
+            )
         )
     }
 
@@ -113,6 +136,11 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
                 ContentAnimationState.EMPTY -> {
                     AnimConfigs.configureAstronautAnim(lottieAnimationView)
                 }
+
+                ContentAnimationState.LOADING -> {
+                    AnimConfigs.configureDiscoverAnim(lottieAnimationView)
+                }
+
                 else -> {
                     AnimConfigs.defaultConfig(lottieAnimationView)
                 }
@@ -181,15 +209,15 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
             isNotInternetAvailable = false
             when(state) {
                 is ContentLoadingState.Preparing -> {
-                    animatedMessage.hide()
-                    binding?.lvCenter?.root?.showView()
+                    animatedMessage.setAnimationAndShow(ContentAnimationState.LOADING)
+                    binding?.lvCenter?.root?.hideView()
                     binding?.recDiscoverContent?.hideView()
                 }
 
                 is ContentLoadingState.Ready<AllContentModel> -> {
                     fragScope.launch {
-                        animatedMessage.hide()
                         delay(300)
+                        animatedMessage.hide()
                         binding?.recDiscoverContent?.showView()
                         adaptHome.updateData(state.data)
                         binding?.lvCenter?.root?.hideView()

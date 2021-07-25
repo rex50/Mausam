@@ -98,14 +98,16 @@ class AnimatedMessage<StateType>(
     fun setAnimationAndShow(state: StateType) {
         if(currentAnim?.state != state) {
             setAnimation(state)
+            show()
+        } else {
+            animViewBinding?.lnlError?.showView()
         }
-        show()
     }
 
     /**
      * For showing current animation
      */
-    fun show() {
+    private fun show() {
         isShowing = true
         currentAnim?.let { anim ->
 

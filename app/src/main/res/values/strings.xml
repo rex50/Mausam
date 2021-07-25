@@ -172,6 +172,7 @@
     <string name="info_show_quality_options">Show quality options always.</string>
     <string name="title_quality_options">Quality options</string>
     <string name="action_start_download">Start download</string>
+    <string name="discovering_new_contents">Discovering new photos.\nPlease wait&#8230;</string>
 
 
     <!--Colors for gradient array-->
