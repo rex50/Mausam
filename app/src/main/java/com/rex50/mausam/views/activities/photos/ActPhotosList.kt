@@ -267,6 +267,9 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
                 }
 
             })
+
+            //For bounce effect
+            edgeEffectFactory = RecyclerEdgeEffect(true)
         }
 
     }

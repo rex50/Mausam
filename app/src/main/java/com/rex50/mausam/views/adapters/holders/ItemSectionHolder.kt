@@ -9,6 +9,7 @@ import com.rex50.mausam.interfaces.OnChildItemClickListener
 import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.ItemOffsetDecoration
+import com.rex50.mausam.utils.RecyclerEdgeEffect
 import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showView
 import com.rex50.mausam.views.adapters.AdaptContent
@@ -62,6 +63,9 @@ class ItemSectionHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
                 adapter = SlideInBottomAnimationAdapter(secAdapter).apply {
                     setFirstOnly(false)
                 }
+
+                //For bounce effect
+                edgeEffectFactory = RecyclerEdgeEffect()
             }
         }
     }

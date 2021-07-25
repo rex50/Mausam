@@ -150,6 +150,9 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
             })
         }
 
+        //For bounce effect
+        binding?.recHomeContent?.edgeEffectFactory = RecyclerEdgeEffect(true)
+
     }
 
     private fun initItemClicks() {
