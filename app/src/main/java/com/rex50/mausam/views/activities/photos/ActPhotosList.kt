@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivityWithBinding
 import com.rex50.mausam.databinding.ActPhotosListBinding
+import com.rex50.mausam.databinding.HeaderCustomCollectionPhotosBinding
 import com.rex50.mausam.databinding.HeaderCustomGeneralBinding
 import com.rex50.mausam.databinding.HeaderCustomPhotographerBinding
 import com.rex50.mausam.enums.ContentAnimationState
@@ -26,6 +27,7 @@ import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
 import com.rex50.mausam.views.bottomsheets.BSUserMore
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
+import kotlinx.android.synthetic.main.tab_custom.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -49,7 +51,10 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
 
     private var imageViewer: ImageViewerHelper? = null
 
+    private var hasCollections = false
+
     private val animatedMessage: AnimatedMessage<ContentAnimationState> by lazy {
+        val emptyTexts = getEmptyMessageText()
         AnimatedMessage(
             binding?.animLayout,
             arrayListOf(
@@ -62,8 +67,8 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
                 AnimatedMessage.AnimationByState(
                     ContentAnimationState.EMPTY,
                     R.raw.l_anim_error_astronaout,
-                    getString(R.string.msg_empty_photos, Constants.Util.userFavConstants.random()),
-                    getString(R.string.action_go_back)
+                    emptyTexts.first,
+                    emptyTexts.second
                 )
             )
         )
@@ -134,6 +139,19 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
                 }
             }
 
+            Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS -> {
+                binding?.headerCollectionPhotos?.let { header ->
+                    bindCollectionPhotosHeader(
+                        header,
+                        viewModel.getPageTitle(),
+                        viewModel.getPageDesc(),
+                        viewModel.listData.getPhotosCount(),
+                        viewModel.listData.getBgImgUrl(),
+                        viewModel.getPhotographerInfo()
+                    )
+                }
+            }
+
             else -> {
                 binding?.headerGeneral?.let { header ->
                     bindGeneralHeader(
@@ -168,6 +186,42 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
             flHeaderBg.showView()
         }
 
+    }
+
+    private fun bindCollectionPhotosHeader(
+        header: HeaderCustomCollectionPhotosBinding,
+        title: String,
+        desc: String,
+        photos: String,
+        bgImgUrl: String,
+        photographerInfo: User?
+    ) = with(header) {
+        root.showView()
+
+        gradientLine.background =
+            GradientHelper.getInstance(this@ActPhotosList)?.getRandomLeftRightGradient()
+
+        tvPageTitle.text = title
+
+        tvPhotosCount.text = photos
+
+        desc.takeIf { it.isNotEmpty() }?.let {
+            tvPageDesc.showView()
+            tvPageDesc.text = it
+        }
+
+        photographerInfo?.let { user ->
+            btnUser.showView()
+            btnUser.text = user.name
+            btnUser.setOnClickListener {
+                startMorePhotosActivity(user.moreListData)
+            }
+        }
+
+        bgImgUrl.takeIf { it.isNotEmpty() }?.let { url ->
+            ivHeaderImg.loadImageWithPreLoader(url, null)
+            flHeaderBg.showView()
+        }
     }
 
     private fun bindUserHeader(
@@ -301,7 +355,19 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
                 }
 
                 ContentAnimationState.EMPTY -> {
-                    finish()
+                    if(hasCollections) {
+                        viewModel.listData.photographerInfo?.let { user ->
+                            showUserCollections(MoreListData(
+                                Constants.ListModes.LIST_MODE_USER_COLLECTIONS,
+                                user
+                            ))
+                        } ?: materialSnackBar?.showActionSnackBar(getString(R.string.something_wrong_msg), "OK", object : MaterialSnackBar.SnackBarListener{
+                            override fun onActionPressed() {
+                                finish()
+                            }
+                        })
+                    } else
+                        finish()
                 }
 
                 else -> {}
@@ -482,6 +548,41 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
         }
 
         imageViewer?.show()
+    }
+
+    private fun getEmptyMessageText(): Pair<String, String> {
+        return when(viewModel.listData.listMode) {
+            Constants.ListModes.LIST_MODE_USER_PHOTOS -> {
+                val user = viewModel.getPhotographerInfo()
+
+                val msgNoPhotos = getString(R.string.msg_empty_photographer_photos)
+                val msgNoPhotosCollections = getString(R.string.msg_empty_photographer_photos_collections)
+                val goBack = getString(R.string.action_go_back)
+                val seeCollections = getString(R.string.see_collections);
+
+                user?.let {
+                    if(it.hasCollections()) {
+                        hasCollections = true
+                        Pair(
+                            msgNoPhotos.format(user.name),
+                            seeCollections
+                        )
+                    } else
+                        Pair(
+                            msgNoPhotosCollections.format(user.name),
+                            goBack
+                        )
+                } ?: Pair(
+                    msgNoPhotosCollections.replace("of %s", ""),
+                    goBack
+                )
+            }
+
+            else -> Pair(
+                getString(R.string.msg_empty_photos, Constants.Util.userFavConstants.random()),
+                getString(R.string.action_go_back)
+            )
+        }
     }
 
     private fun startMorePhotosActivity(data: MoreListData) {

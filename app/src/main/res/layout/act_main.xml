@@ -15,6 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.rex50.mausam.utils.CustomViewPager
+            android:id="@+id/homeViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/tabLayout"/>
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
@@ -29,12 +35,6 @@
             app:tabIndicatorHeight="0dp"
             app:tabMode="fixed"
             android:layout_alignParentBottom="true" />
-
-        <com.rex50.mausam.utils.CustomViewPager
-            android:id="@+id/homeViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/tabLayout"/>
 
     </RelativeLayout>
 

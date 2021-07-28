@@ -48,7 +48,7 @@ data class MoreListData(
 
     fun getDesc(): String = when(listMode){
         Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS -> {
-            collectionInfo?.description?.takeIf { it.isNotEmpty() } ?: Constants.Providers.POWERED_BY_UNSPLASH
+            collectionInfo?.description?.takeIf { it.isNotEmpty() } ?: ""
         }
 
         Constants.ListModes.LIST_MODE_USER_PHOTOS,
@@ -65,9 +65,20 @@ data class MoreListData(
         else -> throw IllegalArgumentException("No desc found for $listMode")
     }
 
+    fun getPhotosCount(): String = when(listMode) {
+        Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS -> {
+            "${collectionInfo?.totalPhotos} Photos"
+        }
+
+        else -> ""
+    }
+
     fun getBgImgUrl(): String = when(listMode){
         Constants.ListModes.LIST_MODE_COLLECTION_PHOTOS -> {
-            collectionInfo?.coverPhoto?.urls?.small ?: ""
+            collectionInfo?.let { col ->
+                col.user?.profileImage?.large?.takeIf { !it.contains("placeholder-avatars") }
+                    ?: col.coverPhoto?.urls?.small
+            } ?: ""
         }
 
         Constants.ListModes.LIST_MODE_USER_COLLECTIONS -> {

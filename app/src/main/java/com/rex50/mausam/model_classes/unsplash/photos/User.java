@@ -291,6 +291,10 @@ public class User implements Parcelable {
         return new MoreListData(Constants.ListModes.LIST_MODE_USER_PHOTOS, this, null, null);
     }
 
+    public boolean hasCollections() {
+        return totalCollections > 0;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

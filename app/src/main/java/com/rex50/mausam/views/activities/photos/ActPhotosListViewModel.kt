@@ -182,7 +182,7 @@ class ActPhotosListViewModel(
     }
 
     fun getPhotographerInfo(): User? {
-        return listData.photographerInfo
+        return listData.photographerInfo ?: listData.collectionInfo?.user
     }
 
     companion object {

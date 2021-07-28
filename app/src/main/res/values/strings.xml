@@ -147,6 +147,8 @@
     <string name="loading">Loading</string>
     <string name="msg_empty_discover">Oops! no new photos found.\nTry searching your favourite %s.</string>
     <string name="msg_empty_photos">Oops! no photos found.\nGo back to Discover and try searching your favourite %s.</string>
+    <string name="msg_empty_photographer_photos">Oops! no photos found.\nSee some collections curated by %s.</string>
+    <string name="msg_empty_photographer_photos_collections">No photos found of %s.</string>
     <string name="action_go_back">Go back</string>
     <string name="action_scroll_to_top_of_the_page">Scroll to top of the page</string>
     <string name="download_cancelled">Download cancelled.</string>
@@ -174,6 +176,7 @@
     <string name="action_start_download">Start download</string>
     <string name="discovering_new_contents">Discovering new photos.\nPlease wait&#8230;</string>
     <string name="apply_changes">Done</string>
+    <string name="curated_by">Curated by</string>
 
 
     <!--Colors for gradient array-->
