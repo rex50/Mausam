@@ -8,6 +8,7 @@
     android:background="@drawable/bg_general"
     android:textColor="@color/black_to_white"
     android:visibility="gone"
+    android:textSize="12sp"
     android:alpha="0.5"
     tools:visibility="visible"
     xmlns:android="http://schemas.android.com/apk/res/android"
