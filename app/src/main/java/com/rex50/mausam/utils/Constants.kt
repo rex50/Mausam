@@ -16,9 +16,9 @@ class Constants {
 
     object AvailableLayouts {
         //Home
-        const val WEATHER_BASED_PHOTOS = "Random weather photos"
+        const val WEATHER_BASED_PHOTOS = "Season based photos"
         const val LOCATION_BASED_PHOTOS = "Random location photos"
-        const val TIME_BASED_PHOTOS = "Random time photos"
+        const val TIME_BASED_PHOTOS = "Time based photos"
         const val POPULAR_PHOTOS = "Popular photos"
         const val POPULAR_PHOTOGRAPHERS = "Popular photographers"
         const val POPULAR_TAGS = "Popular tags"

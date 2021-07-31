@@ -85,20 +85,25 @@ class UnsplashHelper(
     }
 
     suspend fun getSearchedPhotos(searchTerm: String, page: Int, @PerPageRestriction perPage: Int): Result<SearchedPhotos> {
-        return getSearchedPhotos(searchTerm, page, perPage, defaultOrientation)
+        return getSearchedPhotos(searchTerm, page, perPage, defaultOrientation, RESPONSE_VALIDITY_HOURS)
+    }
+
+    suspend fun getSearchedPhotos(searchTerm: String, page: Int, @PerPageRestriction perPage: Int, validityInHours: Int): Result<SearchedPhotos> {
+        return getSearchedPhotos(searchTerm, page, perPage, defaultOrientation, validityInHours)
     }
 
     suspend fun getSearchedPhotos(
         searchTerm: String,
         page: Int,
         @PerPageRestriction perPage: Int,
-        @PhotosOrientationRestriction photosOrientation: String
+        @PhotosOrientationRestriction photosOrientation: String,
+        validityInHours: Int
     ): Result<SearchedPhotos> = withContext(Dispatchers.IO) {
 
         val dbKey = SEARCHED_PHOTOS_KEY + searchTerm + page + perPage
 
         //Check if data available locally and not expired
-        val data = keyValuesRepository.checkValidityAndGetValue(dbKey, RESPONSE_VALIDITY_HOURS)
+        val data = keyValuesRepository.checkValidityAndGetValue(dbKey, validityInHours)
 
         return@withContext when {
             //Local data is not expired

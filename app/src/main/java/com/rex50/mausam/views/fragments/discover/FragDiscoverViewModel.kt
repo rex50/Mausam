@@ -5,16 +5,15 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseAndroidViewModel
-import com.rex50.mausam.enums.ContentAnimationState
+import com.rex50.mausam.enums.Season
+import com.rex50.mausam.enums.Time
 import com.rex50.mausam.model_classes.item_types.CategoryTypeModel
 import com.rex50.mausam.model_classes.item_types.ColorTypeModel
 import com.rex50.mausam.model_classes.utils.AllContentModel
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.network.Result
 import com.rex50.mausam.network.UnsplashHelper
-import com.rex50.mausam.utils.AnimatedMessage.AnimationByState
 import com.rex50.mausam.utils.Constants
-import com.rex50.mausam.utils.Constants.Util.userFavConstants
 import com.rex50.mausam.utils.ImageActionHelper.DownloadStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -35,7 +34,7 @@ class FragDiscoverViewModel(
             Constants.AvailableLayouts.POPULAR_PHOTOS,
             Constants.AvailableLayouts.POPULAR_PHOTOGRAPHERS,
             Constants.AvailableLayouts.BROWSE_BY_COLORS,
-            Constants.AvailableLayouts.LOCATION_BASED_PHOTOS,
+            //Constants.AvailableLayouts.LOCATION_BASED_PHOTOS,
             Constants.AvailableLayouts.WEATHER_BASED_PHOTOS,
             Constants.AvailableLayouts.TIME_BASED_PHOTOS
         )
@@ -237,15 +236,14 @@ class FragDiscoverViewModel(
     }
 
     private suspend fun addTimeBasedPhotos() {
-        //TODO: based on current time use appropriate word
-        val time = "Night"
-        when(val result = unsplashHelper.getSearchedPhotos(time, 1, 20)) {
+        val time = Time.current()
+        when(val result = unsplashHelper.getSearchedPhotos(Time.searchTermFor(time).toLowerCase(), 1, 20, 48)) {
             is Result.Success -> {
                 allData.addSequentially(
                     Constants.AvailableLayouts.TIME_BASED_PHOTOS,
                     GenericModelFactory.getGeneralTypeObject(
+                        time.text,
                         Constants.AvailableLayouts.TIME_BASED_PHOTOS,
-                        Constants.Providers.POWERED_BY_UNSPLASH,
                         false,
                         result.data.results
                     )
@@ -292,18 +290,14 @@ class FragDiscoverViewModel(
     }
 
     private suspend fun addWeatherBasedPhotos() {
-        //TODO: based on current month pick one weather and use it.
-        val seasons = arrayListOf("late winter", "spring", "monsoon", "autumn", "summer", "early winter")
-
-        val season = StringUtils.capitalize(seasons.random())
-
-        when(val result = unsplashHelper.getSearchedPhotos(season, 1, 20)) {
+        val season = Season.current()
+        when(val result = unsplashHelper.getSearchedPhotos(Season.searchTermFor(season).toLowerCase(), 1, 20, 48)) {
             is Result.Success -> {
                 allData.addSequentially(
                     Constants.AvailableLayouts.WEATHER_BASED_PHOTOS,
                     GenericModelFactory.getGeneralTypeObject(
+                        season.text,
                         Constants.AvailableLayouts.WEATHER_BASED_PHOTOS,
-                        season,
                         false,
                         result.data.results
                     )
