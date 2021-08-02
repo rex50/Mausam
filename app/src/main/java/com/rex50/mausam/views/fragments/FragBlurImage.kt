@@ -7,6 +7,7 @@ import android.widget.SeekBar
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.rex50.imageblur.ImageBlur
 import com.rex50.mausam.BuildConfig
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
@@ -32,8 +33,8 @@ class FragBlurImage: BaseFragment() {
             }
         }
 
-    private val blurHelper: BlurImage by lazy {
-        BlurImage.with(requireContext()).also {
+    private val blurHelper: ImageBlur by lazy {
+        ImageBlur.with(requireContext()).also {
             it.load(listener?.getBitmap())
         }
     }
@@ -72,7 +73,7 @@ class FragBlurImage: BaseFragment() {
                         try {
                             finalBitmap =
                                 if(blurLevel > 0 && listener?.getBitmap() != null)
-                                    blurHelper.radius(blurLevel)
+                                    blurHelper.intensity(blurLevel)
                                         .onOutOfMemory {
                                             showToast(
                                             "Error while blurring image. Please try clearing memory before trying again.",
@@ -127,9 +128,9 @@ class FragBlurImage: BaseFragment() {
      */
     private fun updatePreview() {
         listener?.getBitmap()?.takeIf { blurLevel > 0 }?.let {
-            BlurImage.with(requireContext())
+            ImageBlur.with(requireContext())
                 .load(it)
-                .radius(blurLevel)
+                .intensity(blurLevel)
                 .into(ivPreview)
         } ?: initPreview()
     }
