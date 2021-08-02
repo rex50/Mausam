@@ -17,7 +17,7 @@ import java.lang.IllegalArgumentException
  * @param listOfAnimations list of animations and it's data which will be used in future
  */
 class AnimatedMessage<StateType>(
-    val animViewBinding: AnimViewBinding?,
+    private val animViewBinding: AnimViewBinding?,
     val listOfAnimations: ArrayList<AnimationByState<StateType>>
 ) {
 
@@ -53,6 +53,8 @@ class AnimatedMessage<StateType>(
      * First animation from the list is used as default animation
      */
     private var defaultAnimation: AnimationByState<StateType>
+
+    private var isFirstTime = true
 
     init {
         check(listOfAnimations.isNotEmpty()) {
@@ -96,7 +98,8 @@ class AnimatedMessage<StateType>(
      * For changing and showing current animation based on given state
      */
     fun setAnimationAndShow(state: StateType) {
-        if(currentAnim?.state != state) {
+        if((currentAnim?.state != state) || isFirstTime) {
+            isFirstTime = false
             setAnimation(state)
             show()
         } else {
