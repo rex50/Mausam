@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/header"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-    android:elevation="0dp"
-    app:elevation="0dp">
+    android:background="?android:attr/windowBackground"
+    android:paddingBottom="@dimen/_8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
+        android:id="@+id/rl"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?android:attr/windowBackground"
-        android:orientation="horizontal"
         android:paddingStart="@dimen/_16dp"
-        android:paddingEnd="@dimen/_16dp"
-        app:layout_scrollFlags="scroll|enterAlways|snap|snapMargins">
+        android:paddingEnd="@dimen/_16dp">
 
         <ImageView
             android:id="@+id/img_logo"
@@ -61,4 +57,12 @@
             android:layout_centerVertical="true"/>
 
     </RelativeLayout>
-</com.google.android.material.appbar.AppBarLayout>
+
+    <include
+        android:id="@+id/btnAutoWall"
+        layout="@layout/item_auto_wallpaper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rl" />
+
+</RelativeLayout>

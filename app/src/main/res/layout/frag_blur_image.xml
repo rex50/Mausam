@@ -30,7 +30,7 @@
         android:id="@+id/tvBlur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Blur level"
+        android:text="@string/blur_level"
         android:textColor="@color/black_to_white"
         android:textSize="18sp"
         android:layout_marginBottom="@dimen/_32dp"

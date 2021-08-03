@@ -33,7 +33,6 @@ class ActSettingsViewModel(app: Application): BaseAndroidViewModel(app) {
 
     private fun calcAppCache() = viewModelScope.launch {
         val size = CacheFolderUtils.getCacheFolderSize(getApplication())
-        Log.e("calcAppCache", "onCalculated: $size")
         val mb = (size/(1000*1000)).toInt()
         mutableLiveCacheSize.value = mb
     }

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.activities.auto_wallpaper.ActAutoWallpaper"
+    android:orientation="vertical">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/ablAutoWall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white_to_dark">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/ctlAutoWall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <include layout="@layout/header_custom_general"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/headerAutoWall"
+                    app:layout_collapseMode="parallax"
+                    tools:visibility="visible"
+                    android:visibility="visible"
+                    app:layout_collapseParallaxMultiplier="0.7"/>
+
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardElevation="8dp"
+            app:cardCornerRadius="0dp"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:layout_collapseMode="pin">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="@dimen/_80dp"
+                    android:paddingBottom="@dimen/_40dp"
+                    android:clipToPadding="false"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <include layout="@layout/anim_view"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:id="@+id/animLayout"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_16dp"
+                            android:layout_marginVertical="@dimen/_16dp"
+                            android:gravity="top"
+                            android:visibility="visible"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/interval"
+                                    android:textColor="@color/titleColor"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                                    android:id="@+id/tvIntervalDesc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="0dp"
+                                    android:paddingEnd="30dp"
+                                    android:text="@string/change_wallpaper_interval_desc"
+                                    android:textColor="@color/taupeGray"
+                                    android:textSize="10sp"
+                                    android:visibility="visible"
+                                    tools:ignore="SmallSp" />
+                            </LinearLayout>
+
+                            <Button
+                                android:backgroundTint="@color/more_button"
+                                android:id="@+id/btnChangeInterval"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="@string/change"
+                                android:textColor="@color/more_button_text"
+                                android:textSize="12sp"
+                                app:cornerRadius="20dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_16dp"
+                            android:layout_marginVertical="@dimen/_16dp"
+                            android:gravity="top"
+                            android:visibility="visible"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/blur_level"
+                                    android:textColor="@color/titleColor"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                                    android:id="@+id/tvBlurIntensityDesc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="0dp"
+                                    android:paddingEnd="30dp"
+                                    android:text="@string/change_wallpaper_interval_desc"
+                                    android:textColor="@color/taupeGray"
+                                    android:textSize="10sp"
+                                    android:visibility="visible"
+                                    tools:ignore="SmallSp" />
+                            </LinearLayout>
+
+                            <Button
+                                android:backgroundTint="@color/more_button"
+                                android:id="@+id/btnChangeBlurIntensity"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="@string/change"
+                                android:textColor="@color/more_button_text"
+                                android:textSize="12sp"
+                                app:cornerRadius="20dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:background="@drawable/bg_weather_details"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="15dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="40dp"
+                            android:layout_width="match_parent"
+                            android:orientation="vertical"
+                            android:padding="15dp">
+
+                            <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="10dp"
+                                android:layout_width="match_parent"
+                                android:text="@string/auto_wallpaper_not_working"
+                                android:textColor="@color/white"
+                                android:textSize="14sp" />
+
+                            <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                                android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:text="@string/imp_auto_wallpaper_info_desc"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textColorLink="@color/magicMint"
+                                android:autoLink="web"
+                                android:linksClickable="true"/>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+                <LinearLayout
+                    android:id="@+id/lnlAutoWallpaper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_16dp"
+                    android:layout_marginVertical="@dimen/_16dp"
+                    android:background="@drawable/bg_general_accent_transparent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                        android:id="@+id/tvAutoWall"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        tools:text="Auto wallpaper is off"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:layout_marginStart="@dimen/_8dp"
+                        android:textStyle="bold" />
+
+                    <com.bitvale.switcher.SwitcherX
+                        android:id="@+id/sAutoWallpaper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:checked="false"
+                        android:thumb="@drawable/thumb_selector"
+                        android:track="@drawable/track_selector" />
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</LinearLayout>

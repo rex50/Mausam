@@ -292,6 +292,22 @@ class UnsplashHelper(
         }
     }
 
+    suspend fun getRandomPhoto(): Result<UnsplashPhotos> = withContext(Dispatchers.IO) {
+        if(connectionChecker.isNetworkConnected()) {
+            when(val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_RANDOM_PHOTO, hashMapOf())) {
+                is Result.Success -> {
+                    Result.Success(DataParser.parseUnsplashPhoto(result.data))
+                }
+
+                is Result.Failure -> {
+                    result
+                }
+            }
+        } else {
+            Result.Failure(IllegalStateException(NO_INTERNET))
+        }
+    }
+
     fun trackDownload(url: String) = scope.launch {
         val extras = HashMap<String, String>()
         extras[DOWNLOADING_PHOTO_URL] = url

@@ -3,6 +3,7 @@ package com.rex50.mausam.storage;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.rex50.mausam.enums.AutoWallpaperInterval;
 import com.rex50.mausam.enums.DownloadQuality;
 
 import org.joda.time.DateTime;
@@ -29,6 +30,9 @@ public class MausamSharedPrefs {
     private static final String DATA_SAVER_MODE = "dataSaverMode";
     private static final String PHOTO_DOWNLOAD_QUALITY = "photoDownloadQuality";
     private static final String SHOW_DOWNLOAD_QUALITY = "showDownloadQuality";
+    private static final String ENABLED_AUTO_WALLPAPER = "enabledAutoWallpaper";
+    private static final String AUTO_WALLPAPER_INTERVAL = "autoWallpaperInterval";
+    private static final String AUTO_WALLPAPER_BLUR_INTENSITY = "autoWallpaperBlurIntensity";
 
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
@@ -222,4 +226,31 @@ public class MausamSharedPrefs {
         return sharedPrefs.getBoolean(SHOW_DOWNLOAD_QUALITY, true);
     }
 
+    public void setEnabledAutoWallpaper(boolean show) {
+        editor.putBoolean(ENABLED_AUTO_WALLPAPER, show);
+        editor.commit();
+    }
+
+    public boolean isEnabledAutoWallpaper() {
+        return sharedPrefs.getBoolean(ENABLED_AUTO_WALLPAPER, false);
+    }
+
+
+    public void setAutoWallpaperInterval(AutoWallpaperInterval interval) {
+        editor.putString(AUTO_WALLPAPER_INTERVAL, interval.name());
+        editor.commit();
+    }
+
+    public AutoWallpaperInterval getAutoWallpaperInterval() {
+        return AutoWallpaperInterval.valueOf(sharedPrefs.getString(AUTO_WALLPAPER_INTERVAL, "TWENTY_FOUR_HOURS"));
+    }
+
+    public void setAutoWallpaperBlurIntensity(float intensity) {
+        editor.putFloat(AUTO_WALLPAPER_BLUR_INTENSITY, intensity);
+        editor.commit();
+    }
+
+    public float getAutoWallpaperBlurIntensity() {
+        return sharedPrefs.getFloat(AUTO_WALLPAPER_BLUR_INTENSITY, 0f);
+    }
 }

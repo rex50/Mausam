@@ -19,13 +19,16 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".views.activities.ActImageEditor"/>
+        <activity
+            android:name=".views.activities.auto_wallpaper.ActAutoWallpaper"
+            android:exported="true" />
+        <activity android:name=".views.activities.ActImageEditor" />
         <activity android:name=".views.activities.ActSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +43,7 @@
         <activity android:name=".views.activities.ActMain" />
         <activity android:name=".views.activities.collections.ActCollectionsList" />
         <activity android:name=".views.activities.settings.ActSettings" />
-        <activity android:name=".views.activities.ActUsedLibrary"/>
+        <activity android:name=".views.activities.ActUsedLibrary" />
 
         <receiver
             android:name=".receivers.NetworkChangeReceiver"

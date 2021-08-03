@@ -10,6 +10,7 @@ import androidx.annotation.StringRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.rex50.imageblur.ImageBlur
 import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragmentWithListener
@@ -23,6 +24,7 @@ import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
 import com.rex50.mausam.views.activities.ActImageEditor
+import com.rex50.mausam.views.activities.auto_wallpaper.ActAutoWallpaper
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
@@ -87,6 +89,21 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
     private fun initHeader() {
         PushDownAnim.setPushDownAnimTo(binding?.header?.btnSettings)
             .setOnClickListener { listener?.startSettings() }
+
+        binding?.header?.btnAutoWall?.let { b ->
+
+            ImageBlur.with(requireContext())
+                .load(R.drawable.img_banner_auto_wallpaper)
+                .scale(0.2f)
+                .intensity(5f)
+                .into(b.bg)
+
+
+            PushDownAnim.setPushDownAnimTo(b.root)
+                .setOnClickListener {
+                    startActivity(Intent(requireContext(), ActAutoWallpaper::class.java))
+                }
+        }
     }
 
     private fun initAnimation() {
@@ -112,10 +129,10 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
         animatedMessage.onLottieAnimationConfig = { lottieAnimationView, state ->
             when(state) {
                 ContentAnimationState.EMPTY -> {
-                    AnimConfigs.configureAstronautAnim(lottieAnimationView)
+                    lottieAnimationView.configureAstronautAnim()
                 }
                 else -> {
-                    AnimConfigs.defaultConfig(lottieAnimationView)
+                    lottieAnimationView.defaultConfig()
                 }
             }
         }

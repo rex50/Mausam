@@ -15,8 +15,8 @@ import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.Request
 import com.tonyodev.fetch2core.Func
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app), KoinComponent {
 
@@ -46,7 +46,7 @@ abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app), Ko
                 .setDownloadConcurrentLimit(3)
                 .build()
 
-            val fetch = Fetch.Impl.getInstance(fetchConfiguration)
+            val fetch = Fetch.getInstance(fetchConfiguration)
             fetch.cancel(id, {
                 onSuccess?.call(it)
             }, {

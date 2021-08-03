@@ -1,6 +1,7 @@
 package com.rex50.mausam.di
 
 import android.content.Context
+import com.rex50.mausam.views.activities.auto_wallpaper.ActAutoWallpaperViewModel
 import com.rex50.mausam.views.activities.collections.ActCollectionsListViewModel
 import com.rex50.mausam.views.activities.photos.ActPhotosListViewModel
 import com.rex50.mausam.views.activities.settings.ActSettingsViewModel
@@ -22,6 +23,7 @@ object UIDependencySetup {
         viewModel { ActPhotosListViewModel(get(), get()) }
         viewModel { ActCollectionsListViewModel(get(), get()) }
         viewModel { ActSettingsViewModel(get()) }
+        viewModel { ActAutoWallpaperViewModel(get()) }
     }
 
     @JvmStatic

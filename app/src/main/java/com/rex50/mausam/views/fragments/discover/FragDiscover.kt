@@ -68,7 +68,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
                 ),
                 AnimatedMessage.AnimationByState(
                     ContentAnimationState.LOADING,
-                    R.raw.l_searching,
+                    R.raw.l_anim_2_planet,
                     getString(R.string.discovering_new_contents),
                     "",
                     false
@@ -134,15 +134,15 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
         animatedMessage.onLottieAnimationConfig = { lottieAnimationView, state ->
             when(state) {
                 ContentAnimationState.EMPTY -> {
-                    AnimConfigs.configureAstronautAnim(lottieAnimationView)
+                    lottieAnimationView.configureAstronautAnim()
                 }
 
                 ContentAnimationState.LOADING -> {
-                    AnimConfigs.configureDiscoverAnim(lottieAnimationView)
+                    lottieAnimationView.configure2PlanetAnim()
                 }
 
                 else -> {
-                    AnimConfigs.defaultConfig(lottieAnimationView)
+                    lottieAnimationView.defaultConfig()
                 }
             }
         }

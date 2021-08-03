@@ -27,6 +27,10 @@ object DataParser {
         return gson.fromJson(response.toString(), WeatherModelClass::class.java)
     }
 
+    fun parseUnsplashPhoto(response: String): UnsplashPhotos{
+        return Gson().fromJson(response, UnsplashPhotos::class.java)
+    }
+
     fun parseUnsplashData(response: String?, parseUsersList: Boolean): PhotosAndUsers{
         val gson = Gson()
         val photos: MutableList<UnsplashPhotos> = ArrayList()

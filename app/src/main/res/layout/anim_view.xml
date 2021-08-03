@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <com.airbnb.lottie.LottieAnimationView
@@ -42,7 +43,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="10dp"
-            android:text="@string/failed_to_load_image"/>
+            tools:text="@string/failed_to_load_image"/>
 
         <Button
             android:id="@+id/btnAction"

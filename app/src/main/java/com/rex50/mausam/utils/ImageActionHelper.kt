@@ -16,6 +16,7 @@ import com.rex50.mausam.R
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.network.APIManager
+import com.rex50.mausam.network.Result
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.rex50.mausam.utils.ImageViewerHelper.Companion.getFormattedDesc
@@ -23,6 +24,7 @@ import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.Extras
 import kotlinx.coroutines.*
 import java.io.*
+import java.lang.Exception
 
 class ImageActionHelper {
     companion object{
@@ -110,6 +112,27 @@ class ImageActionHelper {
                         onResult(false)
                     }
                 }
+            }
+        }
+
+
+        suspend fun saveImage(context: Context?, unsplashPhotos: UnsplashPhotos): Result<UnsplashPhotos> = withContext(Dispatchers.IO){
+            return@withContext suspendCancellableCoroutine { continuation ->
+                saveImage(context, unsplashPhotos, false, object: ImageSaveListener {
+                    override fun onDownloadStarted(request: Request) {
+                    }
+
+                    override fun onDownloadFailed(msg: String) {
+                        continuation.resumeWith(kotlin.Result.failure(Exception(msg)))
+                    }
+
+                    override fun response(imageMeta: UnsplashPhotos?, msg: String) {
+                        imageMeta?.let {
+                            continuation.resumeWith(kotlin.Result.success(Result.Success(imageMeta)))
+                        } ?: continuation.resumeWith(kotlin.Result.failure(Exception("Error while downloading")))
+                    }
+
+                })
             }
         }
 

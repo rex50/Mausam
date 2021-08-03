@@ -114,7 +114,7 @@ class AnimatedMessage<StateType>(
         isShowing = true
         currentAnim?.let { anim ->
 
-            Log.e(TAG, "show: Preparing animation")
+            Log.d(TAG, "Preparing animation")
 
             //Prepare Animation
             animViewBinding?.lnlError?.showView()

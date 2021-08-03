@@ -377,10 +377,10 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
         animatedMessage.onLottieAnimationConfig = { lottieAnimationView, state ->
             when(state) {
                 ContentAnimationState.EMPTY -> {
-                    AnimConfigs.configureAstronautAnim(lottieAnimationView)
+                    lottieAnimationView.configureAstronautAnim()
                 }
 
-                else -> AnimConfigs.defaultConfig(lottieAnimationView)
+                else -> lottieAnimationView.defaultConfig()
             }
         }
     }

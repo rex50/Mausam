@@ -4,8 +4,10 @@ import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.work.ExistingPeriodicWorkPolicy
 import com.rex50.mausam.di.UIDependencySetup
 import com.rex50.mausam.storage.MausamSharedPrefs
+import com.rex50.mausam.workers.ChangeWallpaperWorker
 import java.io.File
 
 class MausamApplication : Application(){
@@ -41,6 +43,8 @@ class MausamApplication : Application(){
         checkIfThemeChangeRequired()
 
         injectDependency()
+
+        verifyAutoWallWorkerIsRunning()
 
     }
 
@@ -121,6 +125,14 @@ class MausamApplication : Application(){
                 isFollowingSystemTheme = false
             }
         }
+    }
+
+
+    //Verify if auto wallpaper enabled or not.
+    // If enabled then keep the existing work in the queue.
+    // If not then add the work to the queue
+    private fun verifyAutoWallWorkerIsRunning() {
+        ChangeWallpaperWorker.scheduleAutoWallpaper(applicationContext, ExistingPeriodicWorkPolicy.KEEP)
     }
 
 }

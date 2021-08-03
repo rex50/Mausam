@@ -48,6 +48,7 @@
     <string name="search_photo_desc">Browse and search photos by some of the best photographers spread across the world and available on Unsplash.</string>
     <string name="favourites_desc">Your all downloads and based on that recommendations will appear here.</string>
     <string name="imp_info_desc">All your favourites are stored locally so if you uninstall app or clear data of Mausam then you will lose your favourites.</string>
+    <string name="imp_auto_wallpaper_info_desc">If wallpapers are not changing then try disabling battery optimizations for Mausam in your phone\'s settings.\n\nFor manufacturer specific steps: \nhttps://dontkillmyapp.com</string>
     <string name="support_desc">Your donation keeps Mausam app advertisement free.</string>
     <string name="share_app_desc">Share this beautiful app with your friends and family.</string>
     <string name="leave_review_desc">Leave a review and rate the app on Playstore.</string>
@@ -170,6 +171,8 @@
     <string name="full">Full</string>
     <string name="raw">Raw</string>
     <string name="desc_bs_download_quality">Your selected quality will be used as the preferred quality for photo downloads.</string>
+    <string name="desc_bs_interval">Wallpapers will change based on your below selected interval.</string>
+    <string name="desc_bs_blur_level">%s blur will be applied to the future wallpapers.</string>
     <string name="info_download_option">*You can change download quality in settings</string>
     <string name="info_show_quality_options">Show quality options always.</string>
     <string name="title_quality_options">Quality options</string>
@@ -177,6 +180,21 @@
     <string name="discovering_new_contents">Discovering new photos.\nPlease wait&#8230;</string>
     <string name="apply_changes">Done</string>
     <string name="curated_by">Curated by</string>
+    <string name="auto_wallpaper">Auto Wallpaper</string>
+    <string name="auto_wallpaper_desc">Auto Wallpaper feature will automatically change your wallpaper for you based set conditions.</string>
+    <string name="auto_wallpaper_on">Auto wallpaper is running</string>
+    <string name="auto_wallpaper_off">Auto wallpaper is off</string>
+    <string name="change_wallpaper_interval_desc">Wallpaper will change every %s</string>
+    <string name="change_wallpaper_blur_desc">%s blur will applied while changing wallpaper.</string>
+    <string name="auto_wallpaper_not_working">Auto wallpaper not working?</string>
+    <string name="interval">Interval</string>
+    <string name="blur_level">Blur level</string>
+    <string name="title_change_interval">Interval options</string>
+    <string name="one_hour">1 hour</string>
+    <string name="three_hours">3 hours</string>
+    <string name="twelve_hours">12 hours</string>
+    <string name="twenty_four_hours">24 hours</string>
+    <string name="preview">Preview</string>
 
 
     <!--Colors for gradient array-->

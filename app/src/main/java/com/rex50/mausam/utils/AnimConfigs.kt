@@ -3,21 +3,26 @@ package com.rex50.mausam.utils
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 
-object AnimConfigs {
 
-    fun configureAstronautAnim(lottieAnimationView: LottieAnimationView) {
-        lottieAnimationView.scale = 0.2f
-        lottieAnimationView.repeatCount = LottieDrawable.INFINITE
-    }
+fun LottieAnimationView.configureAstronautAnim() {
+    scale = 0.2f
+    repeatCount = LottieDrawable.INFINITE
+}
 
-    fun configureDiscoverAnim(lottieAnimationView: LottieAnimationView) {
-        lottieAnimationView.scale = 0.2f
-        lottieAnimationView.repeatCount = LottieDrawable.INFINITE
-    }
+fun LottieAnimationView.configure2PlanetAnim() {
+    scale = 0.5f
+    repeatCount = LottieDrawable.INFINITE
+}
 
-    fun defaultConfig(lottieAnimationView: LottieAnimationView) {
-        lottieAnimationView.scale = 1f
-        lottieAnimationView.repeatCount = 0
-    }
+fun LottieAnimationView.configureAutoWallpaperAnim() {
+    scale = 2f
+    speed = 0.3f
+    setMinAndMaxProgress(0.2f, 0.6f)
+    repeatCount = LottieDrawable.INFINITE
+    repeatMode = LottieDrawable.REVERSE
+}
 
+fun LottieAnimationView.defaultConfig() {
+    scale = 1f
+    repeatCount = 0
 }
