@@ -83,6 +83,10 @@ public class UnsplashPhotos implements Parcelable {
     @SerializedName("downloadedBy")
     @Expose
     private String downloadedBy;
+
+    @SerializedName("blur_hash")
+    @Expose
+    private String blurHash;
     
 
     public UnsplashPhotos() { }
@@ -335,6 +339,10 @@ public class UnsplashPhotos implements Parcelable {
         return DownloadedBy.getFrom(downloadedBy);
     }
 
+    public String getBlurHash() {
+        return blurHash;
+    }
+
     public String getJSON(){
         try {
             return new Gson().toJson(this);
@@ -389,7 +397,8 @@ public class UnsplashPhotos implements Parcelable {
                 Objects.equals(user, that.user) &&
                 Objects.equals(sponsorship, that.sponsorship) &&
                 Objects.equals(relativePath, that.relativePath) &&
-                Objects.equals(downloadedBy, that.downloadedBy);
+                Objects.equals(downloadedBy, that.downloadedBy) &&
+                Objects.equals(blurHash, that.blurHash);
     }
 
     @Override
