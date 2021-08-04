@@ -82,6 +82,9 @@ class ChangeWallpaperWorker(
 
         const val CHANGE_WALLPAPER_WORK_NAME = "Mausam_Auto_Change_Wallpaper"
 
+        const val TAG = "ChangeWallpaperWorker"
+
+
         @JvmStatic
         fun getConstraints() = Constraints.Builder()
             .setRequiresCharging(false)
@@ -94,7 +97,7 @@ class ChangeWallpaperWorker(
         @JvmStatic
         fun scheduleAutoWallpaper(
             context: Context,
-            workPolicy: ExistingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.REPLACE
+            workPolicy: ExistingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP
         ) {
             val sharedPrefs = MausamSharedPrefs(context)
             if(sharedPrefs.isEnabledAutoWallpaper) {

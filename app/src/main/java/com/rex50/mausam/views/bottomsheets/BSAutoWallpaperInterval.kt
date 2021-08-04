@@ -31,7 +31,7 @@ class BSAutoWallpaperInterval : MaterialBottomSheet(){
 
     private var lastInterval: AutoWallpaperInterval? = null
 
-    var selected: MutableMap.MutableEntry<AutoWallpaperInterval, Int>? = null
+    var selected: AutoWallpaperInterval? = null
         private set
 
     private val qualityMap = hashMapOf<AutoWallpaperInterval, Int>().apply {
@@ -68,6 +68,8 @@ class BSAutoWallpaperInterval : MaterialBottomSheet(){
 
         lastInterval = sharedPrefs?.autoWallpaperInterval
 
+        selected = lastInterval
+
         //Show last selected interval
         val selectedId = qualityMap[lastInterval ?: AutoWallpaperInterval.TWENTY_FOUR_HOURS]
         selectedId?.takeIf { it != -1 }?.let { id ->
@@ -81,9 +83,11 @@ class BSAutoWallpaperInterval : MaterialBottomSheet(){
         rgInterval?.setOnCheckedChangeListener { _, checkedId ->
 
             //Find selected interval and store in shared prefs
-            selected = qualityMap.entries.find { checkedId == it.value }
+            val entry = qualityMap.entries.find { checkedId == it.value }
 
-            selected?.let { entry ->
+            entry?.let { entry ->
+
+                selected = entry.key
 
                 sharedPrefs?.autoWallpaperInterval = entry.key
 
@@ -103,7 +107,7 @@ class BSAutoWallpaperInterval : MaterialBottomSheet(){
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        onSetSuccess?.invoke(lastInterval == selected?.key)
+        onSetSuccess?.invoke(lastInterval != selected)
         super.onDismiss(dialog)
     }
 

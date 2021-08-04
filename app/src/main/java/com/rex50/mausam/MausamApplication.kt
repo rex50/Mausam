@@ -132,7 +132,7 @@ class MausamApplication : Application(){
     // If enabled then keep the existing work in the queue.
     // If not then add the work to the queue
     private fun verifyAutoWallWorkerIsRunning() {
-        ChangeWallpaperWorker.scheduleAutoWallpaper(applicationContext, ExistingPeriodicWorkPolicy.KEEP)
+        ChangeWallpaperWorker.scheduleAutoWallpaper(applicationContext)
     }
 
 }

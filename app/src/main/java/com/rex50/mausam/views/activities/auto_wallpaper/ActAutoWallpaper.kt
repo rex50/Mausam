@@ -81,7 +81,7 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
             val bs = BSAutoWallpaperInterval()
             bs.onSetSuccess = { isUpdated ->
                 if(isUpdated) {
-                    ChangeWallpaperWorker.scheduleAutoWallpaper(applicationContext)
+                    ChangeWallpaperWorker.scheduleAutoWallpaper(applicationContext, ExistingPeriodicWorkPolicy.REPLACE)
                     updateDesc()
                 }
             }
@@ -98,7 +98,7 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
             mausamSharedPrefs?.isEnabledAutoWallpaper = checked
 
             val msg = if(checked) {
-                ChangeWallpaperWorker.scheduleAutoWallpaper(applicationContext, ExistingPeriodicWorkPolicy.KEEP)
+                ChangeWallpaperWorker.scheduleAutoWallpaper(applicationContext)
                 getString(R.string.auto_wallpaper_on)
             } else {
                 ChangeWallpaperWorker.cancelAutoWallpaper(applicationContext)
@@ -109,14 +109,14 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
 
         }
 
-
-        binding?.sAutoWallpaper?.setOnCheckedChangeListener { changeState(it) }
-
         //Get state from shared prefs and update UI
         (mausamSharedPrefs?.isEnabledAutoWallpaper == true).let {
             binding?.sAutoWallpaper?.setChecked(it)
             changeState(it)
         }
+
+        //Handle clicks
+        binding?.sAutoWallpaper?.setOnCheckedChangeListener { changeState(it) }
 
         PushDownAnim.setPushDownAnimTo(binding?.lnlAutoWallpaper).setOnClickListener {
             binding?.sAutoWallpaper?.setChecked(binding?.sAutoWallpaper?.isChecked != true)
