@@ -303,7 +303,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
                 }
 
                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
-                    ImageActionHelper.shareImage(requireContext(), "Share", photoInfo.user.name, photoInfo.links.html)
+                    ImageActionHelper.shareImage(requireContext(), "Share Photo", photoInfo.user.name, photoInfo.links.html)
                 }
 
                 override fun onUserPhotos(user: User) {

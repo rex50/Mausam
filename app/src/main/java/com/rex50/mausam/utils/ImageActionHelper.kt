@@ -68,10 +68,10 @@ class ImageActionHelper {
             context?.apply {
                 val body = getString(R.string.share_body, link, photographer)
                 startActivity(
-                        Intent(ACTION_SEND)
-                                .setType("text/plain")
-                                .putExtra(EXTRA_SUBJECT, subject)
-                                .putExtra(EXTRA_TEXT, body)
+                    createChooser(Intent(ACTION_SEND)
+                        .setType("text/plain")
+                        .putExtra(EXTRA_SUBJECT, subject)
+                        .putExtra(EXTRA_TEXT, body), "Select")
                 )
             }
         }

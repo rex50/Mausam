@@ -1,6 +1,7 @@
 package com.rex50.mausam.views.activities.settings
 
 import android.content.Intent
+import android.content.Intent.createChooser
 import android.os.Bundle
 import com.rex50.mausam.BuildConfig
 import com.rex50.mausam.R
@@ -145,10 +146,10 @@ class ActSettings: BaseActivityWithBinding<ActSettingsBinding>() {
 
                         binding?.btnShareApp -> {
                             startActivity(
-                                Intent(Intent.ACTION_SEND)
+                                createChooser(Intent(Intent.ACTION_SEND)
                                     .setType("text/plain")
                                     .putExtra(Intent.EXTRA_SUBJECT, "Share app link")
-                                    .putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share_app_desc, getString(R.string.link_play_store)))
+                                    .putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share_app_desc, getString(R.string.link_play_store))), "Select")
                             )
                         }
 

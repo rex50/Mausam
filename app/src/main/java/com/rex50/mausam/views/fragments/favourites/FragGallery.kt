@@ -242,7 +242,7 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
                     override fun onShare(photoInfo: UnsplashPhotos, name: String) {
                         ImageActionHelper.shareImage(
                             requireContext(),
-                            "Share",
+                            "Share Photo",
                             photoInfo.user.name,
                             photoInfo.links.html
                         )

@@ -526,7 +526,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
                 }
 
                 override fun onShare(photoInfo: UnsplashPhotos, name: String) {
-                    ImageActionHelper.shareImage(this@ActPhotosList, "Share", photoInfo.user.name, photoInfo.links.html)
+                    ImageActionHelper.shareImage(this@ActPhotosList, "Share Photo", photoInfo.user.name, photoInfo.links.html)
                 }
 
                 override fun onUserPhotos(user: User) {
