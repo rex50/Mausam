@@ -1,5 +1,6 @@
 package com.rex50.mausam.views.bottomsheets
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,6 +11,7 @@ import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.MaterialBottomSheet
 import com.rex50.mausam.enums.DownloadQuality
+import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.Constants.Network.NO_INTERNET
 import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showToast
@@ -23,10 +25,6 @@ import kotlinx.coroutines.launch
 
 
 class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet() {
-
-    companion object{
-        const val TAG = "BottomSheetDownload"
-    }
 
     var isDownloading = false
 
@@ -49,9 +47,7 @@ class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet
             setAnimation(R.raw.l_anim_photo_saving)
         }
 
-        val quality = MausamApplication.getInstance()?.getSharedPrefs()?.photoDownloadQuality ?: DownloadQuality.FULL
-
-        "\n${getString(R.string.downloading, quality.text)}".let { tvBottomSheet?.text = it }
+        tvBottomSheet?.text = getDownloadingWithQualityMsg(requireContext())
 
         btnDismiss?.setOnClickListener{
             animBottomSheet?.apply {
@@ -117,14 +113,14 @@ class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet
 
     fun downloaded(){
         CoroutineScope(Dispatchers.Main).launch {
-            btnCancel?.hideView()
-            animBottomSheet?.pauseAnimation()
-            delay(300)
-            animBottomSheet?.apply {
-                pauseAnimation()
-                setAnimation(R.raw.l_anim_photo_saving)
-            }
-            fragmentManager?.apply {
+            if(isAdded) {
+                btnCancel?.hideView()
+                animBottomSheet?.pauseAnimation()
+                delay(300)
+                animBottomSheet?.apply {
+                    pauseAnimation()
+                    setAnimation(R.raw.l_anim_photo_saving)
+                }
                 dismissAllowingStateLoss()
             }
         }
@@ -138,6 +134,17 @@ class BSDownload(private var fragManager: FragmentManager) : MaterialBottomSheet
             Log.e(TAG, "onProgress: $e")
             FirebaseCrashlytics.getInstance().recordException(e)
         }
+    }
+
+    companion object {
+
+        const val TAG = "BottomSheetDownload"
+
+        fun getDownloadingWithQualityMsg(context: Context?) = context?.let { ctx ->
+            val quality = MausamSharedPrefs(ctx).photoDownloadQuality ?: DownloadQuality.FULL
+            "\n${ctx.getString(R.string.downloading, quality.text)}"
+        } ?: "Downloading..."
+
     }
 
 }

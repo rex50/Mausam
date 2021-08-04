@@ -195,6 +195,9 @@
     <string name="twelve_hours">12 hours</string>
     <string name="twenty_four_hours">24 hours</string>
     <string name="preview">Preview</string>
+    <string name="center_crop">Center crop</string>
+    <string name="desc_center_crop_on">Photos will be center cropped while changing wallpaper.</string>
+    <string name="desc_center_crop_off">Photos will be scrollable while changing wallpaper.</string>
 
 
     <!--Colors for gradient array-->

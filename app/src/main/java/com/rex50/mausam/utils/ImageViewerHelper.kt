@@ -23,6 +23,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.rex50.mausam.R
+import com.rex50.mausam.enums.DownloadedBy
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.storage.database.key_values.KeyValuesRepository
 import com.stfalcon.imageviewer.StfalconImageViewer
@@ -340,6 +341,7 @@ class ImageViewerHelper(
                             photosList[selectedPhotoPos].apply {
                                 val name = getFormattedDesc(description, altDescription)
                                 //if(name.length > 20) name = name.substring(0, 20)
+                                this.also { it.downloadedBy = DownloadedBy.USER }
                                 actionListener?.onSetWallpaper(this, name)
                             }
                         }
@@ -351,6 +353,7 @@ class ImageViewerHelper(
                                 photosList[selectedPhotoPos].apply {
                                     val name = getFormattedDesc(description, altDescription)
                                     //if(name.length > 20) name = name.substring(0, 20)
+                                    this.also { it.downloadedBy = DownloadedBy.USER }
                                     actionListener?.onDownload(this, name)
                                 }
                             }
@@ -361,6 +364,7 @@ class ImageViewerHelper(
                             photosList[selectedPhotoPos].apply {
                                 val name = getFormattedDesc(description, altDescription)
                                 //if(name.length > 20) name = name.substring(0, 20)
+                                this.also { it.downloadedBy = DownloadedBy.USER }
                                 actionListener?.onFavourite(this, name)
                             }
                         }

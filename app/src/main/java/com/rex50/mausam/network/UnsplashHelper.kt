@@ -294,7 +294,9 @@ class UnsplashHelper(
 
     suspend fun getRandomPhoto(): Result<UnsplashPhotos> = withContext(Dispatchers.IO) {
         if(connectionChecker.isNetworkConnected()) {
-            when(val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_RANDOM_PHOTO, hashMapOf())) {
+            val params = hashMapOf<String, String>()
+            params["topics"] = "bo8jQKTaE0Y,6sMVjTLSkeQ"
+            when(val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_RANDOM_PHOTO, params)) {
                 is Result.Success -> {
                     Result.Success(DataParser.parseUnsplashPhoto(result.data))
                 }

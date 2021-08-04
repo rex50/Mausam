@@ -33,6 +33,7 @@ public class MausamSharedPrefs {
     private static final String ENABLED_AUTO_WALLPAPER = "enabledAutoWallpaper";
     private static final String AUTO_WALLPAPER_INTERVAL = "autoWallpaperInterval";
     private static final String AUTO_WALLPAPER_BLUR_INTENSITY = "autoWallpaperBlurIntensity";
+    private static final String ENABLED_AUTO_WALLPAPER_CROP = "enabledAutoWallpaperCrop";
 
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
@@ -252,5 +253,14 @@ public class MausamSharedPrefs {
 
     public float getAutoWallpaperBlurIntensity() {
         return sharedPrefs.getFloat(AUTO_WALLPAPER_BLUR_INTENSITY, 0f);
+    }
+
+    public void setEnabledAutoWallpaperCrop(boolean show) {
+        editor.putBoolean(ENABLED_AUTO_WALLPAPER_CROP, show);
+        editor.commit();
+    }
+
+    public boolean isEnabledAutoWallpaperCrop() {
+        return sharedPrefs.getBoolean(ENABLED_AUTO_WALLPAPER_CROP, true);
     }
 }

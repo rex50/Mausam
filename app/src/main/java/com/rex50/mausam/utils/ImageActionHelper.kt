@@ -242,7 +242,7 @@ class ImageActionHelper {
                                     it.relativePath = it.createRelativePath(imgName)
                                     CoroutineScope(Dispatchers.Main).launch {
                                         listener?.response(it, if(imgAddFav) ctx.getString(R.string.added_to_fav) else ctx.getString(R.string.saved_to_downloads))
-                                        repo.insert(dBKey, it.json)
+                                        repo.insert(it.dbId, it.json)
                                     }
                                 } ?: listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                             }

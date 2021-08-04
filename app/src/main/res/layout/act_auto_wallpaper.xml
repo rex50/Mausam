@@ -179,6 +179,57 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_16dp"
+                            android:layout_marginVertical="@dimen/_16dp"
+                            android:gravity="top"
+                            android:visibility="visible"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/center_crop"
+                                    android:textColor="@color/titleColor"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <com.rex50.mausam.utils.custom_text_views.MediumTextView
+                                    android:id="@+id/tvBlurCenterCropDesc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="0dp"
+                                    android:paddingEnd="30dp"
+                                    android:text="@string/desc_center_crop_off"
+                                    android:textColor="@color/taupeGray"
+                                    android:textSize="10sp"
+                                    android:visibility="visible"
+                                    tools:ignore="SmallSp" />
+                            </LinearLayout>
+
+                            <com.bitvale.switcher.SwitcherX
+                                android:checked="false"
+                                android:id="@+id/sCenterCrop"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:layout_width="wrap_content"
+                                android:thumb="@drawable/thumb_selector"
+                                android:track="@drawable/track_selector" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:background="@drawable/bg_weather_details"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="15dp"

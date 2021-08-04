@@ -10,6 +10,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.rex50.mausam.enums.DownloadedBy;
 import com.rex50.mausam.model_classes.unsplash.collection.Category;
 import com.rex50.mausam.utils.Constants;
 import com.rex50.mausam.MausamApplication;
@@ -78,6 +79,10 @@ public class UnsplashPhotos implements Parcelable {
     @SerializedName("isFavourite")
     @Expose
     private boolean isFavorite;
+
+    @SerializedName("downloadedBy")
+    @Expose
+    private String downloadedBy;
     
 
     public UnsplashPhotos() { }
@@ -322,6 +327,14 @@ public class UnsplashPhotos implements Parcelable {
         return isFavorite;
     }
 
+    public void setDownloadedBy(DownloadedBy downloadedBy) {
+        this.downloadedBy = downloadedBy.getText();
+    }
+
+    public DownloadedBy getDownloadedBy() {
+        return DownloadedBy.getFrom(downloadedBy);
+    }
+
     public String getJSON(){
         try {
             return new Gson().toJson(this);
@@ -375,7 +388,8 @@ public class UnsplashPhotos implements Parcelable {
                 Objects.equals(currentUserCollections, that.currentUserCollections) &&
                 Objects.equals(user, that.user) &&
                 Objects.equals(sponsorship, that.sponsorship) &&
-                Objects.equals(relativePath, that.relativePath);
+                Objects.equals(relativePath, that.relativePath) &&
+                Objects.equals(downloadedBy, that.downloadedBy);
     }
 
     @Override

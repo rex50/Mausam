@@ -390,6 +390,7 @@ suspend fun Uri.getOptimizedBitmap(context: Context?): Bitmap? {
             while ((bitmap?.byteCount?:0) > MAX_BITMAP_SIZE) {
                 Log.d("Bitmap", "getOptimizedBitmap: Compressing bitmap of size ${bitmap?.byteCount}")
                 file = Compressor.compress(context, file)
+                bitmap?.recycle()
                 bitmap = BitmapFactory.decodeFile(file.path)
             }
         }

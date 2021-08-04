@@ -1,7 +1,11 @@
 package com.rex50.mausam.views.activities.auto_wallpaper
 
 import android.os.Bundle
+import androidx.core.view.setPadding
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkQuery
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivityWithBinding
 import com.rex50.mausam.databinding.ActAutoWallpaperBinding
@@ -10,10 +14,12 @@ import com.rex50.mausam.enums.ContentAnimationState
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.views.bottomsheets.BSAutoWallpaperInterval
 import com.rex50.mausam.views.bottomsheets.BSBlurLevel
+import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.workers.ChangeWallpaperWorker
+import com.rex50.mausam.workers.ChangeWallpaperWorker.Companion.CHANGE_NOW
+import com.rex50.mausam.workers.ChangeWallpaperWorker.Companion.PROGRESS
 import com.thekhaeng.pushdownanim.PushDownAnim
 import org.koin.android.viewmodel.ext.android.viewModel
-import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
@@ -49,6 +55,34 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
         initIntervalBtn()
 
         initBlurBtn()
+
+        initCropBtn()
+    }
+
+    private fun initCropBtn() {
+
+        fun changeState(checked: Boolean) {
+
+            mausamSharedPrefs?.isEnabledAutoWallpaperCrop = checked
+
+            val msg = if(checked) {
+                ChangeWallpaperWorker.scheduleAutoWallpaper(this)
+                getString(R.string.desc_center_crop_on)
+            } else {
+                getString(R.string.desc_center_crop_off)
+            }
+
+            binding?.tvBlurCenterCropDesc?.text = msg
+        }
+
+        //Get state from shared prefs and update UI
+        (mausamSharedPrefs?.isEnabledAutoWallpaperCrop == true).let {
+            binding?.sCenterCrop?.setChecked(it)
+            changeState(it)
+        }
+
+        binding?.sCenterCrop?.setOnCheckedChangeListener { changeState(it) }
+
     }
 
     private fun initBlurBtn() {
@@ -137,6 +171,57 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
             }
         }
         animation.setAnimationAndShow(ContentAnimationState.LOADING)
+
+        binding?.animLayout?.ivPlaceHolder?.apply {
+            setImageResource(R.drawable.ic_refresh)
+            setPadding(18)
+            setBackgroundResource(R.drawable.tag_dot)
+        }
+
+        PushDownAnim.setPushDownAnimTo(binding?.animLayout?.root).setOnClickListener {
+
+            val workManager = WorkManager.getInstance(this)
+
+            val query = WorkQuery.Builder
+                .fromTags(listOf(CHANGE_NOW))
+                .addStates(listOf(WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING))
+                .build()
+
+            //Check if any similar work is enqueued or running.
+            // If running then no need work again
+            if(workManager.getWorkInfos(query).get().isEmpty()) {
+
+                val id = ChangeWallpaperWorker.changeNow(this)
+
+                val downloadUI = BSDownload(supportFragmentManager)
+
+                downloadUI.onCancel = {
+                    downloadUI.dismiss()
+                }
+
+                downloadUI.downloadStarted()
+
+                workManager.getWorkInfoByIdLiveData(id).observe(this, { work ->
+                    when (work.state) {
+                        WorkInfo.State.SUCCEEDED -> {
+                            downloadUI.downloaded()
+                        }
+                        WorkInfo.State.FAILED -> {
+                            downloadUI.downloadError("Error while changing wallpaper.")
+                        }
+                        else -> {
+                            downloadUI.onProgress(
+                                work.progress.getString(PROGRESS)
+                                    ?: BSDownload.getDownloadingWithQualityMsg(this)
+                            )
+                        }
+                    }
+                })
+
+            }
+
+        }
+
     }
 
     private fun initHeader() {
