@@ -195,6 +195,8 @@
     <string name="desc_center_crop_on">Photos will be center cropped while changing wallpaper.</string>
     <string name="desc_center_crop_off">Photos will be scrollable while changing wallpaper.</string>
     <string name="see_solutions">See solutions</string>
+    <string name="fresh_wallpaper">Fresh\nWallpaper</string>
+    <string name="desc_automatically_change_wallpaper_periodically">Automatically change wallpaper periodically.</string>
 
 
     <!--Colors for gradient array-->

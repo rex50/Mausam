@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?android:attr/windowBackground"
-    android:paddingBottom="@dimen/_8dp"
+    android:paddingBottom="@dimen/_4dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
@@ -11,7 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:paddingStart="@dimen/_16dp"
-        android:paddingEnd="@dimen/_16dp">
+        android:paddingEnd="@dimen/_16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/img_logo"
@@ -20,21 +23,21 @@
             android:layout_centerVertical="true"
             android:contentDescription="@string/mausam_logo"
             android:padding="10dp"
-            android:visibility="gone"
-            android:src="@drawable/ic_logo" />
+            android:src="@drawable/ic_logo"
+            android:visibility="gone" />
 
         <com.rex50.mausam.utils.custom_text_views.SemiBoldTextView
             android:id="@+id/txt_logo"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:layout_toEndOf="@+id/img_logo"
-            android:layout_toStartOf="@+id/btnSettings"
             android:layout_alignParentStart="true"
-            android:text="@string/app_name"
-            android:layout_marginTop="6dp"
-            android:textColor="@color/blueJeans"
             android:layout_centerVertical="true"
+            android:layout_marginTop="6dp"
+            android:layout_toStartOf="@+id/btnSettings"
+            android:layout_toEndOf="@+id/img_logo"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:textColor="@color/blueJeans"
             android:textSize="26sp"
             android:textStyle="bold" />
 
@@ -42,27 +45,50 @@
             android:id="@+id/btnSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/settings"
-            app:drawableEndCompat="@drawable/ic_settings"
             android:layout_alignParentEnd="true"
-            android:textSize="14sp"
+            android:layout_centerVertical="true"
             android:background="@drawable/track_selector"
-            android:textColor="@color/white"
-            app:drawableTint="@color/white"
-            android:paddingStart="@dimen/_12dp"
-            android:paddingEnd="@dimen/_12dp"
-            android:paddingTop="@dimen/_4dp"
-            android:paddingBottom="@dimen/_4dp"
             android:drawablePadding="@dimen/_6dp"
-            android:layout_centerVertical="true"/>
+            android:paddingStart="@dimen/_12dp"
+            android:paddingTop="@dimen/_4dp"
+            android:paddingEnd="@dimen/_12dp"
+            android:paddingBottom="@dimen/_4dp"
+            android:text="@string/settings"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:drawableEndCompat="@drawable/ic_settings"
+            app:drawableTint="@color/white" />
 
     </RelativeLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.65" />
 
     <include
         android:id="@+id/btnAutoWall"
         layout="@layout/item_auto_wallpaper"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rl" />
+        android:layout_marginStart="@dimen/_8dp"
+        android:layout_marginTop="@dimen/_4dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rl" />
 
-</RelativeLayout>
+    <include
+        android:id="@+id/btnRefreshWall"
+        layout="@layout/item_refresh_wallpaper"
+        android:layout_width="@dimen/_0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_8dp"
+        android:layout_marginTop="@dimen/_4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/rl" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

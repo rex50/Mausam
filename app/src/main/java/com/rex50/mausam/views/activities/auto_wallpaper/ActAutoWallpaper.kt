@@ -202,49 +202,51 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
         }
 
         PushDownAnim.setPushDownAnimTo(binding?.animLayout?.root).setOnClickListener {
-
-            val workManager = WorkManager.getInstance(this)
-
-            val query = WorkQuery.Builder
-                .fromTags(listOf(CHANGE_NOW))
-                .addStates(listOf(WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING))
-                .build()
-
-            //Check if any similar work is enqueued or running.
-            // If running then no need work again
-            if(workManager.getWorkInfos(query).get().isEmpty()) {
-
-                val id = ChangeWallpaperWorker.changeNow(this)
-
-                val downloadUI = BSDownload(supportFragmentManager)
-
-                downloadUI.onCancel = {
-                    downloadUI.dismiss()
-                }
-
-                downloadUI.downloadStarted()
-
-                workManager.getWorkInfoByIdLiveData(id).observe(this, { work ->
-                    when (work.state) {
-                        WorkInfo.State.SUCCEEDED -> {
-                            downloadUI.downloaded()
-                        }
-                        WorkInfo.State.FAILED -> {
-                            downloadUI.downloadError("Error while changing wallpaper.")
-                        }
-                        else -> {
-                            downloadUI.onProgress(
-                                work.progress.getString(PROGRESS)
-                                    ?: BSDownload.getDownloadingWithQualityMsg(this)
-                            )
-                        }
-                    }
-                })
-
-            }
-
+            startRefreshWallpaperProcess()
         }
 
+    }
+
+    private fun startRefreshWallpaperProcess() {
+        val workManager = WorkManager.getInstance(this)
+
+        val query = WorkQuery.Builder
+            .fromTags(listOf(CHANGE_NOW))
+            .addStates(listOf(WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING))
+            .build()
+
+        //Check if any similar work is enqueued or running.
+        // If running then no need work again
+        if(workManager.getWorkInfos(query).get().isEmpty()) {
+
+            val id = ChangeWallpaperWorker.changeNow(this)
+
+            val downloadUI = BSDownload(supportFragmentManager)
+
+            downloadUI.onCancel = {
+                downloadUI.dismiss()
+            }
+
+            downloadUI.downloadStarted()
+
+            workManager.getWorkInfoByIdLiveData(id).observe(this, { work ->
+                when (work.state) {
+                    WorkInfo.State.SUCCEEDED -> {
+                        downloadUI.downloaded()
+                    }
+                    WorkInfo.State.FAILED -> {
+                        downloadUI.downloadError("Error while changing wallpaper.")
+                    }
+                    else -> {
+                        downloadUI.onProgress(
+                            work.progress.getString(PROGRESS)
+                                ?: BSDownload.getDownloadingWithQualityMsg(this)
+                        )
+                    }
+                }
+            })
+
+        }
     }
 
     private fun initHeader() {

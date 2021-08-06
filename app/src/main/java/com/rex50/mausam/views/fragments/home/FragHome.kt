@@ -10,12 +10,16 @@ import androidx.annotation.StringRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkQuery
 import com.rex50.imageblur.ImageBlur
 import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragmentWithListener
 import com.rex50.mausam.databinding.FragHomeBinding
 import com.rex50.mausam.enums.ContentAnimationState
+import com.rex50.mausam.enums.DownloadedBy
 import com.rex50.mausam.interfaces.*
 import com.rex50.mausam.model_classes.item_types.HorizontalSquarePhotosTypeModel
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
@@ -28,6 +32,7 @@ import com.rex50.mausam.views.activities.auto_wallpaper.ActAutoWallpaper
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
+import com.rex50.mausam.workers.ChangeWallpaperWorker
 import com.thekhaeng.pushdownanim.PushDownAnim
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.coroutines.delay
@@ -95,13 +100,25 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
             ImageBlur.with(requireContext())
                 .load(R.drawable.img_banner_auto_wallpaper)
                 .scale(0.2f)
-                .intensity(5f)
+                .intensity(25f)
                 .into(b.bg)
 
 
             PushDownAnim.setPushDownAnimTo(b.root)
                 .setOnClickListener {
                     startActivity(Intent(requireContext(), ActAutoWallpaper::class.java))
+                }
+        }
+
+        binding?.header?.btnRefreshWall?.let { b ->
+
+            GradientHelper.getInstance(requireContext())?.getRandomLeftRightGradient()?.let {
+                b.bg.background = it
+            }
+
+            PushDownAnim.setPushDownAnimTo(b.root)
+                .setOnClickListener {
+                    startFreshWallpaperProcess()
                 }
         }
     }
@@ -324,6 +341,48 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
         }
 
         imageViewer?.show()
+    }
+
+    private fun startFreshWallpaperProcess() {
+        val workManager = WorkManager.getInstance(requireContext())
+
+        val query = WorkQuery.Builder
+            .fromTags(listOf(ChangeWallpaperWorker.CHANGE_NOW))
+            .addStates(listOf(WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING))
+            .build()
+
+        //Check if any similar work is enqueued or running.
+        // If running then no need work again
+        if(workManager.getWorkInfos(query).get().isEmpty()) {
+
+            val id = ChangeWallpaperWorker.changeNow(requireContext(), DownloadedBy.FRESH_WALLPAPER)
+
+            val downloadUI = BSDownload(childFragmentManager)
+
+            downloadUI.onCancel = {
+                downloadUI.dismiss()
+            }
+
+            downloadUI.downloadStarted()
+
+            workManager.getWorkInfoByIdLiveData(id).observe(this, { work ->
+                when (work.state) {
+                    WorkInfo.State.SUCCEEDED -> {
+                        downloadUI.downloaded()
+                    }
+                    WorkInfo.State.FAILED -> {
+                        downloadUI.downloadError("Error while changing wallpaper.")
+                    }
+                    else -> {
+                        downloadUI.onProgress(
+                            work.progress.getString(ChangeWallpaperWorker.PROGRESS)
+                                ?: BSDownload.getDownloadingWithQualityMsg(requireContext())
+                        )
+                    }
+                }
+            })
+
+        }
     }
 
     private fun showErrorMsg(@StringRes msgId: Int){

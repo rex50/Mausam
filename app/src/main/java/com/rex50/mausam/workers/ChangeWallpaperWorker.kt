@@ -49,9 +49,15 @@ class ChangeWallpaperWorker(
 
     private suspend fun changeWallpaper(): Result {
         progress("Getting photo details...")
+        val downloadedBy = inputData.getString(DownloadedBy.TAG)
         return when(val response = unsplashHelper.getRandomPhoto()) {
             is Success -> {
-                downloadPhoto(response.data.also { it.downloadedBy = DownloadedBy.AUTO_WALLPAPER })
+                downloadPhoto(response.data.also {
+                    it.downloadedBy = DownloadedBy.getFrom(
+                        text = downloadedBy,
+                        fallback = DownloadedBy.AUTO_WALLPAPER
+                    )
+                })
             }
             is Failure -> Result.failure(errorData("Failed while getting photo details"))
         }
@@ -182,9 +188,14 @@ class ChangeWallpaperWorker(
             .build()
 
         @JvmStatic
-        fun changeNow(context: Context): UUID {
+        fun changeNow(context: Context, downloadedBy: DownloadedBy = DownloadedBy.AUTO_WALLPAPER): UUID {
+
+            val data = Data.Builder()
+            data.putString(DownloadedBy.TAG, downloadedBy.text)
+
             val request = OneTimeWorkRequestBuilder<ChangeWallpaperWorker>()
                 .addTag(CHANGE_NOW)
+                .setInputData(data.build())
                 .build()
 
             WorkManager.getInstance(context)
