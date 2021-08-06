@@ -21,6 +21,7 @@ import com.rex50.mausam.workers.ChangeWallpaperWorker.Companion.CHANGE_NOW
 import com.rex50.mausam.workers.ChangeWallpaperWorker.Companion.PROGRESS
 import com.thekhaeng.pushdownanim.PushDownAnim
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.util.*
 import kotlin.math.roundToInt
 
 class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
@@ -129,7 +130,8 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
 
         fun updateDesc() {
             val hours = mausamSharedPrefs?.autoWallpaperInterval ?: AutoWallpaperInterval.TWENTY_FOUR_HOURS
-            binding?.tvIntervalDesc?.text = getString(R.string.change_wallpaper_interval_desc, "${hours.interval} hours")
+            val unit:String = hours.unit.getString(hours.interval).toLowerCase(Locale.ENGLISH)
+            binding?.tvIntervalDesc?.text = getString(R.string.change_wallpaper_interval_desc, "${hours.interval} $unit")
         }
 
         binding?.btnChangeInterval?.setOnClickListener {

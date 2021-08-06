@@ -16,8 +16,8 @@ fun LottieAnimationView.configure2PlanetAnim() {
 
 fun LottieAnimationView.configureAutoWallpaperAnim() {
     scale = 2f
-    speed = 0.3f
-    setMinAndMaxProgress(0.2f, 0.6f)
+    speed = 0.5f
+    setMinAndMaxProgress(0.23f, 0.6f)
     repeatCount = LottieDrawable.INFINITE
     repeatMode = LottieDrawable.REVERSE
 }

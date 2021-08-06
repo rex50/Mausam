@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="20dp"
-    android:paddingBottom="20dp"
+    android:paddingBottom="8dp"
     android:visibility="visible"
     tools:visibility="visible"
     android:orientation="vertical"
@@ -47,60 +47,28 @@
         app:cardElevation="@dimen/_6dp"
         app:cardCornerRadius="@dimen/_8dp"
         android:layout_marginHorizontal="@dimen/_16dp"
-        android:layout_marginVertical="@dimen/_8dp">
+        android:layout_marginVertical="@dimen/_16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <RadioGroup
-                android:id="@+id/rgInterval"
+
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checkedButton="@id/rbFull"
-                android:padding="@dimen/_8dp">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:nestedScrollingEnabled="true">
 
-                <RadioButton
-                    android:id="@+id/rb1Hour"
+                <RadioGroup
+                    android:id="@+id/rgInterval"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/_8dp"
-                    android:textColor="@color/black_to_white"
-                    android:layout_marginVertical="@dimen/_8dp"
-                    android:buttonTint="@color/colorAccent"
-                    android:text="@string/one_hour" />
+                    android:checkedButton="@id/rbFull"
+                    android:paddingVertical="@dimen/_8dp"
+                    android:paddingHorizontal="@dimen/_16dp"/>
 
-                <RadioButton
-                    android:id="@+id/rb3Hours"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/_8dp"
-                    android:textColor="@color/black_to_white"
-                    android:layout_marginVertical="@dimen/_8dp"
-                    android:buttonTint="@color/colorAccent"
-                    android:text="@string/three_hours" />
-
-                <RadioButton
-                    android:id="@+id/rb12Hours"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/twelve_hours"
-                    android:textColor="@color/black_to_white"
-                    android:padding="@dimen/_8dp"
-                    android:layout_marginVertical="@dimen/_8dp"
-                    android:buttonTint="@color/colorAccent" />
-
-                <RadioButton
-                    android:id="@+id/rb24Hours"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/_8dp"
-                    android:textColor="@color/black_to_white"
-                    android:layout_marginVertical="@dimen/_8dp"
-                    android:buttonTint="@color/colorAccent"
-                    android:text="@string/twenty_four_hours" />
-
-            </RadioGroup>
+            </ScrollView>
 
             <Button
                 android:id="@+id/btnDone"

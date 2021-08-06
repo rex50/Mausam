@@ -3,18 +3,23 @@ package com.rex50.mausam.views.bottomsheets
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.MaterialBottomSheet
 import com.rex50.mausam.enums.AutoWallpaperInterval
-import com.rex50.mausam.enums.DownloadQuality
 import com.rex50.mausam.storage.MausamSharedPrefs
-import com.rex50.mausam.utils.custom_text_views.MediumTextView
+import com.rex50.mausam.utils.getString
 import com.rex50.mausam.utils.showToast
+import com.rex50.mausam.utils.toColorStateList
+import com.rex50.mausam.utils.toDp
 import kotlinx.android.synthetic.main.bs_auto_wallpaper_interval.*
 import java.lang.RuntimeException
+import java.util.*
 
 class BSAutoWallpaperInterval : MaterialBottomSheet(){
 
@@ -34,13 +39,6 @@ class BSAutoWallpaperInterval : MaterialBottomSheet(){
     var selected: AutoWallpaperInterval? = null
         private set
 
-    private val qualityMap = hashMapOf<AutoWallpaperInterval, Int>().apply {
-        put(AutoWallpaperInterval.ONE_HOUR, R.id.rb1Hour)
-        put(AutoWallpaperInterval.THREE_HOURS, R.id.rb3Hours)
-        put(AutoWallpaperInterval.TWELVE_HOURS, R.id.rb12Hours)
-        put(AutoWallpaperInterval.TWENTY_FOUR_HOURS, R.id.rb24Hours)
-    }
-
     override fun layoutId(): Int = R.layout.bs_auto_wallpaper_interval
 
     fun show(fragmentManager: FragmentManager): BSAutoWallpaperInterval {
@@ -50,12 +48,64 @@ class BSAutoWallpaperInterval : MaterialBottomSheet(){
 
     override fun onViewReady(view: View, savedInstanceState: Bundle?) {
 
-        showSelectedInterval()
+        getLastSelectedValues()
 
-        initIntervalButtons()
+        inflateRadioButtons()
+
+        setRadioGroupClickListener()
 
         initDoneClick()
 
+    }
+
+    private fun getLastSelectedValues() {
+        //Last selected interval
+        lastInterval = sharedPrefs?.autoWallpaperInterval
+
+        //Store it in selected to show the interval as selected
+        selected = lastInterval
+    }
+
+    fun inflateRadioButtons() {
+
+        var selectedId: Int = -1
+
+        //Create layout param for radio buttons
+        val layoutParams = RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT).also {
+            it.topMargin = 48.toDp
+            it.bottomMargin = 48.toDp
+        }
+
+        AutoWallpaperInterval.values().forEach { value ->
+            rgInterval?.addView(
+                //Create a new radio button
+                RadioButton(requireContext()).apply {
+                    //Set text
+                    "${value.interval} ${value.unit.getString(value.interval).toLowerCase(Locale.ENGLISH)}".let { text = it }
+
+                    //Set id
+                    id = value.ordinal
+
+                    //Store id for checking it after
+                    // all the radio buttons are inflated
+                    if(selected == value)
+                        selectedId = id
+
+                    //Store value as tag to use it
+                    // later (inside click listener event)
+                    tag = value
+
+                    //Theming
+                    buttonTintList = ContextCompat.getColor(requireContext(), R.color.colorAccent).toColorStateList
+                    setTextColor(ContextCompat.getColor(requireContext(), R.color.black_to_white))
+                },
+                layoutParams
+            )
+        }
+
+        //Set checked state of radio button if selectedId != -1
+        if(selectedId != -1)
+            rgInterval?.check(selectedId)
     }
 
     private fun initDoneClick() {
@@ -64,39 +114,23 @@ class BSAutoWallpaperInterval : MaterialBottomSheet(){
         }
     }
 
-    private fun showSelectedInterval() {
+    private fun setRadioGroupClickListener() {
 
-        lastInterval = sharedPrefs?.autoWallpaperInterval
+        rgInterval?.setOnCheckedChangeListener { radioGroup, checkedId ->
+            //Find the radio button from radio group
+            val rb = radioGroup.findViewById<RadioButton>(checkedId)
 
-        selected = lastInterval
+            //Get value from tag
+            val interval = rb?.tag as AutoWallpaperInterval?
 
-        //Show last selected interval
-        val selectedId = qualityMap[lastInterval ?: AutoWallpaperInterval.TWENTY_FOUR_HOURS]
-        selectedId?.takeIf { it != -1 }?.let { id ->
-            rgInterval?.check(id)
-        } ?: FirebaseCrashlytics.getInstance().recordException(RuntimeException("Entry not found"))
-
-    }
-
-    private fun initIntervalButtons() {
-
-        rgInterval?.setOnCheckedChangeListener { _, checkedId ->
-
-            //Find selected interval and store in shared prefs
-            val entry = qualityMap.entries.find { checkedId == it.value }
-
-            entry?.let { entry ->
-
-                selected = entry.key
-
-                sharedPrefs?.autoWallpaperInterval = entry.key
-
+            //Store the value in sharedPrefs if it is not null
+            interval?.let {
+                selected = it
+                sharedPrefs?.autoWallpaperInterval = it
             } ?: let {
-
                 val msg = "We are facing a problem while changing interval"
                 showToast(msg)
                 FirebaseCrashlytics.getInstance().recordException(RuntimeException("$msg: Entry not found"))
-
             }
         }
 

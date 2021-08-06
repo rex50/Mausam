@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -20,6 +21,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
@@ -51,6 +53,7 @@ import org.joda.time.DateTime
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 fun String.isInt(): Boolean = when(toIntOrNull()){
@@ -59,6 +62,21 @@ fun String.isInt(): Boolean = when(toIntOrNull()){
 }
 
 fun String.toBoolean(): Boolean = equals("true")
+
+fun TimeUnit.getString(interval: Long): String {
+    //Remove 'S' from 'HOURS' if the interval period is only 1 else return as it is.
+    return toString().let {
+        (if(interval == 1L) it.dropLast(1) else it)
+    }
+}
+
+val Float.toPx get() = this * Resources.getSystem().displayMetrics.density
+val Float.toDp get() = this / Resources.getSystem().displayMetrics.density
+
+val Int.toPx get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+val Int.toDp get() = (this / Resources.getSystem().displayMetrics.density).toInt()
+
+val Int.toColorStateList get() = ColorStateList.valueOf(this)
 
 fun Boolean.getString(): String = if(this) "true" else "false"
 

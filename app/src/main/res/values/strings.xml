@@ -190,10 +190,6 @@
     <string name="interval">Interval</string>
     <string name="blur_level">Blur level</string>
     <string name="title_change_interval">Interval options</string>
-    <string name="one_hour">1 hour</string>
-    <string name="three_hours">3 hours</string>
-    <string name="twelve_hours">12 hours</string>
-    <string name="twenty_four_hours">24 hours</string>
     <string name="preview">Preview</string>
     <string name="center_crop">Center crop</string>
     <string name="desc_center_crop_on">Photos will be center cropped while changing wallpaper.</string>
