@@ -544,6 +544,10 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
             actScope.launch {
                 delay(300)
                 binding?.recSearchedPhotos?.scrollToPosition(it)
+                when(it) {
+                    0 -> binding?.ablPhotosList?.setExpanded(true, true)
+                    else -> binding?.ablPhotosList?.setExpanded(false, true)
+                }
             }
         }
 

@@ -337,6 +337,10 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
             fragScope.launch {
                 delay(300)
                 binding?.recHomeContent?.scrollToPosition(it)
+                when(it) {
+                    0 -> binding?.ablHomeList?.setExpanded(true, true)
+                    else -> binding?.ablHomeList?.setExpanded(false, true)
+                }
             }
         }
 
