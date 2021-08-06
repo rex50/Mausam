@@ -48,7 +48,7 @@
     <string name="search_photo_desc">Browse and search photos by some of the best photographers spread across the world and available on Unsplash.</string>
     <string name="favourites_desc">Your all downloads and based on that recommendations will appear here.</string>
     <string name="imp_info_desc">All your favourites are stored locally so if you uninstall app or clear data of Mausam then you will lose your favourites.</string>
-    <string name="imp_auto_wallpaper_info_desc">If wallpapers are not changing then try disabling battery optimizations for Mausam in your phone\'s settings.\n\nFor manufacturer specific steps: \nhttps://dontkillmyapp.com</string>
+    <string name="imp_auto_wallpaper_info_desc">If wallpapers are not changing automatically then try disabling battery optimizations for Mausam in your phone\'s settings.\n\nIf problem still persists then try below manufacturer specific solutions:</string>
     <string name="support_desc">Your donation keeps Mausam app advertisement free.</string>
     <string name="share_app_desc">Share this beautiful app with your friends and family.</string>
     <string name="leave_review_desc">Leave a review and rate the app on Playstore.</string>
@@ -198,6 +198,7 @@
     <string name="center_crop">Center crop</string>
     <string name="desc_center_crop_on">Photos will be center cropped while changing wallpaper.</string>
     <string name="desc_center_crop_off">Photos will be scrollable while changing wallpaper.</string>
+    <string name="see_solutions">See solutions</string>
 
 
     <!--Colors for gradient array-->

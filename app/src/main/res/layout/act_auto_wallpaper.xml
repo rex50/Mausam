@@ -230,6 +230,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/llNotWorking"
                             android:background="@drawable/bg_weather_details"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="15dp"
@@ -245,17 +246,27 @@
                                 android:layout_width="match_parent"
                                 android:text="@string/auto_wallpaper_not_working"
                                 android:textColor="@color/white"
-                                android:textSize="14sp" />
+                                android:textSize="16sp" />
 
                             <com.rex50.mausam.utils.custom_text_views.MediumTextView
                                 android:layout_height="wrap_content"
                                 android:layout_width="match_parent"
                                 android:text="@string/imp_auto_wallpaper_info_desc"
                                 android:textColor="@color/white"
+                                android:textSize="13sp" />
+
+                            <Button
+                                android:id="@+id/btnSeeSolutions"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:text="@string/see_solutions"
+                                android:textColor="@color/more_button_text"
                                 android:textSize="12sp"
-                                android:textColorLink="@color/magicMint"
-                                android:autoLink="web"
-                                android:linksClickable="true"/>
+                                android:backgroundTint="@color/black"
+                                app:cornerRadius="8dp"
+                                android:layout_marginHorizontal="@dimen/_2dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                         </LinearLayout>
 

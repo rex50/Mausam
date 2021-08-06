@@ -176,6 +176,9 @@ dependencies {
     //For blur feature
     implementation "com.github.rex50:imageblur:$blur_version"
 
+    //For don't kill my app UI
+    implementation 'com.github.rex50:doki:master-SNAPSHOT'
+
     //For testing
     /*implementation "com.google.firebase:firebase-inappmessaging-display:19.0.3"
     implementation "com.google.firebase:firebase-analytics:17.2.2"*/

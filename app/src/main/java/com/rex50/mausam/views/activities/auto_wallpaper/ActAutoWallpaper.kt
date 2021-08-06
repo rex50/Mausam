@@ -14,6 +14,7 @@ import com.rex50.mausam.enums.ContentAnimationState
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.views.bottomsheets.BSAutoWallpaperInterval
 import com.rex50.mausam.views.bottomsheets.BSBlurLevel
+import com.rex50.mausam.views.bottomsheets.BSDoNotKillMyApp
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.workers.ChangeWallpaperWorker
 import com.rex50.mausam.workers.ChangeWallpaperWorker.Companion.CHANGE_NOW
@@ -57,6 +58,26 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
         initBlurBtn()
 
         initCropBtn()
+
+        initNotWorkingBtn()
+    }
+
+    private fun initNotWorkingBtn() {
+        val connectionChecker = ConnectionChecker(this)
+        binding?.btnSeeSolutions?.setOnClickListener {
+            if(connectionChecker.isNetworkConnected()) {
+                BSDoNotKillMyApp().show(supportFragmentManager)
+            } else {
+                materialSnackBar?.showActionSnackBar(
+                    getString(R.string.error_no_internet),
+                    getString(R.string.ok_caps),
+                    object : MaterialSnackBar.SnackBarListener {
+                        override fun onActionPressed() {
+                            materialSnackBar?.dismiss()
+                        }
+                    })
+            }
+        }
     }
 
     private fun initCropBtn() {
