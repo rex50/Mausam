@@ -24,6 +24,10 @@ import com.rex50.mausam.databinding.FragDiscoverBinding
 import com.rex50.mausam.enums.ContentAnimationState
 import com.rex50.mausam.enums.ContentLoadingState
 import com.rex50.mausam.utils.ImageActionHelper.DownloadStatus
+import com.rex50.mausam.utils.animations.AnimatedMessage
+import com.rex50.mausam.utils.animations.configure2PlanetAnim
+import com.rex50.mausam.utils.animations.configureAstronautAnim
+import com.rex50.mausam.utils.animations.defaultConfig
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDownload

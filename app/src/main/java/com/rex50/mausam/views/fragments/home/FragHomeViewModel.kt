@@ -11,7 +11,7 @@ import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.network.Result
 import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.utils.*
-import com.rex50.mausam.utils.AnimatedMessage.AnimationByState
+import com.rex50.mausam.utils.animations.AnimatedMessage.AnimationByState
 import com.rex50.mausam.utils.Constants.Util.userFavConstants
 import com.rex50.mausam.utils.ImageActionHelper.DownloadStatus
 import kotlinx.coroutines.launch

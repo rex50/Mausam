@@ -27,6 +27,9 @@ import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
+import com.rex50.mausam.utils.animations.AnimatedMessage
+import com.rex50.mausam.utils.animations.configureAstronautAnim
+import com.rex50.mausam.utils.animations.defaultConfig
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.activities.auto_wallpaper.ActAutoWallpaper
 import com.rex50.mausam.views.adapters.AdaptContent

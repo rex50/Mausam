@@ -21,6 +21,9 @@ import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.android.synthetic.main.act_collections_list.*
 import kotlinx.android.synthetic.main.header_custom_general.*
 import com.rex50.mausam.model_classes.item_types.CollectionTypeModel
+import com.rex50.mausam.utils.animations.AnimatedMessage
+import com.rex50.mausam.utils.animations.configureAstronautAnim
+import com.rex50.mausam.utils.animations.defaultConfig
 import com.rex50.mausam.views.activities.photos.ActPhotosList
 import org.koin.android.viewmodel.ext.android.viewModel
 

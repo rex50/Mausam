@@ -20,6 +20,9 @@ import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
 import com.rex50.mausam.model_classes.unsplash.photos.User
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.utils.*
+import com.rex50.mausam.utils.animations.AnimatedMessage
+import com.rex50.mausam.utils.animations.configureAstronautAnim
+import com.rex50.mausam.utils.animations.defaultConfig
 import com.rex50.mausam.views.activities.collections.ActCollectionsList
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptContent

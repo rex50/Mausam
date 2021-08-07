@@ -8,11 +8,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.airbnb.lottie.LottieDrawable
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragmentWithListener
 import com.rex50.mausam.databinding.FragGalleryBinding
-import com.rex50.mausam.enums.ContentAnimationState
 import com.rex50.mausam.enums.ContentLoadingState
 import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.model_classes.item_types.GeneralTypeModel
@@ -23,9 +21,10 @@ import com.rex50.mausam.model_classes.utils.AllContentModel
 import com.rex50.mausam.model_classes.utils.MoreListData
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.*
-import com.rex50.mausam.utils.AnimatedMessage.AnimationByState
 import com.rex50.mausam.utils.Constants.IntentConstants.PHOTO_DATA
 import com.rex50.mausam.utils.GradientHelper
+import com.rex50.mausam.utils.animations.SingleAnimatedMessage
+import com.rex50.mausam.utils.animations.configureAstronautAnim
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDeleteConfirmation
@@ -40,16 +39,13 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
 
     private var adaptFav: AdaptHome? = null
 
-    private val animatedMessage: AnimatedMessage<ContentAnimationState> by lazy {
-        AnimatedMessage(
+    private val animation: SingleAnimatedMessage by lazy {
+        SingleAnimatedMessage(
             binding?.animLayout,
-            arrayListOf(
-                AnimationByState(
-                    ContentAnimationState.EMPTY,
-                    R.raw.l_anim_error_astronaout,
-                    getText(R.string.empty_download_section_msg).toString(),
-                    getText(R.string.go_discover).toString()
-                )
+            SingleAnimatedMessage.Animation(
+                R.raw.l_anim_error_astronaout,
+                getString(R.string.empty_download_section_msg),
+                getString(R.string.go_discover)
             )
         )
     }
@@ -73,35 +69,14 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
 
     private fun initAnimation() {
 
-        animatedMessage.cacheAnimations()
-
-        animatedMessage.onLottieAnimationConfig = { lottieView, state ->
-            when(state) {
-                ContentAnimationState.EMPTY -> {
-                    lottieView.scale = 0.2F
-                    lottieView.speed = 0.8F
-                    lottieView.repeatCount = LottieDrawable.INFINITE
-                }
-
-                else -> {
-                    lottieView.scale = 1F
-                    lottieView.speed = 1F
-                    lottieView.repeatCount = 1
-                }
-            }
+        animation.onLottieAnimationConfig = { lottieView ->
+            lottieView.configureAstronautAnim()
         }
 
-        animatedMessage.onActionBtnClicked = { _, state ->
-            when(state) {
-                ContentAnimationState.EMPTY -> {
-                    listener?.navigateToDiscover()
-                }
-
-                else -> {
-                    Log.e("FragGallery", "initAnimation: click not handled")
-                }
-            }
+        animation.onActionBtnClicked = { lottieView ->
+            listener?.navigateToDiscover()
         }
+
     }
 
     private fun initHeader() {
@@ -132,13 +107,13 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
             Log.e("FragFav", "setupContentObserver: $state")
             when(state) {
                 is ContentLoadingState.Preparing -> {
-                    animatedMessage.hide()
+                    animation.hide()
                     binding?.ivLoader?.showView()
                 }
 
                 is ContentLoadingState.Ready -> {
                     binding?.rvRecommendations?.showView()
-                    animatedMessage.hide()
+                    animation.hide()
                     adaptFav?.updateData(state.data)
                     imageViewer?.let {
                         (state.data.getModel(Constants.AvailableLayouts.DOWNLOADED_PHOTOS)
@@ -169,7 +144,7 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
         binding?.ivLoader?.hideView()
         binding?.rvRecommendations?.hideView()
         imageViewer?.dismiss()
-        animatedMessage.setAnimationAndShow(ContentAnimationState.EMPTY)
+        animation.show()
     }
 
     private fun initClicks() {

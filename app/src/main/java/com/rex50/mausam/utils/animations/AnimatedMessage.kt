@@ -1,4 +1,4 @@
-package com.rex50.mausam.utils
+package com.rex50.mausam.utils.animations
 
 import android.util.Log
 import android.view.View
@@ -6,6 +6,8 @@ import androidx.annotation.RawRes
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieCompositionFactory
 import com.rex50.mausam.databinding.AnimViewBinding
+import com.rex50.mausam.utils.hideView
+import com.rex50.mausam.utils.showView
 import java.lang.IllegalArgumentException
 
 /**

@@ -12,6 +12,9 @@ import com.rex50.mausam.databinding.ActAutoWallpaperBinding
 import com.rex50.mausam.enums.AutoWallpaperInterval
 import com.rex50.mausam.enums.ContentAnimationState
 import com.rex50.mausam.utils.*
+import com.rex50.mausam.utils.animations.AnimatedMessage
+import com.rex50.mausam.utils.animations.configureAutoWallpaperAnim
+import com.rex50.mausam.utils.animations.defaultConfig
 import com.rex50.mausam.views.bottomsheets.BSAutoWallpaperInterval
 import com.rex50.mausam.views.bottomsheets.BSBlurLevel
 import com.rex50.mausam.views.bottomsheets.BSDoNotKillMyApp

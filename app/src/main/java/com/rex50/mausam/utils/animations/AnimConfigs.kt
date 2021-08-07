@@ -1,4 +1,4 @@
-package com.rex50.mausam.utils
+package com.rex50.mausam.utils.animations
 
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
