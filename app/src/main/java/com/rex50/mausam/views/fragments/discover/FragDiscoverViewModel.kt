@@ -20,6 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.StringUtils
+import java.util.*
 
 class FragDiscoverViewModel(
     application: Application,
@@ -237,7 +238,11 @@ class FragDiscoverViewModel(
 
     private suspend fun addTimeBasedPhotos() {
         val time = Time.current()
-        when(val result = unsplashHelper.getSearchedPhotos(Time.searchTermFor(time).toLowerCase(), 1, 20, 48)) {
+        when(val result = unsplashHelper.getRandomPhoto(
+            Time.searchTermFor(time).toLowerCase(Locale.ENGLISH),
+            count = 30,
+            responseExpiryInHours = 48
+        )) {
             is Result.Success -> {
                 allData.addSequentially(
                     Constants.AvailableLayouts.TIME_BASED_PHOTOS,
@@ -245,7 +250,7 @@ class FragDiscoverViewModel(
                         time.text,
                         Constants.AvailableLayouts.TIME_BASED_PHOTOS,
                         false,
-                        result.data.results
+                        result.data
                     )
                 )
             }
@@ -265,17 +270,21 @@ class FragDiscoverViewModel(
 
         val place = StringUtils.capitalize(places.random())
 
-        when(val result = unsplashHelper.getSearchedPhotos(place, 1, 20)) {
+        when(val result = unsplashHelper.getRandomPhoto(
+            searchTerm = place,
+            count = 30,
+            responseExpiryInHours = 48
+        )) {
             is Result.Success -> {
                 val photos = result.data
-                if (!photos.results.isNullOrEmpty()) {
+                if (!photos.isNullOrEmpty()) {
                     allData.addSequentially(
                         Constants.AvailableLayouts.LOCATION_BASED_PHOTOS,
                         GenericModelFactory.getGeneralTypeObject(
                             Constants.AvailableLayouts.LOCATION_BASED_PHOTOS,
                             place,
                             false,
-                            photos.results
+                            photos
                         )
                     )
                 } else
@@ -291,7 +300,11 @@ class FragDiscoverViewModel(
 
     private suspend fun addWeatherBasedPhotos() {
         val season = Season.current()
-        when(val result = unsplashHelper.getSearchedPhotos(Season.searchTermFor(season).toLowerCase(), 1, 20, 48)) {
+        when(val result = unsplashHelper.getRandomPhoto(
+            searchTerm = Season.searchTermFor(season).toLowerCase(Locale.ENGLISH),
+            count = 30,
+            responseExpiryInHours = 48
+        )) {
             is Result.Success -> {
                 allData.addSequentially(
                     Constants.AvailableLayouts.WEATHER_BASED_PHOTOS,
@@ -299,7 +312,7 @@ class FragDiscoverViewModel(
                         season.text,
                         Constants.AvailableLayouts.WEATHER_BASED_PHOTOS,
                         false,
-                        result.data.results
+                        result.data
                     )
                 )
             }

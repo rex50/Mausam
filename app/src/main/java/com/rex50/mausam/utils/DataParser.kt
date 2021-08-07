@@ -31,7 +31,7 @@ object DataParser {
         return Gson().fromJson(response, UnsplashPhotos::class.java)
     }
 
-    fun parseUnsplashData(response: String?, parseUsersList: Boolean): PhotosAndUsers{
+    fun parseUnsplashData(response: String?, parseUsersList: Boolean = false): PhotosAndUsers{
         val gson = Gson()
         val photos: MutableList<UnsplashPhotos> = ArrayList()
         val users: MutableList<User> = ArrayList()
@@ -57,6 +57,13 @@ object DataParser {
     fun parseSearchedPhotos(response: String?): SearchedPhotos {
         val gson = Gson()
         return gson.fromJson(response, SearchedPhotos::class.java)
+    }
+
+    fun parseRandomPhotosData(count: Int, data: String): List<UnsplashPhotos> {
+        return if(count > 1) {
+            parseUnsplashData(data).photosList
+        } else
+            listOf(parseUnsplashPhoto(data))
     }
 
     fun parseCollections(response: String?, parseTagsList: Boolean): CollectionsAndTags {

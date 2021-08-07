@@ -292,13 +292,35 @@ class UnsplashHelper(
         }
     }
 
-    suspend fun getRandomPhoto(): Result<UnsplashPhotos> = withContext(Dispatchers.IO) {
+    suspend fun getRandomPhoto(
+        searchTerm: String = "",
+        topicIdsCommaSeparated: String = "",
+        count: Int = 1,
+        responseExpiryInHours: Int = 0
+    ): Result<List<UnsplashPhotos>> = withContext(Dispatchers.IO) {
+
+        val dbKey = RANDOM_PHOTOS_KEY + searchTerm + topicIdsCommaSeparated + count + responseExpiryInHours
+
+        //If expiry date is more than 0 hours then
+        // check DB if offline data is available and not expired
+        if(responseExpiryInHours > 0) {
+            val data = keyValuesRepository.checkValidityAndGetValue(dbKey, responseExpiryInHours)
+            data?.takeIf { it.isNotNullOrEmpty() }?.let {
+                //Data is available so return from here with Success result
+                return@withContext Result.Success(DataParser.parseRandomPhotosData(count, data))
+            }
+        }
+
+        //Offline data might be not available or
+        // data is expired so try getting fresh data from server
         if(connectionChecker.isNetworkConnected()) {
-            val params = hashMapOf<String, String>()
-            params["topics"] = "bo8jQKTaE0Y,6sMVjTLSkeQ"
+            val params = ApiRequestDataMapper.mapRandomPhotosRequest(searchTerm, topicIdsCommaSeparated, count)
             when(val result = apiManager.makeUnsplashRequest(APIManager.SERVICE_GET_RANDOM_PHOTO, params)) {
                 is Result.Success -> {
-                    Result.Success(DataParser.parseUnsplashPhoto(result.data))
+                    if(responseExpiryInHours > 0) {
+                        keyValuesRepository.insert(dbKey, result.data)
+                    }
+                    Result.Success(DataParser.parseRandomPhotosData(count, result.data))
                 }
 
                 is Result.Failure -> {
@@ -326,6 +348,7 @@ class UnsplashHelper(
         private const val COLLECTION_PHOTOS_KEY = "key_collection_photo_"
         private const val PHOTOS_KEY = "key_photos_"
         private const val SEARCHED_PHOTOS_KEY = "key_searched_photo_"
+        private const val RANDOM_PHOTOS_KEY = "key_random_photo_"
 
         //Unsplash order by Constants
         const val ORDER_BY_DEFAULT = "latest"

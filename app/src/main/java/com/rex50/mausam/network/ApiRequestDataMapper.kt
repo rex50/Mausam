@@ -35,6 +35,20 @@ object ApiRequestDataMapper {
         return extras
     }
 
+    fun mapRandomPhotosRequest(
+        searchTerm: String = "",
+        topicIdsCommaSeparated: String = "",
+        count: Int = 1,
+    ): HashMap<String, String> {
+        val extras = hashMapOf<String, String>()
+        when {
+            topicIdsCommaSeparated.isNotEmpty() -> extras["topics"] = topicIdsCommaSeparated
+            searchTerm.isNotEmpty() -> extras["query"] = searchTerm
+        }
+        extras["count"] = count.toString()
+        return extras
+    }
+
     fun mapCollectionPhotosRequest(
         collectionId: String,
         page: Int,

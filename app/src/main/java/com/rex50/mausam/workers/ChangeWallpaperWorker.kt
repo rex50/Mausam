@@ -50,14 +50,18 @@ class ChangeWallpaperWorker(
     private suspend fun changeWallpaper(): Result {
         progress("Getting photo details...")
         val downloadedBy = inputData.getString(DownloadedBy.TAG)
-        return when(val response = unsplashHelper.getRandomPhoto()) {
+        return when(val response = unsplashHelper.getRandomPhoto(topicIdsCommaSeparated = WALLPAPER_TOPICS)) {
             is Success -> {
-                downloadPhoto(response.data.also {
-                    it.downloadedBy = DownloadedBy.getFrom(
-                        text = downloadedBy,
-                        fallback = DownloadedBy.AUTO_WALLPAPER
-                    )
-                })
+                if(response.data.isNullOrEmpty()) {
+                    Result.failure(errorData("Failed while parsing photo details"))
+                } else {
+                    downloadPhoto(response.data[0].also {
+                        it.downloadedBy = DownloadedBy.getFrom(
+                            text = downloadedBy,
+                            fallback = DownloadedBy.AUTO_WALLPAPER
+                        )
+                    })
+                }
             }
             is Failure -> Result.failure(errorData("Failed while getting photo details"))
         }
@@ -171,6 +175,8 @@ class ChangeWallpaperWorker(
     companion object {
 
         const val TAG = "ChangeWallpaperWorker"
+
+        private const val WALLPAPER_TOPICS = "bo8jQKTaE0Y,6sMVjTLSkeQ"
 
         const val CHANGE_WALLPAPER_WORK_NAME = "Mausam_Auto_Change_Wallpaper"
 

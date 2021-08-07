@@ -10,6 +10,7 @@
         android:id="@+id/btnTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="@dimen/_20dp"
         android:text="@string/app_name"
         android:textSize="14sp"
         android:padding="10dp"
@@ -18,7 +19,6 @@
         android:backgroundTint="@color/more_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:cornerRadius="5dp"
-        />
+        app:cornerRadius="8dp" />
 
 </LinearLayout>

@@ -69,7 +69,6 @@ class AnimatedMessage<StateType>(
         //Set default animation as currentAnim
         if(currentAnim == null) {
             currentAnim = defaultAnimation
-            Log.w(TAG, "None animation is active. Showing default animation")
         }
     }
 
@@ -116,7 +115,7 @@ class AnimatedMessage<StateType>(
         isShowing = true
         currentAnim?.let { anim ->
 
-            Log.d(TAG, "Preparing animation")
+            Log.d(TAG, "Preparing animation for ${anim.state} state")
 
             //Prepare Animation
             animViewBinding?.lnlError?.showView()
