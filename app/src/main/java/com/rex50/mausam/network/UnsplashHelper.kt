@@ -307,7 +307,7 @@ class UnsplashHelper(
             val data = keyValuesRepository.checkValidityAndGetValue(dbKey, responseExpiryInHours)
             data?.takeIf { it.isNotNullOrEmpty() }?.let {
                 //Data is available so return from here with Success result
-                return@withContext Result.Success(DataParser.parseRandomPhotosData(count, data))
+                return@withContext Result.Success(DataParser.parseUnsplashData(data).photosList)
             }
         }
 
@@ -320,7 +320,7 @@ class UnsplashHelper(
                     if(responseExpiryInHours > 0) {
                         keyValuesRepository.insert(dbKey, result.data)
                     }
-                    Result.Success(DataParser.parseRandomPhotosData(count, result.data))
+                    Result.Success(DataParser.parseUnsplashData(result.data).photosList)
                 }
 
                 is Result.Failure -> {

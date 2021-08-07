@@ -59,13 +59,6 @@ object DataParser {
         return gson.fromJson(response, SearchedPhotos::class.java)
     }
 
-    fun parseRandomPhotosData(count: Int, data: String): List<UnsplashPhotos> {
-        return if(count > 1) {
-            parseUnsplashData(data).photosList
-        } else
-            listOf(parseUnsplashPhoto(data))
-    }
-
     fun parseCollections(response: String?, parseTagsList: Boolean): CollectionsAndTags {
         val gson = Gson()
         val collections: MutableList<Collections> = arrayListOf()
