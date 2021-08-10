@@ -22,6 +22,7 @@ import com.rex50.mausam.network.UnsplashHelper
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.utils.ImageActionHelper
 import com.rex50.mausam.utils.getOptimizedBitmap
+import kotlinx.coroutines.*
 import org.koin.java.KoinJavaComponent.inject
 import java.lang.Exception
 import java.lang.RuntimeException
@@ -32,11 +33,11 @@ class ChangeWallpaperWorker(
     params: WorkerParameters
 ): CoroutineWorker(appContext, params) {
 
-    val unsplashHelper by inject(UnsplashHelper::class.java)
+    private val unsplashHelper by inject(UnsplashHelper::class.java)
 
-    val sharedPrefs by inject(MausamSharedPrefs::class.java)
+    private val sharedPrefs by inject(MausamSharedPrefs::class.java)
 
-    override suspend fun doWork(): Result {
+    override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val result = changeWallpaper()
 
         if(result is Result.Failure) {
@@ -44,7 +45,7 @@ class ChangeWallpaperWorker(
             FirebaseCrashlytics.getInstance().recordException(result.getException())
         }
 
-        return result
+        return@withContext result
     }
 
     private suspend fun changeWallpaper(): Result {
@@ -68,8 +69,17 @@ class ChangeWallpaperWorker(
     }
 
     private suspend fun downloadPhoto(photoData: UnsplashPhotos): Result {
+
         progress("Downloading photo...")
-        return when(val response = ImageActionHelper.saveImage(applicationContext, photoData)) {
+
+        return when(val response = ImageActionHelper.saveImage(
+            applicationContext,
+            photoData
+        ) { p ->
+            runBlocking {
+                progress(p)
+            }
+        }) {
             is Success -> {
                 modifyAndSetWallpaper(response.data)
             }
@@ -194,7 +204,11 @@ class ChangeWallpaperWorker(
             .build()
 
         @JvmStatic
-        fun changeNow(context: Context, downloadedBy: DownloadedBy = DownloadedBy.AUTO_WALLPAPER): UUID {
+        fun changeNow(
+            context: Context,
+            downloadedBy: DownloadedBy = DownloadedBy.AUTO_WALLPAPER,
+            onRequestCreated: ((OneTimeWorkRequest) -> Unit)? = null
+        ): UUID {
 
             val data = Data.Builder()
             data.putString(DownloadedBy.TAG, downloadedBy.text)
@@ -203,6 +217,8 @@ class ChangeWallpaperWorker(
                 .addTag(CHANGE_NOW)
                 .setInputData(data.build())
                 .build()
+
+            onRequestCreated?.invoke(request)
 
             WorkManager.getInstance(context)
                 .enqueue(request)

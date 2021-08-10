@@ -116,7 +116,11 @@ class ImageActionHelper {
         }
 
 
-        suspend fun saveImage(context: Context?, unsplashPhotos: UnsplashPhotos): Result<UnsplashPhotos> = withContext(Dispatchers.IO){
+        suspend fun saveImage(
+            context: Context?,
+            unsplashPhotos: UnsplashPhotos,
+            onProgress: ((String) -> Unit)? = null
+        ): Result<UnsplashPhotos> = withContext(Dispatchers.IO){
             return@withContext suspendCancellableCoroutine { continuation ->
                 saveImage(context, unsplashPhotos, false, object: ImageSaveListener {
                     override fun onDownloadStarted(request: Request) {
@@ -124,6 +128,11 @@ class ImageActionHelper {
 
                     override fun onDownloadFailed(msg: String) {
                         continuation.resumeWith(kotlin.Result.failure(Exception(msg)))
+                    }
+
+                    override fun onDownloadProgress(progress: String) {
+                        Log.e(TAG, "onDownloadProgress: $progress")
+                        onProgress?.invoke(progress)
                     }
 
                     override fun response(imageMeta: UnsplashPhotos?, msg: String) {

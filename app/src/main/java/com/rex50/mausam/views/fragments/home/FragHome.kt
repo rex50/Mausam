@@ -10,6 +10,7 @@ import androidx.annotation.StringRes
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkQuery
@@ -353,26 +354,19 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
     private fun startFreshWallpaperProcess() {
         val workManager = WorkManager.getInstance(requireContext())
 
-        val query = WorkQuery.Builder
-            .fromTags(listOf(ChangeWallpaperWorker.CHANGE_NOW))
-            .addStates(listOf(WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING))
-            .build()
+        val downloadUI = BSDownload(childFragmentManager)
 
-        //Check if any similar work is enqueued or running.
-        // If running then no need work again
-        if(workManager.getWorkInfos(query).get().isEmpty()) {
+        downloadUI.downloadStarted()
 
-            val id = ChangeWallpaperWorker.changeNow(requireContext(), DownloadedBy.FRESH_WALLPAPER)
-
-            val downloadUI = BSDownload(childFragmentManager)
+        ChangeWallpaperWorker.changeNow(requireContext(), DownloadedBy.FRESH_WALLPAPER) { request ->
 
             downloadUI.onCancel = {
                 downloadUI.dismiss()
+                workManager.cancelWorkById(request.id)
             }
 
-            downloadUI.downloadStarted()
-
-            workManager.getWorkInfoByIdLiveData(id).observe(this, { work ->
+            workManager.getWorkInfoByIdLiveData(request.id).observe(this, { work ->
+                Log.e(TAG, "startFreshWallpaperProcess: ${work.progress}")
                 when (work.state) {
                     WorkInfo.State.SUCCEEDED -> {
                         downloadUI.downloaded()
@@ -388,7 +382,6 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
                     }
                 }
             })
-
         }
     }
 

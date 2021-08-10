@@ -1,6 +1,7 @@
 package com.rex50.mausam.views.activities.auto_wallpaper
 
 import android.os.Bundle
+import android.util.Log
 import androidx.core.view.setPadding
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkInfo
@@ -11,6 +12,7 @@ import com.rex50.mausam.base_classes.BaseActivityWithBinding
 import com.rex50.mausam.databinding.ActAutoWallpaperBinding
 import com.rex50.mausam.enums.AutoWallpaperInterval
 import com.rex50.mausam.enums.ContentAnimationState
+import com.rex50.mausam.enums.DownloadedBy
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.utils.animations.AnimatedMessage
 import com.rex50.mausam.utils.animations.configureAutoWallpaperAnim
@@ -20,7 +22,6 @@ import com.rex50.mausam.views.bottomsheets.BSBlurLevel
 import com.rex50.mausam.views.bottomsheets.BSDoNotKillMyApp
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.workers.ChangeWallpaperWorker
-import com.rex50.mausam.workers.ChangeWallpaperWorker.Companion.CHANGE_NOW
 import com.rex50.mausam.workers.ChangeWallpaperWorker.Companion.PROGRESS
 import com.thekhaeng.pushdownanim.PushDownAnim
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -213,26 +214,19 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
     private fun startRefreshWallpaperProcess() {
         val workManager = WorkManager.getInstance(this)
 
-        val query = WorkQuery.Builder
-            .fromTags(listOf(CHANGE_NOW))
-            .addStates(listOf(WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING))
-            .build()
+        val downloadUI = BSDownload(supportFragmentManager)
 
-        //Check if any similar work is enqueued or running.
-        // If running then no need work again
-        if(workManager.getWorkInfos(query).get().isEmpty()) {
+        downloadUI.downloadStarted()
 
-            val id = ChangeWallpaperWorker.changeNow(this)
-
-            val downloadUI = BSDownload(supportFragmentManager)
+        ChangeWallpaperWorker.changeNow(this, DownloadedBy.FRESH_WALLPAPER) { request ->
 
             downloadUI.onCancel = {
                 downloadUI.dismiss()
+                workManager.cancelWorkById(request.id)
             }
 
-            downloadUI.downloadStarted()
-
-            workManager.getWorkInfoByIdLiveData(id).observe(this, { work ->
+            workManager.getWorkInfoByIdLiveData(request.id).observe(this, { work ->
+                Log.e(TAG, "startRefreshWallpaperProcess: ${work.progress}")
                 when (work.state) {
                     WorkInfo.State.SUCCEEDED -> {
                         downloadUI.downloaded()
@@ -248,7 +242,6 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
                     }
                 }
             })
-
         }
     }
 
@@ -260,5 +253,9 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
 
             gradientLine.background = GradientHelper.getInstance(this@ActAutoWallpaper)?.getRandomLeftRightGradient()
         }
+    }
+
+    companion object {
+        const val TAG = "ActAutoWallpaper"
     }
 }
