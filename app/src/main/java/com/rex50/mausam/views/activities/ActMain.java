@@ -1,5 +1,7 @@
 package com.rex50.mausam.views.activities;
 
+import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +29,7 @@ import com.rex50.mausam.views.fragments.FragSearchResult;
 import com.rex50.mausam.views.fragments.discover.FragDiscover;
 import com.rex50.mausam.views.fragments.favourites.FragGallery;
 import com.rex50.mausam.views.fragments.home.FragHome;
+import com.suddenh4x.ratingdialog.AppRating;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,8 +38,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
-
-import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 public class ActMain extends BaseActivity implements
         FragDiscover.OnFragmentInteractionListener,
@@ -68,6 +69,14 @@ public class ActMain extends BaseActivity implements
     protected void loadAct(@Nullable Bundle savedInstanceState) {
         FirebaseAnalytics analytics = FirebaseAnalytics.getInstance(this);
         analytics.logEvent("on_main_activity", new Bundle());
+
+        new AppRating.Builder(this)
+                .setMinimumLaunchTimes(5)
+                .setMinimumDays(7)
+                .setMinimumLaunchTimesToShowAgain(50)
+                .setMinimumDaysToShowAgain(20)
+                .useGoogleInAppReview()
+                .showIfMeetsConditions();
 
         init();
     }
@@ -222,5 +231,29 @@ public class ActMain extends BaseActivity implements
     public void startSettings() {
         startActivity(new Intent(this, ActSettings.class));
     }
+
+    //TODO: show in-app-review dialog after few days of usage
+    /*val manager = ReviewManagerFactory.create(this)
+
+    //Request a ReviewInfo object
+    val request = manager.requestReviewFlow()
+    request.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            // We got the ReviewInfo object
+            val reviewInfo = task.result
+
+            //Launch the in-app review flow
+            val flow = manager.launchReviewFlow(this, reviewInfo)
+            flow.addOnCompleteListener { _ ->
+                // The flow has finished. The API does not indicate whether the user
+                // reviewed or not, or even whether the review dialog was shown. Thus, no
+                // matter the result, we continue our app flow.
+            }
+
+        } else {
+            // There was some problem, log or handle the error code.
+            openUrl(getString(R.string.link_play_store))
+        }
+    }*/
 
 }

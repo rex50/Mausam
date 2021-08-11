@@ -154,7 +154,6 @@ class ActSettings: BaseActivityWithBinding<ActSettingsBinding>() {
                         }
 
                         binding?.btnGotoPlayStore -> {
-                            //TODO: Integrate in-app review
                             openUrl(getString(R.string.link_play_store))
                         }
 
