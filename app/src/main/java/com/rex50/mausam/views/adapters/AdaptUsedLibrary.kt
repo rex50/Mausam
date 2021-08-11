@@ -12,7 +12,7 @@ import com.rex50.mausam.model_classes.utils.Library
 import com.rex50.mausam.utils.GradientHelper
 import com.thekhaeng.pushdownanim.PushDownAnim
 
-class AdaptUsedLibrary(private val libraries: ArrayList<Library>) : RecyclerView.Adapter<AdaptUsedLibrary.UsedLibraryViewHolder>() {
+class AdaptUsedLibrary(private var libraries: List<Library>) : RecyclerView.Adapter<AdaptUsedLibrary.UsedLibraryViewHolder>() {
 
 
     var listener :OnUsedLibrariesAdapterListener? = null
@@ -51,4 +51,9 @@ class AdaptUsedLibrary(private val libraries: ArrayList<Library>) : RecyclerView
     }
 
     override fun getItemCount(): Int = libraries.size
+
+    fun updateList(list: List<Library>) {
+        libraries = list
+        notifyItemRangeInserted(0, list.size)
+    }
 }

@@ -9,7 +9,7 @@ import com.rex50.mausam.utils.*
 import com.rex50.mausam.MausamApplication
 import com.rex50.mausam.base_classes.BaseActivityWithBinding
 import com.rex50.mausam.databinding.ActSettingsBinding
-import com.rex50.mausam.views.activities.ActUsedLibrary
+import com.rex50.mausam.views.activities.ActUsedResourcesAndLibraries
 import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
 import com.rex50.mausam.views.bottomsheets.BSFeedback
 import com.thekhaeng.pushdownanim.PushDownAnim
@@ -163,7 +163,7 @@ class ActSettings: BaseActivityWithBinding<ActSettingsBinding>() {
                         }
 
                         binding?.btnResUsed -> {
-                            val intent = Intent(this@ActSettings, ActUsedLibrary::class.java)
+                            val intent = Intent(this@ActSettings, ActUsedResourcesAndLibraries::class.java)
                             startActivity(intent)
                         }
 

@@ -43,7 +43,7 @@
         <activity android:name=".views.activities.ActMain" />
         <activity android:name=".views.activities.collections.ActCollectionsList" />
         <activity android:name=".views.activities.settings.ActSettings" />
-        <activity android:name=".views.activities.ActUsedLibrary" />
+        <activity android:name=".views.activities.ActUsedResourcesAndLibraries" />
 
         <receiver
             android:name=".receivers.NetworkChangeReceiver"
