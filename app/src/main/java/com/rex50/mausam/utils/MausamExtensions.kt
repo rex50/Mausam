@@ -105,12 +105,15 @@ fun Activity.showKeyBoard() {
     showKeyBoard(currentFocus ?: View(this))
 }
 
-fun Context.showKeyBoard(view: View?) {
-    view?.apply {
-        val imm: InputMethodManager? = this@showKeyBoard?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-    }
+fun Context?.showKeyBoard(view: View?) {
+    view?.postDelayed({
+        val imm: InputMethodManager? = this@showKeyBoard?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm?.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }, 300)
 }
+
+//Store for cancelling last shown toast
+var toast: Toast? = null
 
 fun Fragment.showToast(msg: String, length: Int = Toast.LENGTH_SHORT){
     context?.showToast(msg, length)
@@ -125,7 +128,10 @@ fun Context.showToast(msg: String, length: Int = Toast.LENGTH_SHORT){
 }
 
 private fun toast(context: Context?, msg: String, length: Int = Toast.LENGTH_SHORT){
-    Toast.makeText(context, msg, length).show()
+    toast?.cancel()
+    toast = Toast.makeText(context, msg, length).also {
+        it.show()
+    }
 }
 
 fun View.toggleViewVisibility(){

@@ -16,8 +16,9 @@ import com.rex50.mausam.utils.Constants.ApiConstants.DOWNLOADING_PHOTO_URL
 import com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME
 import com.rex50.mausam.utils.Utils
 import com.rex50.mausam.utils.VolleySingleton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
-import org.json.JSONArray
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
 import java.lang.Exception
@@ -153,14 +154,6 @@ class APIManager private constructor(private val ctx: Context?) {
         volleySingleton.addToRequestQueue(jsonObjectRequest)
     }
 
-    fun makeUnsplashRequest(
-        @UnsplashApiService service: Int,
-        urlExtras: HashMap<String, String>,
-        listener: UnsplashAPICallResponse?
-    ) {
-        makeUnsplashRequest(service, urlExtras, Request.Method.GET, listener)
-    }
-
     suspend fun makeUnsplashRequest(
         @UnsplashApiService service: Int,
         urlExtras: HashMap<String, String>
@@ -174,7 +167,46 @@ class APIManager private constructor(private val ctx: Context?) {
         }
     }
 
-    fun makeUnsplashRequest(
+    suspend fun makeFeedbackRequest(
+        msg: String
+    ): Result<String> = withContext(Dispatchers.IO){
+        return@withContext try {
+            suspendCancellableCoroutine { continuation ->
+                makeFeedbackRequest(msg, continuation)
+            }
+        } catch (e: Exception) {
+            Result.Failure(e)
+        }
+    }
+
+    private fun makeFeedbackRequest(
+        msg: String,
+        continuation: Continuation<Result<String>>
+    ) {
+
+        val request = object: StringRequest(
+            Method.POST,
+            feedbackUrl,
+            Response.Listener { response ->
+                continuation.resumeWith(kotlin.Result.success(Result.Success(response)))
+            },
+            Response.ErrorListener { error ->
+                continuation.resumeWith(kotlin.Result.failure(error))
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                return mutableMapOf<String, String>().also {
+                    it[feedbackColumn!!] = msg
+                }
+            }
+        }
+
+        val volley = VolleySingleton.getInstance(ctx)
+        volley.addToRequestQueue(request)
+
+    }
+
+    private fun makeUnsplashRequest(
         @UnsplashApiService service: Int,
         continuation: Continuation<Result<String>>,
         urlExtras: HashMap<String, String>
@@ -194,9 +226,6 @@ class APIManager private constructor(private val ctx: Context?) {
                 if (BuildConfig.DEBUG) Log.d("Volley", "makeUnsplashRequest: $response")
                 if (!response.contains("\"errors\":")) {
                     continuation.resumeWith(kotlin.Result.success(Result.Success(response)))
-
-                    //For testing error response
-                    //continuation.resumeWith(kotlin.Result.failure(Exception("[]")))
                 } else {
                     try {
                         val obj = JSONObject(response)
@@ -226,61 +255,9 @@ class APIManager private constructor(private val ctx: Context?) {
         volleySingleton.addToRequestQueue(stringRequest)
     }
 
-    fun makeUnsplashRequest(
-        @UnsplashApiService service: Int,
-        urlExtras: HashMap<String, String>,
-        method: Int,
-        listener: UnsplashAPICallResponse?
-    ) {
-        urlExtras["client_id"] = ctx?.getString(R.string.unsplashAccessKey) ?: ""
-        val stringRequest: StringRequest = object : StringRequest(
-            method,
-            generateUrl(
-                baseUrlUnsplash,
-                service,
-                urlExtras
-            ),
-            Response.Listener { response: String ->
-                if (BuildConfig.DEBUG) Log.d("Volley", "makeUnsplashRequest: $response")
-                if (!response.contains("\"errors\":")) {
-                    listener?.onSuccess(response)
-                } else {
-                    try {
-                        val `object` = JSONObject(response)
-                        listener?.onFailed(`object`.optJSONArray("errors"))
-                    } catch (e: JSONException) {
-                        listener?.onFailed(JSONArray())
-                    }
-                }
-            },
-            Response.ErrorListener { error: VolleyError ->
-                if (BuildConfig.DEBUG) Log.e("Volley", "makeUnsplashRequest: $error")
-                listener?.onFailed(JSONArray())
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                return hashMapOf<String, String>().also {
-                    it["client_id"] = ctx?.getString(R.string.unsplashAccessKey) ?: ""
-                }
-            }
-
-            override fun getBody(): ByteArray? {
-                //return "Your JSON body".toString().getBytes();
-                return null
-            }
-        }
-        val volleySingleton: VolleySingleton = VolleySingleton.getInstance(ctx)
-        volleySingleton.addToRequestQueue(stringRequest)
-    }
-
     interface WeatherAPICallBackResponse {
         fun onWeatherResponseSuccess(weatherDetails: JSONObject)
         fun onWeatherResponseFailure(errorCode: Int, msg: String)
-    }
-
-    interface UnsplashAPICallResponse {
-        fun onSuccess(response: String)
-        fun onFailed(errors: JSONArray)
     }
 
     companion object {
@@ -290,6 +267,10 @@ class APIManager private constructor(private val ctx: Context?) {
         private const val baseUrlWeather = "https://api.openweathermap.org/"
         private const val baseUrlUnsplash = "https://api.unsplash.com/"
         private var appId: String? = null
+
+        //Feedback related code
+        private var feedbackUrl: String? = null
+        private var feedbackColumn: String? = null
 
         @Volatile
         private var apiManager: APIManager? = null
@@ -349,6 +330,8 @@ class APIManager private constructor(private val ctx: Context?) {
                         instance = APIManager(ctx)
                         apiManager = instance
                         appId = ctx?.getString(R.string.openWeatherAppId)
+                        feedbackUrl = "https://docs.google.com/forms/u/0/d/e/${ctx?.getString(R.string.feedbackFormId)}/formResponse"
+                        feedbackColumn = "entry.1187937887"
                         setupServiceTable(apiManager)
                     }
                 }

@@ -52,7 +52,7 @@
     <string name="support_desc">Your donation keeps Mausam app advertisement free.</string>
     <string name="share_app_desc">Share this beautiful app with your friends and family.</string>
     <string name="leave_review_desc">Leave a review and rate the app on Playstore.</string>
-    <string name="report_app_desc">Report bugs or send feedback of Mausam.</string>
+    <string name="report_app_desc">Report bugs or send feedback.</string>
     <string name="designed_developed_by_desc">Mausam is designed and developed by</string>
     <string name="privacy_desc">Mausam (version %s) does not use any of your personal data and store them on any of our server as I can not afford one 😂.\n\nRead Mausam’s <b>Privacy Policy</b> for more.</string>
     <string name="buy_me_a_pizza_desc">and show me how much you care and love Mausam.</string>
@@ -161,8 +161,8 @@
     <string name="msg_share_app_desc">Get this awesome photos app with great features on Google Playstore \n\n%s</string>
     <string name="link_play_store">https://play.google.com/store/apps/details/?id=com.rex50.mausam</string>
     <string name="hint_feedback_box">What did you like or dislike about Mausam?</string>
-    <string name="submit_feedback">Submit feedback</string>
-    <string name="msg_feedback_desc">Go drop your feedback on how was your experience with Mausam. Whether it is good or bad we appreciate your efforts making Mausam a better platform.</string>
+    <string name="action_send">Send</string>
+    <string name="msg_feedback_desc">Drop your feedback on how was your experience with Mausam. Whether it is good or bad we appreciate your efforts making Mausam a better platform.</string>
     <string name="download_quality">Download quality</string>
     <string name="download_quality_desc">Change photo quality for future downloads</string>
     <string name="change">Change</string>

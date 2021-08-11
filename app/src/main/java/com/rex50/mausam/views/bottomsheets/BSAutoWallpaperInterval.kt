@@ -66,7 +66,7 @@ class BSAutoWallpaperInterval : MaterialBottomSheet(){
         selected = lastInterval
     }
 
-    fun inflateRadioButtons() {
+    private fun inflateRadioButtons() {
 
         var selectedId: Int = -1
 

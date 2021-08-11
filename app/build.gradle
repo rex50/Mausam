@@ -20,6 +20,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue("string", "unsplashAccessKey", unsplashAccessKey)
         resValue("string", "openWeatherAppId", openWeatherAppId)
+        resValue("string", "feedbackFormId", feedbackFormId)
+        resValue("string", "feedbackColumn", feedbackColumn)
     }
     buildTypes {
         release {

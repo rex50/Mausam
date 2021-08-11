@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/lnlUserButtons"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="20dp"
+    android:paddingTop="@dimen/_8dp"
     android:paddingBottom="20dp"
     android:visibility="visible"
     tools:visibility="visible"
@@ -24,54 +24,67 @@
 
     <com.rex50.mausam.utils.custom_text_views.RegularTextView
         android:id="@+id/tvIssue"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="start"
         android:text="@string/msg_feedback_desc"
-        android:textSize="14sp"
         android:textColor="@color/descColor"
-        android:layout_marginTop="@dimen/_32dp"
-        android:layout_marginStart="@dimen/_16dp"
-        android:layout_marginEnd="@dimen/_16dp"
-        app:layout_constraintTop_toBottomOf="@+id/view" />
+        android:textSize="13sp"
+        android:layout_marginHorizontal="@dimen/_16dp"
+        android:layout_marginTop="@dimen/_16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSubmitFeedback" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardIssue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_16dp"
-        app:cardCornerRadius="@dimen/_8dp"
         android:elevation="@dimen/_6dp"
+        app:cardCornerRadius="@dimen/_8dp"
         app:cardElevation="@dimen/_6dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvIssue">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvIssue"
+        tools:layout_editor_absoluteX="16dp">
 
         <EditText
-            android:id="@+id/etIssue"
+            android:id="@+id/etFeedback"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:padding="@dimen/_16dp"
-            android:textColorHint="@color/lightSlate"
-            android:textColor="@color/black_to_white"
-            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_general_edit_text"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:gravity="top|start"
             android:hint="@string/hint_feedback_box"
-            android:background="@drawable/bg_general"/>
+            android:imeOptions="normal"
+            android:importantForAutofill="yes"
+            android:inputType="textMultiLine"
+            android:maxLines="6"
+            android:nestedScrollingEnabled="true"
+            android:padding="@dimen/_16dp"
+            android:textColor="@color/black_to_white"
+            android:textColorHint="@color/lightSlate"
+            android:textSize="16sp"
+            tools:ignore="Autofill" />
 
     </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/btnSubmitFeedback"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black_to_white"
-        android:padding="10dp"
-        android:text="@string/submit_feedback"
+        android:padding="8dp"
+        android:text="@string/action_send"
         android:textAllCaps="false"
-        android:textSize="16sp"
-        android:layout_marginTop="@dimen/_32dp"
-        android:layout_marginStart="@dimen/_16dp"
-        android:layout_marginBottom="@dimen/_16dp"
+        android:textSize="14sp"
+        android:minHeight="5dp"
         android:layout_marginEnd="@dimen/_16dp"
-        app:layout_constraintTop_toBottomOf="@+id/cardIssue" />
+        app:icon="@drawable/ic_arrow_right"
+        app:iconGravity="textEnd"
+        app:cornerRadius="@dimen/_30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
