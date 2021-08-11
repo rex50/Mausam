@@ -3,6 +3,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?android:attr/windowBackground"
+    android:paddingVertical="@dimen/_4dp"
     android:paddingBottom="@dimen/_4dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 

@@ -208,7 +208,7 @@ fun ImageView.loadImageWithPreLoader(url: String?, @DrawableRes preLoader: Int? 
 fun Context.openUrl(url: String){
     try {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-    } catch (e: ActivityNotFoundException) {
+    } catch (e: Exception) {
         showToast("No supported app found. Failed to open")
     }
 }

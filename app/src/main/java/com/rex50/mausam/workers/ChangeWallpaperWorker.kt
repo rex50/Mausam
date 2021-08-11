@@ -93,8 +93,7 @@ class ChangeWallpaperWorker(
     private suspend fun modifyAndSetWallpaper(data: UnsplashPhotos): Result {
         try {
 
-            //Apply crop
-            progress("Cropping...")
+            //Apply crop or optimize image
             val bitmap = getCroppedImageOrOptimized(data.relativePath)
 
             //Apply blur if intensity is greater than 0
@@ -127,6 +126,8 @@ class ChangeWallpaperWorker(
     private suspend fun getCroppedImageOrOptimized(path: String): Bitmap? {
 
         if(sharedPrefs.isEnabledAutoWallpaperCrop) {
+
+            progress("Cropping...")
 
             //Decode bitmap
             val bitmap = BitmapFactory.decodeFile(path)
@@ -165,9 +166,11 @@ class ChangeWallpaperWorker(
             } catch (e: Exception) {
                 Log.e(TAG, "getCroppedImage: ", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                null
+                progress("Optimizing...")
+                path.toUri().getOptimizedBitmap(applicationContext)
             }
         } else {
+            progress("Optimizing...")
             return path.toUri().getOptimizedBitmap(applicationContext)
         }
 
