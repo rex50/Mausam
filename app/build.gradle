@@ -13,8 +13,8 @@ android {
         applicationId "com.rex50.mausam"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "beta02"
+        versionCode 2
+        versionName "beta03"
         renderscriptTargetApi 19
         renderscriptSupportModeEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
