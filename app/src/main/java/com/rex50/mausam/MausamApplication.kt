@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.ExistingPeriodicWorkPolicy
+import com.bumptech.glide.Glide
 import com.rex50.mausam.di.UIDependencySetup
 import com.rex50.mausam.storage.MausamSharedPrefs
 import com.rex50.mausam.workers.ChangeWallpaperWorker
@@ -64,14 +65,17 @@ class MausamApplication : Application(){
     // Overriding this method is totally optional!
     override fun onLowMemory() {
         super.onLowMemory()
+        Glide.with(applicationContext).onLowMemory()
+    }
 
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        Glide.with(applicationContext).onTrimMemory(level)
     }
 
     fun setAppContext(app: Context){
         context = app
     }
-
-    fun getAppContext() = context
 
     fun getSharedPrefs(): MausamSharedPrefs? {
 

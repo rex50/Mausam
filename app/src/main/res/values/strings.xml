@@ -47,7 +47,7 @@
     <string name="search_loc_desc">We understand you don’t want to reveal your  location but Mausam needs it show weather and photos based on it. </string>
     <string name="search_photo_desc">Browse and search photos by some of the best photographers spread across the world and available on Unsplash.</string>
     <string name="favourites_desc">Your all downloads and based on that recommendations will appear here.</string>
-    <string name="imp_info_desc">All your favourites are stored locally so if you uninstall app or clear data of Mausam then you will lose your favourites.</string>
+    <string name="imp_info_desc">All your downloads are stored locally so if you uninstall app or clear data of Mausam app then you will lose your downloads.</string>
     <string name="imp_auto_wallpaper_info_desc">If wallpapers are not changing automatically then try disabling battery optimizations for Mausam in your phone\'s settings.\n\nIf problem still persists then try below manufacturer specific solutions:</string>
     <string name="support_desc">Your donation keeps Mausam app advertisement free.</string>
     <string name="share_app_desc">Share this beautiful app with your friends and family.</string>
