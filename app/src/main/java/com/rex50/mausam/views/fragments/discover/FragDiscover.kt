@@ -3,6 +3,8 @@ package com.rex50.mausam.views.fragments.discover
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.view.View.OnTouchListener
@@ -393,7 +395,6 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
     private fun searchPhotos() {
         val searchTerm = binding?.etvSearch?.text.toString().trim().replace(" +".toRegex(), " ")
-        binding?.etvSearch?.setText(searchTerm)
         listener?.startMorePhotosActivity(
                 MoreListData(
                         Constants.ListModes.LIST_MODE_GENERAL_PHOTOS,
@@ -403,6 +404,9 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
                         )
                 )
         )
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding?.etvSearch?.setText("")
+        }, 300)
         hideKeyboard()
     }
 
