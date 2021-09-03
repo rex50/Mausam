@@ -14,11 +14,14 @@ import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
 import com.rex50.mausam.views.bottomsheets.BSFeedback
 import com.thekhaeng.pushdownanim.PushDownAnim
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ActSettings: BaseActivityWithBinding<ActSettingsBinding>() {
 
     private val viewModel by viewModel<ActSettingsViewModel>()
+
+    private val gradientHelper: GradientHelper by inject()
 
     override fun bindView(): ActSettingsBinding {
         return ActSettingsBinding.inflate(layoutInflater)
@@ -61,7 +64,7 @@ class ActSettings: BaseActivityWithBinding<ActSettingsBinding>() {
 
             tvPageDesc.hideView()
 
-            gradientLine.background = GradientHelper.getInstance(this@ActSettings)?.getRandomLeftRightGradient()
+            gradientLine.background = gradientHelper.getRandomLeftRightGradient()
         }
     }
 

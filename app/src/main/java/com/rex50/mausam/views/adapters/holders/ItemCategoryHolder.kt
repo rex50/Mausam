@@ -1,6 +1,5 @@
 package com.rex50.mausam.views.adapters.holders
 
-import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -9,10 +8,7 @@ import com.rex50.mausam.R
 import com.rex50.mausam.interfaces.OnChildItemClickListener
 import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
-import com.rex50.mausam.utils.ItemOffsetDecoration
-import com.rex50.mausam.utils.RecyclerEdgeEffect
-import com.rex50.mausam.utils.hideView
-import com.rex50.mausam.utils.showView
+import com.rex50.mausam.utils.*
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.thekhaeng.pushdownanim.PushDownAnim
 import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter
@@ -23,15 +19,13 @@ class ItemCategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(
         model: GenericModelFactory?,
-        gradient: GradientDrawable?,
+        gradientHelper: GradientHelper,
         groupItemClickListener: OnGroupItemClickListener?,
         spanCount: Int,
         groupPosition: Int
     ) = with(itemView) {
         model?.apply {
-            gradient?.apply {
-                vGradientLineCategory?.background = this
-            }
+            vGradientLineCategory?.background = gradientHelper.getGradient()
             tvCategoryTitle?.text = model.title
             tvCategoryDesc?.text = model.desc
             btnCategoryMore?.apply {
@@ -46,7 +40,7 @@ class ItemCategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
                 isNestedScrollingEnabled = false
 
-                val adaptContent = AdaptContent(context, model)
+                val adaptContent = AdaptContent(gradientHelper, model)
                 adaptContent.setChildClickListener(object : OnChildItemClickListener {
                     override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
                         groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
@@ -57,9 +51,7 @@ class ItemCategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                     recCategoryItems?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
                 }
 
-                adapter =  SlideInBottomAnimationAdapter(adaptContent).apply {
-                    setFirstOnly(false)
-                }
+                adapter = adaptContent
 
                 //For bounce effect
                 edgeEffectFactory = RecyclerEdgeEffect()

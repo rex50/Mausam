@@ -24,6 +24,7 @@ import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.workers.ChangeWallpaperWorker
 import com.rex50.mausam.workers.ChangeWallpaperWorker.Companion.PROGRESS
 import com.thekhaeng.pushdownanim.PushDownAnim
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.math.roundToInt
@@ -31,6 +32,8 @@ import kotlin.math.roundToInt
 class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
 
     private val viewModel by viewModel<ActAutoWallpaperViewModel>()
+
+    private val gradientHelper: GradientHelper by inject()
 
     private val animation: AnimatedMessage<ContentAnimationState> by lazy {
         AnimatedMessage(
@@ -251,7 +254,7 @@ class ActAutoWallpaper : BaseActivityWithBinding<ActAutoWallpaperBinding>() {
 
             tvPageDesc.text = getString(R.string.auto_wallpaper_desc)
 
-            gradientLine.background = GradientHelper.getInstance(this@ActAutoWallpaper)?.getRandomLeftRightGradient()
+            gradientLine.background = gradientHelper.getRandomLeftRightGradient()
         }
     }
 

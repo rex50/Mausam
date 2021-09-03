@@ -1,6 +1,5 @@
 package com.rex50.mausam.views.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +12,7 @@ import com.rex50.mausam.views.adapters.holders.EndImageHolder
 import com.rex50.mausam.views.adapters.holders.ItemCategoryHolder
 import com.rex50.mausam.views.adapters.holders.ItemSectionHolder
 
-class AdaptHome(private var gradientHelper: GradientHelper?, private var allContentModel: AllContentModel?) :
+class AdaptHome(private var gradientHelper: GradientHelper, private var allContentModel: AllContentModel?) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var itemClickListener: OnGroupItemClickListener? = null
@@ -52,7 +51,7 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
                         val itemHolder = holder as ItemCategoryHolder
                         itemHolder.bind(
                             this,
-                            gradientHelper?.getGradient(),
+                            gradientHelper,
                             itemClickListener,
                             1,
                             position
@@ -63,6 +62,7 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
                         val itemHolder = holder as ItemSectionHolder
                         itemHolder.bind(
                             this,
+                            gradientHelper,
                             itemClickListener,
                             1,
                             position
@@ -73,7 +73,7 @@ class AdaptHome(private var gradientHelper: GradientHelper?, private var allCont
                         val itemHolder = holder as ItemCategoryHolder
                         itemHolder.bind(
                             this,
-                            gradientHelper?.getGradient(),
+                            gradientHelper,
                             itemClickListener,
                             2,
                             position

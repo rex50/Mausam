@@ -23,7 +23,6 @@ class ActSplash : BaseActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             val newIntent = withContext(Dispatchers.IO) {
                 MausamApplication.getInstance()?.setAppContext(applicationContext)
-                GradientHelper.init(applicationContext)
                 if (!isStoragePermissionGranted() || mausamSharedPrefs?.isFirstTime == true) {
                     Intent(this@ActSplash, ActOnBoard::class.java)
                 } else {

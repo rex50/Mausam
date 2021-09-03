@@ -30,10 +30,6 @@ class GradientHelper private constructor() {
             return instance
         }
 
-        fun init(context: Context?){
-            getInstance(context)
-        }
-
         private fun createGradientDrawables(gradientStrings: Array<String>?): List<GradientDrawable> {
             val list: MutableList<GradientDrawable> = ArrayList()
             gradientStrings?.apply {

@@ -25,6 +25,7 @@ import com.rex50.mausam.utils.animations.AnimatedMessage
 import com.rex50.mausam.utils.animations.configureAstronautAnim
 import com.rex50.mausam.utils.animations.defaultConfig
 import com.rex50.mausam.views.activities.photos.ActPhotosList
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ActCollectionsList : BaseActivityWithBinding<ActCollectionsListBinding>() {
@@ -34,8 +35,9 @@ class ActCollectionsList : BaseActivityWithBinding<ActCollectionsListBinding>() 
     }
 
     private val adaptCollections: AdaptContent by lazy {
-        AdaptContent(this, ActCollectionsListViewModel.getEmptyData())
+        AdaptContent(gradientHelper, ActCollectionsListViewModel.getEmptyData())
     }
+
     private var scrollToTopActive = false
 
     private val viewModel by viewModel<ActCollectionsListViewModel>()
@@ -59,6 +61,8 @@ class ActCollectionsList : BaseActivityWithBinding<ActCollectionsListBinding>() 
             )
         )
     }
+
+    private val gradientHelper: GradientHelper by inject()
 
     override fun bindView(): ActCollectionsListBinding {
         return ActCollectionsListBinding.inflate(layoutInflater)
@@ -102,7 +106,7 @@ class ActCollectionsList : BaseActivityWithBinding<ActCollectionsListBinding>() 
 
     private fun initHeader() {
         binding?.header?.apply {
-            gradientLine.background = GradientHelper.getInstance(this@ActCollectionsList)?.getRandomLeftRightGradient()
+            gradientLine.background = gradientHelper.getRandomLeftRightGradient()
 
             viewModel.listData.getBgImgUrl().takeIf { it.isNotEmpty() }?.apply {
                 ivHeaderImg.loadImageWithPreLoader(this, null)
@@ -135,9 +139,7 @@ class ActCollectionsList : BaseActivityWithBinding<ActCollectionsListBinding>() 
                 addItemDecoration(ItemOffsetDecoration(this@ActCollectionsList, R.dimen.recycler_item_offset_grid))
 
             //For Item animation while scrolling
-            binding?.recSearchedCollection?.adapter = ScaleInAnimationAdapter(adaptCollections).apply {
-                setFirstOnly(false)
-            }
+            binding?.recSearchedCollection?.adapter = adaptCollections
 
             clearOnScrollListeners()
 

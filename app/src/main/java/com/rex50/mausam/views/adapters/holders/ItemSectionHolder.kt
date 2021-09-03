@@ -8,10 +8,7 @@ import com.rex50.mausam.R
 import com.rex50.mausam.interfaces.OnChildItemClickListener
 import com.rex50.mausam.interfaces.OnGroupItemClickListener
 import com.rex50.mausam.model_classes.utils.GenericModelFactory
-import com.rex50.mausam.utils.ItemOffsetDecoration
-import com.rex50.mausam.utils.RecyclerEdgeEffect
-import com.rex50.mausam.utils.hideView
-import com.rex50.mausam.utils.showView
+import com.rex50.mausam.utils.*
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.thekhaeng.pushdownanim.PushDownAnim
 import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter
@@ -22,6 +19,7 @@ class ItemSectionHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
 
     fun bind(
         model: GenericModelFactory?,
+        gradientHelper: GradientHelper,
         groupItemClickListener: OnGroupItemClickListener?,
         spanCount: Int,
         groupPosition: Int
@@ -54,15 +52,13 @@ class ItemSectionHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
                     addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
                 }
 
-                val secAdapter = AdaptContent(context, model)
+                val secAdapter = AdaptContent(gradientHelper, model)
                 secAdapter.setChildClickListener(object : OnChildItemClickListener {
                     override fun onItemClick(o: Any?, childImgView: ImageView?, childPos: Int) {
                         groupItemClickListener?.onItemClick(o, childImgView, groupPosition, childPos)
                     }
                 })
-                adapter = SlideInBottomAnimationAdapter(secAdapter).apply {
-                    setFirstOnly(false)
-                }
+                adapter = secAdapter
 
                 //For bounce effect
                 edgeEffectFactory = RecyclerEdgeEffect()

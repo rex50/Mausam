@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.tab_custom.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
@@ -45,7 +46,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
     private var scrollToTopActive = false
 
     private val adaptPhotos: AdaptContent by lazy {
-        AdaptContent(this, ActPhotosListViewModel.getEmptyData())
+        AdaptContent(gradientHelper, ActPhotosListViewModel.getEmptyData())
     }
 
     private val bsDownload: BSDownload? by lazy {
@@ -78,6 +79,8 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
     }
 
     private val viewModel: ActPhotosListViewModel by viewModel()
+
+    private val gradientHelper: GradientHelper by inject()
 
     override fun bindView(): ActPhotosListBinding {
         return ActPhotosListBinding.inflate(layoutInflater)
@@ -177,8 +180,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
 
         root.showView()
 
-        gradientLine.background =
-            GradientHelper.getInstance(this@ActPhotosList)?.getRandomLeftRightGradient()
+        gradientLine.background = gradientHelper.getRandomLeftRightGradient()
 
         tvPageTitle.text = title
 
@@ -201,8 +203,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
     ) = with(header) {
         root.showView()
 
-        gradientLine.background =
-            GradientHelper.getInstance(this@ActPhotosList)?.getRandomLeftRightGradient()
+        gradientLine.background = gradientHelper.getRandomLeftRightGradient()
 
         tvPageTitle.text = title
 
@@ -235,8 +236,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
     ) = with(header) {
         root.showView()
 
-        gradientLine.background =
-            GradientHelper.getInstance(this@ActPhotosList)?.getRandomLeftRightGradient()
+        gradientLine.background = gradientHelper.getRandomLeftRightGradient()
 
         tvPageTitle.text = title
 
@@ -291,9 +291,7 @@ class ActPhotosList : BaseActivityWithBinding<ActPhotosListBinding>() {
                 binding?.recSearchedPhotos?.addItemDecoration(ItemOffsetDecoration(this@ActPhotosList, R.dimen.recycler_item_offset_grid))
 
             //For Item animation while scrolling
-            adapter = ScaleInAnimationAdapter(adaptPhotos).apply {
-                setFirstOnly(false)
-            }
+            adapter = adaptPhotos
 
             clearOnScrollListeners()
 

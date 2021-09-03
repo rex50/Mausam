@@ -29,11 +29,14 @@ import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.adapters.AdaptHome
 import com.rex50.mausam.views.bottomsheets.BSDeleteConfirmation
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnFragmentInteractionListener>() {
 
     private val viewModel by viewModel<FragGalleryViewModel>()
+
+    private val gradientHelper: GradientHelper by inject()
 
     private var imageViewer: ImageViewerHelper? = null
 
@@ -81,7 +84,7 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
 
     private fun initHeader() {
         binding?.header?.apply {
-            gradientLine.background = GradientHelper.getInstance(requireContext())?.getRandomLeftRightGradient()
+            gradientLine.background = gradientHelper.getRandomLeftRightGradient()
             tvPageTitle.setText(R.string.favourites_title)
             tvPageDesc.setText(R.string.favourites_desc)
         }
@@ -95,7 +98,7 @@ class FragGallery : BaseFragmentWithListener<FragGalleryBinding, FragGallery.OnF
 
         binding?.rvRecommendations?.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = AdaptHome(GradientHelper.getInstance(requireContext()), AllContentModel()).also {
+            adapter = AdaptHome(gradientHelper, AllContentModel()).also {
                 adaptFav = it
             }
         }

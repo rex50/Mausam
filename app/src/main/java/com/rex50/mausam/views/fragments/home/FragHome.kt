@@ -50,8 +50,10 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
 
     private val viewModel: FragHomeViewModel by viewModel()
 
+    private val gradientHelper: GradientHelper by inject()
+
     private val adapter: AdaptContent by lazy {
-        AdaptContent(context, FragHomeViewModel.getEmptyData())
+        AdaptContent(gradientHelper, FragHomeViewModel.getEmptyData())
     }
 
     private val bsDownload: BSDownload? by lazy {
@@ -116,9 +118,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
 
         binding?.header?.btnRefreshWall?.let { b ->
 
-            GradientHelper.getInstance(requireContext())?.getRandomLeftRightGradient()?.let {
-                b.bg.background = it
-            }
+            b.bg.background = gradientHelper.getRandomLeftRightGradient()
 
             PushDownAnim.setPushDownAnimTo(b.root)
                 .setOnClickListener {
@@ -170,9 +170,7 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
             binding?.recHomeContent?.addItemDecoration(ItemOffsetDecoration(context, R.dimen.recycler_item_offset_grid))
 
         //For Item animation while scrolling
-        binding?.recHomeContent?.adapter = ScaleInAnimationAdapter(adapter).apply {
-            setFirstOnly(false)
-        }
+        binding?.recHomeContent?.adapter = adapter
 
         //For pagination (loading data when reached at the end of the list)
         binding?.recHomeContent?.apply {

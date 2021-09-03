@@ -16,12 +16,9 @@ import com.rex50.mausam.utils.Constants.RecyclerItemLayouts
 import com.rex50.mausam.views.adapters.diffUtils.AdaptContentDiffUtil
 import com.rex50.mausam.views.adapters.holders.*
 
-class AdaptContent(context: Context?, private var model: GenericModelFactory?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AdaptContent(private val gradientHelper: GradientHelper, private var model: GenericModelFactory?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var childClickListener: OnChildItemClickListener? = null
-    private val gradientHelper: GradientHelper? by lazy {
-        GradientHelper.getInstance(context)
-    }
     private val isDataSaverMode = MausamApplication.getInstance()?.getSharedPrefs()?.isDataSaverMode ?: false
 
     //For comparing with new list while updating
@@ -108,7 +105,7 @@ class AdaptContent(context: Context?, private var model: GenericModelFactory?) :
                 }
 
                 is CategoryTypeHolder -> {
-                    holder.bind(data.get(position), gradientHelper?.getRandomLeftRightGradient())
+                    holder.bind(data.get(position), gradientHelper.getRandomLeftRightGradient())
                     holder.setClickListener {
                         childClickListener?.onItemClick(
                             data,

@@ -37,6 +37,7 @@ import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
 import kotlinx.android.synthetic.main.anim_view.*
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.lang.RuntimeException
 import java.util.*
@@ -45,8 +46,10 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
     private val viewModel by viewModel<FragDiscoverViewModel>()
 
+    private val gradientHelper: GradientHelper by inject()
+
     private val adaptHome: AdaptHome by lazy {
-        AdaptHome(GradientHelper.getInstance(requireContext()), AllContentModel())
+        AdaptHome(gradientHelper, AllContentModel())
     }
 
     private val bsDownload: BSDownload? by lazy {
@@ -156,7 +159,7 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
     private fun initHeader() {
         binding?.headerLayout?.apply {
-            gradientLine.background = GradientHelper.getInstance(requireContext())?.getRandomLeftRightGradient()
+            gradientLine.background = gradientHelper.getRandomLeftRightGradient()
 
             tvPageTitle.setText(R.string.search_photo_title)
             tvPageDesc.setText(R.string.search_photo_desc)
