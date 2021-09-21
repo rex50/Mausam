@@ -17,6 +17,8 @@ class AdaptHome(private var gradientHelper: GradientHelper, private var allConte
 
     var itemClickListener: OnGroupItemClickListener? = null
 
+    private val sharedPool = RecyclerView.RecycledViewPool()
+
     fun updateData(data: AllContentModel) {
         allContentModel = data
         notifyDataSetChanged()
@@ -32,7 +34,7 @@ class AdaptHome(private var gradientHelper: GradientHelper, private var allConte
 
             //also when RecyclerItemLayouts.FAVOURITE_PHOTOGRAPHER_PHOTOS_CATEGORY_LAYOUT
             RecyclerItemLayouts.GROUP_CATEGORY_LAYOUT -> {
-                ItemCategoryHolder(v)
+                ItemCategoryHolder(v, sharedPool)
             }
 
             RecyclerItemTypes.END_IMAGE -> {

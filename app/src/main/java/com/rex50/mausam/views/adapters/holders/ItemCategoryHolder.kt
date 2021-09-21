@@ -11,11 +11,10 @@ import com.rex50.mausam.model_classes.utils.GenericModelFactory
 import com.rex50.mausam.utils.*
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.thekhaeng.pushdownanim.PushDownAnim
-import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter
 import kotlinx.android.synthetic.main.header_custom_category.view.*
 import kotlinx.android.synthetic.main.item_category.view.*
 
-class ItemCategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class ItemCategoryHolder(itemView: View, private val sharedPool: RecyclerView.RecycledViewPool) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(
         model: GenericModelFactory?,
@@ -38,6 +37,9 @@ class ItemCategoryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             recCategoryItems?.apply {
 
                 layoutManager = GridLayoutManager(context, spanCount, scrollDirection, false)
+
+                setRecycledViewPool(sharedPool)
+
                 isNestedScrollingEnabled = false
 
                 val adaptContent = AdaptContent(gradientHelper, model)

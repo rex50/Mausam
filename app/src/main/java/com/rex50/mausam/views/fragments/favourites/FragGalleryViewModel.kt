@@ -131,8 +131,6 @@ class FragGalleryViewModel(application: Application, var repository: KeyValuesRe
         super.onCleared()
     }
 
-    fun getSectionsLiveData(): LiveData<AllContentModel> {
-        return allSections.getModelLiveList()
-    }
+    fun getSectionsLiveData() = allSections.getModelLiveList()
 
 }

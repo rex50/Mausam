@@ -113,6 +113,8 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
 
         initAnimation()
 
+        animatedMessage.setAnimationAndShow(ContentAnimationState.LOADING)
+
         setupContentLoadingObserver()
 
         setupDownloadObserver()
@@ -283,7 +285,16 @@ class FragDiscover : BaseFragmentWithListener<FragDiscoverBinding, FragDiscover.
     private fun initRecycler() {
         binding?.recDiscoverContent?.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            setHasFixedSize(true)
+            val params = layoutParams
+
+            params.apply {
+                width = context.resources.displayMetrics.widthPixels
+                height = context.resources.displayMetrics.heightPixels
+            }
+            layoutParams = params
+
+            setItemViewCacheSize(100)
+
             adapter = adaptHome
         }
     }
