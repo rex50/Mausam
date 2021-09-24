@@ -55,7 +55,7 @@ abstract class BaseAndroidViewModel(app: Application): AndroidViewModel(app), Ko
         } ?: onError?.call(Error.FAILED_TO_UPDATE_REQUEST)
     }
 
-    protected fun saveImage(
+    private fun saveImage(
         photoInfo: UnsplashPhotos,
         forFav: Boolean,
         onSuccess: ((UnsplashPhotos?, String) -> Unit)?

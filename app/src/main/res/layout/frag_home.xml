@@ -36,19 +36,44 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recHomeContent"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="100dp"
-            android:paddingTop="@dimen/recycler_item_offset_grid"
-            android:paddingStart="@dimen/recycler_item_offset_grid"
-            android:paddingEnd="@dimen/recycler_item_offset_grid"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:clipToPadding="false"
-            android:layout_below="@+id/header" />
+            app:layout_collapseMode="pin">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include
+                    android:id="@+id/btnNeon"
+                    layout="@layout/item_refresh_wallpaper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_8dp"
+                    android:layout_marginTop="@dimen/_4dp"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recHomeContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="100dp"
+                    android:paddingTop="@dimen/recycler_item_offset_grid"
+                    android:paddingStart="@dimen/recycler_item_offset_grid"
+                    android:paddingEnd="@dimen/recycler_item_offset_grid"
+                    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+                    android:clipToPadding="false"
+                    android:layout_below="@+id/header" />
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

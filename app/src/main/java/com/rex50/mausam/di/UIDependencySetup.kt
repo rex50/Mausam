@@ -3,6 +3,7 @@ package com.rex50.mausam.di
 import android.content.Context
 import com.rex50.mausam.views.activities.auto_wallpaper.ActAutoWallpaperViewModel
 import com.rex50.mausam.views.activities.collections.ActCollectionsListViewModel
+import com.rex50.mausam.views.activities.neon_editor.ActNeonEditorViewModel
 import com.rex50.mausam.views.activities.photos.ActPhotosListViewModel
 import com.rex50.mausam.views.activities.settings.ActSettingsViewModel
 import com.rex50.mausam.views.fragments.discover.FragDiscoverViewModel
@@ -24,6 +25,7 @@ object UIDependencySetup {
         viewModel { ActCollectionsListViewModel(get(), get()) }
         viewModel { ActSettingsViewModel(get()) }
         viewModel { ActAutoWallpaperViewModel(get()) }
+        viewModel { ActNeonEditorViewModel(get(), get()) }
     }
 
     @JvmStatic

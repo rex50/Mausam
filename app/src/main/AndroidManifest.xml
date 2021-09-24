@@ -44,6 +44,7 @@
         <activity android:name=".views.activities.collections.ActCollectionsList" />
         <activity android:name=".views.activities.settings.ActSettings" />
         <activity android:name=".views.activities.ActUsedResourcesAndLibraries" />
+        <activity android:name=".views.activities.neon_editor.ActNeonEditor" />
 
         <receiver
             android:name=".receivers.NetworkChangeReceiver"
