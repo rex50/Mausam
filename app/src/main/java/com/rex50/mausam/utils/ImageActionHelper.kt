@@ -196,21 +196,17 @@ class ImageActionHelper {
 
                         var fetchListener: FetchListener? = null
 
-                        fun removeListener() {
-                            fetchListener?.let {
-                                fetch.removeListener(it)
-                            }
-                        }
-
                         fun requestImage(imgRequest: Request){
                             imgRequest.enqueueAction = EnqueueAction.REPLACE_EXISTING
                             fetch.enqueue(imgRequest, {
                                 CoroutineScope(Dispatchers.Main).launch {
                                     listener?.onDownloadStarted(it)
                                 }
-                            }, {
-                                Log.e("ImageHelper", "download: ", it.throwable)
-                                removeListener()
+                            }, { error ->
+                                Log.e("ImageHelper", "download: ", error.throwable)
+
+                                fetchListener?.let { it -> fetch.removeListener(it) }
+
                                 CoroutineScope(Dispatchers.Main).launch {
                                     listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                                 }
@@ -231,7 +227,8 @@ class ImageActionHelper {
                         fetchListener = object : AbstractFetchListener() {
 
                             override fun onCompleted(download: Download) {
-                                removeListener()
+
+                                fetch.removeListener(this)
 
                                 fetch.close()
 
@@ -271,17 +268,17 @@ class ImageActionHelper {
                                     if (throwable != null) {
                                         FirebaseCrashlytics.getInstance().recordException(throwable)
                                     }
-                                    removeListener()
+                                    fetch.removeListener(this)
                                     listener?.onDownloadFailed(ctx.getString(R.string.no_storage_permission_msg))
                                 }
                             }
 
                             override fun onCancelled(download: Download) {
-                                removeListener()
+                                fetch.removeListener(this)
                             }
 
                             override fun onDeleted(download: Download) {
-                                removeListener()
+                                fetch.removeListener(this)
                             }
                         }
 

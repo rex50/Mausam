@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:name=".MausamApplication"
@@ -45,6 +46,7 @@
         <activity android:name=".views.activities.settings.ActSettings" />
         <activity android:name=".views.activities.ActUsedResourcesAndLibraries" />
         <activity android:name=".views.activities.neon_editor.ActNeonEditor" />
+        <activity android:name=".views.activities.portrait_mode.ActPortraitEditor"/>
 
         <receiver
             android:name=".receivers.NetworkChangeReceiver"
