@@ -61,14 +61,14 @@ android {
 }
 
 dependencies {
-    def room_version = "2.2.5"
+    def room_version = "2.3.0"
     def glide_version = "4.11.0"
     def material_version = "1.3.0-alpha01"
     def joda_version = "2.10.3"
     def lang_version = "3.5"
-    def ktx_version = "1.3.0"
+    def ktx_version = "1.5.31"
     def gson_version = "2.8.6"
-    def volley_version = "1.1.1"
+    def volley_version = "1.2.1"
     def cardview_version = "1.0.0"
     def play_service_location_version = "17.0.0"
     def switcher_version = "1.1.0"
@@ -78,23 +78,23 @@ dependencies {
     def push_down_effect_version = "1.1.1"
     def transition_everywhere_version = "2.1.0"
     def snack_progress_bar_version = "6.4.0"
-    def lottie_version = "3.0.7"
+    def lottie_version = "3.6.0"
     def rex50_imageViewer_version = "1.0.1.3"
     def card_slider_version = "0.3.1"
     def coroutine_version = "1.3.8"
     def fetch_version = "3.1.6"
-    def work_version = "2.5.0"
+    def work_version = "2.6.0"
     def coin_version = "2.2.1"
     def blur_version = "0.2.0"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.gms:play-services-plus:17.0.0'
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //Added
     //implementation "com.google.android.gms:play-services-location:$play_service_location_version"

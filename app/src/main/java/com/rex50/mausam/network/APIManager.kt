@@ -16,6 +16,7 @@ import com.rex50.mausam.utils.Constants.ApiConstants.DOWNLOADING_PHOTO_URL
 import com.rex50.mausam.utils.Constants.ApiConstants.UNSPLASH_USERNAME
 import com.rex50.mausam.utils.Utils
 import com.rex50.mausam.utils.VolleySingleton
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -171,7 +172,7 @@ class APIManager private constructor(private val ctx: Context?) {
         msg: String
     ): Result<String> = withContext(Dispatchers.IO){
         return@withContext try {
-            suspendCancellableCoroutine { continuation ->
+            suspendCancellableCoroutine<Result<String>> { continuation ->
                 makeFeedbackRequest(msg, continuation)
             }
         } catch (e: Exception) {
@@ -181,7 +182,7 @@ class APIManager private constructor(private val ctx: Context?) {
 
     private fun makeFeedbackRequest(
         msg: String,
-        continuation: Continuation<Result<String>>
+        continuation: CancellableContinuation<Result<String>>
     ) {
 
         val request = object: StringRequest(
