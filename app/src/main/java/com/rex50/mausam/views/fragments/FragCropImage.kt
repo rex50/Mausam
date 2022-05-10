@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.canhub.cropper.CropImageView
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseFragment
 import com.rex50.mausam.model_classes.unsplash.photos.UnsplashPhotos
@@ -56,7 +55,7 @@ class FragCropImage : BaseFragment() {
                 photoData?.relativePath?.toUri()?.let { uri ->
 
                     uri.getOptimizedBitmap(requireContext())?.let { image ->
-                        pvPreview?.apply {
+                        /*pvPreview?.apply {
                             resources?.displayMetrics?.let { metrics ->
                                 displayMetrics = Pair(metrics.widthPixels, metrics.heightPixels)
                             }
@@ -68,7 +67,7 @@ class FragCropImage : BaseFragment() {
                             }
                             scaleType = CropImageView.ScaleType.FIT_CENTER
                             cropRect = wholeImageRect
-                        }
+                        }*/
 
                     }
 
@@ -82,11 +81,11 @@ class FragCropImage : BaseFragment() {
                 showLoader(true)
                 CoroutineScope(Dispatchers.IO).launch {
                     //Crop Image according to screen height and width
-                    pvPreview?.getCroppedImage(displayMetrics.first, displayMetrics.second)?.let {
+                    /*pvPreview?.getCroppedImage(displayMetrics.first, displayMetrics.second)?.let {
                         withContext(Dispatchers.Main) {
                             listener?.onCropSuccess(it)
                         }
-                    }
+                    }*/
                     withContext(Dispatchers.Main) {
                         showLoader(false)
                     }

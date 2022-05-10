@@ -1,6 +1,11 @@
 package com.rex50.mausam.views.activities.neon_editor
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.net.toUri
 import com.rex50.mausam.R
 import com.rex50.mausam.base_classes.BaseActivityWithBinding
@@ -8,7 +13,8 @@ import com.rex50.mausam.databinding.ActNeonEditorBinding
 import com.rex50.mausam.network.Status
 import com.rex50.mausam.utils.hideView
 import com.rex50.mausam.utils.showView
-import ja.burhanrashid52.photoeditor.PhotoEditor
+import iamutkarshtiwari.github.io.ananas.editimage.EditImageActivity
+import iamutkarshtiwari.github.io.ananas.editimage.ImageEditorIntentBuilder
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -17,9 +23,11 @@ class ActNeonEditor: BaseActivityWithBinding<ActNeonEditorBinding>() {
 
     private val viewModel by viewModel<ActNeonEditorViewModel>()
 
-    private val editor: PhotoEditor by lazy {
+    /*private val editor: PhotoEditor by lazy {
         PhotoEditor.Builder(this, binding?.photoEditorView).build()
-    }
+    }*/
+
+    private lateinit var editorCallback: ActivityResultLauncher<Intent>
 
     override fun bindView(): ActNeonEditorBinding = ActNeonEditorBinding.inflate(layoutInflater)
 
@@ -29,18 +37,22 @@ class ActNeonEditor: BaseActivityWithBinding<ActNeonEditorBinding>() {
 
         setupObservers()
 
+        editorCallback = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+
+        }
+
         fetchARandomPhoto()
 
     }
 
     private fun initClicks() {
         binding?.btnBrush?.setOnClickListener {
-            editor.setBrushDrawingMode(true)
+            //editor.setBrushDrawingMode(true)
         }
 
         binding?.btnEraser?.setOnClickListener {
-            editor.setBrushEraserSize(20f)
-            editor.brushEraser()
+            /*editor.setBrushEraserSize(20f)
+            editor.brushEraser()*/
         }
     }
 
@@ -56,7 +68,23 @@ class ActNeonEditor: BaseActivityWithBinding<ActNeonEditorBinding>() {
                     viewModel.downloadImage(photoStatus.value) { data, msg ->
                         binding?.tvStatus?.text = ""
                         binding?.lv?.hideView()
-                        binding?.photoEditorView?.source?.setImageURI(data?.relativePath?.toUri())
+                        ImageEditorIntentBuilder(this@ActNeonEditor, data?.relativePath, data?.relativePath+"-edited")
+                            .withAddText()
+                            .withPaintFeature()
+                            .withFilterFeature()
+                            .withRotateFeature()
+                            .withCropFeature()
+                            .withBrightnessFeature()
+                            .withSaturationFeature()
+                            .withBeautyFeature()
+                            .withStickerFeature()
+                            .forcePortrait(true)  // Add this to force portrait mode (It's set to false by default)
+                            .setSupportActionBarVisibility(false) // To hide app's default action bar
+                            .build().let { intent ->
+                                //EditImageActivity.start, this, this@ActNeonEditor)
+                                EditImageActivity.start(editorCallback, intent, this@ActNeonEditor)
+                            }
+                        //binding?.photoEditorView?.source?.setImageURI(data?.relativePath?.toUri())
                     }
                 }
 

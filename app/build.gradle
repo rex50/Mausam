@@ -156,7 +156,7 @@ dependencies {
     implementation 'id.zelory:compressor:3.0.1'
 
     //For Cropping image
-    implementation 'com.github.CanHub:Android-Image-Cropper:3.0.1'
+    //implementation 'com.github.CanHub:Android-Image-Cropper:3.0.1'
 
     //For applying filter
     implementation 'jp.co.cyberagent.android:gpuimage:2.1.0'
@@ -189,7 +189,9 @@ dependencies {
     implementation 'com.suddenh4x.ratingdialog:awesome-app-rating:2.4.0'
 
     //For Photo editing tools
-    implementation 'com.burhanrashid52:photoeditor:1.5.1'
+    //implementation 'com.burhanrashid52:photoeditor:1.5.1'
+    implementation 'com.github.iamutkarshtiwari:Ananas:1.2.6'
+
 
     /*implementation 'com.google.android.play:core:1.10.0'
 
