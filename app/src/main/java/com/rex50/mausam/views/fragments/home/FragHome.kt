@@ -33,7 +33,6 @@ import com.rex50.mausam.utils.animations.configureAstronautAnim
 import com.rex50.mausam.utils.animations.defaultConfig
 import com.rex50.mausam.views.activities.ActImageEditor
 import com.rex50.mausam.views.activities.auto_wallpaper.ActAutoWallpaper
-import com.rex50.mausam.views.activities.neon_editor.ActNeonEditor
 import com.rex50.mausam.views.adapters.AdaptContent
 import com.rex50.mausam.views.bottomsheets.BSDownload
 import com.rex50.mausam.views.bottomsheets.BSDownloadQuality
@@ -125,10 +124,6 @@ class FragHome : BaseFragmentWithListener<FragHomeBinding, FragHome.OnFragmentIn
                 .setOnClickListener {
                     startFreshWallpaperProcess()
                 }
-        }
-
-        PushDownAnim.setPushDownAnimTo(binding?.btnNeon?.root).setOnClickListener {
-            startActivity(Intent(requireContext(), ActNeonEditor::class.java))
         }
     }
 
